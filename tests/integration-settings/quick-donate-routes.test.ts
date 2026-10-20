@@ -16,9 +16,8 @@ test("pathnames resolve to their page, including locale slugs and list/detail pa
   assert.equal(routeForPathname("/en/blog"), "blog");
   assert.equal(routeForPathname("/en/blog/257-rural-road-repair-recovery"), "article");
   assert.equal(routeForPathname("/en/achievements-and-reports"), "reports");
-  assert.equal(routeForPathname("/en/achievements-and-reports/2025"), "reportDetail");
   assert.equal(routeForPathname("/tr/al-aqsa-mosque"), "aqsa");
-  assert.equal(routeForPathname("/en/courses/nur-ad-din-zengi"), "zenkiCourse", "the longer slug wins over `courses`");
+  assert.equal(routeForPathname("/en/courses/nur-ad-din-zengi"), "zenkiCourse", "the whole-path slug resolves");
   assert.equal(routeForPathname("/en/success/000000000000000000000000"), "donationSuccess");
   // A locale's own slug for a page resolves to the same page.
   const arZakat = slugFor("zakat", "ar");
@@ -33,13 +32,13 @@ test("paths outside the page map resolve to null", () => {
 });
 
 test("the pill is absent from the home, the donation modules, the blog and every transactional surface", () => {
-  for (const route of ["home", "projects", "projectDetail", "zakat", "zakatCalculator", "waqf", "recurring", "blog", "article", "cart", "checkout", "donationSuccess", "paymentPending", "receipt", "thanksCertificate", "waqfCertificate", "account", "maintenance"] as const) {
+  for (const route of ["home", "projects", "projectDetail", "zakat", "zakatCalculator", "recurring", "blog", "article", "cart", "checkout", "donationSuccess", "paymentPending", "receipt", "thanksCertificate", "account", "maintenance"] as const) {
     assert.equal(QUICK_DONATE_ROUTES.has(route), false, `${route} must not carry the quick-donate pill`);
   }
 });
 
 test("the pill is present on the reading pages", () => {
-  for (const route of ["aqsa", "jerusalem", "reports", "news", "programs", "about", "contact"] as const) {
+  for (const route of ["aqsa", "jerusalem", "reports", "news", "zenkiCourse", "about", "contact"] as const) {
     assert.equal(QUICK_DONATE_ROUTES.has(route), true, `${route} should carry the quick-donate pill`);
   }
 });

@@ -99,7 +99,7 @@ test("checkout puts the donation summary before the form on phones only", () => 
 
 test("homepage phone sections do not clip content into horizontal rails", () => {
   const css = read("styles/minbar/minbar.css");
-  assert.match(css, /#path-steps,[\s\S]*#impact-metrics,[\s\S]*#sector-metrics,[\s\S]*#regions,[\s\S]*#waqf-areas,[\s\S]*#account-features[\s\S]*display: grid !important/);
+  assert.match(css, /#path-steps,[\s\S]*#impact-metrics,[\s\S]*#sector-metrics,[\s\S]*#regions,[\s\S]*#account-features[\s\S]*display: grid !important/);
   assert.match(css, /#regions[\s\S]*grid-template-columns: minmax\(0, 1fr\) !important/);
   assert.match(css, /#account-features[\s\S]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\) !important/);
 });
@@ -115,18 +115,6 @@ test("homepage and project catalogue remove oversized mobile dead space", () => 
 });
 
 
-test("mobile giving assistant stays fully visible and draggable", () => {
-  const launcher = read("components/minbar/concierge/ConciergeLauncher.tsx");
-  const css = read("styles/minbar/minbar.css");
-  assert.match(launcher, /MOBILE_POS_KEY/);
-  assert.match(launcher, /onLauncherPointerDown/);
-  assert.match(launcher, /setPointerCapture/);
-  assert.match(launcher, /data-draggable="1"/);
-  assert.match(css, /cg-launch-wrap\[data-draggable="1"\][\s\S]*max-width: calc\(100vw - 28px\)/);
-  assert.match(css, /cg-launcher-label[\s\S]*position: static !important/);
-  assert.match(css, /cg-launcher-badge[\s\S]*display: inline-flex !important/);
-});
-
 test("long-form Al-Aqsa and Jerusalem pages stay inside the phone viewport", () => {
   const css = read("styles/minbar/minbar.css");
   assert.match(css, /:is\(\.aq-page, \.qd-page\)[\s\S]*overflow-x: clip/);
@@ -135,15 +123,13 @@ test("long-form Al-Aqsa and Jerusalem pages stay inside the phone viewport", () 
 });
 
 
-test("mobile bottom navigation exposes the seven requested destinations", () => {
+test("mobile bottom navigation exposes the five requested destinations", () => {
   const nav = read("components/minbar/shell/MobileBottomNav.tsx");
   const layout = read("app/[locale]/layout.tsx");
   assert.match(layout, /<MobileBottomNav signedIn=/);
   assert.match(nav, /route: "account"/);
   assert.match(nav, /route: "projects"/);
-  assert.match(nav, /route: "achievementVideos"/);
   assert.match(nav, /route: "home"/);
-  assert.match(nav, /route: "waqf"/);
   assert.match(nav, /route: "recurring"/);
   assert.match(nav, /route: "zakat"/);
 });
@@ -154,7 +140,6 @@ test("mobile bottom navigation persists through payment flows and clears floatin
   assert.doesNotMatch(nav, /HIDDEN_ROUTES|return null/);
   assert.match(css, /mia-mobile-bottom-nav[\s\S]*z-index: 260 !important/);
   assert.match(css, /--mia-mobile-nav-h: 74px/);
-  assert.match(css, /cg-launch-wrap[\s\S]*var\(--mia-mobile-nav-h\)/);
   assert.match(css, /mia-wa-fab[\s\S]*var\(--mia-mobile-nav-h\)/);
   assert.match(css, /data-mia-drawer="open"[\s\S]*mia-mobile-bottom-nav/);
 });
@@ -176,12 +161,11 @@ test("homepage hero no longer duplicates the reports proof strip", () => {
   assert.doesNotMatch(hero, /BIG_STATS/);
 });
 
-test("mobile impact, campaign banners and waqf use the refined layouts", () => {
+test("mobile impact and campaign banners use the refined layouts", () => {
   const css = read("styles/minbar/minbar.css");
   assert.match(css, /#impact-metrics[\s\S]*grid-template-columns: repeat\(2, minmax\(0,1fr\)\) !important/);
   assert.match(css, /#sector-metrics[\s\S]*grid-template-columns: repeat\(2, minmax\(0,1fr\)\) !important/);
-  assert.match(css, /\.friday-body,[\s\S]*\.ibadan-body[\s\S]*min-height: 220px !important/);
-  assert.match(css, /#waqf-areas[\s\S]*grid-template-columns: repeat\(2, minmax\(0,1fr\)\) !important/);
+  assert.match(css, /\.friday-body[\s\S]*min-height: 220px !important/);
 });
 
 test("projects responsive fixes are page scoped and take precedence across phone/tablet breakpoints", () => {
@@ -244,32 +228,26 @@ test("Jerusalem impact cards keep long totals in a full-width featured panel", (
   assert.match(css, /mia-impact-sectors > \.mia-impact-sector[\s\S]*min-width: 0/);
 });
 
-test("shared Ibadan and travel banners do not force headlines or CTA labels outside mobile viewport", () => {
+test("the shared travel banner does not force headlines or CTA labels outside mobile viewport", () => {
   const travel = read("components/minbar/banners/TravelBanner.tsx");
-  const ibadan = read("components/minbar/banners/IbadanBanner.tsx");
   const css = read("styles/minbar/minbar.css");
-  for (const component of [travel, ibadan]) {
-    assert.match(component, /mia-campaign-banner-content/);
-    assert.match(component, /mia-campaign-banner-actions/);
-    assert.doesNotMatch(component, /whiteSpace: "nowrap", fontSize: "clamp\(18px,2vw,28px\)"/);
-  }
+  assert.match(travel, /mia-campaign-banner-content/);
+  assert.match(travel, /mia-campaign-banner-actions/);
+  assert.doesNotMatch(travel, /whiteSpace: "nowrap", fontSize: "clamp\(18px,2vw,28px\)"/);
   assert.match(css, /mia-campaign-banner-content h2[\s\S]*white-space: normal !important/);
   assert.match(css, /mia-campaign-banner-actions > \.mia-campaign-banner-button[\s\S]*white-space: normal !important/);
   assert.match(css, /friday-prices[\s\S]*grid-template-columns: repeat\(2,minmax\(0,1fr\)\)/);
 });
 
-test("recurring, zakat, and waqf layouts remain responsive without touching transaction logic", () => {
+test("recurring and zakat layouts remain responsive without touching transaction logic", () => {
   const css = read("styles/minbar/minbar.css");
   const pages = [
     ["components/minbar/recurring/RecurringPage.tsx", "mia-recurring-page"],
     ["components/minbar/zakat/ZakatPage.tsx", "mia-zakat-page"],
-    ["components/minbar/waqf/WaqfPage.tsx", "mia-waqf-page"],
   ];
   for (const [path, name] of pages) assert.match(read(path), new RegExp(`className="${name}"`));
   assert.match(css, /\.mia-recurring-page \.mia-recurring-amounts \{ display:grid !important/);
   assert.match(css, /\.mia-zakat-page #zk-amounts \{ display:grid !important/);
-  assert.match(css, /\.mia-waqf-page \.mia-waqf-picker \{ padding:15px !important/);
-  assert.match(css, /\.mia-waqf-page #waqf-cert-preview\[data-open="1"\]/);
 });
 
 test("Al-Aqsa and Jerusalem mobile heroes use separate media and flow-based copy", () => {
@@ -284,9 +262,8 @@ test("Al-Aqsa and Jerusalem mobile heroes use separate media and flow-based copy
   assert.match(css, /mia-story-hero__image[\s\S]*object-fit: cover !important/);
 });
 
-test("impact cards occupy one wide and two equally narrow rows and mobile assistant stays compact", () => {
+test("impact cards occupy one wide and two equally narrow rows", () => {
   const css = read("styles/minbar/minbar.css");
   assert.doesNotMatch(css, /#impact-metrics > \*:nth-child\(3\)\s*\{\s*grid-column: 1 \/ -1/);
   assert.match(css, /mia-impact-summary > \.mia-impact-stat--featured \{ grid-column: 1\/-1/);
-  assert.match(css, /cg-launch-wrap\[data-draggable="1"\] \.cg-launcher \{[\s\S]*width: 50px !important/);
 });
