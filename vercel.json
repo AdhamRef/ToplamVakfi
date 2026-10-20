@@ -37,7 +37,7 @@
       "schedule": "*/5 * * * *"
     }
   ],
-  "installCommand": "npm ci --prefer-offline --no-audit --no-fund",
+  "installCommand": "npm ci --include=dev --prefer-offline --no-audit --no-fund",
   "buildCommand": "npm run build:vercel",
   "github": {
     "autoJobCancelation": true
