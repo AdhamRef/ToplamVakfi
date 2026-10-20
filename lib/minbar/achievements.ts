@@ -90,9 +90,6 @@ export const MILESTONES: ReadonlyArray<{ whenKey: string; titleKey: string; text
   { whenKey: "ms5When", titleKey: "ms5Title", textKey: "ms5Text" },
 ];
 
-/* The published report PDFs used to be listed here. They are Report rows now,
-   managed from the dashboard and read through `lib/minbar/cms.ts`. */
-
 /** The hero photograph and the photograph behind the closing call. */
 export const HERO_IMAGE = "16D72JzXMHbp72ZJCHHFWLjUYrmUX4ta1";
 export const CLOSING_IMAGE = "1GKlH6yVXzxEmni6SolP1u2G5PgmXtyQ0";

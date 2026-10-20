@@ -68,7 +68,6 @@ const FREQ_KEY: Record<CartFreqKey, string> = {
 const GENERIC: Record<QuickGenericDestination, { ns: "common" | "navigation" | "homepage"; key: string }> = {
   "where-needed": { ns: "common", key: "whereNeedGreatest" },
   zakat: { ns: "navigation", key: "zakat" },
-  waqf: { ns: "navigation", key: "waqf" },
   "gaza-relief": { ns: "homepage", key: "gazaReliefGroup" },
 };
 

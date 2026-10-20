@@ -83,8 +83,8 @@ const BENEFITS = [
 ] as const;
 
 /**
- * Funds a recurring plan can serve. `ibadan` and `travel` take their titles
- * from `navigation`, where those two projects are already named.
+ * Funds a recurring plan can serve. `travel` takes its title from
+ * `navigation`, where that project is already named.
  */
 const SERVED: ReadonlyArray<{ id: string; titleNs: "recurring" | "navigation"; titleKey: string }> = [
   { id: "aqsa", titleNs: "recurring", titleKey: "fund_aqsa" },
@@ -93,7 +93,6 @@ const SERVED: ReadonlyArray<{ id: string; titleNs: "recurring" | "navigation"; t
   { id: "chairs", titleNs: "recurring", titleKey: "fund_chairs" },
   { id: "quran", titleNs: "recurring", titleKey: "fund_quran" },
   { id: "families", titleNs: "recurring", titleKey: "fund_families" },
-  { id: "ibadan", titleNs: "navigation", titleKey: "ibadanProject" },
   { id: "travel", titleNs: "navigation", titleKey: "travelProject" },
 ];
 

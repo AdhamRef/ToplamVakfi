@@ -939,7 +939,6 @@
 @media (max-width: 980px) {
   .mia-scope #hero-main { grid-template-columns: minmax(0,1fr) !important; }
   .mia-scope #regions { grid-template-columns: minmax(0,1fr) !important; }
-  .mia-scope #waqf-areas { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
 }
 @media (max-width: 860px) {
   .mia-scope #events-cards { grid-template-columns: minmax(0,1fr) !important; }
@@ -962,7 +961,6 @@
 @media (max-width: 560px) {
   .mia-scope #articles-grid { grid-template-columns: minmax(0,1fr) !important; }
   .mia-scope #path-steps { grid-template-columns: minmax(0,1fr) !important; }
-  .mia-scope #waqf-areas { grid-template-columns: minmax(0,1fr) !important; }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -1085,56 +1083,7 @@
 }
 
 /* Row 1  the story strip. */
-.mia-scope .mia-stories {
-  position: relative; display: flex; align-items: center; gap: 12px;
-  padding: 14px 0 10px; border-bottom: 1px solid rgba(0,162,224,.28);
-}
-.mia-scope .mia-stories-rail {
-  display: flex; gap: 6px; flex: 1 1 auto; min-width: 0;
-  overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none;
-  padding: 4px 2px; margin: -4px -2px;
-}
-.mia-scope .mia-stories-rail::-webkit-scrollbar { display: none; }
-.mia-scope .mia-story {
-  flex: 0 0 auto; display: grid; gap: 7px; justify-items: center; width: 84px;
-  padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer;
-  text-decoration: none; text-align: center; scroll-snap-align: start; border-radius: 12px;
-}
-.mia-scope .mia-story:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-.mia-scope .mia-story-ring {
-  position: relative; display: block; width: 62px; height: 62px; border-radius: 50%; padding: 2.5px; box-sizing: border-box;
-  background: rgba(6,36,66,.14);
-  transition: transform .25s cubic-bezier(.22,.61,.36,1);
-}
-.mia-scope .mia-story-ring[data-new="true"] {
-  background: conic-gradient(from 210deg, #1B6FE0, #00A2E0 30%, #D6EFF9 52%, #00A2E0 72%, #1B6FE0);
-  box-shadow: 0 6px 16px -6px rgba(27,111,224,.45);
-}
-.mia-scope .mia-story:hover .mia-story-ring { transform: scale(1.06); }
-.mia-scope .mia-story-disc { display: block; width: 100%; height: 100%; border-radius: 50%; background: var(--ivory); padding: 2.5px; box-sizing: border-box; }
-.mia-scope .mia-story-img { display: block; width: 100%; height: 100%; border-radius: 50%; background-size: cover; background-position: center; }
-.mia-scope .mia-story-badge {
-  position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
-  padding: 1px 7px; border-radius: 999px; background: var(--red); color: #fff;
-  font-size: 9px; font-weight: 900; line-height: 1.5; border: 2px solid var(--ivory); white-space: nowrap;
-}
-.mia-scope .mia-story-label {
-  display: block; max-width: 84px; font-size: 12px; font-weight: 800; line-height: 1.3; color: var(--muted);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-}
-.mia-scope .mia-story-label[data-new="true"] { color: var(--deep); }
-.mia-scope .mia-stories-nav { display: none; flex: 0 0 auto; gap: 6px; align-self: flex-start; margin-top: 14px; }
-.mia-scope .mia-stories[data-overflow="true"] .mia-stories-nav { display: flex; }
-.mia-scope .mia-stories-arrow {
-  display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 9px;
-  border: 1px solid rgba(0,162,224,.45); background: rgba(255,255,255,.75); color: var(--deep); cursor: pointer;
-  transition: all .15s ease;
-}
-.mia-scope .mia-stories-arrow:hover { border-color: var(--gold); color: var(--gold); }
 /* "next" points at the end edge in either direction. */
-.mia-scope .mia-stories-arrow[data-dir="next"] svg { transform: scaleX(-1); }
-[dir="ltr"] .mia-scope .mia-stories-arrow[data-dir="next"] svg { transform: none; }
-[dir="ltr"] .mia-scope .mia-stories-arrow[data-dir="prev"] svg { transform: scaleX(-1); }
 
 /* Row 2  headline and film. */
 .mia-scope .mia-hero-main {
@@ -1353,7 +1302,7 @@
   .mia-scope .mia-hero-copy, .mia-scope .mia-hero-media { animation: none; }
   .mia-scope .mia-hero-play-ring, .mia-scope .mia-hero-eyebrow-dot { animation: none; }
   .mia-scope .mia-hero-accent-stroke path { animation: none; stroke-dashoffset: 0; }
-  .mia-scope .mia-hero-frame, .mia-scope .mia-hero-poster, .mia-scope .mia-hero-play-btn, .mia-scope .mia-story-ring { transition: none; }
+  .mia-scope .mia-hero-frame, .mia-scope .mia-hero-poster, .mia-scope .mia-hero-play-btn { transition: none; }
 }
 
 @media (max-width: 1100px) {
@@ -1369,14 +1318,6 @@
 @media (max-width: 560px) {
   .mia-scope .mia-hero-wrap { padding: 0 16px; }
   /* Stories bleed to the screen edges and scroll under the gutters. */
-  .mia-scope .mia-stories { padding: 10px 0 8px; margin: 0 -16px; border-bottom-color: rgba(0,162,224,.22); }
-  .mia-scope .mia-stories-rail { padding: 4px 16px; margin: -4px 0; gap: 4px; }
-  .mia-scope .mia-story { width: 70px; gap: 5px; }
-  .mia-scope .mia-story-ring { width: 56px; height: 56px; padding: 2px; }
-  .mia-scope .mia-story-disc { padding: 2px; }
-  .mia-scope .mia-story-label { font-size: 11px; max-width: 70px; }
-  .mia-scope .mia-story-badge { font-size: 8.5px; padding: 0 6px; bottom: -3px; }
-  .mia-scope .mia-stories-nav { display: none !important; }
 
   .mia-scope .mia-hero-main { padding: 22px 0 22px; gap: 22px; }
   .mia-scope .mia-hero-copy { gap: 14px; }
@@ -1644,7 +1585,6 @@
   .mia-scope #impact-metrics,
   .mia-scope #sector-metrics,
   .mia-scope #regions,
-  .mia-scope #waqf-areas,
   .mia-scope #account-features,
   .mia-scope #articles-grid,
   .mia-scope #news-list {
@@ -1667,7 +1607,6 @@
   .mia-scope #impact-metrics::-webkit-scrollbar,
   .mia-scope #sector-metrics::-webkit-scrollbar,
   .mia-scope #regions::-webkit-scrollbar,
-  .mia-scope #waqf-areas::-webkit-scrollbar,
   .mia-scope #account-features::-webkit-scrollbar,
   .mia-scope #articles-grid::-webkit-scrollbar,
   .mia-scope #news-list::-webkit-scrollbar { display: none; }
@@ -1677,7 +1616,6 @@
   .mia-scope #impact-metrics > *,
   .mia-scope #sector-metrics > *,
   .mia-scope #regions > *,
-  .mia-scope #waqf-areas > *,
   .mia-scope #account-features > *,
   .mia-scope #articles-grid > *,
   .mia-scope #news-list > * {
@@ -1692,7 +1630,6 @@
   .mia-scope #articles-grid > *  { width: 76vw !important; max-width: 340px; }
   .mia-scope #news-list > *      { width: 84vw !important; max-width: 380px; }
   .mia-scope #regions > *        { width: 78vw !important; max-width: 360px; }
-  .mia-scope #waqf-areas > *     { width: 68vw !important; max-width: 300px; }
   .mia-scope #account-features > * { width: 62vw !important; max-width: 280px; }
   .mia-scope #sector-metrics > * { width: 46vw !important; max-width: 220px; }
 
@@ -1749,18 +1686,15 @@
  * Ported from Minbar/شد الرحال.dc.html, عبادا لنا بانر.dc.html and بنر الزكاة.dc.html.
  * ───────────────────────────────────────────────────────────────────────────── */
 
-.mia-scope .friday-cta,
-.mia-scope .ibadan-cta { transition: transform .2s cubic-bezier(.22,.61,.36,1), filter .2s ease; }
-.mia-scope .friday-cta:hover,
-.mia-scope .ibadan-cta:hover { transform: translateY(-2px); filter: brightness(1.06); }
+.mia-scope .friday-cta { transition: transform .2s cubic-bezier(.22,.61,.36,1), filter .2s ease; }
+.mia-scope .friday-cta:hover { transform: translateY(-2px); filter: brightness(1.06); }
 .mia-scope .mia-zakat-cta:hover { background: #fff; color: #0F55B8; }
 .mia-scope .mia-zakat-cta-ghost:hover { background: rgba(255,255,255,.12); }
 
-.mia-scope .friday-wrap,
-.mia-scope .ibadan-wrap { animation: mia-in .5s cubic-bezier(.22,.61,.36,1) both; }
+.mia-scope .friday-wrap { animation: mia-in .5s cubic-bezier(.22,.61,.36,1) both; }
 @media (prefers-reduced-motion: reduce) {
-  .mia-scope .friday-wrap, .mia-scope .ibadan-wrap { animation: none; }
-  .mia-scope .friday-cta:hover, .mia-scope .ibadan-cta:hover { transform: none; }
+  .mia-scope .friday-wrap { animation: none; }
+  .mia-scope .friday-cta:hover { transform: none; }
 }
 
 @media (max-width: 640px) {
@@ -1776,8 +1710,8 @@
   .mia-scope #friday-quote p { font-size: clamp(11px,3.2vw,13px) !important; white-space: normal !important; line-height: 1.75 !important; text-wrap: balance; }
 
   /* The band follows its content  no empty red space below the photograph. */
-  .mia-scope .friday-body, .mia-scope .ibadan-body { min-height: 0 !important; }
-  .mia-scope .friday-content, .mia-scope .ibadan-content {
+  .mia-scope .friday-body { min-height: 0 !important; }
+  .mia-scope .friday-content {
     min-height: 180px !important;
     align-content: end !important;
     padding: 14px 14px 16px !important;
@@ -1790,8 +1724,8 @@
   .mia-scope #friday h2, .mia-scope #ibadan-banner h2 { white-space: normal !important; font-size: clamp(13.5px,3.8vw,16px) !important; text-wrap: balance; }
 
   /* Both CTAs on one row, equal width. */
-  .mia-scope .friday-ctas, .mia-scope .ibadan-ctas { width: 100%; flex-wrap: nowrap !important; gap: 9px !important; }
-  .mia-scope .friday-cta, .mia-scope .ibadan-cta {
+  .mia-scope .friday-ctas { width: 100%; flex-wrap: nowrap !important; gap: 9px !important; }
+  .mia-scope .friday-cta {
     flex: 1 1 0 !important; min-width: 0 !important; justify-content: center !important;
     height: 44px !important; padding: 0 10px !important;
     font-size: clamp(12.5px,3.6vw,14px) !important; white-space: nowrap;
@@ -1806,92 +1740,7 @@
  * the text colour that sits on it. `data-side` mirrors the copy and the
  * chips. Phone rules follow the `.friday-*` ones above so the two bands read
  * as one family when they sit on the same page. */
-.mia-scope .mia-bn-sec { position: relative; z-index: 1; padding: 0 24px 56px; color: var(--deep); }
-.mia-scope .mia-bn-wrap {
-  --bn: var(--red); --bn-ink: #fff;
-  position: relative; max-width: 1240px; margin: 0 auto; border-radius: 16px; overflow: hidden;
-  background: var(--bn); box-shadow: 0 18px 44px rgba(6,36,66,.14);
-  animation: mia-in .5s cubic-bezier(.22,.61,.36,1) both;
-}
-.mia-scope .mia-bn-wrap[data-tone="navy"] { --bn: var(--navy); }
-.mia-scope .mia-bn-wrap[data-tone="gold"] { --bn: var(--gold); --bn-ink: var(--deep); }
-.mia-scope .mia-bn-wrap[data-tone="green"] { --bn: var(--green); }
-
-.mia-scope .mia-bn-kicker {
-  position: relative; z-index: 3; display: flex; align-items: center; justify-content: center; gap: 12px;
-  padding: 10px 24px; text-align: center; background: var(--ivory); border-bottom: 1px solid rgba(0,162,224,.4);
-}
-.mia-scope .mia-bn-kicker p { margin: 0; font-size: clamp(15px, 1.6vw, 19px); line-height: 1.6; font-weight: 800; color: var(--bn); }
-.mia-scope .mia-bn-wrap[data-tone="gold"] .mia-bn-kicker p { color: var(--gold-2); }
-.mia-scope .mia-bn-diamond { flex: 0 0 auto; width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg); }
-
-.mia-scope .mia-bn-body { position: relative; min-height: 340px; }
-.mia-scope .mia-bn-photo { position: absolute; inset: 0; display: block; background-size: cover; background-position: center; filter: grayscale(1) contrast(1.06); }
-.mia-scope .mia-bn-pattern { position: absolute; inset: 0; opacity: .14; background: url('/toplum/pattern.svg') repeat; background-size: 360px 360px; }
-.mia-scope .mia-bn-shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgba(6,36,66,.86) 0%, rgba(6,36,66,.38) 46%, rgba(6,36,66,.06) 72%, transparent 100%); }
-.mia-scope .mia-bn-body[data-photo="false"] .mia-bn-shade { background: linear-gradient(to top, rgba(6,36,66,.55) 0%, rgba(6,36,66,.12) 60%, transparent 100%); }
-
-.mia-scope .mia-bn-chips { position: absolute; top: 18px; inset-inline-end: 18px; z-index: 3; display: flex; align-items: stretch; gap: 8px; }
-.mia-scope .mia-bn-wrap[data-side="end"] .mia-bn-chips { inset-inline-end: auto; inset-inline-start: 18px; }
-.mia-scope .mia-bn-chip {
-  display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px;
-  background: rgba(255,255,255,.95); box-shadow: 0 14px 34px rgba(6,36,66,.3); color: var(--deep);
-}
-.mia-scope .mia-bn-chip[data-accent="true"] { background: var(--gold); }
-.mia-scope .mia-bn-chip b { font-size: 22px; font-weight: 900; line-height: 1; white-space: nowrap; }
-.mia-scope .mia-bn-chip span { max-width: 90px; font-size: 10px; font-weight: 800; line-height: 1.35; color: var(--muted); }
-.mia-scope .mia-bn-chip[data-accent="true"] span { color: var(--deep); font-weight: 900; }
-
-.mia-scope .mia-bn-content {
-  position: relative; z-index: 2; display: grid; justify-items: start; text-align: start; gap: 14px;
-  margin-inline-end: auto; max-width: 620px; min-height: 340px; padding: 34px 30px 28px 36px; align-content: end;
-}
-.mia-scope .mia-bn-wrap[data-side="end"] .mia-bn-content { margin-inline-end: 0; margin-inline-start: auto; }
-.mia-scope .mia-bn-title {
-  margin: 0; font-size: clamp(18px, 2vw, 28px); line-height: 1.5; font-weight: 900; letter-spacing: -.01em;
-  color: #fff; text-shadow: 0 2px 18px rgba(6,36,66,.55); text-wrap: balance;
-}
-.mia-scope .mia-bn-text { margin: -4px 0 0; max-width: 52ch; font-size: 14.5px; line-height: 1.7; font-weight: 700; color: rgba(255,255,255,.9); text-shadow: 0 1px 12px rgba(6,36,66,.5); }
-.mia-scope .mia-bn-ctas { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
-.mia-scope .mia-bn-cta {
-  display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 24px; border-radius: 8px;
-  font-weight: 900; font-size: 14.5px; white-space: nowrap; text-decoration: none;
-  transition: transform .2s cubic-bezier(.22,.61,.36,1), filter .2s ease;
-}
-.mia-scope .mia-bn-cta:hover { transform: translateY(-2px); filter: brightness(1.06); }
-.mia-scope .mia-bn-cta--primary { background: var(--bn); color: var(--bn-ink); box-shadow: 0 10px 26px rgba(6,36,66,.35); }
-.mia-scope .mia-bn-cta--light { background: rgba(255,255,255,.94); color: var(--bn); }
-.mia-scope .mia-bn-wrap[data-tone="gold"] .mia-bn-cta--light { color: var(--gold-2); }
 /* On the dark tones a tone-coloured button sinks into the photograph; gold carries it. */
-.mia-scope .mia-bn-wrap[data-tone="navy"] .mia-bn-cta--primary { background: var(--gold); color: var(--deep); }
-
-@media (prefers-reduced-motion: reduce) {
-  .mia-scope .mia-bn-wrap { animation: none; }
-  .mia-scope .mia-bn-cta:hover { transform: none; }
-}
-
-@media (max-width: 640px) {
-  .mia-scope .mia-bn-sec { padding: 0 16px 40px; }
-  .mia-scope .mia-bn-chips { top: 10px !important; inset-inline-end: 10px !important; gap: 5px; }
-  .mia-scope .mia-bn-wrap[data-side="end"] .mia-bn-chips { inset-inline-end: auto !important; inset-inline-start: 10px; }
-  .mia-scope .mia-bn-chip { padding: 4px 8px; border-radius: 7px; gap: 5px; box-shadow: 0 6px 16px rgba(6,36,66,.25); }
-  .mia-scope .mia-bn-chip b { font-size: 18px; }
-  .mia-scope .mia-bn-chip span { font-size: 8px; line-height: 1.3; }
-  .mia-scope .mia-bn-kicker { padding: 9px 14px; gap: 0; }
-  .mia-scope .mia-bn-diamond { display: none; }
-  .mia-scope .mia-bn-kicker p { font-size: clamp(11px, 3.2vw, 13px); line-height: 1.75; text-wrap: balance; }
-  .mia-scope .mia-bn-body { min-height: 0; }
-  .mia-scope .mia-bn-content {
-    min-height: 180px; padding: 14px 14px 16px; margin-inline: 0 !important; max-width: none;
-    justify-items: center; text-align: center; gap: 10px;
-  }
-  /* The chips sit over the top of the band; the copy starts beneath them. */
-  .mia-scope .mia-bn-body[data-chips="true"] .mia-bn-content { padding-top: 62px; }
-  .mia-scope .mia-bn-title { font-size: clamp(13.5px, 3.8vw, 16px); }
-  .mia-scope .mia-bn-text { font-size: 12.5px; line-height: 1.6; }
-  .mia-scope .mia-bn-ctas { width: 100%; flex-wrap: nowrap; gap: 9px; }
-  .mia-scope .mia-bn-cta { flex: 1 1 0; min-width: 0; justify-content: center; height: 44px; padding: 0 10px; font-size: clamp(12.5px, 3.6vw, 14px); }
-}
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * Projects catalogue  ported from Minbar/المشاريع.dc.html.
@@ -2081,315 +1930,31 @@
    sweep across it, a pulse ring until the visitor first opens it, and  once
    per visit  a teaser bubble inviting them in. All motion stops under
    prefers-reduced-motion. */
-.mia-scope .cg-launch-wrap {
-  position: fixed;
-  inset-inline-end: max(14px, 2.5vw);
-  bottom: max(16px, env(safe-area-inset-bottom));
-  z-index: 74;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
-  pointer-events: none;
-}
-.mia-scope .cg-launch-wrap > * { pointer-events: auto; }
-.mia-scope .cg-launch-wrap[data-above-pill="1"] { bottom: calc(max(16px, env(safe-area-inset-bottom)) + 62px); }
-.mia-scope .cg-launcher {
-  position: relative;
-  isolation: isolate;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  height: 52px;
-  padding-block: 0;
-  padding-inline: 7px 12px;
-  border: 1.5px solid rgba(39,184,242,.85);
-  border-radius: 999px;
-  background: linear-gradient(135deg, #082C50 0%, #062442 70%);
-  color: #fff;
-  font-family: inherit;
-  font-weight: 900;
-  font-size: 15px;
-  letter-spacing: .1px;
-  cursor: pointer;
-  overflow: hidden;
-  box-shadow: 0 16px 34px rgba(6,36,66,.38), 0 0 0 4px rgba(0,162,224,.16), inset 0 0 0 1px rgba(255,255,255,.08);
-  white-space: nowrap;
-  animation: qf-in .4s cubic-bezier(.22,.61,.36,1) both, cg-float 5s ease-in-out 1.2s infinite;
-  transition: transform .18s ease, box-shadow .18s ease;
-}
 /* A slow light sweep across the pill. */
-.mia-scope .cg-launcher::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: linear-gradient(110deg, transparent 30%, rgba(127,214,245,.28) 48%, transparent 66%);
-  transform: translateX(-120%);
-  animation: cg-sweep 4.8s ease-in-out 1.5s infinite;
-}
-.mia-scope .cg-launcher:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 20px 42px rgba(6,36,66,.45), 0 0 0 6px rgba(0,162,224,.22); }
-.mia-scope .cg-launcher:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
-.mia-scope .cg-launcher-icon {
-  display: grid;
-  place-items: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #7FD6F5, #00A2E0);
-  color: #062442;
-  box-shadow: 0 4px 12px rgba(0,162,224,.5), inset 0 1px 0 rgba(255,255,255,.5);
-}
-.mia-scope .cg-launcher-icon svg { animation: cg-twinkle 2.6s ease-in-out infinite; }
-.mia-scope .cg-launcher-badge {
-  padding: 2px 6px;
-  border-radius: 999px;
-  background: var(--gold);
-  color: #062442;
-  font-size: 10px;
-  font-weight: 900;
-  line-height: 1.3;
-  letter-spacing: .4px;
-}
 /* Pulse rings until the assistant has been opened once. */
-.mia-scope .cg-halo { position: relative; display: inline-flex; border-radius: 999px; }
-.mia-scope .cg-halo[data-pulse="1"]::before,
-.mia-scope .cg-halo[data-pulse="1"]::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 2px solid rgba(39,184,242,.85);
-  pointer-events: none;
-  animation: cg-ring 2.4s cubic-bezier(.2,.6,.3,1) infinite;
-}
-.mia-scope .cg-halo[data-pulse="1"]::after { animation-delay: 1.2s; }
 
 /* Teaser bubble, pointing at the launcher. */
-.mia-scope .cg-teaser {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  max-width: min(290px, calc(100vw - 32px));
-  border-radius: 18px;
-  border-end-end-radius: 6px;
-  background: #fff;
-  color: var(--ink);
-  box-shadow: 0 18px 40px rgba(6,36,66,.22), 0 0 0 1px rgba(0,162,224,.35);
-  animation: cg-teaser-in .45s cubic-bezier(.22,.61,.36,1) both;
-}
-.mia-scope .cg-teaser-body {
-  display: grid;
-  gap: 3px;
-  padding-block: 12px;
-  padding-inline: 14px 6px;
-  border: 0;
-  background: none;
-  color: inherit;
-  font-family: inherit;
-  text-align: start;
-  cursor: pointer;
-}
-.mia-scope .cg-teaser-body b { font-size: 14px; font-weight: 900; color: #062442; }
-.mia-scope .cg-teaser-body span { font-size: 12.5px; line-height: 1.55; color: #33495e; }
-.mia-scope .cg-teaser-x {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  margin: 6px;
-  border: 0;
-  border-radius: 50%;
-  background: #f1f6fa;
-  color: #5d7187;
-  cursor: pointer;
-}
-.mia-scope .cg-teaser-x:hover { background: #e2eaf0; color: #062442; }
 
 @keyframes cg-ring { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(1.18, 1.55); opacity: 0; } }
 @keyframes cg-sweep { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
 @keyframes cg-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -3px; } }
 @keyframes cg-twinkle { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.12) rotate(8deg); } }
 @keyframes cg-teaser-in { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
-
-@media (max-width: 760px) {
-  .mia-scope .cg-launcher { height: 48px; font-size: 14px; gap: 8px; }
-  .mia-scope .cg-launcher-icon { width: 34px; height: 34px; }
-}
-
-.mia-scope .cg-backdrop { position: fixed; inset: 0; z-index: 90; background: rgba(6,36,66,.42); backdrop-filter: blur(2px); animation: cg-fade .2s ease both; }
 @keyframes cg-fade { from { opacity: 0; } to { opacity: 1; } }
-
-.mia-scope .cg-sheet {
-  position: fixed;
-  z-index: 91;
-  inset-inline-end: max(14px, 2.5vw);
-  bottom: max(16px, env(safe-area-inset-bottom));
-  width: min(420px, calc(100vw - 28px));
-  height: min(680px, calc(100vh - 32px));
-  display: flex;
-  flex-direction: column;
-  background: var(--ivory);
-  border: 1px solid rgba(0,162,224,.45);
-  border-radius: 18px;
-  box-shadow: 0 30px 70px rgba(6,36,66,.3);
-  overflow: hidden;
-  visibility: hidden;
-  opacity: 0;
-  transform: translateY(16px) scale(.98);
-  transition: opacity .22s ease, transform .22s cubic-bezier(.22,.61,.36,1), visibility 0s linear .22s;
-}
-.mia-scope .cg-sheet[data-open="1"] { visibility: visible; opacity: 1; transform: none; transition: opacity .22s ease, transform .26s cubic-bezier(.22,.61,.36,1); }
-@media (max-width: 760px) {
-  .mia-scope .cg-sheet { inset-inline: 0; bottom: 0; width: 100vw; height: min(92vh, 100dvh); border-radius: 18px 18px 0 0; transform: translateY(100%); }
-  .mia-scope .cg-sheet[data-open="1"] { transform: none; }
-}
-
-.mia-scope .cg-head { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--deep); color: #fff; }
-.mia-scope .cg-head-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(0,162,224,.2); color: var(--gold); flex: 0 0 auto; }
 /* The foundation's mark: original colours on light surfaces, flattened to
    white on dark ones so it matches the surface instead of sitting on it. */
-.mia-scope .cg-logo { display: block; width: 22px; height: 22px; object-fit: contain; }
-.mia-scope .cg-logo-on-dark { filter: brightness(0) invert(1); }
-.mia-scope .cg-head-text { display: grid; gap: 2px; min-width: 0; flex: 1 1 auto; }
-.mia-scope .cg-head-text b { font-size: 14.5px; font-weight: 900; }
-.mia-scope .cg-head-text span { font-size: 11.5px; color: rgba(255,255,255,.7); line-height: 1.5; }
-.mia-scope .cg-icon-btn { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; border: 1px solid rgba(255,255,255,.18); background: transparent; color: #fff; cursor: pointer; flex: 0 0 auto; }
-.mia-scope .cg-icon-btn:hover { background: rgba(255,255,255,.1); }
-
-.mia-scope .cg-thread { flex: 1 1 auto; overflow-y: auto; padding: 14px 14px 8px; display: grid; gap: 12px; align-content: start; overscroll-behavior: contain; }
-.mia-scope .cg-turn { display: grid; gap: 10px; }
-.mia-scope .cg-turn-user { justify-items: end; }
-.mia-scope .cg-bubble { margin: 0; max-width: 92%; padding: 10px 14px; border-radius: 14px; font-size: 14px; line-height: 1.75; color: var(--deep); background: #fff; border: 1px solid var(--border); white-space: pre-line; }
-.mia-scope .cg-turn-user .cg-bubble { background: var(--deep); color: #fff; border-color: var(--deep); }
 /* Thinking: no bubble. The assistant's glyph breathes inside a soft gold
    halo, and a thin line beside it shimmers  quiet, and clearly "working". */
-.mia-scope .cg-thinking { display: inline-flex; align-items: center; gap: 12px; padding: 4px 2px; }
-.mia-scope .cg-thinking-orb { position: relative; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--deep); color: var(--gold); animation: cg-breathe 1.8s ease-in-out infinite; }
-.mia-scope .cg-thinking-orb::before { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid rgba(0,162,224,.55); animation: cg-halo 1.8s ease-out infinite; }
-.mia-scope .cg-thinking-line { width: 120px; height: 4px; border-radius: 999px; background: linear-gradient(90deg, rgba(0,162,224,.12) 0%, rgba(0,162,224,.85) 50%, rgba(0,162,224,.12) 100%); background-size: 200% 100%; animation: cg-shimmer 1.4s linear infinite; }
 @keyframes cg-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
 @keyframes cg-halo { 0% { transform: scale(.85); opacity: .9; } 100% { transform: scale(1.45); opacity: 0; } }
 @keyframes cg-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-.mia-scope .cg-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-
-.mia-scope .cg-actions, .mia-scope .cg-chips { display: flex; flex-wrap: wrap; gap: 7px; }
-.mia-scope .cg-chip {
-  display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 6px 13px; border-radius: 999px;
-  border: 1px solid rgba(6,36,66,.16); background: #fff; color: var(--deep); font-family: inherit; font-size: 13px; font-weight: 800;
-  cursor: pointer; transition: all .16s ease; text-align: start;
-}
-.mia-scope .cg-chip:hover { border-color: var(--gold); }
-.mia-scope .cg-chip[data-on="1"] { border-color: var(--green); background: rgba(31,122,77,.1); color: var(--green); }
-.mia-scope .cg-chip:disabled { opacity: .55; cursor: default; }
-.mia-scope .cg-chip-primary { background: var(--red); border-color: var(--red); color: #fff; }
-.mia-scope .cg-chip-count { font-size: 11px; color: var(--muted); }
-
-.mia-scope .cg-cards { display: grid; gap: 10px; }
-.mia-scope .cg-card { display: grid; grid-template-columns: 84px minmax(0,1fr); gap: 12px; padding: 10px; background: #fff; border: 1px solid var(--border); border-radius: 12px; }
-.mia-scope .cg-card-img { width: 84px; height: 84px; border-radius: 10px; object-fit: cover; background: var(--sand); }
-.mia-scope .cg-card-img-empty { display: block; background: linear-gradient(135deg, var(--sand), #DCE8F1); }
-.mia-scope .cg-card-body { display: grid; gap: 4px; min-width: 0; align-content: start; }
-.mia-scope .cg-card-title { font-size: 14px; font-weight: 900; color: var(--deep); overflow-wrap: anywhere; }
-.mia-scope .cg-card-meta { font-size: 11.5px; font-weight: 800; color: var(--gold); }
-.mia-scope .cg-card-text { margin: 0; font-size: 12.5px; line-height: 1.6; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.mia-scope .cg-card-why { margin: 2px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--deep); padding-inline-start: 8px; border-inline-start: 2px solid var(--gold); }
-.mia-scope .cg-card-facts { font-size: 11.5px; font-weight: 700; color: var(--muted); }
-.mia-scope .cg-card-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
-
-.mia-scope .cg-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; padding: 6px 14px; border-radius: 8px; font-family: inherit; font-size: 13px; font-weight: 900; cursor: pointer; border: 1px solid var(--border); background: #fff; color: var(--deep); }
-.mia-scope .cg-btn-primary { background: var(--red); border-color: var(--red); color: #fff; box-shadow: var(--shadow-cta); }
-.mia-scope .cg-btn-light:hover { border-color: var(--gold); }
-.mia-scope .cg-btn-full { width: 100%; min-height: 46px; font-size: 14.5px; flex-wrap: wrap; }
-.mia-scope .cg-btn-sub { font-size: 11px; font-weight: 700; opacity: .85; }
-.mia-scope .cg-btn:disabled { opacity: .55; cursor: default; box-shadow: none; }
-.mia-scope .cg-link { background: none; border: 0; padding: 0; color: var(--red); font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
-
-.mia-scope .cg-config { display: grid; gap: 10px; padding: 12px; background: #fff; border: 1px solid rgba(0,162,224,.45); border-radius: 12px; }
-.mia-scope .cg-config-head { display: flex; align-items: center; gap: 10px; }
-.mia-scope .cg-config-head > div { flex: 1 1 auto; min-width: 0; display: grid; gap: 2px; }
-.mia-scope .cg-config-img { width: 46px; height: 46px; border-radius: 8px; object-fit: cover; flex: 0 0 auto; }
-.mia-scope .cg-label { font-size: 11px; font-weight: 900; letter-spacing: .06em; color: var(--muted); }
-.mia-scope .cg-input { height: 38px; padding: 0 12px; border: 1px solid rgba(6,36,66,.14); border-radius: 8px; background: #fff; font-family: inherit; font-size: 13.5px; font-weight: 700; color: var(--deep); box-sizing: border-box; min-width: 0; width: 100%; }
-.mia-scope .cg-input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
-.mia-scope .cg-input-amount { width: 12ch; border-style: dashed; border-color: rgba(0,162,224,.65); border-radius: 999px; }
-.mia-scope .cg-hint { font-size: 11.5px; color: var(--muted); }
-.mia-scope .cg-row { display: flex; align-items: center; gap: 10px; }
-.mia-scope .cg-toggle { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: var(--deep); cursor: pointer; }
-.mia-scope .cg-toggle input { accent-color: var(--green); width: 16px; height: 16px; }
-.mia-scope .cg-gift { display: grid; gap: 6px; }
-
-.mia-scope .cg-confirm { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: rgba(31,122,77,.08); border: 1px solid rgba(31,122,77,.35); animation: cart-added-pop .45s cubic-bezier(.22,1.2,.36,1) both; }
-.mia-scope .cg-confirm-check { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: #fff; flex: 0 0 auto; }
-.mia-scope .cg-confirm > div { display: grid; gap: 2px; min-width: 0; }
-.mia-scope .cg-confirm b { font-size: 13.5px; color: var(--green); }
-.mia-scope .cg-confirm span { font-size: 12.5px; color: var(--deep); }
-
-.mia-scope .cg-cross { display: grid; gap: 8px; padding: 12px; border-radius: 12px; background: var(--sand); border: 1px dashed rgba(0,162,224,.55); }
-.mia-scope .cg-cross-title { font-size: 13.5px; font-weight: 900; color: var(--deep); }
-.mia-scope .cg-cross-body { display: flex; align-items: center; gap: 10px; }
-.mia-scope .cg-cross-body > div { min-width: 0; display: grid; gap: 2px; }
-
-.mia-scope .cg-notice { margin: 0; padding: 10px 12px; border-radius: 10px; font-size: 12.5px; line-height: 1.7; }
-.mia-scope .cg-notice-info { background: rgba(31,122,77,.08); border: 1px solid rgba(31,122,77,.3); color: var(--deep); }
-.mia-scope .cg-notice-warning { background: rgba(0,162,224,.12); border: 1px solid rgba(0,162,224,.5); color: var(--deep); }
-
-.mia-scope .cg-composer { display: flex; gap: 8px; padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: #fff; }
-.mia-scope .cg-composer-input { flex: 1 1 auto; height: 42px; border-radius: 999px; font-weight: 600; }
-.mia-scope .cg-send { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; border: 0; background: var(--red); color: #fff; cursor: pointer; flex: 0 0 auto; }
-.mia-scope .cg-send:disabled { opacity: .45; cursor: default; }
-
-.mia-scope .cg-entry { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 12px; padding: 12px 14px; text-align: start; background: #fff; border: 1px solid rgba(0,162,224,.45); border-radius: 12px; font-family: inherit; cursor: pointer; transition: border-color .16s ease, transform .16s ease; }
-.mia-scope .cg-entry:hover { border-color: var(--gold); transform: translateY(-1px); }
-.mia-scope .cg-entry-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--deep); color: var(--gold); flex: 0 0 auto; }
-.mia-scope .cg-entry-text { display: grid; gap: 2px; min-width: 0; }
-.mia-scope .cg-entry-text b { font-size: 14px; font-weight: 900; color: var(--deep); }
-.mia-scope .cg-entry-text span { font-size: 12px; color: var(--muted); line-height: 1.5; }
-.mia-scope .cg-entry-compact { margin-top: 0; padding: 10px 12px; }
 
 /* The next step after a reply: quieter than the reply itself, so the answer
    is read first  no fill, no bold, a light button. */
-.mia-scope .cg-suggest { display: flex; align-items: flex-start; gap: 10px; max-width: 92%; padding: 8px 12px; border-radius: 12px; background: transparent; border: 1px solid var(--border); }
-.mia-scope .cg-suggest-body { display: grid; gap: 6px; min-width: 0; flex: 1 1 auto; }
-.mia-scope .cg-suggest-text { margin: 0; font-size: 13px; font-weight: 600; line-height: 1.6; color: var(--muted); }
-.mia-scope .cg-suggest-actions { display: flex; align-items: center; gap: 12px; margin-top: 2px; }
-.mia-scope .cg-suggest .cg-btn { min-height: 32px; padding: 4px 14px; font-size: 12.5px; font-weight: 800; }
-.mia-scope .cg-suggest .cg-config-img { width: 38px; height: 38px; }
 /* Choices under a reply (areas, quick actions) sit below the text, never louder than it. */
-.mia-scope .cg-turn > .cg-chips .cg-chip, .mia-scope .cg-actions .cg-chip { font-weight: 700; }
-.mia-scope .cg-card .cg-btn-primary { box-shadow: none; }
-
-.mia-scope .cg-textarea { height: auto; min-height: 84px; padding: 10px 12px; resize: vertical; line-height: 1.6; font-weight: 600; }
-.mia-scope .cg-support-list { display: grid; gap: 6px; }
-.mia-scope .cg-support-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border: 1px solid rgba(6,36,66,.12); border-radius: 10px; cursor: pointer; }
-.mia-scope .cg-support-row[data-on="1"] { border-color: var(--green); background: rgba(31,122,77,.06); }
-.mia-scope .cg-support-row input { margin-top: 3px; accent-color: var(--green); }
-.mia-scope .cg-support-row > span { display: grid; gap: 2px; min-width: 0; font-size: 12.5px; color: var(--muted); }
-.mia-scope .cg-support-row > span > b { font-size: 13px; color: var(--deep); }
-
-.mia-scope .cg-donor-totals { display: grid; gap: 2px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-.mia-scope .cg-donor-totals b { font-size: 22px; font-weight: 900; color: var(--deep); }
-.mia-scope .cg-donor-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(6,36,66,.06); }
-.mia-scope .cg-donor-row:last-child { border-bottom: 0; }
-.mia-scope .cg-donor-row > div:first-child { display: grid; gap: 2px; min-width: 0; }
-.mia-scope .cg-donor-row b { font-size: 13.5px; font-weight: 900; color: var(--deep); }
-.mia-scope .cg-donor-row > div:first-child > span { font-size: 12px; color: var(--muted); overflow-wrap: anywhere; }
-.mia-scope .cg-donor-actions { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex: 0 0 auto; }
-.mia-scope .cg-state { font-weight: 800; }
-.mia-scope .cg-state-ok { color: var(--green) !important; }
-.mia-scope .cg-state-warn { color: var(--gold) !important; }
-.mia-scope .cg-state-bad { color: var(--red) !important; }
 
 /* The homepage quick-donate bar is fixed to the bottom edge above the sheet;
    it disappears entirely while the concierge is open (flag set by the launcher). */
-html.cg-open .mia-scope .mia-qb-sec { display: none; }
-html.cg-open .mia-scope:has(.mia-qb-sec) { padding-bottom: 0; }
-
-@media (prefers-reduced-motion: reduce) {
-  .mia-scope .cg-halo::before, .mia-scope .cg-halo::after, .mia-scope .cg-launcher::after, .mia-scope .cg-launcher-icon svg, .mia-scope .cg-teaser,
-  .mia-scope .cg-launcher, .mia-scope .cg-sheet, .mia-scope .cg-backdrop, .mia-scope .cg-confirm, .mia-scope .cg-thinking-orb, .mia-scope .cg-thinking-orb::before, .mia-scope .cg-thinking-line { animation: none; transition: none; }
-}
 
 .mia-scope .cart-step:not(.is-static):hover { border-color: var(--gold); }
 .mia-scope .cart-amt-btn:hover { border-color: var(--gold); box-shadow: 0 4px 14px rgba(0,162,224,.22); transform: translateY(-1px); }
@@ -2571,13 +2136,6 @@ html.cg-open .mia-scope:has(.mia-qb-sec) { padding-bottom: 0; }
 /* ─────────────────────────────────────────────────────────────────────────────
  * Al-Quds Waqf  ported from Minbar/الأوقاف.dc.html.
  * ───────────────────────────────────────────────────────────────────────────── */
-
-.mia-scope .wq-step:hover { background: rgba(0,162,224,.14); color: var(--gold); }
-.mia-scope .wq-input:focus { outline: 0; border-color: var(--gold); }
-.mia-scope .wq-link:hover { text-decoration: underline; }
-.mia-scope .wq-monthly:hover { border-color: var(--gold); }
-.mia-scope .wq-aid-card:hover { background: rgba(255,255,255,.12); border-color: var(--gold); transform: translateY(-4px); }
-.mia-scope .wq-part:hover { transform: translateY(-4px); }
 .mia-scope .wq-error { animation: waqf-shake .35s ease; }
 @keyframes waqf-shake {
   0%, 100% { transform: translateX(0); }
@@ -2586,7 +2144,6 @@ html.cg-open .mia-scope:has(.mia-qb-sec) { padding-bottom: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .mia-scope .wq-error { animation: none; }
-  .mia-scope .wq-aid-card:hover, .mia-scope .wq-part:hover { transform: none; }
 }
 
 @media (max-width: 1000px) {
@@ -3289,33 +2846,8 @@ html.cg-open .mia-scope:has(.mia-qb-sec) { padding-bottom: 0; }
  * Video index pages  ported from `Minbar/إنجازاتنا بالفيديو.dc.html` and
  * `Minbar/تزكياتنا بالفيديو.dc.html`.
  * ───────────────────────────────────────────────────────────────────────────── */
-
-.mia-scope .vg-pattern {
-  position: absolute;
-  inset: 0;
-  background-image: url("/toplum/pattern.svg");
-  background-repeat: repeat;
-  background-size: 420px 420px;
-  opacity: .06;
-  pointer-events: none;
-}
 /* A gold hairline closing the dark hero, brightest at its centre. */
-.mia-scope .vg-rule {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: 2px;
-  background: linear-gradient(to right, rgba(0, 162, 224, .2), var(--gold), rgba(0, 162, 224, .2));
-}
-
-.mia-scope .vg-card { transition: transform .2s cubic-bezier(.22,.61,.36,1), box-shadow .2s ease; }
-.mia-scope .vg-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(6, 36, 66, .18); }
 /* A still with no recording behind it does not pretend to be pressable. */
-.mia-scope .vg-card--still { cursor: default; }
-.mia-scope .vg-card--still:hover { transform: none; box-shadow: 0 12px 34px rgba(6, 36, 66, .12); }
-
-@media (max-width: 960px) { .mia-scope .vg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } }
-@media (max-width: 620px) { .mia-scope .vg-grid { grid-template-columns: minmax(0, 1fr) !important; } }
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * Video programmes and courses  ported from `Minbar/برامجنا المصورة.dc.html`
@@ -4008,34 +3540,14 @@ html.cg-open .mia-scope:has(.mia-qb-sec) { padding-bottom: 0; }
 
 /* While a drawer is open the floating buttons step aside. */
 html[data-mia-drawer="open"] .mia-wa-fab,
-html[data-mia-drawer="open"] .mia-scope .cg-launch-wrap,
 html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; }
 
 /* Floating buttons: on a phone the concierge pill becomes a round button the
    size of the WhatsApp one, so the two stop covering the page's own content.
    The label stays in the accessibility tree, just off-screen. */
 @media (max-width: 760px) {
-  .mia-scope .cg-launcher {
-    width: 50px;
-    height: 50px !important;
-    padding: 0 !important;
-    justify-content: center;
-    gap: 0 !important;
-  }
-  .mia-scope .cg-launcher-icon { width: 40px !important; height: 40px !important; }
-  .mia-scope .cg-launcher-label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-  }
   /* The pill clips its overflow (for the light sweep), so a corner tag would be cut. */
-  .mia-scope .cg-launcher-badge { display: none; }
-  .mia-scope .cg-launch-wrap { inset-inline-end: 14px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
   .mia-wa-fab { inset-inline-start: 14px !important; bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important; }
-  .mia-scope:has(.mia-qb-sec) .cg-launch-wrap,
   .mia-scope:has(.mia-qb-sec) .mia-wa-fab {
     bottom: calc(92px + env(safe-area-inset-bottom, 0px)) !important;
   }
@@ -4074,8 +3586,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
 
 /* Footer: the copyright line wraps rather than ending in "…", and the photo
    window is shorter on small phones. */
-@media (max-width: 720px) {
-}
 
 /* Projects list: filter chips keep their size inside the sideways-scrolling
    row (they were shrinking until the labels overlapped). */
@@ -4171,14 +3681,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope #meter-picker button,
   .mia-scope #meter-picker input {
     min-height: 44px;
-  }
-  .mia-scope #meter-picker .wq-step {
-    width: 44px !important;
-    height: 44px !important;
-  }
-  .mia-scope #meter-picker .wq-link {
-    min-height: 44px;
-    padding: 8px 0 !important;
   }
   .mia-scope #waqf-cert-toggle {
     min-height: 44px !important;
@@ -4391,7 +3893,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope #impact-metrics,
   .mia-scope #sector-metrics,
   .mia-scope #regions,
-  .mia-scope #waqf-areas,
   .mia-scope #account-features {
     display: grid !important;
     overflow: visible !important;
@@ -4402,8 +3903,7 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
 
   .mia-scope #path-steps,
   .mia-scope #impact-metrics,
-  .mia-scope #regions,
-  .mia-scope #waqf-areas {
+  .mia-scope #regions {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 
@@ -4416,7 +3916,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope #impact-metrics > *,
   .mia-scope #sector-metrics > *,
   .mia-scope #regions > *,
-  .mia-scope #waqf-areas > *,
   .mia-scope #account-features > * {
     width: auto !important;
     max-width: none !important;
@@ -4531,51 +4030,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
 @media (max-width: 760px) {
   /* Giving assistant: keep the full branded pill visible and draggable.
      Dragging happens on the wrapper so the launcher's own float animation stays intact. */
-  .mia-scope .cg-launch-wrap[data-draggable="1"] {
-    inset-inline-end: 14px;
-    max-width: calc(100vw - 28px);
-    will-change: transform;
-    transition: transform .22s cubic-bezier(.22,.61,.36,1);
-    touch-action: none;
-  }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-halo {
-    max-width: 100%;
-  }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher {
-    width: auto !important;
-    min-width: 0;
-    max-width: min(290px, calc(100vw - 28px));
-    height: 52px !important;
-    padding-inline: 7px 12px !important;
-    gap: 9px !important;
-    justify-content: flex-start !important;
-    touch-action: none;
-    user-select: none;
-    -webkit-user-select: none;
-    cursor: grab;
-  }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher:active { cursor: grabbing; }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher-icon {
-    width: 38px !important;
-    height: 38px !important;
-    flex: 0 0 38px;
-  }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher-label {
-    position: static !important;
-    width: auto !important;
-    height: auto !important;
-    overflow: visible !important;
-    clip: auto !important;
-    white-space: nowrap;
-    font-size: 14px;
-  }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher-badge {
-    display: inline-flex !important;
-    flex: 0 0 auto;
-  }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-teaser {
-    max-width: min(290px, calc(100vw - 28px));
-  }
 
   /* Shared public-page containers: no section may be wider than the viewport. */
   .mia-scope :is(.aq-page, .qd-page) {
@@ -4681,26 +4135,9 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   }
 
   /* Buttons inside two-column CTA groups can wrap their labels instead of clipping. */
-  .mia-scope :is(.friday-ctas, .ibadan-ctas, #zk-ctas) > * {
-    min-width: 0;
-  }
 }
 
 @media (max-width: 480px) {
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher {
-    max-width: calc(100vw - 24px);
-    height: 50px !important;
-    padding-inline: 6px 10px !important;
-    gap: 7px !important;
-  }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher-icon {
-    width: 36px !important;
-    height: 36px !important;
-    flex-basis: 36px;
-  }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher-label {
-    font-size: 13px;
-  }
 
   .mia-scope :is(.aq-page, .qd-page) section {
     padding-top: 24px !important;
@@ -4715,12 +4152,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope :is(.aq-page, .qd-page) .qd-hero > div > div:last-child,
   .mia-scope :is(.aq-page, .qd-page) .qd-hero [style*="display: flex"][style*="gap: 10"] {
     width: 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .mia-scope .cg-launch-wrap[data-draggable="1"] {
-    transition: none;
   }
 }
 
@@ -4814,14 +4245,10 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   }
 
   /* Floating actions rise above the nav instead of competing with it. */
-  .mia-scope .cg-launch-wrap {
-    bottom: calc(var(--mia-mobile-nav-h) + 16px + env(safe-area-inset-bottom, 0px)) !important;
-  }
   .mia-scope .mia-wa-fab {
     bottom: calc(var(--mia-mobile-nav-h) + 16px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
-  .mia-scope:has(.mia-qb-sec) .cg-launch-wrap,
   .mia-scope:has(.mia-qb-sec) .mia-wa-fab {
     bottom: calc(var(--mia-mobile-nav-h) + 94px + env(safe-area-inset-bottom, 0px)) !important;
   }
@@ -4938,18 +4365,15 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope #ibadan-banner > div {
     padding-inline: 14px !important;
   }
-  .mia-scope .friday-wrap,
-  .mia-scope .ibadan-wrap {
+  .mia-scope .friday-wrap {
     border-radius: 14px !important;
     box-shadow: 0 12px 30px rgba(6,36,66,.12) !important;
   }
-  .mia-scope .friday-body,
-  .mia-scope .ibadan-body {
+  .mia-scope .friday-body {
     min-height: 220px !important;
     aspect-ratio: 16 / 7.7;
   }
-  .mia-scope .friday-content,
-  .mia-scope .ibadan-content {
+  .mia-scope .friday-content {
     min-height: 220px !important;
     padding: 16px 14px 14px !important;
     gap: 9px !important;
@@ -4959,14 +4383,7 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
     font-size: clamp(14px, 4vw, 17px) !important;
     line-height: 1.45 !important;
   }
-  .mia-scope .ibadan-logo {
-    inset-inline-end: 10px !important;
-    top: 10px !important;
-    width: min(29vw, 122px) !important;
-    padding: 6px 8px !important;
-  }
-  .mia-scope .friday-ctas,
-  .mia-scope .ibadan-ctas {
+  .mia-scope .friday-ctas {
     margin-top: 0 !important;
   }
 
@@ -5001,28 +4418,13 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
     justify-content: center;
     min-height: 46px;
   }
-  .mia-scope #waqf-areas {
-    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
-    gap: 9px !important;
-  }
-  .mia-scope #waqf-areas > * {
-    min-height: 68px !important;
-    padding: 12px 10px !important;
-    border-radius: 11px !important;
-    font-size: 12px !important;
-    line-height: 1.55 !important;
-    align-items: flex-start !important;
-    box-shadow: 0 5px 16px rgba(6,36,66,.04) !important;
-  }
 }
 
 @media (min-width: 561px) and (max-width: 900px) {
-  .mia-scope .friday-body,
-  .mia-scope .ibadan-body {
+  .mia-scope .friday-body {
     min-height: 300px !important;
   }
-  .mia-scope .friday-content,
-  .mia-scope .ibadan-content {
+  .mia-scope .friday-content {
     min-height: 300px !important;
   }
 }
@@ -5124,9 +4526,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   /* The donation card content remains accessible above the global bottom bar. */
   .mia-scope:has(.mia-projects-page) .mia-wa-fab {
     bottom: calc(var(--mia-mobile-nav-h, 74px) + 22px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-  .mia-scope:has(.mia-projects-page) .cg-launch-wrap[data-draggable="1"] {
-    bottom: calc(var(--mia-mobile-nav-h, 74px) + 78px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
@@ -5273,7 +4672,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope .acc-page .acc-stats > * b { font-size: clamp(17px,4.1vw,23px) !important; }
   .mia-scope .acc-page :is(.acc-body,.acc-in) { min-width: 0; }
   .mia-scope .acc-page :is(h1,h2,b) { overflow-wrap: anywhere; }
-  .mia-scope :is(.rc-page,.wq-page,.pd-page) :is(input,select,textarea,button) { max-width: 100%; }
   .mia-scope #pd-top, .mia-scope #pd-body, .mia-scope #rc-grid, .mia-scope #waqf-grid { min-width: 0; max-width: 100%; }
 }
 
@@ -5323,18 +4721,13 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
     visibility: visible !important;
   }
   .mia-scope .mia-mobile-bottom-nav__inner { width: 100%; max-width: 540px; margin-inline: auto; }
-  .mia-scope :is(.mia-qb-sec,.cg-launch-wrap,.mia-wa-fab) {
-    max-width: calc(100vw - 24px);
-  }
   .mia-scope .mia-qb-sec {
     bottom: calc(var(--mia-mobile-nav-h) + 6px + env(safe-area-inset-bottom, 0px)) !important;
     z-index: 94 !important;
   }
-  .mia-scope .cg-launch-wrap,
   .mia-scope .mia-wa-fab {
     bottom: calc(var(--mia-mobile-nav-h) + 18px + env(safe-area-inset-bottom, 0px)) !important;
   }
-  .mia-scope:has(.mia-qb-sec) .cg-launch-wrap,
   .mia-scope:has(.mia-qb-sec) .mia-wa-fab {
     bottom: calc(var(--mia-mobile-nav-h) + 96px + env(safe-area-inset-bottom, 0px)) !important;
   }
@@ -5409,8 +4802,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope .mia-region-card__body > b { font-size: clamp(20px,5.5vw,26px) !important; line-height: 1.35 !important; }
   .mia-scope .mia-region-card__body > span:not(.mia-region-card__cta) { line-height: 1.65 !important; font-size: 13px !important; }
   .mia-scope .mia-region-card__cta { max-width: 100%; min-height: 44px; height: auto !important; padding: 10px 16px !important; white-space: normal; }
-  .mia-scope :is(.friday-wrap,.ibadan-wrap,.friday-body,.ibadan-body,.mia-campaign-banner-content) { min-width: 0; max-width: 100%; box-sizing: border-box; }
-  .mia-scope :is(.friday-body,.ibadan-body) { height: auto !important; min-height: 265px !important; aspect-ratio: auto !important; }
   .mia-scope .mia-campaign-banner-content {
     min-height: 265px !important; width: 100% !important; padding: 88px 14px 16px !important;
     margin: 0 !important; justify-items: stretch !important; gap: 12px !important;
@@ -5443,7 +4834,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
     padding: 8px 6px !important; overflow: hidden;
   }
   .mia-scope .friday-prices b[dir="ltr"] { font-size: clamp(15px,4.3vw,20px) !important; min-width: 0; }
-  .mia-scope .ibadan-logo { width: clamp(82px,26vw,118px) !important; max-width: 35% !important; }
 }
 @media (max-width: 370px) {
   .mia-scope .mia-impact-sector-value { font-size: 16px !important; }
@@ -5507,12 +4897,10 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope .mia-waqf-page .mia-waqf-picker { padding:15px !important; gap:14px !important; }
   .mia-scope .mia-waqf-page .mia-waqf-picker > div:first-child { min-width:0; padding-bottom:0 !important; }
   .mia-scope .mia-waqf-page #meter-picker > div:first-child > div { min-width:0; max-width:100%; }
-  .mia-scope .mia-waqf-page .wq-step { flex:0 0 44px; }
   .mia-scope .mia-waqf-page #wq-facts { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:9px !important; }
   .mia-scope .mia-waqf-page #wq-aid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:9px !important; }
   .mia-scope .mia-waqf-page :is(#wq-goals,#wq-parts,#wq-detail) { grid-template-columns:minmax(0,1fr) !important; gap:12px !important; }
   .mia-scope .mia-waqf-page .wv-head { padding:19px !important; }
-  .mia-scope .mia-waqf-page :is(.wq-part,.wq-aid-card) { min-width:0; overflow-wrap:anywhere; }
   .mia-scope .mia-waqf-page #waqf-cert-preview[data-open="1"] { box-sizing:border-box; width:100%; min-width:0; overflow-wrap:anywhere; }
   .mia-scope .mia-waqf-page #waqf-cert-preview[data-open="1"] > div { box-sizing:border-box; min-width:0; }
   .mia-scope .mia-waqf-page #waqf-cert-preview[data-open="1"] span { max-width:100%; overflow-wrap:anywhere; }
@@ -5582,17 +4970,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope .mia-impact-section .mia-impact-summary > .mia-impact-stat b[dir="ltr"] { justify-self: start; max-width:100%; font-size:clamp(23px,6.4vw,34px) !important; }
   .mia-scope .mia-impact-section .mia-impact-summary > .mia-impact-stat--featured b[dir="ltr"] { font-size:clamp(26px,7vw,37px) !important; }
   /* Keep the giving assistant accessible without hiding actual section content. */
-  .mia-scope .cg-launch-wrap[data-draggable="1"] { inset-inline-end: 10px !important; }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher {
-    width: 50px !important; height: 50px !important; min-width:50px !important;
-    max-width: 50px !important; padding: 5px !important;
-    display: grid !important; place-items: center !important;
-    overflow:hidden !important; border-radius: 50% !important;
-  }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher-label,
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher-badge { display:none !important; }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-launcher-icon { width:38px !important; height:38px !important; flex-basis:38px !important; }
-  .mia-scope .cg-launch-wrap[data-draggable="1"] .cg-teaser { display:none !important; }
 }
 
 /* Form controls never wider than their column. A <select> sizes itself to its
@@ -5608,8 +4985,7 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
 /* Cart and checkout on a phone: the floating WhatsApp and assistant buttons
  * covered amount chips and form fields there (`useQuietFloatingButtons`). */
 @media (max-width: 700px) {
-  html[data-mia-form="1"] .mia-wa-fab,
-  html[data-mia-form="1"] .mia-scope .cg-launch-wrap { display: none !important; }
+  html[data-mia-form="1"] .mia-wa-fab { display: none !important; }
 }
 
 /* Phone tap targets and legibility (UX sweep, Oct 2026). Links that sat at
@@ -5619,9 +4995,7 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope .fcol-links a { display: flex; align-items: center; min-height: 44px; }
   .mia-scope .cart-add-another { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
   .mia-scope .mia-verse-link { min-height: 40px; }
-  .mia-scope .mia-story-badge { font-size: 10px; }
-  .mia-scope .friday-prices span span,
-  .mia-scope .mia-bn-chip span { font-size: 10px !important; }
+  .mia-scope .friday-prices span span { font-size: 10px !important; }
   /* Carousel dots stay 10px wide visually but get a finger-sized hit area. */
   .mia-scope .swiper-pagination-bullet { position: relative; }
   .mia-scope .swiper-pagination-bullet::after { content: ""; position: absolute; inset: -14px -6px; }
@@ -5650,14 +5024,12 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
  * WhatsApp button and the assistant launcher with its teaser bubble sat on
  * top of the main button on desktop too. The assistant stays on every other
  * page; WhatsApp stays reachable from the footer. */
-html[data-mia-form="1"] .mia-wa-fab,
-html[data-mia-form="1"] .mia-scope .cg-launch-wrap { display: none !important; }
+html[data-mia-form="1"] .mia-wa-fab { display: none !important; }
 
 /* Homepage hero on a phone: floating buttons step aside while the hero's own
  * buttons are on screen (`useQuietFloatingButtonsWhileVisible`). */
 @media (max-width: 700px) {
-  html[data-mia-hero-cta="1"] .mia-wa-fab,
-  html[data-mia-hero-cta="1"] .mia-scope .cg-launch-wrap { display: none !important; }
+  html[data-mia-hero-cta="1"] .mia-wa-fab { display: none !important; }
 }
 
 /* Checkout donor fields: one per row on a phone. Two-across left the phone

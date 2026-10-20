@@ -58,7 +58,6 @@ test("zakat calculator uses the visitor currency instead of a fixed dollar unit"
 
 test("mobile donor controls cannot regress below the 44px touch target", () => {
   const css = read("styles/minbar/minbar.css");
-  assert.match(css, /#meter-picker \.wq-step[\s\S]*width: 44px !important;[\s\S]*height: 44px !important/);
   assert.match(css, /#rc-grid \.rc-seg[\s\S]*height: 44px !important/);
   assert.match(css, /cart-row \.cart-monthly[\s\S]*height: 44px !important/);
   assert.match(css, /#upsell-rail > div button[\s\S]*height: 44px !important/);

@@ -146,9 +146,6 @@ export function galleryFor(region: string, count = 6, width = 700): string[] {
   return Array.from({ length: count }, (_, i) => drive(bank[i % bank.length], width));
 }
 
-/** YouTube poster frame for a video id. */
-export const youtubeThumb = (id: string) => `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
-
 /** Watch URL for a video, with an optional start offset in seconds. */
 export const youtubeWatch = (id: string, start?: number) =>
   `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` : ""}`;

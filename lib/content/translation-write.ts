@@ -68,16 +68,6 @@ export function youtubeId(v: unknown): string {
   return m ? m[1] : s;
 }
 
-/** A `DateTime?` column. An empty value means null  "no limit"  not "now". */
-export function optionalDate(v: unknown): Date | null | undefined {
-  if (v === null) return null;
-  if (v === undefined) return undefined;
-  const s = str(v);
-  if (!s) return null;
-  const d = new Date(s);
-  return Number.isNaN(d.getTime()) ? undefined : d;
-}
-
 export interface ParsedTranslations<T> {
   /** Locales carrying content  created or updated. */
   write: Array<T & { locale: string }>;

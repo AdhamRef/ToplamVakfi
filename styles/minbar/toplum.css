@@ -47,15 +47,6 @@
 }
 .mia-scope .mia-hero-wrap { z-index: 1; }
 
-.mia-scope .mia-stories { border-bottom-color: rgba(255,255,255,.14); }
-.mia-scope .mia-story-ring { background: rgba(255,255,255,.22); }
-.mia-scope .mia-story-disc { background: #031a36; }
-.mia-scope .mia-story-badge { border-color: #031a36; }
-.mia-scope .mia-hero .mia-story-label { color: #b9d3e6; }
-.mia-scope .mia-hero .mia-story-label[data-new="true"] { color: #fff; }
-.mia-scope .mia-hero .mia-stories-arrow { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.28); color: #fff; }
-.mia-scope .mia-hero .mia-stories-arrow:hover { border-color: #27b8f2; color: #7fd6f5; }
-
 .mia-scope .mia-hero-h1 { color: #fff; font-weight: 900; }
 .mia-scope .mia-hero-accent-word {
   background: linear-gradient(90deg, #27b8f2, #7fd6f5); -webkit-background-clip: text; background-clip: text; color: transparent;

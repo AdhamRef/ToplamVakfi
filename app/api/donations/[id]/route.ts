@@ -618,7 +618,13 @@ export async function PATCH(
     const newLineSum = (newItems ?? existing.items).reduce((s, i) => s + i.amount, 0)
       + (newCatItems ?? existing.categoryItems).reduce((s, i) => s + i.amount, 0);
 
-    const newAmount = (newItems || newCatItems) ? newLineSum : existing.amount;
+    // Money on the donation that no campaign/category line accounts for — an old
+    // waqf line, whose model is retired — is carried over as-is, so editing the
+    // lines never silently lowers what the donor actually gave.
+    const oldLineSum = existing.items.reduce((s, i) => s + i.amount, 0)
+      + existing.categoryItems.reduce((s, i) => s + i.amount, 0);
+    const unlinedRemainder = Math.max(0, existing.amount - oldLineSum);
+    const newAmount = (newItems || newCatItems) ? newLineSum + unlinedRemainder : existing.amount;
     // totalAmount = donation amount + teamSupport + fees(if coverFees). Preserve
     // teamSupport/fees as-is  the admin is editing the donation portion only.
     const carriedExtras = existing.teamSupport + (existing.coverFees ? existing.fees : 0);
