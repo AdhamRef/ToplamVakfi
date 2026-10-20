@@ -117,18 +117,6 @@
 .mia-scope .pdc-card .mia-card-cta:hover { filter: brightness(1.05); transform: translateY(-1px); }
 @media (max-width: 760px) { .mia-scope .pdc-media { height: 180px; } }
 
-/* ── Header fit ───────────────────────────────────────────────────────────────
- * Seven links, the CTA and five controls only fit on one row from ~1360px
- * (wider words in LTR). Below that the links live in the "all pages" menu,
- * which already lists every one of them. */
-.mia-head .mia-rail { gap: 20px !important; }
-@media (max-width: 1360px) { .mia-head nav { display: none !important; } }
-@media (max-width: 1360px) and (min-width: 701px) { .mia-head .mia-main-row > a:first-child { margin-inline-end: auto; } }
-@media (max-width: 1520px) {
-  .mia-head .mia-locale-label { display: none; }
-  .mia-head .mia-locale-btn { padding-inline: 10px 6px !important; gap: 6px !important; }
-}
-
 /* ── Inner page banners ───────────────────────────────────────────────────────
  * The dark navy banner of every inner page closes on the design's wave
  * (`wave-divider`): the page background rising into it. */
@@ -149,10 +137,6 @@
 .mia-scope .mia-qb-chip[data-chip="freq"] {
   background: #0077b3 !important; border-color: #0077b3 !important; color: #fff !important;
   box-shadow: 0 6px 14px -6px rgba(0,119,179,.55) !important;
-}
-/* The language / currency rows keep their own light pick. */
-.mia-scope .mia-head button.mia-row[data-pick="1"] {
-  background: #eaf6fd !important; border-color: #00a2e0 !important; color: #062442 !important; box-shadow: none !important;
 }
 
 /* ── Legacy Tailwind pages (sign-in, complete profile, legacy campaign pages) ─
@@ -180,3 +164,369 @@
  * `--red` became the CTA blue in the Toplum palette, so error states (invalid
  * fields, failed steps, alerts) read from their own token. */
 .mia-scope { --danger: #c62828; --danger-tint: rgba(198, 40, 40, .1); }
+
+/* ═════════════════════════════════════════════════════════════════════════════
+ * SHELL — header, announcement strip, language suggestion, search, drawer,
+ * bottom navigation, quick donation bar, add-to-cart toast, footer, WhatsApp.
+ * Ported from `Toplum Vakfı Header.dc.html`, `Toplum Vakfı Footer.dc.html` and
+ * the `.alert-bar` of `Toplum Vakfı Homepage.dc.html`. The design's physical
+ * left/right are written as logical properties so LTR mirrors.
+ * ═════════════════════════════════════════════════════════════════════════════ */
+.mia-scope { --tv-brand: #00a2e0; --tv-brand-ink: #0077b3; --tv-ink: #062442; --tv-muted: #5d7187; --tv-cta: linear-gradient(90deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); }
+.mia-scope[dir="rtl"] { --tv-cta: linear-gradient(270deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); }
+:root { --bnav-h: 0px; --qd-h: 0px; }
+.mia-scope .tv-header-root, .mia-scope .tv-header-root *, .mia-scope .tv-foot, .mia-scope .tv-foot *,
+.mia-scope .tv-bnav, .mia-scope .tv-qd, .mia-scope .tv-qd *, .mia-scope .tv-drawer, .mia-scope .tv-drawer *,
+.mia-scope .tv-dropdown-menu, .mia-scope .tv-dropdown-menu *, .mia-scope .tv-search-field, .mia-scope .tv-search-field *, .mia-scope .tv-toast { font-family: Cairo, Arial, sans-serif; }
+.mia-scope .tv-head-spacer { height: 64px; }
+@media (max-width: 828px) { .mia-scope .tv-head-spacer { height: 66px; } }
+
+/* ── Fixed stack ── */
+.mia-scope .tv-header-root { position: fixed; top: 0; inset-inline: 0; z-index: 1000; }
+
+/* Language suggestion bar */
+.mia-scope .tv-lang-suggest { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 14px; background: #eaf6fd; border-bottom: 1px solid #cfe9f7; color: var(--tv-ink); font-size: 12.5px; font-weight: 700; padding: 9px 16px; }
+.mia-scope .tv-lang-suggest button { border: 0; cursor: pointer; }
+.mia-scope .tv-lang-suggest .ls-yes { background: var(--tv-cta); color: #fff; border-radius: 999px; padding: 7px 18px; font-size: 12px; font-weight: 800; min-height: 34px; }
+.mia-scope .tv-lang-suggest .ls-no { background: transparent; color: var(--tv-muted); font-size: 12px; font-weight: 700; text-decoration: underline; min-height: 44px; padding: 0 4px; }
+
+/* Announcement strip (homepage) */
+.mia-scope .tv-alert { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 16px; background: linear-gradient(90deg, #00a2e0, #0077b3); color: #fff; padding: 6px 20px; min-height: 56px; font-size: 13px; font-weight: 700; }
+.mia-scope[dir="rtl"] .tv-alert { background: linear-gradient(270deg, #0077b3, #00a2e0); }
+.mia-scope .tv-alert .ab-dot { width: 7px; height: 7px; border-radius: 50%; background: #bfe9ff; flex-shrink: 0; animation: tvAbPulse 2s infinite; }
+@keyframes tvAbPulse { 0% { box-shadow: 0 0 0 0 rgba(191,233,255,.7); } 70% { box-shadow: 0 0 0 7px rgba(191,233,255,0); } 100% { box-shadow: 0 0 0 0 rgba(191,233,255,0); } }
+.mia-scope .tv-alert .ab-text { min-width: 0; }
+.mia-scope .tv-alert a { display: inline-flex; align-items: center; min-height: 44px; color: #0077b3; background: #fff; padding: 6px 18px; border-radius: 999px; font-size: 12.5px; font-weight: 800; white-space: nowrap; flex-shrink: 0; transition: transform .2s; }
+.mia-scope .tv-alert a:hover { color: #0077b3; transform: translateY(-1px); }
+.mia-scope .tv-alert .ab-brief { display: none; }
+.mia-scope .tv-alert .ab-close { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; background: none; border: 0; color: rgba(255,255,255,.75); font-size: 17px; line-height: 1; cursor: pointer; padding: 0; }
+.mia-scope .tv-alert .ab-close:hover { color: #fff; }
+@media (max-width: 760px) {
+  .mia-scope .tv-alert { font-size: 12px; gap: 8px; padding: 6px 8px; }
+  .mia-scope .tv-alert .ab-full { display: none; }
+  .mia-scope .tv-alert .ab-brief { display: inline; }
+  .mia-scope .tv-alert a { padding: 6px 14px; font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) { .mia-scope .tv-alert .ab-dot { animation: none; } }
+
+/* ── Header bar ── */
+.mia-scope .tv-header { position: relative; z-index: 1; height: 78px; background: #fff; border-bottom: 1px solid rgba(6,36,66,.08); box-shadow: 0 2px 24px rgba(6,36,66,.05); }
+.mia-scope .tv-header::before { content: ""; position: absolute; top: 0; inset-inline: 0; height: 2px; background: linear-gradient(90deg, #0089cb, #00a2e0 45%, #7fd6f5); opacity: .9; }
+.mia-scope .tv-header-shell { height: 100%; padding: 0 40px; }
+.mia-scope .tv-header-row { position: relative; height: 100%; display: flex; align-items: center; gap: 16px; max-width: 1140px; margin: 0 auto; }
+.mia-scope .tv-brand-lang { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.mia-scope .tv-brand { display: inline-flex; align-items: center; }
+.mia-scope .tv-brand-logo { height: 40px; width: auto; filter: drop-shadow(0 2px 5px rgba(0,16,33,.10)); }
+.mia-scope .tv-lang, .mia-scope .tv-curr { position: relative; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: #33495e; background: transparent; border: 0; cursor: pointer; padding: 0; transition: background .2s, color .2s, border-color .2s; }
+.mia-scope .tv-lang svg { width: 19px; height: 19px; }
+.mia-scope .tv-curr-symbol { font-size: 15px; font-weight: 800; }
+.mia-scope .tv-dd-label { display: none; }
+
+/* Nav + dropdown groups (open on hover and on keyboard focus) */
+.mia-scope .tv-nav { display: flex; align-items: center; justify-content: center; gap: clamp(10px, 1.6vw, 22px); flex: 1; min-width: 0; padding-inline: 8px; }
+.mia-scope .tv-nav a { position: relative; color: var(--tv-ink); font-size: 14px; font-weight: 700; letter-spacing: .1px; white-space: nowrap; padding: 6px 2px; transition: color .2s; }
+.mia-scope .tv-nav a::after { content: ""; position: absolute; inset-inline: 0; bottom: 0; height: 2px; border-radius: 2px; background: var(--tv-brand); transform: scaleX(0); transition: transform .25s ease; }
+.mia-scope .tv-nav a:hover, .mia-scope .tv-nav a.active { color: var(--tv-brand-ink); }
+.mia-scope .tv-nav a:hover::after, .mia-scope .tv-nav a.active::after { transform: scaleX(1); }
+.mia-scope .tv-ni { position: relative; display: flex; align-items: center; }
+.mia-scope .tv-ni > a { display: inline-flex; align-items: center; gap: 4px; }
+.mia-scope .tv-caret { width: 12px; height: 12px; opacity: .6; transition: transform .2s; }
+.mia-scope .tv-ni:hover .tv-caret, .mia-scope .tv-ni:focus-within .tv-caret { transform: rotate(180deg); }
+.mia-scope .tv-sub { position: absolute; top: calc(100% + 14px); inset-inline-start: -20px; z-index: 30; width: 270px; padding: 12px; background: #fff; border: 1px solid #e6eef3; border-radius: 18px; box-shadow: 0 24px 50px rgba(2,36,66,.18); opacity: 0; visibility: hidden; }
+.mia-scope .tv-sub--2 { width: 500px; }
+.mia-scope .tv-sub::before { content: ""; position: absolute; inset: -14px 0 auto; height: 14px; }
+.mia-scope .tv-ni:hover .tv-sub, .mia-scope .tv-ni:focus-within .tv-sub { opacity: 1; visibility: visible; }
+.mia-scope .tv-sub-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 8px 12px; margin-bottom: 8px; border-bottom: 1px solid #eef2f5; }
+.mia-scope .tv-sub-head b { color: var(--tv-ink); font-size: 14px; font-weight: 800; }
+.mia-scope .tv-nav .tv-sub .tv-sub-all { display: inline-flex; align-items: center; min-height: 34px; line-height: 1; padding: 0 14px; border-radius: 999px; background: #eaf6fd; color: var(--tv-ink); font-size: 12.5px; font-weight: 800; }
+.mia-scope .tv-nav .tv-sub .tv-sub-all:hover { background: #dcf0fb; color: var(--tv-ink); }
+.mia-scope .tv-sub-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 4px; }
+.mia-scope .tv-sub--2 .tv-sub-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+.mia-scope .tv-nav .tv-sub-grid a { display: flex; align-items: center; gap: 12px; min-height: 52px; line-height: 1.3; padding: 6px 8px; border-radius: 12px; white-space: normal; }
+.mia-scope .tv-sub-grid i { display: grid; place-items: center; flex-shrink: 0; width: 38px; height: 38px; border-radius: 10px; background: #eaf6fd; color: var(--tv-brand); font-style: normal; }
+.mia-scope .tv-sub-grid i svg { width: 19px; height: 19px; }
+.mia-scope .tv-nav .tv-sub-grid a:hover i { background: var(--tv-brand); color: #fff; }
+.mia-scope .tv-nav .tv-sub a { font-size: 13.5px; font-weight: 800; color: var(--tv-ink); }
+.mia-scope .tv-nav .tv-sub a::after { display: none; }
+.mia-scope .tv-nav .tv-sub a:hover { background: #f2f8fb; color: var(--tv-brand-ink); }
+
+/* Actions */
+.mia-scope .tv-mcluster { display: flex; align-items: center; gap: 8px; }
+.mia-scope .tv-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.mia-scope .tv-icon-group { display: flex; align-items: center; gap: 2px; background: #f5f8fa; border-radius: 999px; padding: 3px; }
+.mia-scope .tv-search, .mia-scope .tv-icon-btn { position: relative; width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; color: #33495e; background: transparent; border: 0; padding: 0; cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.mia-scope .tv-search svg { width: 18px; height: 18px; }
+.mia-scope .tv-icon-btn svg { width: 19px; height: 19px; }
+.mia-scope .tv-search:hover, .mia-scope .tv-icon-btn:hover { background: #fff; color: var(--tv-brand-ink); box-shadow: 0 2px 8px rgba(6,36,66,.1); }
+.mia-scope .tv-icon-badge { position: absolute; top: 2px; inset-inline-end: 2px; min-width: 17px; height: 17px; padding: 0 4px; display: none; border-radius: 999px; background: #0077b3; color: #fff; font-size: 11px; font-weight: 800; line-height: 17px; text-align: center; }
+.mia-scope .tv-icon-badge.show { display: block; }
+.mia-scope .tv-donate-top { display: inline-flex; align-items: center; color: #fff; background: var(--tv-cta); padding: 11px 24px; border-radius: 999px; font-weight: 800; font-size: 13.5px; white-space: nowrap; box-shadow: 0 8px 18px rgba(0,162,224,.3); border: 0; cursor: pointer; transition: box-shadow .2s, transform .2s; }
+.mia-scope .tv-donate-top:hover { color: #fff; transform: translateY(-1px); box-shadow: 0 10px 22px rgba(0,162,224,.42); }
+.mia-scope .dn-short, .mia-scope .tv-mhome, .mia-scope .tv-mrail, .mia-scope .tv-mobile-menu { display: none; }
+
+/* Profile: a slowly turning blue ring. A cart with items: the same ring in red. */
+.mia-scope .tv-profile, .mia-scope .tv-mrail-profile, .mia-scope .tv-cart-full { isolation: isolate; }
+.mia-scope .tv-profile::before, .mia-scope .tv-mrail-profile::before, .mia-scope .tv-cart-full::before {
+  content: ""; position: absolute; inset: 4px; border-radius: 50%; z-index: -1; pointer-events: none;
+  background: conic-gradient(from 0deg, rgba(0,162,224,0) 0deg, #27b8f2 90deg, #1b6fe0 180deg, rgba(0,162,224,0) 270deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+  filter: drop-shadow(0 0 4px rgba(39,184,242,.85));
+  animation: tvRingSpin 2.8s linear infinite;
+}
+.mia-scope .tv-cart-full::before { background: conic-gradient(from 0deg, rgba(229,57,53,0) 0deg, #ff6b5e 90deg, #e53935 180deg, rgba(229,57,53,0) 270deg); filter: drop-shadow(0 0 4px rgba(229,57,53,.85)); }
+.mia-scope .tv-cart-full svg { color: #d93025; }
+@keyframes tvRingSpin { to { transform: rotate(360deg); } }
+.mia-scope .tv-bump { animation: tvBump .5s ease-out; }
+@keyframes tvBump { 0% { transform: scale(1); } 35% { transform: scale(1.18); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .mia-scope .tv-profile::before, .mia-scope .tv-mrail-profile::before, .mia-scope .tv-cart-full::before, .mia-scope .tv-bump { animation: none; }
+}
+
+/* Language / currency menus */
+.mia-scope .tv-dropdown-menu { position: fixed; z-index: 2000; min-width: 130px; display: flex; flex-direction: column; gap: 2px; padding: 6px; background: #fff; border: 1px solid #e6eef3; border-radius: 12px; box-shadow: 0 16px 32px rgba(2,52,88,.16); }
+.mia-scope .tv-dropdown-menu button { text-align: start; background: transparent; border: 0; padding: 8px 12px; min-height: 40px; font-size: 13px; font-weight: 600; color: var(--tv-ink); border-radius: 8px; cursor: pointer; }
+.mia-scope .tv-dropdown-menu button:hover { background: #eaf6fd; color: var(--tv-brand-ink); }
+.mia-scope .tv-dropdown-menu button.on { background: #eaf6fd; color: var(--tv-brand-ink); font-weight: 800; }
+
+/* Search field under the header */
+.mia-scope .tv-search-field { position: fixed; top: var(--mia-head-h, 64px); inset-inline: 0; z-index: 1500; background: #fff; border-bottom: 1px solid #e6eef3; box-shadow: 0 14px 30px rgba(6,36,66,.1); padding: 14px 20px; }
+.mia-scope .tv-search-field[hidden] { display: none; }
+.mia-scope .tv-search-field form { display: flex; gap: 8px; max-width: 620px; margin: 0 auto; background: #f5f8fa; border: 1.5px solid #e2eaf0; border-radius: 999px; padding-block: 4px; padding-inline: 16px 4px; }
+.mia-scope .tv-search-field input { flex: 1; min-width: 0; min-height: 40px; background: transparent; border: 0; outline: none; font-size: 14px; color: var(--tv-ink); text-align: start; }
+.mia-scope .tv-search-field input::-webkit-search-cancel-button { display: none; }
+.mia-scope .tv-search-field form button { background: var(--tv-cta); color: #fff; border: 0; border-radius: 999px; padding: 10px 22px; font-weight: 800; font-size: 13px; cursor: pointer; }
+.mia-scope .tv-search-results { display: grid; gap: 4px; max-width: 620px; margin: 10px auto 0; }
+.mia-scope .tv-search-results p { margin: 4px 8px; color: var(--tv-muted); font-size: 13px; }
+.mia-scope .tv-search-results a { display: grid; gap: 2px; padding: 8px 12px; border-radius: 10px; color: var(--tv-ink); }
+.mia-scope .tv-search-results a:hover { background: #f2f8fb; color: var(--tv-brand-ink); }
+.mia-scope .tv-search-results small { color: var(--tv-brand-ink); font-size: 11.5px; font-weight: 800; }
+.mia-scope .tv-search-results b { font-size: 14px; font-weight: 700; }
+.mia-scope .tv-search-all { justify-self: start; margin: 4px 8px 0; min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: #eaf6fd; color: var(--tv-ink); font-size: 12.5px; font-weight: 800; cursor: pointer; }
+
+/* Drawer */
+.mia-scope .tv-drawer-overlay { position: fixed; inset: 0; z-index: 1999; background: rgba(2,20,38,.5); opacity: 0; pointer-events: none; transition: opacity .25s; }
+.mia-scope .tv-drawer-overlay.open { opacity: 1; pointer-events: auto; }
+.mia-scope .tv-drawer { position: fixed; top: 0; inset-inline-start: -300px; z-index: 2000; width: 280px; height: 100%; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; background: #fff; box-shadow: 0 0 30px rgba(0,0,0,.2); visibility: hidden; transition: inset-inline-start .3s ease, visibility .3s; }
+.mia-scope .tv-drawer.open { inset-inline-start: 0; visibility: visible; }
+.mia-scope .tv-drawer-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e6eef3; }
+.mia-scope .tv-drawer-head .tv-brand-logo { height: 38px; }
+.mia-scope .tv-drawer-head button { width: 44px; height: 44px; display: grid; place-items: center; background: transparent; border: 0; font-size: 18px; color: var(--tv-ink); cursor: pointer; }
+.mia-scope .tv-drawer a { display: block; padding: 13px 6px; color: var(--tv-ink); font-size: 14.5px; font-weight: 700; border-bottom: 1px solid #f0f4f7; }
+.mia-scope .tv-drawer a:hover { color: var(--tv-brand-ink); }
+.mia-scope .tv-drawer-group { margin-top: 18px; }
+.mia-scope .tv-drawer-group > span { display: block; margin-bottom: 6px; color: var(--tv-muted); font-size: 12px; font-weight: 800; letter-spacing: .4px; }
+.mia-scope .tv-drawer-picks { display: flex; gap: 8px; margin-top: 14px; }
+.mia-scope .tv-drawer-picks select { flex: 1; min-width: 0; min-height: 44px; padding: 11px 10px; background: #f5f8fa; border: 1px solid #e2eaf0; border-radius: 10px; font-size: 12.5px; font-weight: 700; color: var(--tv-ink); outline: none; }
+.mia-scope .tv-drawer .tv-drawer-donate { margin-top: 16px; background: var(--tv-cta); color: #fff; text-align: center; border-radius: 999px; border-bottom: 0; }
+.mia-scope .tv-drawer .tv-drawer-donate:hover { color: #fff; }
+
+/* Add-to-cart toast */
+.mia-scope .tv-toast { position: fixed; z-index: 2600; top: calc(var(--mia-head-h, 64px) + 12px); left: 50%; transform: translateX(-50%); display: none; align-items: center; gap: 12px; width: min(440px, calc(100% - 24px)); padding: 12px; padding-inline-start: 16px; background: #fff; border: 1px solid #e3edf4; border-radius: 16px; box-shadow: 0 18px 44px rgba(2,36,66,.2); }
+.mia-scope .tv-toast.show { display: flex; animation: tvToastIn .25s ease-out; }
+@keyframes tvToastIn { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+.mia-scope .tv-toast-ic { flex-shrink: 0; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #e7f7ee; color: #1a7f4b; }
+.mia-scope .tv-toast-ic svg { width: 18px; height: 18px; }
+.mia-scope .tv-toast-tx { flex: 1; min-width: 0; display: grid; }
+.mia-scope .tv-toast-tx b { color: var(--tv-ink); font-size: 14px; font-weight: 800; }
+.mia-scope .tv-toast-go { flex-shrink: 0; display: inline-flex; align-items: center; gap: 2px; min-height: 40px; padding: 0 16px; border-radius: 999px; background: var(--tv-cta); color: #fff; font-size: 13px; font-weight: 800; white-space: nowrap; }
+.mia-scope .tv-toast-go:hover { color: #fff; }
+
+/* ── Desktop (≥829px): the reference bar — white, with a curved lower edge ── */
+@media (min-width: 829px) {
+  .mia-scope .tv-header { height: 64px; border-bottom: 0; box-shadow: none; background: transparent; }
+  .mia-scope .tv-header::before { display: none; }
+  .mia-scope .tv-header::after { content: ""; position: absolute; z-index: -1; inset: 0 0 -10px 0; background: #fff; clip-path: ellipse(120% 100% at 70% 0%); box-shadow: inset 0 1px 0 rgba(6,36,66,.08); filter: drop-shadow(0 6px 12px rgba(2,36,66,.07)); }
+  .mia-scope[dir="ltr"] .tv-header::after { clip-path: ellipse(120% 100% at 30% 0%); }
+  .mia-scope .tv-brand-logo { height: 36px; }
+  .mia-scope .tv-curr { width: 38px; height: 38px; border: 1px solid #e3ebf1; background: #fff; color: var(--tv-ink); }
+  .mia-scope .tv-curr .tv-curr-symbol { font-size: 15px; font-weight: 900; }
+  .mia-scope .tv-lang { width: auto; height: 38px; padding: 0 14px; gap: 8px; display: inline-flex; align-items: center; border: 1px solid #e3ebf1; border-radius: 999px; color: var(--tv-ink); font-size: 13.5px; font-weight: 800; }
+  .mia-scope .tv-lang .tv-dd-label { display: inline; }
+  .mia-scope .tv-lang::after { content: ""; width: 7px; height: 7px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(45deg) translateY(-2px); opacity: .7; }
+  .mia-scope .tv-icon-group { gap: 8px; padding: 0; background: transparent; }
+  .mia-scope .tv-search, .mia-scope .tv-icon-btn { width: 38px; height: 38px; border: 1px solid #e3ebf1; background: #fff; }
+  .mia-scope .tv-search:hover, .mia-scope .tv-icon-btn:hover, .mia-scope .tv-curr:hover, .mia-scope .tv-lang:hover { border-color: rgba(0,162,224,.45); background: #f2faff; color: var(--tv-brand-ink); box-shadow: none; }
+  .mia-scope .tv-donate-top { min-height: 44px; padding: 0 26px; font-size: 14.5px; box-shadow: 0 8px 20px rgba(0,162,224,.34); }
+}
+@media (max-width: 1180px) { .mia-scope .tv-header-shell { padding-inline: 18px 14px; } .mia-scope .tv-nav { gap: 10px; } .mia-scope .tv-nav > a, .mia-scope .tv-nav > .tv-ni > a { font-size: 12px; } }
+/* The design's row needs ~1000px with the language name and the long LTR words;
+   below that the pill keeps its globe and the CTA tightens rather than wrapping. */
+@media (max-width: 1060px) and (min-width: 829px) {
+  .mia-scope .tv-lang .tv-dd-label { display: none; }
+  .mia-scope .tv-lang { padding: 0 10px; }
+  .mia-scope .tv-nav { gap: 7px; padding-inline: 0; }
+  .mia-scope .tv-donate-top { padding: 0 16px; font-size: 12.5px; }
+  .mia-scope .tv-actions, .mia-scope .tv-icon-group { gap: 5px; }
+  .mia-scope .tv-header-row { gap: 10px; }
+}
+
+/* ── Compact (≤828px): logo + one control rail + menu ── */
+@media (max-width: 828px) {
+  .mia-scope .tv-lang, .mia-scope .tv-curr, .mia-scope .tv-nav, .mia-scope .tv-search, .mia-scope .tv-icon-group { display: none; }
+  .mia-scope .tv-header { height: 66px; }
+  .mia-scope .tv-header-shell { padding: 0 14px; }
+  .mia-scope .tv-header-row { justify-content: space-between; gap: 8px; }
+  .mia-scope .tv-mcluster { flex: 1; justify-content: flex-end; gap: 8px; min-width: 0; margin-inline-start: auto; }
+  .mia-scope .tv-actions { gap: 8px; }
+  .mia-scope .tv-donate-top { height: 44px; padding: 0 18px; font-size: 13px; border-radius: 12px; box-shadow: 0 6px 14px rgba(0,162,224,.28); }
+  .mia-scope .tv-mrail { display: flex; align-items: center; gap: 0; flex: 0 0 auto; background: #f5f8fa; border: 1px solid #e6eef3; border-radius: 999px; padding: 2px; }
+  .mia-scope .tv-mrail-btn { position: relative; width: 44px; height: 44px; display: grid; place-items: center; border: 0; background: transparent; border-radius: 50%; color: #33495e; cursor: pointer; transition: background .2s, color .2s; padding: 0; }
+  .mia-scope .tv-mrail-btn:hover { background: #fff; color: var(--tv-brand-ink); box-shadow: 0 2px 6px rgba(6,36,66,.1); }
+  .mia-scope .tv-mrail-btn svg { width: 17px; height: 17px; }
+  .mia-scope .tv-mhome { display: grid; flex-shrink: 0; }
+  .mia-scope .tv-mrail-curr span { font-size: 13.5px; font-weight: 800; }
+  .mia-scope .tv-mrail-badge { position: absolute; top: 0; inset-inline-end: 0; min-width: 14px; height: 14px; padding: 0 3px; display: none; border-radius: 999px; background: #0077b3; color: #fff; font-size: 9px; font-weight: 800; line-height: 14px; text-align: center; }
+  .mia-scope .tv-mrail-badge.show { display: block; }
+  .mia-scope .tv-mobile-menu { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; color: var(--tv-ink); background: #f5f8fa; border: 1px solid #e6eef3; cursor: pointer; padding: 0; }
+  .mia-scope .tv-mobile-menu:hover { background: #eaf6fd; color: var(--tv-brand-ink); }
+  .mia-scope .tv-mobile-menu svg { width: 19px; height: 19px; }
+  .mia-scope .tv-drawer { width: min(86vw, 320px); inset-inline-start: calc(-1 * min(86vw, 320px)); padding: 18px; }
+  .mia-scope .tv-drawer a { padding: 15px 6px; font-size: 15px; }
+}
+@media (max-width: 828px) and (min-width: 761px) { .mia-scope .tv-dd-label { display: none; } }
+
+/* ── Phone (≤760px): logo centred, language + currency on one side, profile +
+   cart on the other; the bottom navigation carries the rest. ── */
+@media (max-width: 760px) {
+  :root { --bnav-h: calc(62px + env(safe-area-inset-bottom, 0px)); }
+  /* The footer runs under the bottom bar and pads itself for it. */
+  .mia-scope { --mia-mobile-nav-h: 62px; padding-bottom: 0; }
+  .mia-scope .tv-header-shell { padding: 0 16px; }
+  .mia-scope .tv-header-row { justify-content: center; }
+  .mia-scope .tv-brand-lang { position: relative; z-index: 2; margin: 0 auto; }
+  .mia-scope .tv-brand-logo { height: 44px; }
+  .mia-scope .tv-mcluster { position: absolute; inset: 0; margin: 0; display: block; pointer-events: none; }
+  .mia-scope .tv-mrail { position: absolute; inset: 0; display: grid; grid-template-columns: 44px 44px 1fr 44px 44px; align-items: center; background: none; border: 0; padding: 0; border-radius: 0; }
+  .mia-scope .tv-mrail-btn { pointer-events: auto; width: 44px; height: 44px; background: #f5f8fa; border: 1px solid #e6eef3; border-radius: 0; grid-row: 1; }
+  .mia-scope .tv-mrail-lang { grid-column: 1; border-start-start-radius: 22px; border-end-start-radius: 22px; border-inline-end: 0; }
+  .mia-scope .tv-mrail-curr { grid-column: 2; border-start-end-radius: 22px; border-end-end-radius: 22px; }
+  .mia-scope .tv-mrail-profile { grid-column: 4; border-start-start-radius: 22px; border-end-start-radius: 22px; border-inline-end: 0; }
+  .mia-scope .tv-mrail-cart { grid-column: 5; border-start-end-radius: 22px; border-end-end-radius: 22px; }
+  .mia-scope .tv-mhome, .mia-scope .tv-mobile-menu, .mia-scope .tv-actions { display: none; }
+  .mia-scope .tv-toast { top: auto; bottom: calc(var(--bnav-h) + 12px); }
+  .mia-scope .tv-search-field { padding: 12px 14px; }
+}
+
+/* ── Bottom navigation (phones) ── */
+.mia-scope .tv-bnav { display: none; }
+@media (max-width: 760px) {
+  .mia-scope .tv-bnav { position: fixed; inset: auto 0 0 0; z-index: 1300; display: grid; grid-template-columns: repeat(5, 1fr); align-items: end; height: var(--bnav-h); padding: 0 6px env(safe-area-inset-bottom, 0px); background: #fff; border-top: 1px solid #e6eef3; box-shadow: 0 -6px 20px rgba(2,36,66,.08); }
+  .mia-scope .tv-bnav a, .mia-scope .tv-bnav button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; height: 62px; min-width: 44px; border: 0; background: none; color: #4a6276; font-size: 12px; font-weight: 700; cursor: pointer; padding: 0; }
+  .mia-scope .tv-bnav svg { width: 22px; height: 22px; }
+  .mia-scope .tv-bnav a:hover, .mia-scope .tv-bnav button:hover, .mia-scope .tv-bnav a[aria-current="page"] { color: var(--tv-brand-ink); }
+  .mia-scope .tv-bnav .tv-bnav-give { color: var(--tv-brand-ink); font-weight: 800; }
+  .mia-scope .tv-bnav .tv-bnav-give svg { width: 46px; height: 46px; padding: 12px; margin-top: -26px; border-radius: 50%; background: var(--tv-cta); color: #fff; box-shadow: 0 8px 20px rgba(0,162,224,.4); }
+  /* The bottom bar carries the donate action, so page-level sticky bars step aside. */
+  .mia-scope .mobile-sticky-donate { display: none !important; }
+}
+
+/* ── Quick donation bar ── */
+:root[data-qd="on"] { --qd-h: 76px; }
+.mia-scope .tv-qd { position: fixed; z-index: 1280; inset-inline: 0; bottom: calc(var(--bnav-h, 0px) + 12px); display: flex; justify-content: center; padding: 0 16px; pointer-events: none; }
+.mia-scope .tv-qd-in { pointer-events: auto; display: flex; align-items: center; gap: 10px; width: min(1080px, 100%); padding: 8px; padding-inline-start: 18px; border-radius: 999px; background: rgba(255,255,255,.97); border: 1px solid #e2ebf1; box-shadow: 0 18px 44px rgba(3,26,54,.2), 0 2px 6px rgba(3,26,54,.06); backdrop-filter: blur(10px); }
+.mia-scope .tv-qd-label { display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0; color: var(--tv-ink); font-size: 14px; font-weight: 900; padding-inline-end: 12px; border-inline-end: 1px solid #e6eef3; }
+.mia-scope .tv-qd-label svg { width: 18px; height: 18px; color: #1ca3ec; fill: currentColor; stroke: none; }
+.mia-scope .tv-qd-fund { flex: 1 1 190px; min-width: 0; min-height: 44px; padding: 0 12px; border: 1.5px solid #e2eaf0; border-radius: 999px; background: #f4f8fb; color: var(--tv-ink); font-size: 13px; font-weight: 800; cursor: pointer; }
+.mia-scope .tv-qd-fund:focus { outline: none; border-color: var(--tv-brand); background: #fff; }
+.mia-scope .tv-qd-amts { display: flex; gap: 6px; flex-shrink: 0; }
+.mia-scope .tv-qd-amts button { min-width: 64px; min-height: 44px; padding: 0 12px; border: 1.5px solid #e2eaf0; border-radius: 999px; background: #fff; color: var(--tv-ink); font-size: 13.5px; font-weight: 800; cursor: pointer; unicode-bidi: isolate; }
+.mia-scope .tv-qd-amts button:hover { border-color: var(--tv-brand); }
+.mia-scope .tv-qd-amts button.on { border-color: transparent; color: #fff; background: var(--tv-cta); box-shadow: 0 6px 16px rgba(27,111,224,.3); }
+.mia-scope .tv-qd-custom { display: flex; align-items: center; gap: 4px; flex: 0 1 130px; min-width: 96px; min-height: 44px; padding: 0 12px; border: 1.5px solid #e2eaf0; border-radius: 999px; background: #f4f8fb; direction: ltr; }
+.mia-scope .tv-qd-custom:focus-within { border-color: var(--tv-brand); background: #fff; }
+.mia-scope .tv-qd-custom span { color: var(--tv-muted); font-size: 13px; font-weight: 800; }
+.mia-scope .tv-qd-custom input { flex: 1; min-width: 0; min-height: 42px; border: 0; outline: none; background: transparent; color: var(--tv-ink); font-size: 13.5px; font-weight: 800; -moz-appearance: textfield; appearance: textfield; }
+.mia-scope .tv-qd-custom input::-webkit-outer-spin-button, .mia-scope .tv-qd-custom input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.mia-scope .tv-qd-go { flex-shrink: 0; min-height: 48px; padding: 0 26px; border: 0; border-radius: 999px; background: var(--tv-cta); color: #fff; font-size: 15px; font-weight: 900; cursor: pointer; box-shadow: 0 10px 22px rgba(27,111,224,.34); }
+.mia-scope .tv-qd-go:hover { filter: brightness(.95); }
+.mia-scope .tv-qd-x { flex-shrink: 0; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: var(--tv-muted); cursor: pointer; padding: 0; }
+.mia-scope .tv-qd-x:hover { background: #f1f5f8; color: var(--tv-ink); }
+.mia-scope .tv-qd-x svg { width: 16px; height: 16px; }
+@media (min-width: 761px) { .mia-scope .tv-qd-x { display: none; } }
+@media (max-width: 1000px) { .mia-scope .tv-qd-label { display: none; } .mia-scope .tv-qd-in { padding-inline-start: 10px; } }
+@media (max-width: 760px) {
+  :root[data-qd="on"] { --qd-h: 0px; }
+  .mia-scope .tv-qd { bottom: var(--bnav-h, 0px); padding: 0 10px 10px; }
+  .mia-scope .tv-qd-in { flex-wrap: wrap; gap: 8px; width: 100%; padding: 16px 14px 14px; border-radius: 20px; box-shadow: 0 -10px 34px rgba(3,26,54,.22); }
+  .mia-scope .tv-qd-label { display: inline-flex; order: 0; flex: 1 1 0; min-width: 0; border: 0; padding: 0; font-size: 15px; }
+  .mia-scope .tv-qd-x { order: 1; margin-inline-start: auto; }
+  .mia-scope .tv-qd-fund, .mia-scope .tv-qd-amts, .mia-scope .tv-qd-custom, .mia-scope .tv-qd-go { order: 2; }
+  .mia-scope .tv-qd-fund { display: block; flex: 1 1 100%; }
+  .mia-scope .tv-qd-amts { flex: 1 1 100%; min-width: 0; }
+  .mia-scope .tv-qd-amts button { flex: 1; min-width: 0; padding: 0 6px; }
+  .mia-scope .tv-qd-custom { flex: 1 1 100%; }
+  .mia-scope .tv-qd-go { flex: 1 1 100%; min-height: 50px; }
+}
+
+/* ── Footer ── */
+.mia-scope .tv-foot { position: relative; margin-top: 60px; padding: 70px 0 0; background: #031a36; color: rgba(255,255,255,.72); }
+.mia-scope .tv-foot-wave { position: absolute; top: -1px; left: 0; width: 100%; height: 60px; display: block; }
+.mia-scope .tv-foot-in { position: relative; width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+.mia-scope .tv-foot-grid { display: grid; grid-template-columns: 1.35fr 1.05fr .8fr 1fr; gap: 40px; padding-bottom: 36px; }
+.mia-scope .tv-foot h4 { margin: 0 0 16px; color: #fff; font-size: 15px; font-weight: 800; }
+.mia-scope .tv-foot-news p { margin: 0 0 16px; font-size: 13px; line-height: 1.8; }
+.mia-scope .tv-foot-news form { display: flex; align-items: center; gap: 6px; padding: 5px; border: 1px solid rgba(255,255,255,.22); border-radius: 999px; background: rgba(255,255,255,.05); }
+.mia-scope .tv-foot-news form:focus-within { border-color: rgba(127,214,245,.7); }
+.mia-scope .tv-foot-news input { flex: 1; min-width: 0; min-height: 40px; padding: 0 14px; border: 0; background: transparent; color: #fff; font-size: 13px; outline: none; }
+.mia-scope .tv-foot-news input::placeholder { color: rgba(255,255,255,.5); }
+.mia-scope .tv-foot-news button { min-height: 44px; padding: 0 24px; border: 0; border-radius: 999px; background: var(--tv-cta); color: #fff; font-size: 13.5px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.mia-scope .tv-foot-news button:disabled { opacity: .75; cursor: progress; }
+.mia-scope .tv-foot-news .tv-foot-news-done { display: flex; align-items: center; gap: 10px; min-height: 56px; margin: 0; padding: 8px 18px; border: 1px solid rgba(127,214,245,.45); border-radius: 999px; background: rgba(39,184,242,.12); color: #fff; font-weight: 700; line-height: 1.6; }
+.mia-scope .tv-foot-news-done svg { width: 20px; height: 20px; flex-shrink: 0; color: #7fd6f5; }
+.mia-scope .tv-foot-news .tv-foot-news-error { margin: 10px 4px 0; color: #ffb4a8; font-size: 12.5px; }
+.mia-scope .tv-foot-contact { display: grid; gap: 12px; font-size: 13px; }
+.mia-scope .tv-foot-contact > a, .mia-scope .tv-foot-contact > span { display: flex; align-items: flex-start; gap: 10px; color: rgba(255,255,255,.78); line-height: 1.7; }
+.mia-scope .tv-foot-contact > a:hover { color: #7fd6f5; }
+.mia-scope .tv-foot-contact svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 3px; color: #38b6f0; }
+.mia-scope .tv-foot-contact span[dir="ltr"] { unicode-bidi: isolate; }
+.mia-scope .tv-foot-social { display: flex; gap: 8px; margin-top: 8px; }
+.mia-scope .tv-foot-social a { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); color: #fff; }
+.mia-scope .tv-foot-social a:hover { background: #00a2e0; border-color: #00a2e0; color: #fff; }
+.mia-scope .tv-foot-social svg { width: 16px; height: 16px; }
+.mia-scope .tv-foot-links { display: grid; gap: 10px; }
+.mia-scope .tv-foot-links a { color: rgba(255,255,255,.72); font-size: 13px; }
+.mia-scope .tv-foot-links a:hover, .mia-scope .tv-foot-legal a:hover { color: #7fd6f5; }
+.mia-scope .tv-foot-brand { display: grid; justify-items: start; align-content: start; gap: 14px; }
+.mia-scope .tv-foot-brand span { display: grid; place-items: center; width: 92px; height: 92px; border-radius: 18px; background: #fff; }
+.mia-scope .tv-foot-brand img { height: 62px; width: auto; }
+.mia-scope .tv-foot-brand b { color: #fff; font-size: 14px; font-weight: 800; line-height: 1.7; }
+.mia-scope .tv-foot-legal { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 18px 0 22px; border-top: 1px solid rgba(255,255,255,.12); font-size: 12px; }
+.mia-scope .tv-foot-legal nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.mia-scope .tv-foot-legal a { color: rgba(255,255,255,.62); }
+.mia-scope .tv-foot-copy { color: rgba(255,255,255,.55); }
+:root[data-qd="on"] .mia-scope .tv-foot { padding-bottom: calc(var(--qd-h, 0px) + 18px); }
+
+/* WhatsApp — the inline-end edge, above the bottom bar and the quick donation bar */
+.mia-scope .tv-wa { position: fixed; z-index: 1250; inset-inline-end: 22px; bottom: calc(22px + var(--bnav-h, 0px)); display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; padding: 0; line-height: 0; border-radius: 50%; background: #25d366; color: #fff; box-shadow: 0 8px 20px rgba(37,211,102,.4), 0 0 0 4px rgba(255,255,255,.9); }
+.mia-scope .tv-wa:hover { color: #fff; filter: brightness(.95); }
+.mia-scope .tv-wa svg { width: 28px; height: 28px; display: block; flex-shrink: 0; }
+:root[data-qd="on"] .mia-scope .tv-wa { bottom: calc(22px + var(--bnav-h, 0px) + var(--qd-h, 0px)); }
+
+@media (max-width: 980px) { .mia-scope .tv-foot-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 900px) {
+  .mia-scope .tv-foot-links a, .mia-scope .tv-foot-legal a, .mia-scope .tv-foot-contact > a { display: inline-flex; align-items: center; min-height: 44px; }
+  .mia-scope .tv-foot-social a { width: 44px; height: 44px; }
+}
+@media (max-width: 560px) {
+  .mia-scope .tv-foot { padding-top: 56px; }
+  .mia-scope .tv-foot-in { width: calc(100% - 32px); }
+  .mia-scope .tv-foot-wave { height: 36px; }
+  .mia-scope .tv-foot-grid { grid-template-columns: 1fr; gap: 22px; padding-bottom: 20px; }
+  .mia-scope .tv-foot-brand { order: -1; display: flex; align-items: center; gap: 14px; }
+  .mia-scope .tv-foot-brand span { flex-shrink: 0; }
+  .mia-scope .tv-foot-brand img { height: 52px; }
+  .mia-scope .tv-foot h4 { margin-bottom: 8px; }
+  .mia-scope .tv-foot-links { grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .mia-scope .tv-foot-contact { gap: 0; }
+  .mia-scope .tv-foot-contact > span { min-height: 44px; align-items: center; }
+  .mia-scope .tv-foot-social { gap: 10px; margin-top: 6px; }
+  .mia-scope .tv-foot-legal { flex-direction: column; align-items: stretch; gap: 4px; padding: 12px 0 calc(16px + var(--bnav-h, 0px)); }
+  .mia-scope .tv-foot-legal nav { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+  .mia-scope .tv-wa { width: 50px; height: 50px; inset-inline-end: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+}
+
+@media print {
+  .mia-scope .tv-header-root, .mia-scope .tv-head-spacer, .mia-scope .tv-foot, .mia-scope .tv-bnav, .mia-scope .tv-qd, .mia-scope .tv-wa,
+  .mia-scope .tv-toast, .mia-scope .tv-search-field, .mia-scope .tv-drawer, .mia-scope .tv-drawer-overlay { display: none !important; }
+}

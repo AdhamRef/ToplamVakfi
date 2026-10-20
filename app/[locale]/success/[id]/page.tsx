@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getDonationSummary } from "@/lib/minbar/donation";
-import { messagesFor } from "@/i18n/locale-messages";
-import { verseBlock } from "@/lib/minbar/quran";
 import { ensureDonationDocuments } from "@/lib/certificates/issue";
 import { successDocumentsFor } from "@/lib/certificates/documents";
 import { reconcileStripeDonation } from "@/lib/donations/reconcile-stripe-donation";
@@ -17,7 +15,7 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["cart", "certificates", "quran", "Recurring"] as const;
+const NAMESPACES = ["cart", "certificates", "Recurring", "tvPayment"] as const;
 
 /**
  * Never indexed: this page belongs to one donation and is reachable by its id.
@@ -30,7 +28,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 /**
- * Donation received  ported from `Minbar/نجاح التبرع.dc.html`.
+ * Donation received  `ToplamVakfi-design/Toplum Vakfı Thank You.dc.html`.
  *
  * This lives at `/success/{id}` rather than at the handoff's own slug because
  * that is the address the payment gateways redirect to on a successful 3-D
@@ -67,12 +65,9 @@ export default async function Success({ params, searchParams }: Props) {
   });
   const documents = await successDocumentsFor(id, issued);
 
-  /* Al-Baqarah 261, resolved on the server so it is in the HTML. */
-  const quran = messagesFor(locale).quran as Parameters<typeof verseBlock>[0];
-
   return (
     <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-      <SuccessPage donation={donation} verse={verseBlock(quran, "baqarah_261", locale)} documents={documents} accessToken={token ?? null} />
+      <SuccessPage donation={donation} documents={documents} accessToken={token ?? null} />
     </MinbarMessages>
   );
 }

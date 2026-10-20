@@ -3,6 +3,7 @@ import { Metadata } from "next";
 import MainPage from "./_components/MainPage";
 import { getServerBaseUrl } from "@/lib/server-base-url";
 import { SITE_URL } from "@/lib/seo";
+import { ORG } from "@/lib/minbar/org";
 
 
 /**
@@ -44,10 +45,10 @@ export async function generateMetadata({ params }: CategoryProps): Promise<Metad
   const category = await fetchCategoryData();
 
   return {
-    title: `${category.title} - منبر الأقصي`,
+    title: `${category.title} - ${ORG.legalName}`,
     description: category.description,
     openGraph: {
-      title: `${category.title} - منبر الأقصي`,
+      title: `${category.title} - ${ORG.legalName}`,
       description: category.description,
       images: [
         {
@@ -57,17 +58,17 @@ export async function generateMetadata({ params }: CategoryProps): Promise<Metad
           alt: category.title,
         },
       ],
-      url: `${SITE_URL}/${params.locale || "ar"}/blog/category/${(category as any)?.slug || params.categoryId}`,
+      url: `${SITE_URL}/${params.locale || "ar"}/blog/category/${(category as Category & { slug?: string }).slug || params.categoryId}`,
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${category.title} - منبر الأقصي`,
+      title: `${category.title} - ${ORG.legalName}`,
       description: category.description,
       images: [category.image || "/default-category-bg.jpg"],
     },
     alternates: {
-      canonical: `${SITE_URL}/${params.locale || "ar"}/blog/category/${(category as any)?.slug || params.categoryId}`,
+      canonical: `${SITE_URL}/${params.locale || "ar"}/blog/category/${(category as Category & { slug?: string }).slug || params.categoryId}`,
     },
   };
 }

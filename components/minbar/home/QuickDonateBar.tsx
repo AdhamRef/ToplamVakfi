@@ -86,6 +86,7 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
   const t = useTranslations("common");
   const tHome = useTranslations("homepage");
   const tNav = useTranslations("navigation");
+  const tRing = useTranslations("tvHome.ring");
   const { format, currency: selectedCurrency, symbol } = useMinbarMoney();
   const dir = (LOCALES as Record<string, { direction?: "rtl" | "ltr" }>)[locale]?.direction ?? "rtl";
 
@@ -212,7 +213,7 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
      page's own tree. */
   const destinationSelect = (id: string) => (
     <SelectPrimitive.Root value={destination} onValueChange={setDestination} dir={dir}>
-      <SelectPrimitive.Trigger id={`${id}-destination`} className="mia-sel-trigger tv-ring-sel" aria-label={tHome("projectSelectLabel")}>
+      <SelectPrimitive.Trigger id={`${id}-destination`} className="mia-sel-trigger tv-ring-sel" aria-label={tRing("destLabel")}>
         <SelectPrimitive.Value>{destinationLabel}</SelectPrimitive.Value>
         <SelectPrimitive.Icon className="mia-sel-icon">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -274,7 +275,8 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
       </svg>
 
       <div className="tv-ring-disc">
-        <h2 id="quick-title" className="tv-ring-title">{t("quickDonate")}</h2>
+        <h2 id="quick-title" className="tv-ring-title">{tRing("title")}</h2>
+        <span className="tv-ring-sub">{tRing("sub")}</span>
 
         <div className="tv-ring-step">
           {stepButton(-1)}
@@ -283,7 +285,7 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
         </div>
 
         {hasFrequencies ? (
-          <div className="tv-ring-freq" role="group" aria-label={t("frequency")}>
+          <div className="tv-ring-freq" role="group" aria-label={tRing("freqLabel")}>
             {config.frequencies.map((f) => (
               <button key={f} type="button" data-on={freq === f ? "true" : "false"} aria-pressed={freq === f} onClick={() => setFreq(f)}>
                 {t(FREQ_KEY[f])}
@@ -329,7 +331,7 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
 
         <button type="button" className="tv-ring-go" onClick={submit} disabled={!canGive}>
           <Heart />
-          {t("donateNow")}
+          {tRing("go")}
         </button>
       </div>
     </section>

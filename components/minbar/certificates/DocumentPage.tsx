@@ -4,8 +4,13 @@ import type { ReactNode } from "react";
 
 /**
  * The standalone page around one document  the sheet, the print rules from
- * its handoff file, and the `.no-print` action row beneath it (save as PDF,
- * print, back). The buttons never appear in print or in the PDF.
+ * its handoff file, and the `.no-print` toolbar (save as PDF, print, back).
+ * The buttons never appear in print or in the PDF.
+ *
+ * Laid out as `ToplamVakfi-design/Toplum Vakfı Certificate.dc.html`
+ * (`.cert-stage`): a pale stage, the toolbar above the sheet with the primary
+ * action as the gradient pill and the rest as white pills, and the print hint
+ * beneath the sheet.
  *
  * The site shell (header, footer, quick-donation dock) is hidden in print so
  * the page prints the sheet alone, as the handoff files do when opened on
@@ -26,7 +31,7 @@ export interface DocumentPageProps {
   /** Extra `@media print` CSS: the `@page` size and the sheet's print size. */
   printCss: string;
   actions: DocumentAction[];
-  /** Optional note above the actions (e.g. a preview warning). */
+  /** Optional note beneath the sheet (`.cert-hint`). */
   note?: string;
   children: ReactNode;
 }
@@ -55,35 +60,32 @@ const SHELL_PRINT_CSS = `
 
 export default function DocumentPage({ printCss, actions, note, children }: DocumentPageProps) {
   return (
-    <div className="mia-doc-wrap" style={{ minHeight: "60vh", padding: "28px 20px 44px", background: "var(--sand, #EAF3F9)" }}>
+    <div className="mia-doc-wrap gf-doc-stage">
       <style dangerouslySetInnerHTML={{ __html: SHELL_PRINT_CSS + printCss }} />
-      {children}
 
-      {note ? (
-        <p className="no-print" style={{ margin: "18px auto 0", maxWidth: 720, textAlign: "center", fontSize: 13, color: "var(--muted, #5D7187)" }}>{note}</p>
-      ) : null}
-
-      <div className="no-print" style={{ display: "flex", justifyContent: "center", gap: 12, flexWrap: "wrap", paddingTop: 26 }}>
+      <div className="no-print gf-doc-toolbar">
         {actions.map((action) => {
-          const style = action.primary
-            ? { display: "inline-flex", alignItems: "center", gap: 9, height: 48, padding: "0 26px", border: 0, borderRadius: 8, background: "var(--gold, #00A2E0)", color: "var(--deep, #062442)", fontFamily: "inherit", fontSize: 14, fontWeight: 900, cursor: "pointer", whiteSpace: "nowrap" as const, textDecoration: "none" }
-            : { display: "inline-flex", alignItems: "center", gap: 9, height: 48, padding: "0 24px", borderRadius: 8, border: "1px solid rgba(6,36,66,.16)", background: "#fff", fontFamily: "inherit", fontSize: 14, fontWeight: 800, color: "var(--deep, #062442)", cursor: "pointer", whiteSpace: "nowrap" as const, textDecoration: "none" };
+          const className = action.primary ? "gf-doc-btn is-primary" : "gf-doc-btn";
           if (action.kind === "print") {
             return (
-              <button key={action.label} type="button" onClick={() => window.print()} style={style}>
+              <button key={action.label} type="button" onClick={() => window.print()} className={className}>
                 {PrintIcon}
                 {action.label}
               </button>
             );
           }
           return (
-            <a key={action.label} href={action.href} download={action.download ? "" : undefined} style={style}>
+            <a key={action.label} href={action.href} download={action.download ? "" : undefined} className={className}>
               {action.download ? DownloadIcon : null}
               {action.label}
             </a>
           );
         })}
       </div>
+
+      {children}
+
+      {note ? <p className="no-print gf-doc-hint">{note}</p> : null}
     </div>
   );
 }

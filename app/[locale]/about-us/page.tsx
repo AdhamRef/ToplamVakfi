@@ -10,25 +10,20 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["about", "homepage"] as const;
+const NAMESPACES = ["about"] as const;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "about" });
   return buildPageMetadata(locale, {
     title: t("heroTitle"),
-    description: t("heroSubtitle"),
+    description: t("introText"),
     path: `/${slugFor("about", locale)}`,
   });
 }
 
-/**
- * About us  ported from `Minbar/من نحن.dc.html`.
- *
- * `homepage` rides along for the two closing banners, which the handoff
- * places at the foot of this page as it does on projects and the home page.
- */
-export default async function About({ params }: Props) {
+/** About us  `ToplamVakfi-design/Toplum Vakfı About.dc.html`. */
+export default async function Page({ params }: Props) {
   const { locale } = await params;
 
   return (

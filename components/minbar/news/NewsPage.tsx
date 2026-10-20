@@ -4,24 +4,21 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
 import type { MinbarArticle } from "@/lib/minbar/posts";
-import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
-import TravelBanner from "@/components/minbar/banners/TravelBanner";
 import { NoResults } from "@/components/minbar/states/ContentStates";
-import { EdArrow, EdBanner } from "@/components/minbar/blog/Editorial";
+import { EdBanner, EdFeatureCard } from "@/components/minbar/blog/Editorial";
 
 /**
- * The newsroom  laid out after `ToplamVakfi-design/Toplum Vakfı News.dc.html`
- * (styles in `styles/minbar/pages/blog.css`, `ed-` classes).
+ * The newsroom  `ToplamVakfi-design/Toplum Vakfı News.dc.html` (styles in
+ * `styles/minbar/pages/blog.css`, `ed-` classes).
  *
- * The photo banner, then the newest item as the design's featured card, then
- * the design's dated list: the date in its own column, the headline and its
- * lead beside it, a hairline between rows. News is read newest-first, and the
- * date is the point.
+ * The photo banner (الأخبار والشراكات and its lead), "مقالات ومشاريع مميزة"
+ * with the newest item as the design's single feature card, then "آخر
+ * الأخبار": the dated list  the date in its own column, the headline and its
+ * lead beside it, a hairline between rows  grouped under a heading per year
+ * as the design groups its archive.
  *
- * These are real published posts filed under the newsroom category, each
- * carrying its own publication date and linking to the same article page the
- * blog links to. The design's rows have no picture; ours keep the cover each
- * item already showed, as a small thumbnail at the row's end.
+ * These are the real published posts filed under the newsroom category, each
+ * with its own publication date, linking to the article page.
  */
 
 export interface NewsPageProps {
@@ -30,76 +27,77 @@ export interface NewsPageProps {
 
 export default function NewsPage({ items }: NewsPageProps) {
   const locale = useLocale();
-  const tCommon = useTranslations("common");
-  const tHome = useTranslations("homepage");
+  const t = useTranslations("tvNews");
 
-  /* Dates are formatted for the reader's language, so an Arabic page shows an
-     Arabic month name and a Japanese page a Japanese one. */
+  /* Dates are formatted for the reader's language. */
   const dateFormat = new Intl.DateTimeFormat(locale, { year: "numeric", month: "long", day: "numeric" });
+  const yearFormat = new Intl.DateTimeFormat(locale, { year: "numeric" });
 
   const hrefOf = (item: MinbarArticle) => `${miaPath("blog", locale)}/${encodeURIComponent(item.slug)}`;
-  const [lead, ...rest] = items;
+  const [lead] = items;
+
+  /* Newest first, grouped by year in that order. */
+  const groups: Array<{ key: string; label: string; items: MinbarArticle[] }> = [];
+  for (const item of items) {
+    const date = new Date(item.createdAt);
+    const key = String(date.getFullYear());
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) last.items.push(item);
+    else groups.push({ key, label: t("groupYear", { year: yearFormat.format(date) }), items: [item] });
+  }
 
   return (
     <div className="news-page ed-page">
-      <EdBanner title={tCommon("newsTitle")} lead={tCommon("newsLead")} />
+      <EdBanner title={t("title")} lead={t("lead")} />
 
       <section className="ed-main">
         <div className="ed-wrap">
           {lead ? (
             <div className="ed-section">
-              <Link href={hrefOf(lead)} className="ed-card ed-feature">
-                <span className="ed-media">
-                  {lead.cover ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- covers are arbitrary CMS URLs, not a known-host set
-                    <img src={lead.cover} alt="" decoding="async" />
-                  ) : null}
-                  {lead.category ? <span className="ed-badge">{lead.category.name}</span> : null}
-                </span>
-                <span className="ed-body">
-                  <time className="ed-eyebrow" dateTime={lead.createdAt}>{dateFormat.format(new Date(lead.createdAt))}</time>
-                  <h3>{lead.title}</h3>
-                  {lead.excerpt ? <p className="ed-clamp">{lead.excerpt}</p> : null}
-                  <span className="ed-cta">
-                    {tHome("readNews")}
-                    <EdArrow />
-                  </span>
-                </span>
-              </Link>
+              <div className="ed-head">
+                <h2>{t("featuredTitle")}</h2>
+                <span>{t("featuredNote")}</span>
+              </div>
+              <div className="ed-featured">
+                <EdFeatureCard
+                  href={hrefOf(lead)}
+                  badge={lead.category?.name}
+                  title={lead.title}
+                  text={lead.excerpt}
+                  cta={t("readMore")}
+                />
+              </div>
             </div>
           ) : null}
 
-          {rest.length ? (
+          {items.length ? (
             <div className="ed-section">
               <div className="ed-head">
-                <h2>{tHome("allNews")}</h2>
+                <h2>{t("latestTitle")}</h2>
+                <span>{t("latestNote")}</span>
               </div>
-              <div className="ed-list">
-                {rest.map((item) => (
-                  <Link key={item.id} href={hrefOf(item)} className={`ed-row${item.cover ? "" : " ed-row--nothumb"}`}>
-                    <time dateTime={item.createdAt}>{dateFormat.format(new Date(item.createdAt))}</time>
-                    <span className="ed-row-copy">
-                      <b>{item.title}</b>
-                      {item.excerpt ? <span>{item.excerpt}</span> : null}
-                    </span>
-                    {item.cover ? (
-                      <span className="ed-row-thumb">
-                        {/* eslint-disable-next-line @next/next/no-img-element -- covers are arbitrary CMS URLs, not a known-host set */}
-                        <img src={item.cover} alt="" loading="lazy" decoding="async" />
-                      </span>
-                    ) : null}
-                  </Link>
+              <div className="ed-nlist">
+                {groups.map((group) => (
+                  <div key={group.key} style={{ display: "contents" }}>
+                    <div className="ed-ngroup">{group.label}</div>
+                    {group.items.map((item) => (
+                      <Link key={item.id} href={hrefOf(item)} className="ed-nrow">
+                        <time dateTime={item.createdAt}>{dateFormat.format(new Date(item.createdAt))}</time>
+                        <div>
+                          <h4>{item.title}</h4>
+                          {item.excerpt ? <p>{item.excerpt}</p> : null}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
                 ))}
               </div>
             </div>
-          ) : null}
-
-          {items.length === 0 ? <NoResults /> : null}
+          ) : (
+            <NoResults />
+          )}
         </div>
       </section>
-
-      <ZakatBanner />
-      <TravelBanner />
     </div>
   );
 }

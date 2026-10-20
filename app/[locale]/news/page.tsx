@@ -11,26 +11,23 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["homepage"] as const;
+const NAMESPACES = ["tvNews"] as const;
 
 /** News changes when an editor publishes, not per request. */
 export const revalidate = 60;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "common" });
+  const t = await getTranslations({ locale, namespace: "tvNews" });
   return buildPageMetadata(locale, {
-    title: t("newsTitle"),
-    description: t("newsLead"),
+    title: t("title"),
+    description: t("lead"),
     path: `/${slugFor("news", locale)}`,
   });
 }
 
 /**
- * The newsroom  ported from `Minbar/الأخبار.dc.html`.
- *
- * Its copy lives in the shell's `common` namespace, so only `homepage` is
- * added, for the two closing banners.
+ * The newsroom  `ToplamVakfi-design/Toplum Vakfı News.dc.html`.
  */
 export default async function News({ params }: Props) {
   const { locale } = await params;

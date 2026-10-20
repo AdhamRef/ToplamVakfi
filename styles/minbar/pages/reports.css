@@ -1,213 +1,203 @@
 /* Toplum Vakfi page layer: reports. Loaded after toplum.css (app/[locale]/layout.tsx); scoped under .mia-scope.
  *
- * Trust, account and legal pages, laid out on the inner-page system of
+ * Trust, account and legal pages, on the inner-page system of
  * `ToplamVakfi-design/toplum-inner.css`:
- *  - Achievements & reports  (`Toplum Vakfı Impact` + `… Transparency`)  .rpx-*
- *  - Donor account           (`Toplum Vakfı Profile`)                      .acx-*
- *  - Legal pages             (`… Terms`, `… Privacy Policy`, …)            .lgx-*
+ *  - Impact                  (`Toplum Vakfı Impact`)                     .tvi-*
+ *  - Reports & transparency  (`Toplum Vakfı Transparency`)               .tvt-*
+ *  - Donor account           (`Toplum Vakfı Profile`)                    .acx-*
+ *  - Legal pages             (`… Terms`, `… Privacy Policy`, …)          .lgx-*
  */
 
 /* ─────────────────────────────────────────────────────────────────────────────
- * Achievements & reports
+ * Shared inner banner (`.in-banner`) and Impact (`.im-*`, `.gp-*`, `.fg-*`)
  * ───────────────────────────────────────────────────────────────────────────── */
-.mia-scope .rpx-page { background: #f4f8fb; color: #062442; }
-.mia-scope .rpx-wrap { width: min(1240px, calc(100% - 40px)); margin: 0 auto; }
-.mia-scope .rpx-muted { color: #5d7187; }
+.mia-scope .tvi-page,
+.mia-scope .tvt-page { background: #f4f8fb; color: #062442; }
+.mia-scope .tvi-wrap { width: min(1240px, calc(100% - 40px)); margin: 0 auto; }
 
-/* Banner: field photograph, directional navy fade, wave into the page. */
-.mia-scope .rpx-banner {
+.mia-scope .tvi-banner {
+  --tvi-img: url("/toplum/hero-bg.webp");
   position: relative; isolation: isolate; overflow: hidden; color: #fff;
-  min-height: 420px; display: flex; align-items: center; padding: 64px 0 100px; background: #031a36;
+  min-height: 380px; display: flex; align-items: center; padding: 64px 0 92px; margin-bottom: -2px;
+  background: linear-gradient(270deg, rgba(3,26,54,.95) 0%, rgba(3,26,54,.84) 40%, rgba(3,26,54,.45) 72%, rgba(3,26,54,.2) 100%), var(--tvi-img) center / cover no-repeat, #031a36;
 }
-.mia-scope .rpx-banner-img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
-.mia-scope .rpx-banner-fade {
-  position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background:
-    linear-gradient(0deg, rgba(3,26,54,.6), rgba(3,26,54,0) 45%),
-    linear-gradient(270deg, rgba(3,26,54,.95) 0%, rgba(3,26,54,.84) 40%, rgba(3,26,54,.45) 72%, rgba(3,26,54,.2) 100%);
+[dir="ltr"] .mia-scope .tvi-banner,
+.mia-scope[dir="ltr"] .tvi-banner {
+  background: linear-gradient(90deg, rgba(3,26,54,.95) 0%, rgba(3,26,54,.84) 40%, rgba(3,26,54,.45) 72%, rgba(3,26,54,.2) 100%), var(--tvi-img) center / cover no-repeat, #031a36;
 }
-[dir="ltr"] .mia-scope .rpx-banner-fade {
-  background:
-    linear-gradient(0deg, rgba(3,26,54,.6), rgba(3,26,54,0) 45%),
-    linear-gradient(90deg, rgba(3,26,54,.95) 0%, rgba(3,26,54,.84) 40%, rgba(3,26,54,.45) 72%, rgba(3,26,54,.2) 100%);
+.mia-scope .tvi-banner::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(0deg, rgba(3,26,54,.6), rgba(3,26,54,0) 45%);
 }
-.mia-scope .rpx-banner::after {
+.mia-scope .tvi-banner::after {
   content: ""; position: absolute; inset-inline: 0; bottom: -1px; height: 70px; pointer-events: none;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 70' preserveAspectRatio='none'%3E%3Cpath fill='%23f4f8fb' d='M0 70V34C320 6 620 58 960 30S1300 4 1440 20v50Z'/%3E%3C/svg%3E") bottom / 100% 100% no-repeat;
 }
-.mia-scope .rpx-banner-in { position: relative; display: grid; gap: 14px; justify-items: start; }
-.mia-scope .rpx-banner-eyebrow { font-size: 12.5px; font-weight: 800; color: #cfe3f1; letter-spacing: .08em; }
-.mia-scope .rpx-banner-h1 {
-  position: relative; margin: 0; padding-bottom: 16px; color: #fff;
-  font-size: clamp(32px, 4.4vw, 58px); font-weight: 900; line-height: 1.18; letter-spacing: -.02em;
+.mia-scope .tvi-banner .tvi-wrap { position: relative; z-index: 1; }
+.mia-scope .tvi-crumb { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; font-size: 12.5px; color: #cfe3f1; }
+.mia-scope .tvi-crumb-item { display: inline-flex; align-items: center; gap: 8px; }
+.mia-scope .tvi-crumb a,
+.mia-scope .tvi-crumb [aria-current] { color: #cfe3f1; }
+.mia-scope .tvi-crumb a:hover { color: #fff; }
+.mia-scope .tvi-crumb-sep { opacity: .6; display: inline-block; }
+[dir="ltr"] .mia-scope .tvi-crumb-sep,
+.mia-scope[dir="ltr"] .tvi-crumb-sep { transform: scaleX(-1); }
+.mia-scope .tvi-banner h1 {
+  position: relative; margin: 0 0 14px; padding-bottom: 16px; color: #fff;
+  font-size: clamp(38px, 5vw, 62px); font-weight: 900; letter-spacing: -.8px; line-height: 1.08;
 }
-.mia-scope .rpx-banner-h1::after {
+.mia-scope .tvi-banner h1::after {
   content: ""; position: absolute; inset-inline-start: 0; bottom: 0; width: 64px; height: 4px; border-radius: 4px;
   background: linear-gradient(90deg, #1b6fe0, #27b8f2);
 }
-[dir="rtl"] .mia-scope .rpx-banner-h1::after { background: linear-gradient(270deg, #1b6fe0, #27b8f2); }
-.mia-scope .rpx-banner-lead { margin: 0; max-width: 56ch; color: #dbe9f3; font-size: 15.5px; line-height: 1.85; }
+.mia-scope .tvi-banner p { margin: 0; max-width: 56ch; color: #dbe9f3; font-size: 15.5px; line-height: 1.85; }
 
-/* Page body */
-.mia-scope .rpx-main { position: relative; background: #f4f8fb; padding: 26px 0 70px; }
-.mia-scope .rpx-sec { margin-top: 50px; }
-.mia-scope .rpx-sec--first { margin-top: 10px; }
-.mia-scope .rpx-head { display: grid; justify-items: start; margin-bottom: 18px; }
-.mia-scope .rpx-eyebrow { display: block; margin-bottom: 6px; color: #0077b3; font-size: 13px; font-weight: 800; }
-.mia-scope .rpx-h2 { margin: 0 0 6px; color: #062442; font-size: clamp(22px, 2.4vw, 28px); font-weight: 900; letter-spacing: -.3px; line-height: 1.35; }
-.mia-scope .rpx-h3 { margin: 30px 0 14px; color: #062442; font-size: 19px; font-weight: 900; }
-.mia-scope .rpx-sub { margin: 0; max-width: 64ch; color: #5d7187; font-size: 13.5px; line-height: 1.8; }
-.mia-scope .rpx-card {
-  background: #fff; border: 1px solid #e6eef3; border-radius: 16px; box-shadow: 0 12px 28px rgba(2,52,88,.07);
-}
-.mia-scope .rpx-ico {
-  display: grid; place-items: center; flex: 0 0 42px; width: 42px; height: 42px; border-radius: 50%;
-  background: #eaf5fc; color: #0077b3;
-}
-.mia-scope .rpx-pill {
-  display: inline-flex; align-items: center; gap: 5px; justify-self: start; min-height: 28px; padding: 0 11px; margin-top: 4px;
-  border-radius: 999px; border: 1px solid #e3edf4; background: #f7fbfe; color: #062442; font-size: 12px; font-weight: 700;
-}
+.mia-scope .tvi-main { position: relative; background: #f4f8fb; padding: 26px 0 70px; }
+.mia-scope .tvi-card { background: #fff; border-radius: 18px; box-shadow: 0 12px 30px rgba(2,52,88,.07); }
+.mia-scope .tvi-h2 { margin: 0 0 6px; color: #062442; font-size: clamp(22px, 2.4vw, 28px); font-weight: 900; letter-spacing: -.3px; line-height: 1.4; }
+.mia-scope .tvi-sub { margin: 0 0 18px; color: #5d7187; font-size: 13px; line-height: 1.8; }
+.mia-scope .tvi-sec { margin-top: 30px; }
+.mia-scope .tvi-sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+.mia-scope .tvi-sec-head .tvi-sub { margin: 0; }
+.mia-scope .tvi-script { font-family: "Aref Ruqaa", Cairo, serif; font-weight: 700; color: #0077b3; }
+.mia-scope .tvi-ico { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: #eaf5fc; color: #0077b3; }
+.mia-scope .tvi-ico svg { width: 19px; height: 19px; }
 
-/* Figure cards */
-.mia-scope .rpx-bigstats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.mia-scope .rpx-stat { display: grid; justify-items: center; gap: 6px; padding: 24px 16px; text-align: center; }
-.mia-scope .rpx-stat-num { display: block; color: #062442; font-size: clamp(26px, 3vw, 38px); font-weight: 900; line-height: 1.2; letter-spacing: -.02em; }
-.mia-scope .rpx-stat-label { color: #5d7187; font-size: 13.5px; font-weight: 600; }
-.mia-scope .rpx-sectors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.mia-scope .rpx-sector { display: flex; align-items: flex-start; gap: 14px; padding: 18px; }
-.mia-scope .rpx-sector-label { color: #0077b3; font-size: 15.5px; font-weight: 900; line-height: 1.4; }
-.mia-scope .rpx-sector-num { color: #062442; font-size: 24px; font-weight: 900; line-height: 1.25; }
-
-/* Field panels */
-.mia-scope .rpx-scenes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 50px; }
-.mia-scope .rpx-scene {
-  position: relative; isolation: isolate; overflow: hidden; display: flex; align-items: flex-end;
-  min-height: 480px; border-radius: 22px; background: #0b2440; scroll-margin-top: 120px;
+/* World map */
+.mia-scope .tvi-map {
+  position: relative; overflow: hidden; width: 100%; aspect-ratio: 2 / 1; min-height: 300px; border-radius: 22px;
+  background: radial-gradient(circle at 55% 45%, #0b3a78, #031a36 70%);
 }
-.mia-scope .rpx-scene > img { z-index: -2; }
-.mia-scope .rpx-scene-fade {
-  position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(0deg, rgba(3,26,54,.95) 8%, rgba(3,26,54,.66) 50%, rgba(3,26,54,.12) 100%);
+.mia-scope .tvi-map-land,
+.mia-scope .tvi-map-routes { position: absolute; inset: 0; width: 100%; height: 100%; animation: tvi-fade 1s ease both; }
+.mia-scope .tvi-map-land { object-fit: contain; }
+.mia-scope .tvi-map-routes .tvi-arc { filter: drop-shadow(0 0 3px rgba(0,182,245,.6)); }
+/* Label size in map units: 10 units ≈ the design's 12px at full width; larger on phones, where the map is scaled down. */
+.mia-scope .tvi-map-label { font: 700 10px Cairo, Arial, sans-serif; }
+.mia-scope .tvi-map-label--sub { font-weight: 600; }
+@media (max-width: 700px) {
+  .mia-scope .tvi-map-label { font-size: 24px; }
+  .mia-scope .tvi-map-label--sub { display: none; }
 }
-.mia-scope .rpx-scene-copy { display: grid; gap: 8px; justify-items: start; padding: 28px 28px 26px; max-width: 60ch; }
-.mia-scope .rpx-scene-eyebrow { color: #7fd6f5; font-size: 12.5px; font-weight: 800; }
-.mia-scope .rpx-scene-num { display: block; color: #fff; font-size: clamp(44px, 5.4vw, 74px); font-weight: 900; line-height: 1.05; letter-spacing: -.03em; }
-.mia-scope .rpx-scene-num--accent { color: #7fd6f5; font-size: clamp(54px, 7vw, 104px); }
-.mia-scope .rpx-scene-label { color: #fff; font-size: clamp(18px, 1.8vw, 24px); font-weight: 900; line-height: 1.4; }
-.mia-scope .rpx-scene-text { margin: 0; color: #cfe3f1; font-size: 14.5px; line-height: 1.9; }
-.mia-scope .rpx-scene-chip {
-  display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; min-height: 30px; padding: 0 12px; border-radius: 999px;
-  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.22); color: #fff; font-size: 12px; font-weight: 800;
-}
-/* The feature panel runs full width; its copy sits against the side the data names. */
-.mia-scope .rpx-feature { scroll-margin-top: 120px; }
-.mia-scope .rpx-scene--feature { min-height: 520px; align-items: center; }
-.mia-scope .rpx-scene--feature .rpx-scene-copy { max-width: min(60%, 62ch); padding: 40px; }
-.mia-scope .rpx-scene--feature[data-side="end"] { justify-content: flex-end; }
-.mia-scope .rpx-scene--feature .rpx-scene-fade { background: linear-gradient(270deg, rgba(3,26,54,.95) 18%, rgba(3,26,54,.7) 55%, rgba(3,26,54,.25)); }
-[dir="ltr"] .mia-scope .rpx-scene--feature .rpx-scene-fade { background: linear-gradient(90deg, rgba(3,26,54,.95) 18%, rgba(3,26,54,.7) 55%, rgba(3,26,54,.25)); }
-.mia-scope .rpx-scene--feature[data-side="end"] .rpx-scene-fade { background: linear-gradient(90deg, rgba(3,26,54,.95) 18%, rgba(3,26,54,.7) 55%, rgba(3,26,54,.25)); }
-[dir="ltr"] .mia-scope .rpx-scene--feature[data-side="end"] .rpx-scene-fade { background: linear-gradient(270deg, rgba(3,26,54,.95) 18%, rgba(3,26,54,.7) 55%, rgba(3,26,54,.25)); }
-.mia-scope .rpx-qudsmetrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
-.mia-scope .rpx-metric { display: grid; gap: 6px; align-content: start; padding: 20px 22px; }
-
-/* Voices */
-.mia-scope .rpx-voice { display: grid; align-content: start; overflow: hidden; }
-.mia-scope .rpx-voice-img { position: relative; display: block; aspect-ratio: 16 / 10; background: #0b2440; }
-.mia-scope .rpx-voice-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.mia-scope .rpx-voice-img::after {
-  content: ""; position: absolute; inset-inline: 0; bottom: -1px; height: 30px; background: #fff; clip-path: ellipse(70% 100% at 50% 100%);
+.mia-scope .tvi-map-script { position: absolute; bottom: 18px; inset-inline: 0; text-align: center; color: #fff; font-size: 24px; }
+@keyframes tvi-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .mia-scope .tvi-map-land,
+  .mia-scope .tvi-map-routes { animation: none; }
 }
 
-/* Programmes (giving-path cards) */
-.mia-scope .rpx-programs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.mia-scope .rpx-program { display: flex; flex-direction: column; overflow: hidden; transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .2s ease, box-shadow .2s ease; }
-.mia-scope .rpx-program:hover { transform: translateY(-4px); box-shadow: 0 22px 44px rgba(2,52,88,.12); }
-.mia-scope .rpx-program-head {
-  position: relative; display: block; height: 104px;
-  background: radial-gradient(circle at 70% 20%, rgba(39,184,242,.32), transparent 55%), linear-gradient(120deg, #021428 0%, #082b50 60%, #04172e 100%);
+/* Selected indicators */
+.mia-scope .tvi-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.mia-scope .tvi-stat { padding: 20px 14px; text-align: center; }
+.mia-scope .tvi-stat .tvi-ico { margin: 0 auto 10px; }
+.mia-scope .tvi-stat b { display: block; color: #062442; font-size: 24px; font-weight: 900; unicode-bidi: isolate; }
+.mia-scope .tvi-stat > span:last-child { color: #5d7187; font-size: 12.5px; }
+
+/* Regions */
+.mia-scope .tvi-regions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+.mia-scope .tvi-region { padding: 18px; }
+.mia-scope .tvi-region h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; color: #062442; font-size: 16px; font-weight: 900; }
+.mia-scope .tvi-region h3 i {
+  display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #00a2e0, #0077b3); color: #fff; font-style: normal; font-size: 12px;
 }
-.mia-scope .rpx-program-head::after {
-  content: ""; position: absolute; inset-inline: 0; bottom: -1px; height: 34px; background: #fff; clip-path: ellipse(70% 100% at 50% 100%);
+.mia-scope .tvi-region div { display: flex; flex-wrap: wrap; gap: 6px; }
+.mia-scope .tvi-region span {
+  display: inline-flex; align-items: center; gap: 5px; min-height: 30px; padding: 0 11px; border-radius: 999px;
+  border: 1px solid #e3edf4; background: #f7fbfe; color: #062442; font-size: 12px; font-weight: 700;
 }
-.mia-scope .rpx-program-badge {
-  position: absolute; z-index: 1; bottom: -14px; inset-inline-start: calc(50% - 21px);
+.mia-scope .tvi-region span::before { content: ""; width: 6px; height: 6px; border-radius: 50%; border: 1.5px solid #00a2e0; }
+
+/* Giving paths */
+.mia-scope .tvi-paths { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.mia-scope .tvi-path { display: flex; flex-direction: column; overflow: hidden; color: #062442; transition: transform .2s; }
+.mia-scope .tvi-path:hover { color: #062442; transform: translateY(-3px); }
+.mia-scope .tvi-path-img { position: relative; aspect-ratio: 16 / 10; background: #0b2440 center / cover no-repeat; }
+.mia-scope .tvi-path-img::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 34px; background: #fff; clip-path: ellipse(70% 100% at 50% 100%); }
+.mia-scope .tvi-path-badge {
+  position: absolute; z-index: 1; bottom: -14px; left: 50%; transform: translateX(-50%);
   display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%;
   background: #fff; color: #0077b3; box-shadow: 0 6px 14px rgba(2,52,88,.14);
 }
-.mia-scope .rpx-program-body { display: flex; flex-direction: column; flex: 1; gap: 6px; padding: 24px 20px 18px; text-align: center; }
-.mia-scope .rpx-program-kpi { color: #0077b3; font-size: 12px; font-weight: 800; line-height: 1.6; }
-.mia-scope .rpx-program-title { color: #062442; font-size: 17px; font-weight: 900; line-height: 1.45; }
-.mia-scope .rpx-program-text { flex: 1; color: #5d7187; font-size: 13px; line-height: 1.85; }
-.mia-scope .rpx-program-foot { display: flex; align-items: center; gap: 12px; margin-top: 8px; padding-top: 12px; border-top: 1px solid #edf2f6; }
-.mia-scope .rpx-bar { flex: 1; display: block; height: 6px; border-radius: 999px; background: #e7f0f6; overflow: hidden; }
-.mia-scope .rpx-bar > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #00a2e0, #0077b3); }
-[dir="rtl"] .mia-scope .rpx-bar > span { background: linear-gradient(270deg, #00a2e0, #0077b3); }
+.mia-scope .tvi-path-badge svg { width: 18px; height: 18px; }
+.mia-scope .tvi-path-body { display: flex; flex-direction: column; flex: 1; padding: 22px 18px 16px; text-align: center; }
+.mia-scope .tvi-path-body small { color: #0077b3; font-size: 12px; font-weight: 800; }
+.mia-scope .tvi-path-body h3 { margin: 4px 0 8px; color: #062442; font-size: 16px; font-weight: 900; }
+.mia-scope .tvi-path-body p { flex: 1; margin: 0 0 14px; color: #5d7187; font-size: 12.5px; line-height: 1.8; }
+.mia-scope .tvi-path-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; font-weight: 800; }
+.mia-scope .tvi-path-foot > span { color: #062442; }
+.mia-scope .tvi-path-foot b { color: #0077b3; white-space: nowrap; }
 
-/* Timeline (the design's dotted-heading story card) */
-.mia-scope .rpx-timeline { padding: 10px 30px; }
-.mia-scope .rpx-milestone { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 16px; align-items: start; padding: 20px 0; }
-.mia-scope .rpx-milestone + .rpx-milestone { border-top: 1px solid #e3edf4; }
-.mia-scope .rpx-milestone-n {
-  display: grid; place-items: center; width: 34px; height: 34px; margin-top: 4px; border-radius: 50%;
-  background: linear-gradient(135deg, #00a2e0, #0077b3); color: #fff; font-size: 13px; font-weight: 900; unicode-bidi: isolate;
-  box-shadow: 0 0 0 4px #e3f2fb;
+/* From the field */
+.mia-scope .tvi-field { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.mia-scope .tvi-field-card { position: relative; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: #0b2440 center / cover no-repeat; }
+.mia-scope .tvi-field-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(3,26,54,.8), rgba(3,26,54,0) 52%); }
+.mia-scope .tvi-field-card span {
+  position: absolute; z-index: 1; bottom: 11px; inset-inline: 13px; display: flex; align-items: center; gap: 6px;
+  color: #fff; font-size: 12.5px; font-weight: 800; line-height: 1.5;
 }
+.mia-scope .tvi-field-card svg { width: 13px; height: 13px; flex-shrink: 0; }
 
-/* Reports (request note) */
-.mia-scope .rpx-reports-side { display: grid; justify-items: start; gap: 4px; }
-.mia-scope .rpx-ghost {
-  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 14px; padding: 0 20px;
-  border-radius: 999px; border: 1.5px solid #00a2e0; background: #fff; color: #0077b3; font-size: 13px; font-weight: 800; white-space: nowrap;
+/* The gradient pill (`.in-pill`) */
+.mia-scope .tvi-pill {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding-block: 0; padding-inline: 8px 20px; border-radius: 999px;
+  background: linear-gradient(90deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); color: #fff;
+  font-size: 13px; font-weight: 800; box-shadow: 0 8px 20px rgba(0,162,224,.3); transition: transform .2s;
 }
-.mia-scope .rpx-ghost:hover { background: #eaf6fd; color: #0077b3; }
-
-/* Closing band */
-.mia-scope .rpx-closing { position: relative; isolation: isolate; overflow: hidden; border-radius: 22px; background: #031a36; }
-.mia-scope .rpx-closing-img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; }
-.mia-scope .rpx-closing-fade {
-  position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(120deg, rgba(2,20,40,.94) 0%, rgba(8,43,80,.86) 60%, rgba(4,23,46,.94) 100%);
+.mia-scope .tvi-pill:hover { color: #fff; transform: translateY(-2px); }
+.mia-scope .tvi-pill i {
+  order: -1; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+  background: #fff; color: #0077b3; font-style: normal; font-size: 14px;
 }
 
 @media (max-width: 1100px) {
-  .mia-scope .rpx-programs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .mia-scope .rpx-sectors { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mia-scope .tvi-paths,
+  .mia-scope .tvi-field,
+  .mia-scope .tvi-regions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mia-scope .tvi-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
-@media (max-width: 960px) {
-  .mia-scope .rpx-scenes { grid-template-columns: minmax(0, 1fr); }
-  .mia-scope .rpx-scene { min-height: 420px; }
-  .mia-scope .rpx-scene--feature { align-items: flex-end; }
-  .mia-scope .rpx-scene--feature .rpx-scene-copy { max-width: 100%; padding: 28px; }
-  .mia-scope .rpx-scene--feature .rpx-scene-fade,
-  [dir="ltr"] .mia-scope .rpx-scene--feature .rpx-scene-fade,
-  .mia-scope .rpx-scene--feature[data-side="end"] .rpx-scene-fade,
-  [dir="ltr"] .mia-scope .rpx-scene--feature[data-side="end"] .rpx-scene-fade {
-    background: linear-gradient(0deg, rgba(3,26,54,.95) 8%, rgba(3,26,54,.66) 50%, rgba(3,26,54,.12) 100%);
-  }
-}
-@media (max-width: 760px) {
-  .mia-scope .rpx-qudsmetrics { grid-template-columns: minmax(0, 1fr); }
-  .mia-scope .rpx-timeline { padding: 4px 18px; }
+@media (max-width: 700px) {
+  /* aspect-ratio + min-height would widen the box past the viewport. */
+  .mia-scope .tvi-map { aspect-ratio: auto; height: 300px; min-height: 0; }
 }
 @media (max-width: 560px) {
-  .mia-scope .rpx-wrap { width: calc(100% - 32px); }
-  .mia-scope .rpx-banner { min-height: 0; padding: 40px 0 84px; }
-  .mia-scope .rpx-banner-fade,
-  [dir="ltr"] .mia-scope .rpx-banner-fade { background: linear-gradient(0deg, rgba(3,26,54,.95) 0%, rgba(3,26,54,.78) 55%, rgba(3,26,54,.5) 100%); }
-  .mia-scope .rpx-sec { margin-top: 36px; }
-  .mia-scope .rpx-scenes { margin-top: 36px; }
-  .mia-scope .rpx-programs,
-  .mia-scope .rpx-sectors { grid-template-columns: minmax(0, 1fr); }
-  .mia-scope .rpx-bigstats { gap: 10px; }
-  .mia-scope .rpx-stat { padding: 18px 10px; }
-  .mia-scope .rpx-scene { min-height: 380px; border-radius: 18px; }
-  .mia-scope .rpx-scene-copy,
-  .mia-scope .rpx-scene--feature .rpx-scene-copy { padding: 22px 18px; }
-  .mia-scope .rpx-closing { border-radius: 18px; }
-  /* The old dark page's section ids carried their own block padding here. */
-  .mia-scope .rpx-page :is(#totals, #voices, #programs, #timeline, #reports) { padding-block: 0 !important; }
+  .mia-scope .tvi-wrap { width: calc(100% - 32px); }
+  .mia-scope .tvi-banner {
+    min-height: 320px; padding: 48px 0 76px;
+    background: linear-gradient(0deg, rgba(3,26,54,.95) 0%, rgba(3,26,54,.78) 55%, rgba(3,26,54,.5) 100%), var(--tvi-img) center / cover no-repeat, #031a36 !important;
+  }
+  .mia-scope .tvi-paths,
+  .mia-scope .tvi-regions { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .tvi-field,
+  .mia-scope .tvi-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mia-scope .tvi-stats .tvi-stat:last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Reports & transparency  `Toplum Vakfı Transparency.dc.html`
+ * ───────────────────────────────────────────────────────────────────────────── */
+.mia-scope .tvt-container { width: min(1180px, calc(100% - 64px)); margin: 0 auto; }
+.mia-scope .tvt-trust { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 56px 0 20px; }
+.mia-scope .tvt-trust-item { padding: 24px; text-align: center; background: #fff; border: 1px solid #e6eef3; border-radius: 14px; }
+.mia-scope .tvt-trust-item svg { width: 30px; height: 30px; margin-bottom: 10px; color: #00a2e0; }
+.mia-scope .tvt-trust-item span { display: block; color: #062442; font-size: 12.5px; font-weight: 700; line-height: 1.7; }
+.mia-scope .tvt-docs { max-width: 720px; padding: 30px 0 70px; }
+.mia-scope .tvt-docs h2 { margin: 30px 0 14px; color: #062442; font-size: 19px; font-weight: 800; line-height: 1.5; }
+.mia-scope .tvt-docs p { margin: 0 0 16px; color: #33495e; font-size: 14.5px; line-height: 1.9; }
+.mia-scope .tvt-docs-list { display: flex; flex-direction: column; gap: 10px; }
+.mia-scope .tvt-doc {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 14px 18px;
+  background: #fff; border: 1px solid #e6eef3; border-radius: 12px; color: #0077b3; font-size: 13.5px; font-weight: 700;
+}
+.mia-scope .tvt-doc:hover { border-color: #00a2e0; color: #00a2e0; }
+.mia-scope .tvt-empty { padding: 30px 20px; text-align: center; color: #5d7187; font-size: 13px; line-height: 1.8; background: #fff; border: 1px dashed #d7e3ea; border-radius: 14px; }
+.mia-scope .tvt-empty svg { display: block; width: 30px; height: 30px; margin: 0 auto 10px; color: #b9c9d4; }
+.mia-scope .tvt-docs .tvt-updated { margin: 30px 0 0; text-align: center; color: #5d7187; font-size: 12px; }
+@media (max-width: 900px) { .mia-scope .tvt-trust { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) {
+  .mia-scope .tvt-container { width: calc(100% - 32px); }
+  .mia-scope .tvt-trust { gap: 12px; padding-top: 36px; }
+  .mia-scope .tvt-trust-item { padding: 18px 12px; }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -344,42 +334,19 @@
   .mia-scope .acx-row .acx-action { margin-inline-start: auto; }
 }
 
+
 /* ─────────────────────────────────────────────────────────────────────────────
  * Legal pages  `Toplum Vakfı Terms / Privacy Policy / Donation Agreement /
- * Refund Policy`: a 720px reading column on the page background. The contents
- * list is the design's white side menu; it is still dropped under 860px by
- * the rule in minbar.css, so the text comes first on a phone.
+ * Refund Policy`: one 720px reading column on the page background.
  * ───────────────────────────────────────────────────────────────────────────── */
-.mia-scope .lgx-page {
-  display: grid; grid-template-columns: 230px minmax(0, 720px); justify-content: center; gap: 40px; align-items: start;
-  max-width: 1040px; margin: 0 auto; padding: 60px 24px 80px; color: #062442;
-}
-.mia-scope .lgx-toc {
-  position: sticky; top: 122px; flex-direction: column; gap: 2px; padding: 10px;
-  background: #fff; border: 1px solid #e6eef3; border-radius: 16px; box-shadow: 0 10px 26px rgba(2,52,88,.07);
-}
-.mia-scope .lgx-toc-label { display: block; padding: 6px 12px 8px; color: #5d7187; font-size: 12px; font-weight: 800; }
-.mia-scope .lgx-toc-link {
-  display: flex; align-items: center; min-height: 42px; padding: 6px 12px; border-radius: 12px;
-  color: #062442; font-size: 13px; font-weight: 800; line-height: 1.5; border: 0;
-}
-.mia-scope .lgx-toc-link:hover { background: #f2f8fc; color: #0077b3; }
-.mia-scope .lgx-body { min-width: 0; }
-.mia-scope .lgx-h1 { margin: 0 0 20px; color: #062442; font-size: clamp(22px, 2.4vw, 26px); font-weight: 800; line-height: 1.45; }
-.mia-scope .lgx-sections { display: grid; gap: 4px; }
-.mia-scope .lgx-sec { scroll-margin-top: 130px; padding-top: 18px; }
-.mia-scope .lgx-h2 { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; color: #062442; font-size: 16px; font-weight: 800; line-height: 1.5; }
-.mia-scope .lgx-ico {
-  display: grid; place-items: center; flex: 0 0 30px; width: 30px; height: 30px; border-radius: 50%;
-  background: #eaf5fc; color: #0077b3;
-}
-.mia-scope .lgx-p { margin: 0; color: #33495e; font-size: 14px; line-height: 1.9; }
-.mia-scope .lgx-back {
-  display: inline-flex; align-items: center; gap: 6px; margin-top: 30px; min-height: 44px;
-  color: #0077b3; font-size: 13px; font-weight: 700;
-}
+.mia-scope .lgx-page { max-width: 720px; margin: 0 auto; padding: 60px 24px 80px; color: #062442; }
+.mia-scope .lgx-h1 { margin: 0 0 20px; color: #062442; font-size: 24px; font-weight: 800; line-height: 1.5; }
+.mia-scope .lgx-h2 { margin: 28px 0 10px; color: #062442; font-size: 16px; font-weight: 800; line-height: 1.6; scroll-margin-top: 130px; }
+.mia-scope .lgx-h2--divider { margin-top: 34px; padding-top: 24px; border-top: 1px solid #e3edf4; }
+.mia-scope .lgx-h3 { margin: 22px 0 8px; color: #062442; font-size: 18px; font-weight: 800; line-height: 1.6; }
+.mia-scope .lgx-p { margin: 0 0 14px; color: #33495e; font-size: 14px; line-height: 1.9; }
+.mia-scope .lgx-ul { margin: 0 0 14px; padding-inline-start: 20px; list-style: disc; }
+.mia-scope .lgx-ul li { color: #33495e; font-size: 14px; line-height: 1.9; }
+.mia-scope .lgx-back { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; margin-top: 16px; color: #0077b3; font-size: 13px; font-weight: 700; }
 .mia-scope .lgx-back:hover { color: #00a2e0; }
-[dir="ltr"] .mia-scope .lgx-back-arrow { display: inline-block; transform: scaleX(-1); }
-@media (max-width: 860px) {
-  .mia-scope .lgx-page { grid-template-columns: minmax(0, 720px); padding: 32px 16px 56px; }
-}
+@media (max-width: 560px) { .mia-scope .lgx-page { padding: 32px 16px 56px; } }

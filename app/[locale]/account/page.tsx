@@ -12,7 +12,7 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["account", "transferReceipt"] as const;
+const NAMESPACES = ["account", "transferReceipt", "tvPayment"] as const;
 
 /**
  * Never indexed: this page exists only for the donor signed in to it, and
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * The donor account  ported from `Minbar/حساب المتبرع.dc.html`.
+ * The donor account  `ToplamVakfi-design/Toplum Vakfı Profile.dc.html`.
  *
  * Signed-out visitors are sent to sign in rather than shown an empty account:
  * there is nothing on this page that means anything without a donor behind it.

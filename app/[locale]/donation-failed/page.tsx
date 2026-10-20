@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge";
 import BankAccountsBlock from "../bank-transfer/_components/BankAccountsBlock";
 import { restoreCheckoutAttempt } from "@/lib/minbar/cart";
 import { miaPath } from "@/lib/minbar/routes";
+import { CheckoutSteps } from "@/components/minbar/cart/CheckoutSteps";
 import {
   resolvePaymentError,
   type PaymentErrorKey,
@@ -263,34 +264,52 @@ export default function DonationFailedPage() {
     <main className="min-h-screen bg-[#f4f8fb]" dir={isRtl ? "rtl" : "ltr"}>
       <Toaster position="top-center" />
 
-      {/* ───────────────────────────── Hero ───────────────────────────────── */}
-      <section className="px-4 pt-8 sm:pt-10">
+      {/* ── The checkout bar: the payment step in red, "nothing was charged" ── */}
+      <section className="gf-status-bar px-4 pt-[26px]">
+        <CheckoutSteps
+          id="fail-steps"
+          maxWidth={768}
+          steps={[
+            { n: 1, label: t("steps.cart"), current: false, enabled: false, done: true },
+            { n: 2, label: t("steps.pay"), current: true, enabled: false, error: true },
+            { n: 3, label: t("steps.confirm"), current: false, enabled: false },
+          ]}
+          trailing={
+            <>
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <rect x="4" y="10" width="16" height="10" rx="2" />
+                <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+              </svg>
+              {t("notCharged")}
+            </>
+          }
+        />
+      </section>
+
+      {/* ── Hero: the design's white panel ── */}
+      <section className="px-4 pt-5">
         <div className="max-w-3xl mx-auto rounded-[18px] border border-[#e6eef3] bg-white px-5 py-8 sm:p-[34px] text-center shadow-[0_16px_34px_rgba(2,52,88,.08)]">
           <div className="inline-flex items-center justify-center w-[68px] h-[68px] rounded-full bg-[#fdeaea] text-[#d64545] mb-[18px]">
             <AlertCircle className="w-8 h-8" strokeWidth={2} />
           </div>
-          <div>
-            <Badge className="rounded-full border-transparent bg-[#fdeaea] hover:bg-[#fdeaea] text-[#b3391f] font-extrabold text-[12px] px-3 py-1 mb-3">
-              {t("badge")}
-            </Badge>
-          </div>
-          <h1 className="text-[21px] sm:text-[24px] font-extrabold text-[#062442] leading-snug mb-2.5">
+          <h1 className="text-[19px] font-extrabold text-[#062442] leading-snug mb-2.5">
             {t("title")}
           </h1>
-          <p className="text-[#5d7187] text-[13.5px] sm:text-[14.5px] max-w-xl mx-auto leading-[1.85]">
+          <p className="text-[#5d7187] text-[13.5px] max-w-xl mx-auto leading-[1.85]">
             {t("description")}
           </p>
-          <p className="mt-2 inline-flex items-center justify-center gap-1.5 text-[#5d7187] text-[12.5px] font-bold">
-            <ShieldCheck className="w-4 h-4 text-[#00a2e0] shrink-0" />
-            {t("reassurance")}
-          </p>
-          <div>
+          <div className="mt-[26px] flex flex-wrap justify-center gap-2.5">
             <a
               href="#donate-again"
-              className="mt-6 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-[linear-gradient(90deg,#1b6fe0_0%,#1ca3ec_72%,#27b8f2_100%)] px-7 text-sm font-extrabold text-white shadow-[0_8px_20px_rgba(0,162,224,.3)] transition-transform hover:-translate-y-0.5"
+              className="flex-1 min-w-[130px] inline-flex min-h-[44px] items-center justify-center rounded-full bg-[linear-gradient(90deg,#1b6fe0_0%,#1ca3ec_72%,#27b8f2_100%)] px-[26px] py-[13px] text-[13.5px] font-extrabold text-white shadow-[0_8px_20px_rgba(0,162,224,.3)] transition-transform hover:-translate-y-0.5"
             >
-              <ShieldCheck className="w-4 h-4" />
               {t("alternate.cta")}
+            </a>
+            <a
+              href={miaPath("contact", locale)}
+              className="flex-1 min-w-[130px] inline-flex min-h-[44px] items-center justify-center rounded-full border-[1.5px] border-[#e2eaf0] px-[26px] py-[13px] text-[13.5px] font-extrabold text-[#5d7187] transition-transform hover:-translate-y-0.5"
+            >
+              {t("contactSupport")}
             </a>
           </div>
         </div>

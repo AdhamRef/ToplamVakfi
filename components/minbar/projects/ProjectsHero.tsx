@@ -26,8 +26,8 @@ export default function ProjectsHero({ slides }: { slides: ProjectSlide[] }) {
   const locale = useLocale();
   const rtl = localeDirection(locale) === "rtl";
   const t = useTranslations("common");
-  // "View project"  the shell bundle's `projects` namespace carries the label.
-  const tProjects = useTranslations("projects");
+  // "عرض المشروع"  the shell bundle carries `projects`.
+  const tProjects = useTranslations("projects.tv");
 
   const [index, setIndex] = useState(0);
   const startX = useRef<number | null>(null);

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { LOCALE_SEO, buildPageMetadata } from "@/lib/seo";
-import type { Locale } from "@/lib/seo";
+import { getTranslations } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/seo";
 import { listProjects, listSlides } from "@/lib/minbar/projects";
-import { slugFor } from "@/lib/minbar/routes";
+import { miaPath, slugFor } from "@/lib/minbar/routes";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import ProjectsPage from "@/components/minbar/projects/ProjectsPage";
 import type { ProjectSlide } from "@/components/minbar/projects/ProjectsHero";
@@ -11,44 +11,40 @@ interface Props {
   params: Promise<{ locale: string }>;
 }
 
-/** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["projects", "homepage", "quran"] as const;
+/** The page's own namespaces, on top of the shell bundle (`projects` is in it). */
+const NAMESPACES = [] as const;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const seo = LOCALE_SEO[locale as Locale] ?? LOCALE_SEO.en;
+  const t = await getTranslations({ locale, namespace: "projects.tv" });
   return buildPageMetadata(locale, {
-    title: seo.campaigns.title,
-    description: seo.campaigns.description,
+    title: t("metaTitle"),
+    description: t("metaDescription"),
     path: `/${slugFor("projects", locale)}`,
-    keywords: seo.keywords,
   });
 }
 
 /**
- * Projects catalogue  ported from `Minbar/المشاريع.dc.html`.
+ * Projects catalogue  `ToplamVakfi-design/Toplum Vakfı Projects.dc.html`.
  *
- * Rendered on the server so the full project list is in the first response:
- * `PRODUCTION_SEO_CONTRACT.md` marks this page and its detail pages as
- * indexable, and a client-only fetch would leave the copy out of the index.
+ * Rendered on the server so the full project list is in the first response
+ * (the page and its detail pages are indexable).
  */
 export default async function Projects({ params }: Props) {
   const { locale } = await params;
   const [projects, curated] = await Promise.all([listProjects(locale), listSlides(locale)]);
 
-  /* The carousel is the one the dashboard curates  an editor picks the
-     images, the wording and where each slide leads. With none published it
-     falls back to the highest-priority projects that have imagery: a slide
-     with no photograph is a dark rectangle, which is worse than one slide
-     fewer. */
+  /* The carousel is the one the dashboard curates. With none published it
+     falls back to the first projects that have imagery, each slide leading to
+     its project as in the design ("عرض المشروع"). */
   const slides: ProjectSlide[] = curated.length
     ? curated
         .filter((slide) => slide.image)
         .map((slide) => ({ title: slide.title, image: slide.image, href: slide.href || "#all" }))
     : projects
         .filter((p) => p.image)
-        .slice(0, 4)
-        .map((p) => ({ title: p.title, image: p.image, href: "#all" }));
+        .slice(0, 3)
+        .map((p) => ({ title: p.title, image: p.image, href: miaPath("projectDetail", locale, p.slug) }));
 
   return (
     <MinbarMessages locale={locale} namespaces={NAMESPACES}>

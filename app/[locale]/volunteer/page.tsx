@@ -10,7 +10,7 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["volunteer", "contact", "partner", "homepage"] as const;
+const NAMESPACES = ["about", "volunteer"] as const;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -22,14 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-/**
- * Volunteer with us  ported from `Minbar/تطوع معنا.dc.html`.
- *
- * The form borrows its field labels from `contact` and its send button from
- * `partner` rather than duplicating strings that are already reviewed in 19
- * languages; `homepage` rides along for the two closing banners.
- */
-export default async function Volunteer({ params }: Props) {
+/** Volunteer with us  no design of its own; built on the shared inner-page system. */
+export default async function Page({ params }: Props) {
   const { locale } = await params;
 
   return (

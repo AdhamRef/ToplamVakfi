@@ -1,42 +1,61 @@
 import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
-import { getServerSession } from "next-auth";
+import { preload } from "react-dom";
 import { LOCALE_SEO, buildPageMetadata, SITE_URL } from "@/lib/seo";
 import type { Locale } from "@/lib/seo";
-import { authOptions } from "@/app/api/auth/[...nextauth]/options";
-import { listProjects } from "@/lib/minbar/projects";
+import { listProjects, type MinbarProject } from "@/lib/minbar/projects";
 import { readQuickDonation } from "@/lib/minbar/quick-donation-read";
-import { readHomeLayout, resolveHomeLists, visibleSections } from "@/lib/minbar/home-layout-read";
+import { getCategoryPageByTemplate } from "@/lib/minbar/category-page";
+import { readHomeLayout, resolveHomeLists, usedLists, visibleSections } from "@/lib/minbar/home-layout-read";
+import type { HomeZakatTarget } from "@/lib/minbar/home-content";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import HomePage from "@/components/minbar/home/HomePage";
 
 /**
- * Namespaces this page renders, on top of the shell bundle: its own copy, the
- * official impact figures' labels, and the verse strip (Al-Isra 1).
+ * Namespaces this page renders, on top of the shell bundle: the homepage
+ * copy (`tvHome`) and `homepage`, which the quick-donation disc still reads
+ * for its destination group labels.
  */
-const NAMESPACES = ["homepage", "achievements", "quran"] as const;
+const NAMESPACES = ["tvHome", "homepage"] as const;
 
 /**
- * Everything the homepage shows except the visitor's session, read together
- * and cached per locale for a minute. Uncached, these ~15 MongoDB queries ran
- * on every visit and kept the server ~1.7 s from sending the first byte
- * (PageSpeed: LCP breakdown, "time to first byte"). Dashboard edits, raised
- * amounts and new posts show within 60 s. All of it is plain JSON (strings,
- * numbers), which `unstable_cache` requires.
+ * Where the «الزكاة» tab gives: the zakat category's donation box, as the
+ * zakat page resolves it (`ZakatPage.addZakat`). Null when the dashboard has
+ * bound no zakat category, and the tab then sends the donor to the zakat page.
+ */
+async function readZakatTarget(locale: string): Promise<HomeZakatTarget> {
+  try {
+    const category = await getCategoryPageByTemplate("zakat", locale);
+    if (!category) return null;
+    if (category.donateTarget?.kind === "campaign") return { projectId: category.donateTarget.slug };
+    if (category.donateTarget?.kind === "category") return { categoryId: category.donateTarget.id };
+    return { categoryId: category.id };
+  } catch (e) {
+    console.error("home readZakatTarget:", e);
+    return null;
+  }
+}
+
+/**
+ * Everything the homepage shows, read together and cached per locale for a
+ * minute. Uncached, these MongoDB queries ran on every visit and kept the
+ * server from sending the first byte (PageSpeed: LCP breakdown, "time to
+ * first byte"). Dashboard edits, raised amounts and new campaigns show within
+ * 60 s. All of it is plain JSON, which `unstable_cache` requires.
  */
 const cachedHomeData = unstable_cache(
   async (locale: string) => {
-    const projectsRead = listProjects(locale);
-    const layoutRead = readHomeLayout();
-    const [, quick, layout, lists] = await Promise.all([
-      projectsRead,
+    const layout = await readHomeLayout();
+    const projectsRead = usedLists(layout).has("projects") ? listProjects(locale) : Promise.resolve([] as MinbarProject[]);
+    const ways = visibleSections(layout).includes("ways");
+    const [quick, lists, zakat] = await Promise.all([
       readQuickDonation(),
-      layoutRead,
-      layoutRead.then((l) => resolveHomeLists(locale, l, projectsRead)),
+      resolveHomeLists(locale, layout, projectsRead),
+      ways ? readZakatTarget(locale) : Promise.resolve(null),
     ]);
-    return { quick, layout, lists };
+    return { quick, layout, lists, zakat };
   },
-  ["minbar-home-data"],
+  ["tv-home-data"],
   { revalidate: 60, tags: ["minbar-home"] }
 );
 
@@ -56,27 +75,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * Homepage  the Minbar Al-Aqsa design, ported from
- * `Minbar/الصفحة الرئيسية.dc.html`.
+ * Homepage  `ToplamVakfi-design/Toplum Vakfı Homepage.dc.html`.
  *
- * Projects are read here rather than fetched from the client so the urgent rail
- * and the quick-donation bar's destination list are in the first HTML response.
- * `PRODUCTION_SEO_CONTRACT.md` requires server-rendered metadata and content 
- * a client-only fetch would leave the homepage's project copy out of the index.
+ * Every section's content is read here, in parallel, so the whole homepage is
+ * in the first HTML response rather than filled in by client fetches
+ * (`PRODUCTION_SEO_CONTRACT.md` requires server-rendered content). Which
+ * sections show, in what order, and which projects «طرق العطاء» lists are the
+ * dashboard's homepage layout (`lib/minbar/home-layout.ts`); its defaults are
+ * the design.
  */
 export default async function Home({ params }: Props) {
   const { locale } = await params;
-
-  // Every section's content is read here, in parallel, so the whole homepage is
-  // in the first HTML response rather than filled in by client fetches. Which
-  // sections show, in what order, and which items each list picks are the
-  // dashboard's homepage layout (`lib/minbar/home-layout.ts`); its defaults are
-  // the approved design. The quick-donation select lists whatever its own
-  // settings allow, which may be every project.
-  const [{ quick, layout, lists }, session] = await Promise.all([
-    cachedHomeData(locale),
-    getServerSession(authOptions),
-  ]);
+  const { quick, layout, lists, zakat } = await cachedHomeData(locale);
+  /* The hero's first photograph is the Largest Contentful Paint. The sizes
+     mirror `.th-slide--hero` in home.css: the 800px copy up to 760px wide
+     (a 3× phone included), the full one above. */
+  preload("/toplum/hero-bg.webp", { as: "image", fetchPriority: "high", imageSrcSet: "/toplum/hero-bg-800.webp 800w, /toplum/hero-bg.webp 1600w", imageSizes: "(max-width: 760px) 260px, 100vw" });
 
   const organisationSchema = {
     "@context": "https://schema.org",
@@ -89,9 +103,8 @@ export default async function Home({ params }: Props) {
 
   return (
     <>
-      {/* `PRODUCTION_SEO_CONTRACT.md` § Structured Data: Organization + WebSite
-          on the homepage only, and nothing describing data the page does not
-          actually show. */}
+      {/* `PRODUCTION_SEO_CONTRACT.md` § Structured Data: Organization on the
+          homepage only, and nothing describing data the page does not show. */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organisationSchema) }}
@@ -100,12 +113,11 @@ export default async function Home({ params }: Props) {
         <HomePage
           sections={visibleSections(layout)}
           lists={lists}
-          /* QuickDonateBar's markup is commented out, so it renders nothing, yet
-             every project was serialized into the page for it (~90 KB, a third
-             of the inline payload, parsed during hydration). Pass `allProjects`
-             again when the bar is restored. */
+          /* The disc lists only the generic destinations unless the
+             dashboard allows projects; every project serialized into the page
+             for it cost ~90 KB of inline payload, so none is passed. */
           quick={{ config: quick, projects: [] }}
-          signedIn={!!session?.user}
+          zakat={zakat}
         />
       </MinbarMessages>
     </>

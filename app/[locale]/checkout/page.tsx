@@ -16,7 +16,7 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["cart", "validation", "Recurring", "TeamSupport"] as const;
+const NAMESPACES = ["cart", "validation", "Recurring", "TeamSupport", "tvPayment"] as const;
 
 /**
  * Payment details are per-donor and must never be indexed

@@ -22,8 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-/** Become a partner  ported from `Minbar/كن شريكا.dc.html`. */
-export default async function Partner({ params }: Props) {
+/** Partnerships  `ToplamVakfi-design/Toplum Vakfı Partners.dc.html` (plus the partnership lead form). */
+export default async function Page({ params }: Props) {
   const { locale } = await params;
 
   return (

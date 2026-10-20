@@ -7,7 +7,7 @@ import { CategoryDonateBox, CategoryHeroFilm, CategoryProjectsGrid, CategoryStat
 
 /**
  * A category's landing page  ported from
- * `Minbar/مشروع ترميم منازل القدس.dc.html`.
+ * the Toplum programme template (`ToplamVakfi-design/Toplum Vakfı Program - Aytam.dc.html`).
  *
  * Every category is published this way: a hero with the programme's film, a
  * navy band of figures over a progress bar, its campaigns as the site's own
@@ -23,7 +23,7 @@ import { CategoryDonateBox, CategoryHeroFilm, CategoryProjectsGrid, CategoryStat
 
 export default function CategoryLandingPage({ page }: { page: CategoryPageContent }) {
   const t = useTranslations("common");
-  const tCampaigns = useTranslations("CampaignsPage");
+  const tLanding = useTranslations("CategoryLanding");
 
   return (
     /* Laid out as `ToplamVakfi-design/Toplum Vakfı Program - Aytam.dc.html`:
@@ -60,7 +60,7 @@ export default function CategoryLandingPage({ page }: { page: CategoryPageConten
                 {t("donateNow")}
               </a>
               <a href="#category-projects" className="cat-ghost tv-ghost-dark">
-                {page.ctaLabel || page.projectsTitle || tCampaigns("allCampaigns")}
+                {page.ctaLabel || page.projectsTitle || tLanding("allProjects")}
               </a>
             </div>
           </div>

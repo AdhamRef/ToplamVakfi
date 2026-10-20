@@ -24,7 +24,6 @@ import { MarketingRuntime } from "@/components/MarketingRuntime";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
-import { listCategories, type NavCategory } from "@/lib/minbar/categories";
 import "@/styles/minbar/minbar.css";
 import "@/styles/minbar/locale-fonts.css";
 import "@/styles/minbar/toplum.css";
@@ -124,20 +123,11 @@ export default async function Rootlayout({
   // , per PERFORMANCE_BUDGET.md. The legacy namespaces stay
   // here while the pre-Minbar routes are still served through this layout.
   const messages = pickNamespaces(locale, [...SHELL_NAMESPACES, ...LEGACY_NAMESPACES]);
-  const tagline = String(
-    (pickNamespaces(locale, ["homepage"]).homepage as Record<string, string> | undefined)
-      ?.orgDescription ?? ""
-  );
   // Direction comes from the locale catalog, not a hand-written check  Urdu is
   // RTL too, and the previous `locale === "ar"` test silently rendered it LTR.
   const dir = localeDirection(locale);
   // Drives where the header's account icon points (`[AUTH-INTEGRATION]`).
-  // Categories feed the header's projects dropdown and the footer's band.
-  const [session, categories] = await Promise.all([
-    getServerSession(authOptions),
-    listCategories(locale),
-  ]);
-  const navCategories: NavCategory[] = categories.map(({ id, href, name, image, projectCount }) => ({ id, href, name, image, projectCount }));
+  const session = await getServerSession(authOptions);
   const localeFont = LOCALE_FONT_STYLESHEETS[locale];
 
   // Phones hide the hero pattern (styles/minbar/minbar.css), so only wider screens need it early.
@@ -163,18 +153,15 @@ export default async function Rootlayout({
             <SessionProvider>
               <PreferredLangSync />
               <ScrollToTop />
-              <Header signedIn={!!session?.user} isAdmin={session?.user?.role === "ADMIN"} categories={navCategories} />
-              <MobileBottomNav signedIn={!!session?.user} />
+              <Header signedIn={!!session?.user} isAdmin={session?.user?.role === "ADMIN"} />
+              <MobileBottomNav />
               {/* No top padding here: the header renders its own spacer, sized
                   from its measured height, because that height changes with the
                   language, the back button and the viewport. */}
               <main>{children}</main>
-              {/* The tagline is the footer's one string from the `homepage`
-                  namespace. Passing it in keeps a 10KB bundle out of the shell
-                  for the sake of a single sentence. */}
               {/* Hydrated in its own task, after the page above it. */}
               <Suspense fallback={null}>
-                <MinbarFooter tagline={tagline} categories={navCategories} />
+                <MinbarFooter />
               </Suspense>
               <QuickDonate />
               <CartReminder />

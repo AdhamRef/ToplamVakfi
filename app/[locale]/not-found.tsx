@@ -7,15 +7,12 @@ import StatusScreen from "@/components/minbar/states/StatusScreen";
 import { NotFoundIcon } from "@/components/minbar/states/StatusIcons";
 
 /**
- * 404  ported from `Minbar/صفحة غير موجودة.dc.html`.
+ * 404  `ToplamVakfi-design/Toplum Vakfı 404.dc.html`: the navy band, the
+ * code in large brand-blue figures, one line of explanation and one way home.
  *
  * Reached by `notFound()` from a route, or by any address that matches no page.
  * Next.js serves this with a real 404 status, which is what
  * `PRODUCTION_SEO_CONTRACT.md` requires  "لا soft-404".
- *
- * Exactly two exits, as the handoff specifies: home, and the projects
- * catalogue. Its note is that more choices scatter a lost visitor's decision
- * rather than help it.
  *
  * Two constraints shape how this file is written. Next renders the not-found
  * boundary **outside** the `[locale]` segment, so it has neither route params
@@ -39,19 +36,19 @@ async function currentLocale(): Promise<string> {
 export default async function NotFound() {
   const locale = await currentLocale();
   const messages = messagesFor(locale);
+  const tv = ((messages.tvPayment ?? {}) as Record<string, Record<string, string>>).notFound ?? {};
   const system = (messages.system ?? {}) as Record<string, string>;
-  const projects = (messages.projects ?? {}) as Record<string, string>;
 
   return (
-    <MinbarMessages locale={locale} namespaces={["system"]}>
+    <MinbarMessages locale={locale} namespaces={["system", "tvPayment"]}>
       <StatusScreen
         tone="neutral"
         icon={NotFoundIcon}
-        title={system.notFoundTitleFull}
-        lead={system.notFoundLead}
-        primary={{ label: system.backHomeCta, href: miaPath("home", locale) }}
-        secondary={{ label: projects.allProjects, href: miaPath("projects", locale) }}
-        animate
+        variant="dark"
+        code="404"
+        title={tv.title ?? system.notFoundTitleFull}
+        lead={tv.lead ?? system.notFoundLead}
+        primary={{ label: tv.home ?? system.backHomeCta, href: miaPath("home", locale) }}
       />
     </MinbarMessages>
   );

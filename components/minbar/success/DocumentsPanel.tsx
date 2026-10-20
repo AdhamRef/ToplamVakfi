@@ -28,26 +28,6 @@ const DownloadIcon = (
   </svg>
 );
 
-/* Toplum Vakfı thank-you (`Thank You.dc.html` § `.certificate`): the document
-   toggles are the design's outline pills (`.btn-outline-full`), the previews sit
-   in the miniature-sheet frame (`.cert-mini`), and each download is a full pill. */
-const rowButton = (tone: "plain" | "gold"): React.CSSProperties => ({
-  display: "inline-flex",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: 9,
-  minHeight: 46,
-  padding: "0 20px",
-  borderRadius: 999,
-  border: tone === "plain" ? "1.5px solid #e2eaf0" : "1.5px solid var(--brand)",
-  background: "#fff",
-  fontFamily: "inherit",
-  fontWeight: 800,
-  fontSize: 13.5,
-  color: tone === "plain" ? "var(--ink)" : "var(--brand-ink)",
-  cursor: "pointer",
-});
-
 const panel: React.CSSProperties = {
   position: "relative",
   width: "100%",
@@ -117,6 +97,7 @@ export default function DocumentsPanel({
   extraButtons?: ReactNode;
 }) {
   const t = useTranslations("system");
+  const tv = useTranslations("tvPayment.success");
 
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [certOpen, setCertOpen] = useState(false);
@@ -130,18 +111,15 @@ export default function DocumentsPanel({
 
   return (
     <>
-      <div id="succ-downloads" className="succ-in succ-in-4" style={{ width: "100%", display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
-        <button type="button" onClick={() => setReceiptOpen((open) => !open)} aria-expanded={receiptOpen} className="succ-link" style={rowButton("plain")}>
+      {/* The design's outline pills: the certificate first, the receipt beside it. */}
+      <div id="succ-downloads" className="gf-docs-row">
+        <button type="button" onClick={() => setCertOpen((open) => !open)} aria-expanded={certOpen} className="gf-btn-outline-full succ-link2">
+          {tv("certCta")}
+        </button>
+        <button type="button" onClick={() => setReceiptOpen((open) => !open)} aria-expanded={receiptOpen} className="gf-btn-outline-full is-quiet succ-link">
           {DownloadIcon}
           {t("downloadReceipt")}
         </button>
-
-        <button type="button" onClick={() => setCertOpen((open) => !open)} aria-expanded={certOpen} className="succ-link2" style={rowButton("gold")}>
-          {DownloadIcon}
-          {t("thankYouCertTitle")}
-        </button>
-
-
         {extraButtons}
       </div>
 
@@ -189,7 +167,7 @@ export default function DocumentsPanel({
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "flex-start", gap: 20 }}>
             <ScaledSheet width={1060} height={750} maxWidth={620} className="succ-cert-canvas">
               <div style={{ width: 1060 }}>
-                <ThanksCertificate donorName={certName.trim()} copy={documents.thanks.copy} verse={documents.thanks.verse} duaVerse={documents.thanks.duaVerse} dir={documents.thanks.dir} />
+                <ThanksCertificate donorName={certName.trim()} copy={documents.thanks.copy} verse={documents.thanks.verse} duaVerse={documents.thanks.duaVerse} dir={documents.thanks.dir} serial={documents.issued ? documents.thanks.serial : undefined} locale={documents.thanks.locale} />
               </div>
             </ScaledSheet>
           </div>

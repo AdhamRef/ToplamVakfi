@@ -4,31 +4,24 @@ import { type FormEvent, type ReactElement, useEffect, useRef, useState } from "
 import { useLocale, useTranslations } from "next-intl";
 import { track } from "@vercel/analytics";
 import { miaPath } from "@/lib/minbar/routes";
-import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
-import TravelBanner from "@/components/minbar/banners/TravelBanner";
 import InnerBanner from "@/components/minbar/about/InnerBanner";
 
 /**
- * Volunteer with us  ported from `Minbar/تطوع معنا.dc.html`. The Toplum design
- * has no volunteer page, so it takes the shared inner-page template of the
- * other foundation pages (photo banner, icon cards, form card); styles
- * (`.fd-*`) live in `styles/minbar/pages/about.css`.
+ * Volunteer with us. The Toplum design has no volunteer page, so this one is
+ * built from the shared inner-page system of the other foundation pages:
+ * photo banner (lead line from the About page's volunteering card), the
+ * volunteering areas as icon cards, and the application in the contact page's
+ * form card. Styles: `styles/minbar/pages/about.css`.
  *
- * TRANSLATION GAP: this is the only page in the handoff written in hard-coded
- * Arabic  `Minbar/i18n/<lang>/` ships no `volunteer.json` in any of the 19
- * languages. Every string that had a reviewed key elsewhere uses it (name,
- * email, phone, "Volunteering Field", the received line, send / sending / send
- * another); the rest live in a new `volunteer` namespace whose non-Arabic
- * entries are an English rendering awaiting a translator.
- *
- * The handoff's `submitApplication()` is a placeholder timer. This posts to
- * `POST /api/messages` under the `VOLUNTEERING` subject.
+ * The application posts to `POST /api/messages` under `VOLUNTEERING`; the
+ * phone goes in `contactPhone`, and the country and chosen area lead the
+ * message body (the inbox has no columns for them).
  */
 
 const TRACKS: ReadonlyArray<{ icon: string; title: string; text: string }> = [
   { icon: "translate", title: "track1Title", text: "track1Text" },
   { icon: "media", title: "track2Title", text: "track2Text" },
-  { icon: "remote", title: "track3Title", text: "track3Text" },
+  { icon: "tech", title: "track3Title", text: "track3Text" },
   { icon: "remote", title: "track4Title", text: "track4Text" },
   { icon: "agent", title: "track5Title", text: "track5Text" },
 ];
@@ -47,6 +40,11 @@ const ICONS: Record<string, ReactElement> = {
       <path d="m10 8 4 2.5-4 2.5V8Z" />
     </>
   ),
+  tech: (
+    <>
+      <path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14" />
+    </>
+  ),
   remote: (
     <>
       <rect x="2" y="4" width="14" height="10" rx="2" />
@@ -58,35 +56,16 @@ const ICONS: Record<string, ReactElement> = {
     <>
       <circle cx="12" cy="8" r="3.2" />
       <path d="M5 20c0-4 3-6.5 7-6.5s7 2.5 7 6.5" />
-      <path d="M12 4.5v-1M9 6l-1-1M15 6l1-1" />
     </>
   ),
 };
 
-const EMAIL_RE = /\S+@\S+\.\S+/;
-
-function field(invalid: boolean) {
-  return {
-    width: "100%",
-    minHeight: 46,
-    border: `1.5px solid ${invalid ? "#b3261e" : "#e3edf4"}`,
-    borderRadius: 10,
-    padding: "0 14px",
-    fontSize: 14,
-    background: "#fbfdff",
-    color: "#062442",
-    boxSizing: "border-box" as const,
-    unicodeBidi: "plaintext" as const,
-  };
-}
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 export default function VolunteerPage() {
   const locale = useLocale();
   const t = useTranslations("volunteer");
-  const tCommon = useTranslations("common");
-  const tContact = useTranslations("contact");
-  const tPartner = useTranslations("partner");
-  const tNav = useTranslations("navigation");
+  const tAbout = useTranslations("about");
 
   const [name, setName] = useState("");
   const [country, setCountry] = useState("");
@@ -102,7 +81,7 @@ export default function VolunteerPage() {
 
   useEffect(() => () => clearTimeout(shakeTimer.current), []);
 
-  const emailValid = EMAIL_RE.test(email);
+  const emailValid = EMAIL_RE.test(email.trim());
   const chosen = TRACKS[trackIndex] ?? TRACKS[0];
   const chosenTitle = t(chosen.title);
 
@@ -125,11 +104,8 @@ export default function VolunteerPage() {
     setSubmitting(true);
     setError("");
     try {
-      /* The inbox has a phone column but none for country or volunteering
-         track, and both are answers the applicant actually gave  so they lead
-         the message body rather than being dropped on the way to the team. */
       const lines = [
-        `${tCommon("volunteerField")}: ${chosenTitle}`,
+        `${t("fieldLabel")}: ${chosenTitle}`,
         country.trim() ? `${t("countryLabel")}: ${country.trim()}` : null,
         bio.trim(),
       ].filter(Boolean);
@@ -173,130 +149,138 @@ export default function VolunteerPage() {
     setError("");
   };
 
+  const star = (
+    <>
+      {" "}
+      <b aria-hidden="true">*</b>
+    </>
+  );
+
   return (
-    <div className="vl-page fd-page">
+    <div className="fd-page fd-p-volunteer">
       <InnerBanner
-        id="hero"
-        crumbs={[{ label: tNav("home"), href: miaPath("home", locale) }, { label: t("heroTitle") }]}
+        crumbs={[{ label: tAbout("home"), href: miaPath("home", locale) }, { label: t("heroTitle") }]}
+        crumbLabel={tAbout("crumbLabel")}
         title={t("heroTitle")}
         lead={t("heroSubtitle")}
       />
 
       <div className="fd-main">
-        <div className="fd-wrap fd-stack" style={{ gap: 30 }}>
-          <div>
-            <h2 className="fd-h2">{tCommon("volunteerFields")}</h2>
-            <div className="fd-cards">
+        <div className="fd-wrap">
+          <section aria-labelledby="fd-vl-fields">
+            <h2 id="fd-vl-fields" className="fd-h2">
+              {t("fieldsTitle")}
+            </h2>
+            <ul className="fd-cards">
               {TRACKS.map((item) => (
-                <article key={item.title} className="fd-card vl-track vl-in">
+                <li key={item.title} className="fd-card">
                   <span aria-hidden="true" className="fd-ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
                       {ICONS[item.icon]}
                     </svg>
                   </span>
                   <h3>{t(item.title)}</h3>
                   <p>{t(item.text)}</p>
-                </article>
+                </li>
               ))}
-            </div>
-          </div>
+            </ul>
+          </section>
 
-          <div className="fd-narrow" style={{ width: "100%" }}>
+          <div className="fd-narrow">
             {submitted ? (
               <div className="fd-card fd-done" role="status">
-                <span className="vl-pop fd-done-ico">
+                <span className="fd-done-ico">
                   <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M20 6 9 17l-5-5" />
                   </svg>
                 </span>
-                <h2>{tCommon("volunteerReceived")}</h2>
+                <h2>{t("received")}</h2>
                 <p>{t("receivedNote", { field: chosenTitle })}</p>
-                <button type="button" onClick={reset} className="vl-again fd-ghost">
-                  {tContact("sendAnother")}
+                <button type="button" onClick={reset} className="fd-ghost">
+                  {t("sendAnother")}
                 </button>
               </div>
             ) : (
-              <form id="vform" onSubmit={onSubmit} noValidate className={`fd-card fd-form vl-in vl-in-2${shake ? " vl-shake" : ""}`}>
-                <h2>{t("formTitle")}</h2>
+              <form onSubmit={onSubmit} noValidate className={`fd-card fd-form${shake ? " fd-shake" : ""}`} aria-labelledby="fd-vl-title">
+                <span className="fd-script">{t("script")}</span>
+                <h2 id="fd-vl-title">{t("formTitle")}</h2>
 
-                <div className="fd-pair vl-pair">
-                  <label>
-                    <span className="fd-label">{tContact("nameLabel")}</span>
+                <div className="fd-row">
+                  <div className="fd-field">
+                    <label htmlFor="vlName">
+                      {t("nameLabel")}
+                      {star}
+                    </label>
                     <input
+                      id="vlName"
+                      required
+                      autoComplete="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      autoComplete="name"
-                      aria-invalid={Boolean(error) && !name.trim()}
-                      style={field(Boolean(error) && !name.trim())}
+                      aria-invalid={Boolean(error) && !name.trim() ? true : undefined}
                     />
-                  </label>
-                  <label>
-                    <span className="fd-label">{t("countryLabel")}</span>
-                    <input value={country} onChange={(e) => setCountry(e.target.value)} autoComplete="country-name" style={field(false)} />
-                  </label>
-                  <label>
-                    <span className="fd-label">{tContact("emailLabel")}</span>
+                  </div>
+                  <div className="fd-field">
+                    <label htmlFor="vlCountry">{t("countryLabel")}</label>
+                    <input id="vlCountry" autoComplete="country-name" value={country} onChange={(e) => setCountry(e.target.value)} />
+                  </div>
+                </div>
+                <div className="fd-row">
+                  <div className="fd-field">
+                    <label htmlFor="vlEmail">
+                      {t("emailLabel")}
+                      {star}
+                    </label>
                     <input
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      id="vlEmail"
                       type="email"
+                      required
                       dir="ltr"
                       autoComplete="email"
-                      aria-invalid={Boolean(error) && !emailValid}
-                      style={field(Boolean(error) && !emailValid)}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      aria-invalid={Boolean(error) && !emailValid ? true : undefined}
                     />
-                  </label>
-                  <label>
-                    <span className="fd-label">{tContact("phoneLabel")}</span>
-                    <input value={phone} onChange={(e) => setPhone(e.target.value)} dir="ltr" type="tel" autoComplete="tel" style={field(false)} />
-                  </label>
+                  </div>
+                  <div className="fd-field">
+                    <label htmlFor="vlPhone">{t("phoneLabel")}</label>
+                    <input id="vlPhone" type="tel" dir="ltr" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                  </div>
                 </div>
 
-                <label>
-                  <span className="fd-label">{tCommon("volunteerField")}</span>
-                  {/* The value is the track's index, not its title: a title is
-                      translated and would stop matching once it changes. */}
-                  <select value={trackIndex} onChange={(e) => setTrackIndex(Number(e.target.value))} style={{ ...field(false), cursor: "pointer" }}>
+                <div className="fd-field">
+                  <label htmlFor="vlTrack">{t("fieldLabel")}</label>
+                  {/* The value is the area's index, not its translated title. */}
+                  <select id="vlTrack" value={trackIndex} onChange={(e) => setTrackIndex(Number(e.target.value))}>
                     {TRACKS.map((item, index) => (
                       <option key={item.title} value={index}>
                         {t(item.title)}
                       </option>
                     ))}
                   </select>
-                </label>
+                </div>
 
-                <label>
-                  <span className="fd-label">{t("bioLabel")}</span>
-                  <textarea
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    rows={4}
-                    style={{ ...field(false), minHeight: 120, padding: "12px 14px", resize: "vertical" }}
-                  />
-                </label>
+                <div className="fd-field">
+                  <label htmlFor="vlBio">{t("bioLabel")}</label>
+                  <textarea id="vlBio" value={bio} onChange={(e) => setBio(e.target.value)} />
+                </div>
 
-                {error ? (
-                  <span role="alert" className="fd-error">
-                    {error}
-                  </span>
-                ) : null}
-
-                <button type="submit" disabled={submitting} className="vl-submit fd-pill">
+                <button type="submit" disabled={submitting} className="fd-pill">
                   <span aria-hidden="true" className="fd-pill-ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" />
                     </svg>
                   </span>
-                  {submitting ? tPartner("submitLabelSending") : tPartner("submitLabel")}
+                  {submitting ? t("sending") : t("submit")}
                 </button>
+                <p className="fd-msg" role="alert" data-tone={error ? "error" : undefined}>
+                  {error}
+                </p>
               </form>
             )}
           </div>
         </div>
       </div>
-
-      <ZakatBanner />
-      <TravelBanner />
     </div>
   );
 }

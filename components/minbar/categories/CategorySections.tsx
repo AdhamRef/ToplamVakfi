@@ -86,7 +86,7 @@ export function CategoryProjectsGrid({ page, columns = 3 }: { page: CategoryPage
   return (
     <div id="cat-projects-grid" className="qd-work" style={{ display: "grid", gridTemplateColumns: `repeat(${columns},minmax(0,1fr))`, gap: 20 }}>
       {page.projects.map((project) => (
-        <ProjectDonateCard key={project.id} project={project} tag={page.name} />
+        <ProjectDonateCard key={project.id} project={project} />
       ))}
     </div>
   );

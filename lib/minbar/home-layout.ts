@@ -24,23 +24,25 @@
 /* ── Sections ────────────────────────────────────────────────────────────── */
 
 /**
- * The movable sections, in the approved design's order. The hero and the
- * quick-donation bar are not here: the bar is sticky "right under the hero"
- * by design, so those two stay at the top and are shown as locked rows.
+ * The movable sections, in the approved design's order
+ * (`ToplamVakfi-design/Toplum Vakfı Homepage.dc.html`, top to bottom). The
+ * hero and its quick-donation disc are not here: they always open the page,
+ * so the dashboard shows them as locked rows.
+ *
+ * Ids the code no longer has (the Minbar sections: verse, path, travel,
+ * urgent, categories, zakat, recurring, regions, account, articles, news) are
+ * dropped by `parseHomeLayout` when a stored row still names them.
  */
 export const HOME_SECTION_IDS = [
-  "verse",
-  "path",
   "impact",
-  "travel",
-  "urgent",
-  "categories",
-  "zakat",
-  "recurring",
-  "regions",
-  "account",
-  "articles",
-  "news",
+  "programs",
+  "world",
+  "ways",
+  "stories",
+  "trust",
+  "partners",
+  "faq",
+  "cta",
 ] as const;
 export type HomeSectionId = (typeof HOME_SECTION_IDS)[number];
 
@@ -66,18 +68,21 @@ export interface HomeSectionMeta {
 }
 
 export const HOME_SECTIONS: Record<HomeSectionId, HomeSectionMeta> = {
-  verse: { label: "شريط الآية", description: "آية الإسراء ورابط صفحة المسجد الأقصى.", kind: "static", lists: [] },
-  path: { label: "كيف يصل تبرعك؟", description: "خطوات وصول التبرع ورابط التقارير.", kind: "static", lists: [] },
-  impact: { label: "أثرنا في القدس", description: "أرقام الأثر الرسمية.", kind: "static", lists: [] },
-  travel: { label: "بانر شد الرحال", description: "بانر الجمعة وشد الرحال إلى الأقصى.", kind: "static", lists: [] },
-  urgent: { label: "مشاريع عاجلة", description: "شريط المشاريع مع زر التبرع المباشر.", kind: "list", lists: ["projects"], editHref: "/dashboard/campaigns" },
-  categories: { label: "الحملات والدول", description: "بطاقات الحملات والدول تحت المشاريع العاجلة.", kind: "list", lists: ["categories"], editHref: "/dashboard/categories" },
-  zakat: { label: "بانر الزكاة", description: "بانر الزكاة وحاسبتها.", kind: "static", lists: [] },
-  recurring: { label: "عطاء منتظم يستمر أثره", description: "قسم التبرع المتكرر.", kind: "static", lists: [] },
-  regions: { label: "بطاقات المناطق", description: "مشاريع القدس، مشاريع الأقصى، والإغاثة العاجلة.", kind: "static", lists: [] },
-  account: { label: "حسابك في منبر الأقصى", description: "دعوة إنشاء حساب أو تسجيل الدخول.", kind: "static", lists: [] },
-  articles: { label: "المدونة", description: "أحدث المقالات.", kind: "list", lists: ["articles"], editHref: "/dashboard/blog" },
-  news: { label: "الأخبار", description: "أخبار المنبر.", kind: "list", lists: ["news"], editHref: "/dashboard/blog" },
+  impact: { label: "شريط الأرقام", description: "«مجتمعات أقوى» وأرقام الأثر الخمسة تحت الواجهة.", kind: "static", lists: [] },
+  programs: { label: "برامجنا", description: "بطاقة حملة الوقف والمسارات الأربعة ورابط صفحة البرامج.", kind: "static", lists: [] },
+  world: { label: "أثرنا حول العالم", description: "الخريطة والأرقام والمناطق الأربع.", kind: "static", lists: [] },
+  ways: {
+    label: "طرق العطاء",
+    description: "تبويبات المشاريع والإنجازات والكفالات والتبرع الشهري والزكاة والإهداء. مشاريع المبالغ تظهر بطاقاتٍ، ومشاريع السهوم بسعر الوحدة.",
+    kind: "list",
+    lists: ["projects"],
+    editHref: "/dashboard/campaigns",
+  },
+  stories: { label: "من الميدان", description: "قصة من الواقع وصور الميدان ورابط صفحة القصص.", kind: "static", lists: [] },
+  trust: { label: "لماذا تثق بنا", description: "بطاقات الثقة الأربع واعتماد الوقف الرسمي.", kind: "static", lists: [] },
+  partners: { label: "شركاؤنا في صناعة الأثر", description: "شريط الشركاء.", kind: "static", lists: [] },
+  faq: { label: "الأسئلة الشائعة", description: "ثلاثة أسئلة ورابط صفحة الأسئلة الشائعة.", kind: "static", lists: [] },
+  cta: { label: "دعوة التبرع الختامية", description: "«تبرع اليوم لمشروع قائم» وروابط التطوع والشراكة.", kind: "static", lists: [] },
 };
 
 /* ── Lists ───────────────────────────────────────────────────────────────── */
@@ -129,7 +134,8 @@ export interface HomeListMeta {
 }
 
 export const HOME_LISTS: Record<HomeListId, HomeListMeta> = {
-  projects: { label: "المشاريع العاجلة", sorts: ["default", "newest", "oldest", "mostRaised", "mostProgress"], defaultLimit: 12 },
+  /* The design's «طرق العطاء» shows three project cards and six priced units. */
+  projects: { label: "مشاريع طرق العطاء", sorts: ["default", "newest", "oldest", "mostRaised", "mostProgress"], defaultLimit: 9 },
   categories: { label: "الحملات والدول", sorts: ["default", "newest", "oldest", "mostProjects"], defaultLimit: 0 },
   articles: { label: "المقالات", sorts: ["newest", "oldest"], defaultLimit: 4 },
   news: { label: "الأخبار", sorts: ["newest", "oldest"], defaultLimit: 4 },

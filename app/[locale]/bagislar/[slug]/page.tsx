@@ -7,9 +7,7 @@ import {
   getProjectSeo,
   listProjectComments,
   listProjectUpdates,
-  listRelatedProjects,
 } from "@/lib/minbar/projects";
-import { galleryFor } from "@/lib/minbar/content/media";
 import { miaPath, slugFor } from "@/lib/minbar/routes";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import ProjectDetail from "@/components/minbar/projects/ProjectDetail";
@@ -19,7 +17,7 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["projects", "cart", "homepage", "quran", "ProjectExtras"] as const;
+const NAMESPACES = ["cart", "ProjectExtras"] as const;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -53,7 +51,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * Project detail  ported from `Minbar/تفاصيل مشروع.dc.html`.
+ * Project detail  `ToplamVakfi-design/Toplum Vakfı Project - *.dc.html`.
  *
  * Everything is read on the server: this page is indexable, and its copy,
  * figures and breadcrumb all have to be in the first response.
@@ -65,19 +63,14 @@ export default async function ProjectPage({ params }: Props) {
   const project = await getProject(key, locale);
   if (!project) notFound();
 
-  const [updates, related, donorCount, comments] = await Promise.all([
+  const [updates, donorCount, comments] = await Promise.all([
     listProjectUpdates(project.id, locale),
-    listRelatedProjects(project, locale),
     getProjectDonorCount(project.id),
     listProjectComments(project.id),
   ]);
 
-  /* The campaign's own photos first (the cover is already the hero), then
-     the region's field photography to fill the tab. A campaign with neither
-     has no Gallery tab. */
-  const own = project.images.slice(1);
-  const regional = project.region ? galleryFor(project.region, 6) : [];
-  const gallery = [...new Set([...own, ...regional])].slice(0, Math.max(6, own.length));
+  /* The campaign's own further photos (the cover is already the hero). */
+  const gallery = project.images.slice(1, 13);
 
   const breadcrumb = {
     "@context": "https://schema.org",
@@ -93,7 +86,7 @@ export default async function ProjectPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-        <ProjectDetail project={project} updates={updates} gallery={gallery} related={related} donorCount={donorCount} comments={comments} />
+        <ProjectDetail project={project} updates={updates} gallery={gallery} donorCount={donorCount} comments={comments} />
       </MinbarMessages>
     </>
   );

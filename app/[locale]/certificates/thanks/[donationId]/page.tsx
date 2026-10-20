@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { ensureDonationDocuments } from "@/lib/certificates/issue";
-import { thanksDocumentFor } from "@/lib/certificates/documents";
+import { documentDate, thanksDocumentFor } from "@/lib/certificates/documents";
 import { donationAccess } from "@/lib/certificates/http";
 import { withDonationToken } from "@/lib/donations/access-token";
 import { miaPath } from "@/lib/minbar/routes";
@@ -56,10 +56,13 @@ export default async function ThanksCertificatePage({ params, searchParams }: Pr
   const t = await getTranslations({ locale: doc.locale, namespace: "certificates" });
 
   const props = { donorName: doc.donorName, copy: doc.copy, verse: doc.verse, duaVerse: doc.duaVerse, dir: doc.dir };
+  /* The design's meta row: the serial and the date the record was issued. */
+  const sheetMeta = { serial: doc.serial, issueDate: documentDate(docs.thanks.issuedAt, doc.locale), locale: doc.locale };
   const pdfHref = withDonationToken(`/api/certificates/thanks/${docs.donationId}${portrait ? "?layout=portrait" : ""}`, token);
 
   return (
     <DocumentPage
+      note={t("printHint")}
       printCss={portrait ? PORTRAIT_PRINT_CSS : LANDSCAPE_PRINT_CSS}
       actions={[
         { label: t("savePdfCert"), href: pdfHref, primary: true, download: true },
@@ -70,7 +73,7 @@ export default async function ThanksCertificatePage({ params, searchParams }: Pr
         { label: t("back"), href: withDonationToken(`${miaPath("donationSuccess", locale)}/${docs.donationId}`, token) },
       ]}
     >
-      {portrait ? <ThanksCertificatePortrait {...props} /> : <ThanksCertificate {...props} />}
+      {portrait ? <ThanksCertificatePortrait {...props} /> : <ThanksCertificate {...props} {...sheetMeta} />}
     </DocumentPage>
   );
 }

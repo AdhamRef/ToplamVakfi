@@ -64,7 +64,7 @@ export function messagesFor(locale: string): MessageObject {
    `CategoryNav` is the header's projects dropdown and the footer's categories
    band, both on every page. `CardGive` is that card's frequency dialog and
    added-to-basket toast. */
-export const SHELL_NAMESPACES = ["common", "navigation", "system", "validation", "projects", "Concierge", "ProjectShares", "CategoryNav", "CardGive"] as const;
+export const SHELL_NAMESPACES = ["common", "navigation", "system", "validation", "tvShell", "projects", "Concierge", "ProjectShares", "CategoryNav", "CardGive"] as const;
 
 /**
  * Legacy namespaces belonging to the pre-Minbar public pages. They stay in the

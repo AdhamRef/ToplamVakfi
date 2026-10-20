@@ -11,8 +11,13 @@ const icon = (children: ReactElement, strokeWidth = 2) => (
   </svg>
 );
 
-/** A cross  the payment did not go through. */
-export const FailIcon = icon(<path d="M18 6 6 18M6 6l12 12" />);
+/** A circled exclamation  the payment did not go through (`Payment Error.dc.html`). */
+export const FailIcon = icon(
+  <>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 8v4M12 16h.01" />
+  </>
+);
 
 /** An arrow returning to its origin  the donor stepped back. */
 export const CancelIcon = icon(

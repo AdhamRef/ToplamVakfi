@@ -1,99 +1,78 @@
 "use client";
 
-import { Suspense, type ReactNode } from "react";
-import VideoModal, { useVideoModal } from "@/components/minbar/VideoModal";
-import { IMG } from "@/lib/minbar/content/media";
+import { Suspense, useMemo, type ReactNode } from "react";
 import type { MinbarProject } from "@/lib/minbar/projects";
 import type { QuickDonationConfig } from "@/lib/minbar/quick-donation";
 import type { HomeSectionId } from "@/lib/minbar/home-layout";
 import type { HomeLists } from "@/lib/minbar/home-layout-read";
-import { Hero, VerseStrip } from "./TopSections";
+import { photoPool, type HomeZakatTarget } from "@/lib/minbar/home-content";
 import QuickDonateBar from "./QuickDonateBar";
-import { ImpactSection, PathSection, RegionCards, UrgentProjectsSection } from "./ImpactSections";
-import { AccountSection, RecurringSection } from "./GivingSections";
-import { ArticlesSection, NewsSection } from "./KnowledgeSections";
-import CategoriesSection from "./CategoriesSection";
-import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
+import HomeHero from "./HomeHero";
+import { ImpactStrip, ProgramsRow } from "./HomeIntro";
+import WorldSection from "./WorldSection";
+import WaysSection from "./WaysSection";
+import { ClosingCta, FaqSection, PartnersSection, StoriesSection, TrustSection } from "./LowerSections";
 
 /**
- * The homepage, from `Minbar/الصفحة الرئيسية.dc.html`.
+ * The homepage  `ToplamVakfi-design/Toplum Vakfı Homepage.dc.html`, top to
+ * bottom (styles: `styles/minbar/pages/home.css`, all under `.tv-home`).
  *
- * The hero always opens the page, with the quick donation as its disc (the
- * Toplum Vakfı design's «دائرة الخير», `ToplamVakfi-design/Toplum Vakfı
- * Homepage.dc.html`). Every section after it renders in the
- * order the dashboard's homepage layout sets (`/dashboard/homepage-layout`),
- * hidden ones left out; that layout's defaults are the approved design's order.
- * The lists arrive already picked and ranked by the same layout.
+ * The hero always opens the page, with the quick donation as its disc
+ * («دائرة الخير»); switched off in the dashboard, the hero shows its copy
+ * alone. Every section after it renders in the order the dashboard's homepage
+ * layout sets (`/dashboard/homepage-layout`), hidden ones left out; the
+ * layout's defaults are the design's order. The projects list arrives already
+ * picked and ranked by the same layout.
  *
- * This is a client component because the hero's intro film opens into the
- * video overlay, whose state lives here. The data is fetched on the server and
- * passed down.
+ * The design's photo slots take the listed campaigns' own pictures first, then
+ * the foundation's photographs in /public (`photoPool`).
  */
 export default function HomePage({
   sections,
   lists,
   quick,
-  signedIn,
+  zakat,
 }: {
-  /** The visible sections after the quick-donation bar, in display order. */
+  /** The visible sections after the hero, in display order. */
   sections: HomeSectionId[];
   lists: HomeLists;
-  /** The quick-donation bar as the dashboard configured it, with every project it may list. */
+  /** The quick-donation disc as the dashboard configured it, with the projects it may list. */
   quick: { config: QuickDonationConfig; projects: MinbarProject[] };
-  signedIn: boolean;
+  /** Where the zakat tab's gift goes; null sends the donor to the zakat page. */
+  zakat: HomeZakatTarget;
 }) {
-  const video = useVideoModal();
+  const projectImages = useMemo(() => lists.projects.map((p) => p.image), [lists.projects]);
+  const images = useMemo(() => photoPool(projectImages), [projectImages]);
+  /* The hero's first slide is the design's own photograph (the LCP image,
+     preloaded by the page); the campaigns' pictures follow. */
+  const slides = useMemo(() => photoPool(["/toplum/hero-bg.webp", ...projectImages]).slice(0, 3), [projectImages]);
 
   const render: Record<HomeSectionId, () => ReactNode> = {
-    verse: () => <VerseStrip />,
-    path: () => <PathSection />,
-    impact: () => <ImpactSection />,
-    travel: () => <TravelBanner />,
-    urgent: () => <UrgentProjectsSection projects={lists.projects} />,
-    categories: () => <CategoriesSection categories={lists.categories} />,
-    zakat: () => <ZakatBanner />,
-    recurring: () => <RecurringSection />,
-    regions: () => <RegionCards images={{ quds: IMG.quds, aqsa: IMG.aqsa, relief: IMG.parcels }} />,
-    account: () => <AccountSection signedIn={signedIn} />,
-    articles: () => <ArticlesSection articles={lists.articles} />,
-    news: () => <NewsSection news={lists.news} />,
+    impact: () => <ImpactStrip />,
+    programs: () => <ProgramsRow images={images} />,
+    world: () => <WorldSection />,
+    ways: () => <WaysSection projects={lists.projects} images={images} zakat={zakat} />,
+    stories: () => <StoriesSection images={images} />,
+    trust: () => <TrustSection />,
+    partners: () => <PartnersSection />,
+    faq: () => <FaqSection />,
+    cta: () => <ClosingCta />,
   };
 
   return (
-    <div className="mia-home" style={{ position: "relative" }}>
-      {/* Page-wide ornament wash, behind everything and never interactive. */}
-      <div
-        aria-hidden="true"
-        data-aqsa-pattern=""
-        style={{
-          position: "fixed",
-          inset: 0,
-          backgroundImage: "url('/toplum/pattern.svg')",
-          backgroundRepeat: "repeat",
-          backgroundSize: "620px 620px",
-          opacity: 0.085,
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
-
-      {/* The quick donation is the hero's disc (the Toplum design's «دائرة
-          الخير»); switched off in the dashboard, the hero shows its film there. */}
-      <Hero
-        onPlayIntro={video.open}
+    <div className="tv-home">
+      <HomeHero
+        slides={slides}
         donate={quick.config.enabled ? <QuickDonateBar config={quick.config} projects={quick.projects} /> : undefined}
       />
       {sections.map((id) => (
         /* Each section is its own Suspense boundary, so React hydrates it in
-           its own task and yields to the browser in between. One boundary made
-           the whole homepage a single long hydration task (PageSpeed: TBT).
+           its own task and yields to the browser in between (PageSpeed: TBT).
            Nothing suspends: the server HTML shows as-is, no fallback. */
-        <Suspense key={id} fallback={null}>{render[id]()}</Suspense>
+        <Suspense key={id} fallback={null}>
+          {render[id]()}
+        </Suspense>
       ))}
-
-      <VideoModal embed={video.embed} onClose={video.close} />
     </div>
   );
 }
-

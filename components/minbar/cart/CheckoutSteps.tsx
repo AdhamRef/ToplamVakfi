@@ -13,6 +13,8 @@ export interface CheckoutStep {
   onSelect?: () => void;
   /** Shown with a check instead of its number. Defaults to "comes before the current step". */
   done?: boolean;
+  /** A step that failed (`Payment Error.dc.html`): red, with "!" in its dot. */
+  error?: boolean;
 }
 
 /**
@@ -44,11 +46,13 @@ export function CheckoutSteps({
       <ol id={id} style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", alignItems: "center", gap: 8, flexWrap: "nowrap", minWidth: 0 }}>
         {steps.map((step, i) => {
           const done = step.done ?? (currentIndex >= 0 && i < currentIndex);
-          const lit = step.current || done;
+          const lit = !step.error && (step.current || done);
           const content = (
             <>
-              <span className="cart-step-n" aria-hidden={done ? true : undefined}>
-                {done ? (
+              <span className="cart-step-n" aria-hidden={done || step.error ? true : undefined}>
+                {step.error ? (
+                  "!"
+                ) : done ? (
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M20 6 9 17l-5-5" />
                   </svg>
@@ -60,7 +64,7 @@ export function CheckoutSteps({
             </>
           );
           const clickable = !step.current && step.enabled;
-          const state = step.current ? "current" : done ? "done" : "todo";
+          const state = step.error ? "error" : step.current ? "current" : done ? "done" : "todo";
           return (
             <li key={step.n} style={{ display: "contents" }}>
               {clickable && step.href ? (

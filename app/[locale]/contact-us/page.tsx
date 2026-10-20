@@ -10,7 +10,7 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["contact", "homepage"] as const;
+const NAMESPACES = ["about", "contact"] as const;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -22,12 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-/**
- * Contact us  ported from `Minbar/تواصل معنا.dc.html`.
- *
- * `homepage` rides along for the two closing banners.
- */
-export default async function Contact({ params }: Props) {
+/** Contact us  `ToplamVakfi-design/Toplum Vakfı Contact.dc.html`. */
+export default async function Page({ params }: Props) {
   const { locale } = await params;
 
   return (

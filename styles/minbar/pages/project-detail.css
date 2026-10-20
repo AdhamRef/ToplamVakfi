@@ -1,157 +1,212 @@
 /* Toplum Vakfi page layer: project-detail. Loaded after toplum.css (app/[locale]/layout.tsx); scoped under .mia-scope. */
 /* ─────────────────────────────────────────────────────────────────────────────
- * Project page (ProjectDetail, DonationPanel, RestorationPage) laid out on
+ * Project page (ProjectDetail, DonationPanel, ProjectUpdatePost) laid out on
  * `ToplamVakfi-design/Toplum Vakfı Project - *.dc.html`:
- *  - a full-bleed photo hero (`.proj-hero-img`), title and tags over its foot.
- *    The design runs it behind a glass header; the app's header is a solid
- *    bar with its own spacer, so the hero starts under it (design 492px less
- *    the 78px header);
+ *  - `.proj-hero-img`: a full-bleed photo, 492px with the header over it in
+ *    the design; the app's header is a solid bar with its own spacer, so the
+ *    hero is the remaining 414px. Tag and title sit at its foot;
  *  - `.proj-layout`: story 1.7fr beside a sticky donation sidebar 1fr, 40px
- *    apart, 50px / 70px above and below; one column (sidebar first) on
- *    tablets and phones;
- *  - fact tiles, update cards and the sidebar card as drawn there.
- * Old `#pd-top` / `#pd-body` rules in minbar.css belonged to the previous
- * layout; the few that still reach these elements are neutralised below.
+ *    apart, 50px / 70px above and below; one column on tablets and phones;
+ *  - section headings 19px, body 14.5px / 1.9, fact tiles, the budget card,
+ *    update cards and the sidebar card as drawn there.
  * ───────────────────────────────────────────────────────────────────────────── */
 
-.mia-scope .pd-page { background: #f4f8fb; }
+.mia-scope .pd-page { position: relative; background: #f4f8fb; color: #062442; }
 .mia-scope .pd-container { width: min(1180px, calc(100% - 64px)); margin-inline: auto; box-sizing: border-box; }
 
 /* ── Hero ─────────────────────────────────────────────────────────────────── */
-.mia-scope .pd-hero { min-height: 414px; }
-.mia-scope .pd-hero-inner { padding: 72px 0 34px; }
-.mia-scope .pd-crumbs a { color: inherit; transition: color .18s ease; }
-.mia-scope .pd-crumbs a:hover { color: #fff; }
+.mia-scope .pd-hero {
+  position: relative; z-index: 1; display: flex; align-items: flex-end; min-height: 414px; overflow: hidden;
+  background: #031a36 url("/toplum/hero-bg.webp") center 25% / cover no-repeat;
+}
+.mia-scope .pd-hero-inner { position: relative; z-index: 1; padding: 30px 0; color: #fff; pointer-events: none; }
+.mia-scope .pd-hero-inner a { pointer-events: auto; }
+.mia-scope .pd-hero-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .mia-scope .pd-tag-lg {
   display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 999px;
   background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
   color: #fff; font-size: 12px; font-weight: 700; line-height: 1.6;
-  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
   transition: background .18s ease, border-color .18s ease;
 }
-.mia-scope a.pd-tag-lg:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+.mia-scope a.pd-tag-lg:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); color: #fff; }
+.mia-scope .pd-hero h1 { margin: 0; max-width: 30ch; color: #fff; font-size: clamp(26px, 3vw, 38px); font-weight: 800; line-height: 1.35; text-wrap: pretty; }
 
 /* The carousel as a banner: dots move to the top so they clear the title. */
 .mia-scope .pd-hero-media--banner .pd-hero-dots { bottom: auto !important; top: 20px; }
 .mia-scope .pd-hero-media--banner:focus-visible { outline-offset: -4px; }
 .mia-scope .pd-hero-media--banner .pd-hero-nav { z-index: 3; }
-.mia-scope .pd-hero-media--banner .pd-hero-nav:hover { background: var(--gold); color: #fff; }
-
-/* Outlined white pill on the dark hero (the restoration page's jump link). */
-.mia-scope .pd-ghost-btn {
-  display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 24px;
-  border-radius: 999px; border: 1.5px solid rgba(255,255,255,.45); color: #fff;
-  font-size: 15px; font-weight: 800; transition: background .18s ease, border-color .18s ease, transform .18s ease;
-}
-.mia-scope .pd-ghost-btn:hover { border-color: #fff; }
+.mia-scope .pd-hero-media--banner .pd-hero-nav:hover { background: #00a2e0; color: #fff; }
 
 /* ── Story + sidebar ──────────────────────────────────────────────────────── */
 .mia-scope .pd-layout {
-  display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 40px;
+  position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 40px;
   padding: 50px 0 70px; align-items: start;
 }
 /* The column runs the row's full height so its content can stick in it. */
-.mia-scope .pd-aside-col { align-self: stretch; }
-.mia-scope .pd-aside-sticky { position: sticky; top: calc(var(--mia-head-h, 78px) + 22px); }
+.mia-scope .pd-aside-col { align-self: stretch; min-width: 0; }
+.mia-scope .pd-aside-sticky { position: sticky; top: calc(var(--mia-head-h, 78px) + 52px); }
 
-/* minbar.css (≤640px) pads `#pd-body` as if it were the page grid; it is now
-   the tab block inside the story column. */
-.mia-scope .pd-layout #pd-body { padding-inline: 0 !important; }
+.mia-scope .pd-main { min-width: 0; }
+.mia-scope .pd-main h2 { margin: 36px 0 14px; color: #062442; font-size: 19px; font-weight: 800; line-height: 1.5; }
+.mia-scope .pd-main > h2:first-child { margin-top: 0; }
+.mia-scope .pd-main p { margin: 0 0 14px; color: #33495e; font-size: 14.5px; line-height: 1.9; overflow-wrap: anywhere; }
+.mia-scope .pd-main .pd-li { position: relative; padding-inline-start: 18px; }
+.mia-scope .pd-main .pd-li > span { position: absolute; inset-inline-start: 2px; top: .8em; width: 6px; height: 6px; border-radius: 50%; background: #00a2e0; }
+.mia-scope .pd-anchor { scroll-margin-top: calc(var(--mia-head-h, 78px) + 20px); }
 
 /* Fact tiles (`.proj-facts` / `.proj-fact`). */
-.mia-scope .pd-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
-.mia-scope .pd-fact {
-  display: grid; gap: 4px; align-content: center; justify-items: center; min-width: 0;
-  padding: 16px; background: #fff; border: 1px solid #e6eef3; border-radius: 12px; text-align: center;
-}
-.mia-scope .pd-fact b { font-size: 20px; line-height: 1.4; font-weight: 800; color: #0077b3; overflow-wrap: anywhere; }
-.mia-scope .pd-fact span { font-size: 12px; line-height: 1.6; color: var(--muted); }
-.mia-scope .pd-facts--values { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
-.mia-scope .pd-facts--values .pd-fact span:not(.pd-fact-dot) { font-size: 13px; font-weight: 700; color: var(--deep); }
-.mia-scope .pd-fact-dot { display: block; width: 8px; height: 8px; margin-bottom: 4px; border-radius: 999px; background: var(--gold); }
+.mia-scope .pd-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin: 20px 0; }
+.mia-scope .pd-fact { min-width: 0; padding: 16px; background: #fff; border: 1px solid #e6eef3; border-radius: 12px; text-align: center; }
+.mia-scope .pd-fact b { display: block; color: #0077b3; font-size: 20px; font-weight: 800; line-height: 1.5; overflow-wrap: anywhere; unicode-bidi: isolate; }
+.mia-scope .pd-fact span { color: #5d7187; font-size: 12px; }
 
-/* Icon chip beside a section heading. */
-.mia-scope .pd-icon-chip {
-  flex: 0 0 38px; display: grid; place-items: center; width: 38px; height: 38px;
-  border-radius: 12px; background: #eaf6fd; color: #0077b3;
-}
+/* Budget (`.proj-budget`). */
+.mia-scope .pd-budget { margin: 8px 0 20px; padding: 16px 18px; background: #fff; border: 1px solid #e6eef3; border-radius: 12px; }
+.mia-scope .pd-budget-bar { height: 8px; margin-bottom: 12px; border-radius: 999px; background: #eef3f7; overflow: hidden; }
+.mia-scope .pd-budget-bar > span,
+.mia-scope .pd-ds-progress > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #00a2e0, #4fc3f7); }
+.mia-scope .pd-budget-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; color: #5d7187; font-size: 12.5px; }
+.mia-scope .pd-budget-row b { color: #062442; unicode-bidi: isolate; }
 
-/* Tabs: pills; the picked one is the brand-ink fill (CLAUDE.md). The old
-   underline rule in minbar.css is outranked here. */
-.mia-scope .pd-layout .pd-tab {
-  height: 42px; padding: 0 18px; border: 1px solid #e2eaf0; border-radius: 999px;
-  background: #fff; color: var(--muted); font-family: inherit; font-size: 14px; font-weight: 800;
-  cursor: pointer; transition: background .18s ease, border-color .18s ease, color .18s ease;
-}
-.mia-scope .pd-layout .pd-tab:hover { border-color: var(--gold); color: var(--deep); }
-.mia-scope .pd-layout .pd-tab[data-tab="1"] {
-  background: #0077b3 !important; border-color: #0077b3 !important; color: #fff !important;
-  box-shadow: 0 6px 14px -6px rgba(0,119,179,.55);
-}
-.mia-scope .pd-layout .pd-tab:focus-visible { outline: 3px solid rgba(0,162,224,.45); outline-offset: 2px; }
+/* Field photos. */
+.mia-scope .pd-gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+.mia-scope .pd-gallery > span { display: block; aspect-ratio: 4 / 3; border-radius: 10px; background: #e6eef3 center / cover no-repeat; }
 
-.mia-scope .pd-card { background: #fff; border: 1px solid #e6eef3; border-radius: 12px; }
+/* Video. */
+.mia-scope .pd-project-video { display: grid; }
 
-/* Zakat / waqf cross-links: a dark band card and a light one, side by side. */
-.mia-scope .pd-cross-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
-.mia-scope .pd-cross {
-  position: relative; overflow: hidden; display: grid; gap: 8px; align-content: start;
-  padding: 22px; border-radius: 16px; transition: transform .2s ease, box-shadow .2s ease;
-}
-.mia-scope .pd-cross:hover { transform: translateY(-4px); box-shadow: 0 22px 44px rgba(2,52,88,.14); }
-.mia-scope .pd-cross--zakat { background: linear-gradient(120deg, #021428 0%, #082b50 60%, #04172e 100%); color: #fff; }
-.mia-scope .pd-cross--zakat:hover { filter: none; }
-/* The design's glow circle in the band's far corner. */
-.mia-scope .pd-cross--zakat::after {
-  content: ""; position: absolute; inset-inline-end: -60px; top: -60px; width: 180px; height: 180px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(39,184,242,.32), rgba(39,184,242,0) 70%); pointer-events: none;
-}
-.mia-scope .pd-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 800; letter-spacing: .06em; }
-.mia-scope .pd-eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--gold); }
+/* Updates (`.updates-list` / `.update-item`). */
+.mia-scope .pd-updates { display: flex; flex-direction: column; gap: 14px; }
+.mia-scope .pd-update { display: grid; gap: 6px; padding: 16px 18px; background: #fff; border: 1px solid #e6eef3; border-radius: 12px; }
+.mia-scope .pd-update time { display: block; color: #0077b3; font-size: 12px; font-weight: 800; }
+.mia-scope .pd-update b { color: #062442; font-size: 14px; font-weight: 800; line-height: 1.6; }
+.mia-scope .pd-main .pd-update p { margin: 0; color: #062442; font-size: 13px; line-height: 1.8; white-space: pre-line; }
+.mia-scope .pd-update-more { border: 0; padding: 0; background: none; color: #0077b3; font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
+.mia-scope .pd-update-img { display: block; width: 100%; max-height: 460px; margin-top: 6px; object-fit: cover; border-radius: 10px; border: 1px solid #e6eef3; background: #f4f8fb; }
 
 /* ── Donation sidebar (`.donate-sidebar`) ─────────────────────────────────── */
-.mia-scope .pd-fill { background: linear-gradient(90deg, var(--gold), #4fc3f7); }
-[dir="rtl"] .mia-scope .pd-fill { background: linear-gradient(270deg, var(--gold), #4fc3f7); }
+.mia-scope .pd-donate {
+  position: relative; padding: 26px; background: #fff; border: 1px solid #e6eef3; border-radius: 18px;
+  box-shadow: 0 16px 34px rgba(2,52,88,.1);
+}
+.mia-scope .pd-donate h3 { margin: 0 0 4px; color: #062442; font-size: 16px; font-weight: 800; line-height: 1.5; }
+.mia-scope .pd-ds-progress { height: 8px; margin: 14px 0 8px; border-radius: 999px; background: #eef3f7; overflow: hidden; }
+.mia-scope .pd-ds-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px; margin-bottom: 18px; color: #5d7187; font-size: 12px; }
+.mia-scope .pd-ds-meta > span[dir="ltr"] { unicode-bidi: isolate; }
+.mia-scope .pd-ds-meta--open { margin-top: 12px; }
+.mia-scope .pd-ds-sub { margin: -12px 0 14px; color: #5d7187; font-size: 12px; }
+.mia-scope .pd-ds-price {
+  display: flex; justify-content: center; margin-bottom: 12px; padding: 9px 14px; border-radius: 999px;
+  background: #eaf6fd; border: 1px solid rgba(0,162,224,.35); color: #062442; font-size: 13.5px; font-weight: 800;
+}
+.mia-scope .pd-ds-amounts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 10px; }
+.mia-scope .pd-ds-amounts > button,
+.mia-scope .pd-ds-freq > button,
+.mia-scope .pd-ds-gift-channels > button {
+  min-width: 0; min-height: 44px; padding: 9px 6px; border: 1px solid #e2eaf0; border-radius: 999px;
+  background: #f7fafc; color: #062442; font-family: inherit; font-size: 12px; font-weight: 800;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; transition: all .15s;
+}
+.mia-scope .pd-ds-amounts > button > span { unicode-bidi: isolate; }
+.mia-scope .pd-ds-amounts > button.active,
+.mia-scope .pd-ds-amounts > button:hover { background: #00a2e0; border-color: #00a2e0; color: #fff; }
+/* #0077b3 keeps white text at 4.5:1 on the picked pill (CLAUDE.md); the
+   design's #00a2e0 fill is used for hover only on the secondary rows. */
+.mia-scope .pd-ds-amounts > button.active { background: #0077b3; border-color: #0077b3; }
+.mia-scope .pd-ds-custom {
+  display: flex; align-items: center; gap: 6px; min-height: 44px; margin-bottom: 12px; padding: 0 14px;
+  border: 1px solid #e2eaf0; border-radius: 999px; background: #fff; cursor: text;
+}
+.mia-scope .pd-ds-custom > span { color: #5d7187; font-size: 13px; font-weight: 800; }
+.mia-scope .pd-ds-custom .pd-custom {
+  flex: 1; min-width: 0; min-height: 42px; border: 0; outline: none; background: transparent;
+  color: #062442; font-family: inherit; font-size: 13px; font-weight: 700;
+}
+.mia-scope .pd-ds-custom:focus-within { border-color: #00a2e0; box-shadow: 0 0 0 3px rgba(0,162,224,.15); }
+.mia-scope .pd-ds-custom .pd-custom::placeholder { color: #5d7187; font-weight: 600; }
+
+/* How often: a quiet segmented row (design: `.dw-freq`). */
+.mia-scope .pd-ds-freq {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-bottom: 10px; padding: 3px;
+  border: 1px solid #e2eaf0; border-radius: 999px; background: #eef3f7;
+}
+.mia-scope .pd-ds-freq > button { min-height: 38px; padding: 6px 4px; border: 0; background: transparent; color: #5d7187; font-size: 11.5px; }
+.mia-scope .pd-ds-freq > button:hover { color: #062442; }
+.mia-scope .pd-ds-freq > button[data-pick="1"] { background: #fff; color: #0077b3; box-shadow: 0 2px 6px rgba(2,52,88,.12); }
+
+/* Gift (`.ds-gift`). */
+.mia-scope .pd-ds-gift {
+  display: flex; align-items: center; gap: 7px; width: 100%; min-height: 40px; margin-bottom: 10px; padding: 8px 12px;
+  border: 1px solid #e2eaf0; border-radius: 999px; background: #fff; color: #5d7187;
+  font-family: inherit; font-size: 12.5px; font-weight: 600; text-align: start; cursor: pointer; transition: all .2s;
+}
+.mia-scope .pd-ds-gift svg { flex-shrink: 0; width: 15px; height: 15px; color: #0077b3; }
+.mia-scope .pd-ds-gift.checked { background: #eaf6fd; border-color: #00a2e0; color: #062442; }
+.mia-scope .pd-ds-gift-field { display: grid; gap: 8px; margin-bottom: 10px; }
+.mia-scope .pd-ds-gift-field input:not([type="checkbox"]) {
+  width: 100%; min-height: 40px; padding: 10px 14px; border: 1px solid #e2eaf0; border-radius: 10px; outline: none; box-sizing: border-box;
+  background: #fff; color: #062442; font-family: inherit; font-size: 12.5px;
+}
+.mia-scope .pd-ds-gift-field input:focus { border-color: #00a2e0; }
+.mia-scope .pd-ds-gift-field input[dir="ltr"] { unicode-bidi: isolate; }
+.mia-scope .pd-ds-gift-more { display: grid; gap: 8px; }
+.mia-scope .pd-ds-gift-label { color: #0077b3; font-size: 11.5px; font-weight: 800; }
+.mia-scope .pd-ds-gift-channels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.mia-scope .pd-ds-gift-channels > button { min-height: 40px; }
+.mia-scope .pd-ds-gift-channels > button[data-pick="1"] { background: #0077b3; border-color: #0077b3; color: #fff; }
+.mia-scope .pd-ds-check { display: flex; align-items: center; gap: 8px; color: #5d7187; font-size: 12px; font-weight: 700; cursor: pointer; }
+.mia-scope .pd-ds-check input { width: 16px; height: 16px; min-height: 0 !important; accent-color: #0077b3; }
+
+.mia-scope .pd-ds-hint { display: block; margin-bottom: 10px; color: #c0392b; font-size: 12.5px; font-weight: 800; }
+
+/* `.ds-btn-row`: donate beside add to cart. */
+.mia-scope .pd-ds-btns { display: flex; gap: 8px; }
+.mia-scope .pd-ds-btn {
+  flex: 1.3 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; min-height: 46px; padding: 13px 8px;
+  border: 0; border-radius: 999px; background: var(--cta-gradient); color: #fff;
+  font-family: inherit; font-size: 13.5px; font-weight: 800; white-space: nowrap; cursor: pointer; transition: transform .2s, filter .2s;
+}
+.mia-scope .pd-ds-btn:hover { filter: brightness(.94); transform: translateY(-1px); }
+.mia-scope .pd-ds-cart {
+  flex: 1 1 0; min-width: 0; min-height: 46px; padding: 13px 6px; border: 1px solid #e2eaf0; border-radius: 999px;
+  background: #f2f6f9; color: #062442; font-family: inherit; font-size: 12px; font-weight: 800; white-space: nowrap; cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.mia-scope .pd-ds-cart:hover { background: #eaf6fd; border-color: #00a2e0; color: #0077b3; }
+.mia-scope .pd-ds-cart.is-added { border-color: #1f7a4d; color: #1f7a4d; background: rgba(31,122,77,.08); }
+.mia-scope .pd-donate .pd-ds-note { margin: 10px 0 0; color: #5d7187; font-size: 12px; text-align: center; }
+.mia-scope .pd-donate :is(button, input):focus-visible { outline: 2px solid #00a2e0; outline-offset: 2px; }
+
+/* Donors' messages: the comment form's send button. */
 .mia-scope .pd-cta { background: var(--cta-gradient); }
-[dir="rtl"] .mia-scope .pd-cta { background: linear-gradient(270deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); }
-.mia-scope .pd-cta:hover { filter: brightness(.95); transform: translateY(-1px); }
-.mia-scope .pd-cta:disabled { transform: none; filter: none; }
-.mia-scope .pd-custom::placeholder { color: #8aa0b4; font-weight: 600; }
-.mia-scope .pd-custom:focus,
-.mia-scope .pd-donate input:focus,
-.mia-scope .pd-page textarea:focus { outline: none; border-color: var(--gold) !important; box-shadow: 0 0 0 3px rgba(0,162,224,.15); }
-.mia-scope .pd-donate .mia-share-btn:hover { border-color: var(--gold); background: #eaf6fd; }
-.mia-scope .pd-outline-btn:hover { border-color: var(--gold) !important; }
+.mia-scope .pd-cta:hover { filter: brightness(.95); }
+.mia-scope .pd-outline-btn:hover { border-color: #00a2e0 !important; }
+.mia-scope .pd-page textarea:focus { outline: none; border-color: #00a2e0 !important; box-shadow: 0 0 0 3px rgba(0,162,224,.15); }
 
 @media (prefers-reduced-motion: reduce) {
-  .mia-scope .pd-cross:hover, .mia-scope .pd-cta:hover { transform: none; }
+  .mia-scope .pd-ds-btn:hover { transform: none; }
 }
 
 /* ── Tablet / phone ───────────────────────────────────────────────────────── */
-@media (max-width: 980px) {
+@media (max-width: 900px) {
   .mia-scope .pd-layout { grid-template-columns: minmax(0, 1fr); gap: 30px; padding: 30px 0 50px; }
-  /* The sidebar comes first: the hero already carries the title and opening. */
-  .mia-scope .pd-aside-col { order: -1; align-self: auto; }
+  .mia-scope .pd-aside-col { align-self: auto; }
   .mia-scope .pd-aside-sticky { position: static; }
 }
 @media (max-width: 760px) {
-  .mia-scope .pd-hero { min-height: 340px; }
-  .mia-scope .pd-hero-inner { padding: 64px 0 26px; }
-  .mia-scope .pd-hero h1 { font-size: 25px !important; }
+  .mia-scope .pd-hero { min-height: 320px; }
+  .mia-scope .pd-hero-inner { padding: 64px 0 24px; }
+  .mia-scope .pd-hero h1 { font-size: 25px; }
   /* Arrows sit above the title block instead of across it. */
   .mia-scope .pd-hero-media--banner .pd-hero-nav { top: 60px; transform: none; }
 }
 @media (max-width: 640px) {
   .mia-scope .pd-container { width: calc(100% - 32px); }
-  .mia-scope .pd-layout .pd-tab { height: 44px; }
+  .mia-scope .pd-donate { padding: 20px; }
 }
 @media (max-width: 560px) {
-  .mia-scope .pd-cross-row { grid-template-columns: minmax(0, 1fr); }
-  .mia-scope .pd-facts { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
-  .mia-scope .pd-facts--values { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-@media (max-width: 640px) {
-  /* minbar.css turns the tab row into a sideways scroller; room for the
-     picked pill's shadow so it is not clipped. */
-  .mia-scope .pd-layout .pd-tabs { padding-block: 2px 10px; }
+  .mia-scope .pd-facts { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .pd-gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mia-scope .pd-ds-freq { grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 14px; }
+  .mia-scope .pd-ds-freq > button { border-radius: 11px; }
 }

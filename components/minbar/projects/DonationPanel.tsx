@@ -1,7 +1,7 @@
 "use client";
 
 import { decimalAmount, digitsOnly } from "@/lib/minbar/numeric-input";
-import { useState, type CSSProperties } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
@@ -13,57 +13,53 @@ import { useDonationAmount } from "@/hooks/useDonationAmount";
 import type { MinbarProject } from "@/lib/minbar/projects";
 
 /**
- * The sticky donation panel on a project page  ported from the `#pd-aside`
- * block of `Minbar/تفاصيل مشروع.dc.html`.
+ * The project page's donation sidebar  `.donate-sidebar` of
+ * `ToplamVakfi-design/Toplum Vakfı Project - *.dc.html`.
  *
- * Amount, frequency, and an optional dedication ("give this in someone's name")
- * that produces a thank-you certificate sent by WhatsApp, email, or both.
+ * Title, funding bar and "NN% complete", six amount pills three-up, the free
+ * amount field with the currency at its start, the "give as a gift" pill
+ * that opens the recipient's name, then "donate now" beside "add to cart" and
+ * the secure-giving note.
  *
- * Contract notes carried over:
- *  - only identifiers reach the cart (`projectId`, `freqKey`, numeric amount,
- *    ISO currency)  the displayed title is resolved live from the locale;
- *  - the certificate itself is generated server-side after payment is
- *    confirmed, never in the browser (`DONATION_LOGIC_SPEC §2`). What this panel
- *    collects is the dedication data that will go on it;
- *  - "Donate now" adds to the basket and routes to the cart, the same path as
- *    every other add-to-basket on the site, so the donor always sees their
- *    basket before paying.
+ * Kept from the site's giving flow, styled in the same pill language:
+ *  - how often to give (one-time / monthly / every Friday / daily), a quiet
+ *    segmented row under the amounts  recurring gifts start here;
+ *  - the gift's delivery: once a recipient's name is written, the optional
+ *    WhatsApp / email notice, a message and "show the amount" ride on the row
+ *    as before (the certificate is generated server-side after payment).
  *
- * On a سهوم (shares) campaign the donor picks a number of shares instead of an
- * amount; the amount is the count times the share price and the row carries
- * the count, so the receipt says "3 shares".
+ * Only identifiers reach the cart (`projectId`, `freqKey`, numeric USD amount
+ * and the exact local figure). "Donate now" adds and routes to the basket.
+ * On a سهوم (shares) campaign the pills are share counts and the row carries
+ * the count.
  */
 
-const AMOUNTS = [25, 50, 100, 250, 500, 750, 1000, 2500];
+const AMOUNTS = [100, 200, 300, 500, 700, 1000];
 
 const FREQUENCIES: ReadonlyArray<{ id: CartFreqKey; key: string }> = [
   { id: "once", key: "oneTime" },
-  { id: "daily", key: "daily" },
-  { id: "friday", key: "everyFriday" },
   { id: "monthly", key: "monthly" },
+  { id: "friday", key: "everyFriday" },
+  { id: "daily", key: "daily" },
 ];
 
 /** Note length that fits the certificate's dedication line. */
 const NOTE_MAX = 90;
 
-export default function DonationPanel({ project, donorCount = 0 }: { project: MinbarProject; donorCount?: number }) {
+export default function DonationPanel({ project }: { project: MinbarProject; donorCount?: number }) {
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("common");
   const tCart = useTranslations("cart");
-  const tProjects = useTranslations("projects");
-  const { format, formatNumber } = useMinbarMoney();
-  const { fromLocal, fromChip, labelOf, tooSmall, minLabel } = useDonationAmount();
+  const tTv = useTranslations("projects.tv");
   const tGive = useTranslations("CardGive");
+  const { symbol: currencyMark, format, formatNumber } = useMinbarMoney();
+  const { fromLocal, fromChip, labelOf, tooSmall, minLabel } = useDonationAmount();
   const shares = project.shares;
   const { t: tShares, unitWord, countLabel } = useShareWording(shares);
 
   const { chips: amountChips, sharePrice } = useProjectPricing(project, AMOUNTS);
 
-  /* On a shares campaign the chips are share counts, not amounts. An amount
-     chip's value is USD (the basket's unit); its label may be an admin's
-     figure in the visitor's own currency. Picked by position, so switching
-     currency keeps the same chip selected. */
   const options = shares
     ? shares.counts.map((count) => ({ value: count, label: countLabel(count, formatNumber(count)) }))
     : amountChips.map((c) => ({ value: c.usd, label: c.label }));
@@ -73,73 +69,29 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
   const [freq, setFreq] = useState<CartFreqKey>("once");
   const [giftOpen, setGiftOpen] = useState(false);
   const [giftName, setGiftName] = useState("");
-  const [channels, setChannels] = useState<{ whatsapp: boolean; email: boolean }>({
-    whatsapp: false,
-    email: false,
-  });
+  const [channels, setChannels] = useState<{ whatsapp: boolean; email: boolean }>({ whatsapp: false, email: false });
   const [giftPhone, setGiftPhone] = useState("");
   const [giftEmail, setGiftEmail] = useState("");
   const [giftNote, setGiftNote] = useState("");
   const [showAmount, setShowAmount] = useState(true);
   const [added, setAdded] = useState(false);
+  const [minHint, setMinHint] = useState(false);
 
   const chosen = custom ? Number(custom) : options[picked]?.value ?? 0;
-  /* `chosen` is a share count on a shares campaign, an amount otherwise. */
   const shareCount = shares && Number.isInteger(chosen) && chosen > 0 ? chosen : 0;
   /* A typed figure is in the donor's own currency and an admin's per-currency
-     chip or share price is kept exactly (1 TL stays 1 TL); `amount` is the
-     USD value the basket stores. */
-  const given = shares
-    ? fromChip(sharePrice, shareCount)
-    : custom
-      ? fromLocal(Number(custom))
-      : fromChip(amountChips[picked]);
+     chip or share price is kept exactly; `amount` is the USD value stored. */
+  const given = shares ? fromChip(sharePrice, shareCount) : custom ? fromLocal(Number(custom)) : fromChip(amountChips[picked]);
   const amount = given.usd;
-  /* With the $1 floor on, less than a dollar is refused here and said so. */
   const belowMinimum = amount > 0 && tooSmall(amount, given.local);
-  const [minHint, setMinHint] = useState(false);
   const hasFinancials = project.goal != null && project.goal > 0;
   const pct = hasFinancials ? Math.min((project.raised / (project.goal as number)) * 100, 100) : 0;
   const progress = shares ? shareProgress(shares, project.raised, hasFinancials ? project.goal : null) : null;
-  const giftReady = giftName.trim().length > 0 && (channels.whatsapp ? giftPhone.trim() : true) && (channels.email ? giftEmail.trim() : true);
+  const giftReady =
+    giftOpen && giftName.trim().length > 0 && (channels.whatsapp ? giftPhone.trim() : true) && (channels.email ? giftEmail.trim() : true);
 
-  /* The design's pill chips (`.ds-amounts button`): a quiet fill at rest, the
-     brand-ink fill with white text once picked. */
-  const chip = (active: boolean, height: number): CSSProperties => ({
-    height,
-    minHeight: 40,
-    padding: "0 8px",
-    borderRadius: 999,
-    border: `1px solid ${active ? "#0077b3" : "#e2eaf0"}`,
-    background: active ? "#0077b3" : "#f7fafc",
-    color: active ? "#fff" : "var(--deep)",
-    fontFamily: "inherit",
-    fontSize: 13,
-    fontWeight: 800,
-    whiteSpace: "nowrap",
-    cursor: "pointer",
-    transition: "all .18s ease",
-  });
-
-  const field: CSSProperties = {
-    height: 44,
-    padding: "0 14px",
-    borderRadius: 10,
-    border: "1px solid #e2eaf0",
-    background: "#fff",
-    fontFamily: "inherit",
-    fontSize: 14,
-    fontWeight: 700,
-    color: "var(--deep)",
-    boxSizing: "border-box",
-    width: "100%",
-  };
-
-  /* The dedication rides on the row itself: the basket shows "gift to X",
-     the order carries it on the line, and the recipient is told once the
-     donation is confirmed. Only a complete dedication (a name, and contact
-     details for every chosen channel) is attached  a half-filled one is
-     dropped rather than sent to nobody. */
+  /* The dedication rides on the row itself. Only a complete one (a name, and
+     contact details for every chosen channel) is attached. */
   const buildItem = () => ({
     projectId: project.slug,
     title: project.title,
@@ -178,409 +130,160 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
     window.setTimeout(() => setAdded(false), 2400);
   };
 
-  const onShare = async () => {
-    const url = window.location.href;
-    if (navigator.share) await navigator.share({ title: project.title, url }).catch(() => {});
-    else if (navigator.clipboard) await navigator.clipboard.writeText(url).catch(() => {});
-  };
-
   return (
-    /* The design's `.donate-sidebar` card. It no longer sticks itself: the
-       project page sticks the column it sits in. */
-    <div
-      id="pd-aside"
-      className="pd-donate"
-      style={{
-        position: "relative",
-        display: "grid",
-        gap: 16,
-        padding: 26,
-        background: "#fff",
-        border: "1px solid #e6eef3",
-        borderRadius: 18,
-        boxShadow: "0 16px 34px rgba(2,52,88,.1)",
-      }}
-    >
-      {hasFinancials ? (
-        <div style={{ display: "grid", gap: 9 }}>
-          <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10 }}>
-            <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: 25, fontWeight: 900, color: "var(--deep)" }}>
-              {format(project.raised)}
-            </b>
-            <span style={{ fontSize: 12.5, fontWeight: 800, color: "var(--muted)" }}>
-              {t("raisedOfGoal", { raised: format(project.raised), goal: format(project.goal as number) })}
-            </span>
-          </span>
-          <span style={{ display: "block", height: 8, borderRadius: 999, background: "#eef3f7", overflow: "hidden" }}>
-            <span className="pd-fill" style={{ display: "block", height: "100%", borderRadius: 999, width: `${pct}%` }} />
-          </span>
-          <span style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 12, fontWeight: 800, color: "var(--muted)", flexWrap: "wrap" }}>
-            <span>{tProjects("pctOfGoal", { pct: formatNumber(Math.round(pct)) })}</span>
-            {donorCount > 0 ? <span>{tProjects("donorsCount", { n: formatNumber(donorCount) })}</span> : null}
-            {progress?.total != null ? (
-              <span>
-                {tShares("soldOfTotal", {
-                  sold: formatNumber(progress.sold),
-                  total: formatNumber(progress.total),
-                  unit: unitWord(progress.total),
-                })}
-              </span>
-            ) : null}
-          </span>
-        </div>
-      ) : (
-        /* No fixed target: say so plainly rather than drawing a bar against a
-           number that does not exist. A shares campaign still says how many
-           have been given. */
-        <span style={{ display: "grid", gap: 4, fontSize: 13, fontWeight: 800, color: "var(--muted)", lineHeight: 1.7 }}>
-          {progress && progress.sold > 0 ? (
-            <b style={{ fontSize: 17, fontWeight: 900, color: "var(--deep)" }}>
-              {tShares("givenSoFar", { count: formatNumber(progress.sold), unit: unitWord(progress.sold) })}
-            </b>
-          ) : null}
-          {tProjects("noTargetNote")}
-          {donorCount > 0 ? <span>{tProjects("donorsCount", { n: formatNumber(donorCount) })}</span> : null}
-        </span>
-      )}
+    <div id="pd-aside" className="pd-donate">
+      <h3>{tTv("donateTitle")}</h3>
 
-      {shares ? (
-        <span
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            padding: "10px 14px",
-            borderRadius: 999,
-            background: "#eaf6fd",
-            border: "1px solid rgba(0,162,224,.35)",
-            fontSize: 14,
-            fontWeight: 800,
-            color: "var(--deep)",
-          }}
-        >
-          {tShares("pricePer", {
-            price: sharePrice?.label ?? format(shares.priceUSD),
-            unit: unitWord(1),
-          })}
-        </span>
+      {hasFinancials ? (
+        <>
+          <div className="pd-ds-progress" aria-hidden="true">
+            <span style={{ width: `${pct}%` }} />
+          </div>
+          <div className="pd-ds-meta">
+            <span>{tTv("complete", { pct: formatNumber(Math.round(pct)) })}</span>
+            <span>{tTv("raisedOfGoal", { raised: format(project.raised), goal: format(project.goal as number) })}</span>
+          </div>
+        </>
+      ) : (
+        <div className="pd-ds-meta pd-ds-meta--open">
+          <span>
+            {progress && progress.sold > 0
+              ? tShares("givenSoFar", { count: formatNumber(progress.sold), unit: unitWord(progress.sold) })
+              : project.raised > 0
+                ? tTv("raisedSoFar", { amount: format(project.raised) })
+                : null}
+          </span>
+          <span>{tTv("ongoing")}</span>
+        </div>
+      )}
+      {progress?.total != null ? (
+        <p className="pd-ds-sub">
+          {tShares("soldOfTotal", { sold: formatNumber(progress.sold), total: formatNumber(progress.total), unit: unitWord(progress.total) })}
+        </p>
       ) : null}
 
-      <div style={{ display: "grid", gap: 8 }}>
-        <span style={{ fontSize: 11.5, fontWeight: 900, letterSpacing: ".06em", color: "var(--muted)" }}>
-          {shares ? tShares("chooseCount", { unit: unitWord(2) }) : tCart("chooseAmount")}
-        </span>
-        <div style={{ display: "grid", gridTemplateColumns: `repeat(${shares ? 3 : 4}, minmax(0,1fr))`, gap: 6 }}>
-          {options.map((option, index) => (
+      {shares ? (
+        <span className="pd-ds-price">{tShares("pricePer", { price: sharePrice?.label ?? format(shares.priceUSD), unit: unitWord(1) })}</span>
+      ) : null}
+
+      <div className="pd-ds-amounts" role="group" aria-label={shares ? tShares("chooseCount", { unit: unitWord(2) }) : tCart("chooseAmount")}>
+        {options.map((option, index) => {
+          const active = picked === index && !custom;
+          return (
             <button
               key={index}
               type="button"
-              data-pick={picked === index && !custom ? "1" : ""}
+              data-pick={active ? "1" : ""}
+              aria-pressed={active}
+              className={active ? "active" : undefined}
               onClick={() => {
                 setPicked(index);
                 setCustom("");
+                setMinHint(false);
               }}
-              style={chip(picked === index && !custom, 44)}
             >
-              {shares ? (
-                option.label
-              ) : (
-                <span dir="ltr" style={{ unicodeBidi: "isolate" }}>
-                  {option.label}
-                </span>
-              )}
+              {shares ? option.label : <span dir="ltr">{option.label}</span>}
             </button>
-          ))}
-        </div>
+          );
+        })}
+      </div>
+      <label className="pd-ds-custom">
+        {shares ? null : <span aria-hidden="true">{currencyMark}</span>}
         <input
           value={custom}
           /* Whole shares only; a count has no leading zero. */
-          onChange={(e) => setCustom(shares ? digitsOnly(e.target.value).replace(/^0+/, "").slice(0, 6) : decimalAmount(e.target.value))}
-          inputMode={shares ? "numeric" : "decimal"}
-          placeholder={shares ? tShares("customCountPh") : tCart("customAmountPh")}
-          aria-label={shares ? tShares("customCountPh") : tCart("customAmountPh")}
-          className="pd-custom"
-          style={{ ...field, borderRadius: 999, padding: "0 16px" }}
-        />
-      </div>
-
-      <div style={{ display: "grid", gap: 8 }}>
-        <span style={{ fontSize: 11.5, fontWeight: 900, letterSpacing: ".06em", color: "var(--muted)" }}>{t("frequency")}</span>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 6 }}>
-          {FREQUENCIES.map((f) => (
-            <button key={f.id} type="button" data-pick={freq === f.id ? "1" : ""} onClick={() => setFreq(f.id)} style={chip(freq === f.id, 40)}>
-              {t(f.key)}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Dedication ─────────────────────────────────────────────────── */}
-      <div style={{ display: "grid", gap: 10 }}>
-        {/* The design's `.ds-gift` row: a quiet outlined pill that turns
-            light-blue once the dedication is open. */}
-        <button
-          type="button"
-          onClick={() => setGiftOpen((v) => !v)}
-          aria-expanded={giftOpen}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 11,
-            padding: "7px 12px",
-            borderRadius: 999,
-            border: `1px solid ${giftOpen ? "var(--gold)" : "#e2eaf0"}`,
-            background: giftOpen ? "#eaf6fd" : "#fff",
-            cursor: "pointer",
-            fontFamily: "inherit",
-            width: "100%",
-            textAlign: "start",
+          onChange={(e) => {
+            setCustom(shares ? digitsOnly(e.target.value).replace(/^0+/, "").slice(0, 6) : decimalAmount(e.target.value));
+            setMinHint(false);
           }}
-        >
-          <span style={{ display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 999, background: "#eaf6fd", border: "1px solid rgba(0,162,224,.35)", flex: "0 0 auto" }}>
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0077b3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M4 11h16v9H4zM3 7h18v4H3zM12 7v13" />
-              <path d="M12 7S9.5 3.5 7.5 4.6C5.8 5.5 7 7 7 7M12 7s2.5-3.5 4.5-2.4C18.2 5.5 17 7 17 7" />
-            </svg>
-          </span>
-          <span style={{ display: "grid", gap: 2, minWidth: 0, flex: "1 1 auto" }}>
-            <b style={{ fontSize: 14, lineHeight: 1.4 }}>{tCart("giftThisDonation")}</b>
-            <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {giftName ? tCart("inNameOf", { name: giftName }) : tCart("giftCertHint")}
-            </span>
-          </span>
-          <span aria-hidden="true" style={{ color: "var(--gold)", transform: giftOpen ? "rotate(180deg)" : undefined, transition: "transform .2s ease", flex: "0 0 auto" }}>
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="m6 9 6 6 6-6" />
-            </svg>
-          </span>
-        </button>
+          inputMode={shares ? "numeric" : "decimal"}
+          placeholder={shares ? tShares("customCountPh") : tGive("otherAmount")}
+          aria-label={shares ? tShares("customCountPh") : tGive("otherAmount")}
+          className="pd-custom"
+        />
+      </label>
 
-        {giftOpen ? (
-          /* Page-background tint, not the light-blue chip tint: the #0077b3
-             labels keep 4.5:1 on it (ToplamVakfi-design/CLAUDE.md). */
-          <div style={{ display: "grid", gap: 12, padding: 16, background: "#f4f8fb", border: "1px solid #e2eaf0", borderRadius: 14 }}>
-            <span style={{ display: "grid", gap: 5 }}>
-              <span style={{ fontSize: 11.5, fontWeight: 900, color: "#0077b3" }}>{tCart("giftRecipientName")}</span>
-              <input value={giftName} onChange={(e) => setGiftName(e.target.value)} placeholder={tCart("certNamePh")} style={field} />
-            </span>
+      <div className="pd-ds-freq" role="radiogroup" aria-label={t("frequency")}>
+        {FREQUENCIES.map((f) => (
+          <button key={f.id} type="button" role="radio" aria-checked={freq === f.id} data-pick={freq === f.id ? "1" : ""} onClick={() => setFreq(f.id)}>
+            {t(f.key)}
+          </button>
+        ))}
+      </div>
 
-            <span style={{ display: "grid", gap: 6 }}>
-              <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-                <span style={{ fontSize: 11.5, fontWeight: 900, color: "#0077b3" }}>{tCart("certSendMethod")}</span>
-                <span style={{ fontSize: 11, fontWeight: 800, color: "var(--muted)" }}>
-                  {channels.whatsapp && channels.email
-                    ? tCart("giftBothLong")
-                    : channels.whatsapp || channels.email
-                      ? tCart("giftSentVia")
-                      : tCart("giftChannelChoose")}
-                </span>
-              </span>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 6 }}>
-                <button
-                  type="button"
-                  data-pick={channels.whatsapp ? "1" : ""}
-                  onClick={() => setChannels((c) => ({ ...c, whatsapp: !c.whatsapp }))}
-                  style={{ ...chip(channels.whatsapp, 40), display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, fontSize: 12.5 }}
-                >
+      {/* ── Gift (`.ds-gift`) ───────────────────────────────────────────── */}
+      <button type="button" className={`pd-ds-gift${giftOpen ? " checked" : ""}`} aria-expanded={giftOpen} onClick={() => setGiftOpen((v) => !v)}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+          <rect x="3" y="8" width="18" height="13" rx="2" />
+          <path d="M3 12h18M12 8v13M8 8a2.5 2.5 0 1 1 0-5c1.5 0 3 1.5 4 5-1 0 2.5 0 4-5a2.5 2.5 0 1 1 0 5" />
+        </svg>
+        <span>{tTv("giftToggle")}</span>
+      </button>
+      {giftOpen ? (
+        <div className="pd-ds-gift-field">
+          <input value={giftName} onChange={(e) => setGiftName(e.target.value)} placeholder={tTv("giftNamePh")} aria-label={tTv("giftNamePh")} />
+          {giftName.trim() ? (
+            <div className="pd-ds-gift-more">
+              <span className="pd-ds-gift-label">{tCart("certSendMethod")}</span>
+              <div className="pd-ds-gift-channels">
+                <button type="button" aria-pressed={channels.whatsapp} data-pick={channels.whatsapp ? "1" : ""} onClick={() => setChannels((c) => ({ ...c, whatsapp: !c.whatsapp }))}>
                   {tCart("sendViaWhatsapp")}
                 </button>
-                <button
-                  type="button"
-                  data-pick={channels.email ? "1" : ""}
-                  onClick={() => setChannels((c) => ({ ...c, email: !c.email }))}
-                  style={{ ...chip(channels.email, 40), display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, fontSize: 12.5 }}
-                >
+                <button type="button" aria-pressed={channels.email} data-pick={channels.email ? "1" : ""} onClick={() => setChannels((c) => ({ ...c, email: !c.email }))}>
                   {tCart("giftChannelEmail")}
                 </button>
               </div>
-            </span>
-
-            {channels.whatsapp ? (
-              <input
-                value={giftPhone}
-                onChange={(e) => setGiftPhone(e.target.value)}
-                type="tel"
-                inputMode="tel"
-                /* A phone number is Latin-script data  isolated so bidi cannot
-                   reorder its digits inside an Arabic panel. */
-                dir="ltr"
-                placeholder={tCart("recipientWhatsapp")}
-                aria-label={tCart("recipientWhatsapp")}
-                style={{ ...field, unicodeBidi: "isolate" }}
-              />
-            ) : null}
-            {channels.email ? (
-              <input
-                value={giftEmail}
-                onChange={(e) => setGiftEmail(e.target.value)}
-                type="email"
-                dir="ltr"
-                placeholder="name@example.com"
-                aria-label={tCart("giftChannelEmail")}
-                style={{ ...field, unicodeBidi: "isolate" }}
-              />
-            ) : null}
-
-            <span style={{ display: "grid", gap: 5 }}>
-              <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10 }}>
-                <span style={{ fontSize: 11.5, fontWeight: 900, color: "#0077b3" }}>{tCart("giftMessage")}</span>
-                <span dir="ltr" style={{ unicodeBidi: "isolate", fontSize: 11, fontWeight: 800, color: "var(--muted)" }}>
-                  {giftNote.length}/{NOTE_MAX}
-                </span>
-              </span>
+              {channels.whatsapp ? (
+                <input
+                  value={giftPhone}
+                  onChange={(e) => setGiftPhone(e.target.value)}
+                  type="tel"
+                  inputMode="tel"
+                  dir="ltr"
+                  placeholder={tCart("recipientWhatsapp")}
+                  aria-label={tCart("recipientWhatsapp")}
+                />
+              ) : null}
+              {channels.email ? (
+                <input value={giftEmail} onChange={(e) => setGiftEmail(e.target.value)} type="email" dir="ltr" placeholder="name@example.com" aria-label={tCart("giftChannelEmail")} />
+              ) : null}
               <input
                 value={giftNote}
                 onChange={(e) => setGiftNote(e.target.value.slice(0, NOTE_MAX))}
                 maxLength={NOTE_MAX}
                 placeholder={tCart("writeYourMessagePh")}
-                style={field}
+                aria-label={tCart("giftMessage")}
               />
-            </span>
-
-            {giftReady ? (
-              <span style={{ display: "grid", gap: 6, padding: "12px 14px", background: "#fff", border: "1px solid rgba(31,122,77,.35)", borderInlineStart: "3px solid var(--green)", borderRadius: 8 }}>
-                <span style={{ fontSize: 11, fontWeight: 900, color: "var(--green)" }}>{tCart("certPreview")}</span>
-                <b style={{ fontSize: 13.5, lineHeight: 1.6 }}>{tCart("inNameOf", { name: giftName })}</b>
-                <span style={{ fontSize: 12.5, lineHeight: 1.75, color: "var(--muted)" }}>
-                  {giftNote || project.title}
-                </span>
-              </span>
-            ) : null}
-
-            <button
-              type="button"
-              onClick={() => setShowAmount((v) => !v)}
-              aria-pressed={showAmount}
-              style={{ display: "flex", alignItems: "center", gap: 10, padding: "11px 13px", background: "#fff", border: "1px solid var(--border)", borderRadius: 9, cursor: "pointer", fontFamily: "inherit", textAlign: "start", width: "100%" }}
-            >
-              <span
-                aria-hidden="true"
-                style={{
-                  display: "grid",
-                  placeItems: "center",
-                  width: 20,
-                  height: 20,
-                  flex: "0 0 auto",
-                  borderRadius: 6,
-                  border: `1px solid ${showAmount ? "var(--green)" : "var(--border)"}`,
-                  background: showAmount ? "var(--green)" : "#fff",
-                }}
-              >
-                {showAmount ? (
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m5 12 5 5L19 7" />
-                  </svg>
-                ) : null}
-              </span>
-              <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
-                <b style={{ fontSize: 13, lineHeight: 1.4 }}>{tCart("showAmountOnCert")}</b>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "var(--muted)" }}>
-                  {showAmount ? tCart("amountShownNote") : tCart("amountHiddenNote")}
-                </span>
-              </span>
-            </button>
-
-            <span style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 11.5, lineHeight: 1.75, color: "var(--muted)" }}>
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--green)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto", marginTop: 3 }}>
-                <path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z" />
-                <path d="m9 12 2 2 4-4" />
-              </svg>
-              {tCart("giftPrivacyNote")}
-            </span>
-          </div>
-        ) : null}
-      </div>
-
-      <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10, paddingTop: 14, borderTop: "1px solid #e6eef3" }}>
-        <span style={{ display: "grid", gap: 2, fontSize: 13, fontWeight: 800, color: "var(--muted)" }}>
-          {freq === "once" ? tCart("totalDonation") : tCart("perInstalment")}
-          {shares && shareCount ? (
-            <span style={{ fontSize: 11.5, fontWeight: 700 }}>
-              {countLabel(shareCount, formatNumber(shareCount))} ×{" "}
-              <span dir="ltr" style={{ unicodeBidi: "isolate" }}>
-                {sharePrice?.label ?? format(shares.priceUSD)}
-              </span>
-            </span>
+              <label className="pd-ds-check">
+                <input type="checkbox" checked={showAmount} onChange={(e) => setShowAmount(e.target.checked)} />
+                <span>{tCart("showAmountOnCert")}</span>
+              </label>
+            </div>
           ) : null}
-        </span>
-        <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: 21, fontWeight: 900, color: "var(--red)" }}>
-          {labelOf(given)}
-        </b>
-      </span>
+        </div>
+      ) : null}
+
       {minHint && belowMinimum ? (
-        <span role="alert" className="wq-error" style={{ marginTop: -6, fontSize: 13, fontWeight: 800, color: "var(--danger)" }}>
+        <span role="alert" className="pd-ds-hint">
           {tGive("minAmount", { amount: minLabel })}
         </span>
       ) : null}
 
-      {/* The design's `.ds-btn-row`: donate (the CTA gradient) beside add to
-          basket, with share at the end. Wraps when a language's labels are long. */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-        <button
-          type="button"
-          onClick={onDonate}
-          className="mia-card-cta pd-cta"
-          style={{ flex: "1.3 1 150px", minHeight: 48, padding: "0 14px", border: 0, borderRadius: 999, color: "#fff", fontFamily: "inherit", fontSize: 15, fontWeight: 800, whiteSpace: "nowrap", cursor: "pointer", boxShadow: "0 12px 24px -12px rgba(27,111,224,.7)", transition: "filter .18s ease, transform .18s ease" }}
-        >
-          {t("donateNow")}
+      <div className="pd-ds-btns">
+        <button type="button" onClick={onDonate} className="mia-card-cta pd-cta pd-ds-btn">
+          {shares && shareCount && !belowMinimum ? (
+            <span>
+              {tTv("donateNow")} (<span dir="ltr" style={{ unicodeBidi: "isolate" }}>{labelOf(given)}</span>)
+            </span>
+          ) : (
+            tTv("donateNow")
+          )}
         </button>
-        <div style={{ flex: "1 1 160px", display: "flex", gap: 8 }}>
-          <button
-            type="button"
-            onClick={onAddToBasket}
-            className="pd-cart-btn"
-            style={{
-              flex: "1 1 auto",
-              minHeight: 48,
-              padding: "0 12px",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              border: `1px solid ${added ? "var(--green)" : "#e2eaf0"}`,
-              borderRadius: 999,
-              background: added ? "rgba(31,122,77,.08)" : "#f2f6f9",
-              color: added ? "var(--green)" : "var(--deep)",
-              fontFamily: "inherit",
-              fontSize: 13,
-              fontWeight: 800,
-              whiteSpace: "nowrap",
-              cursor: "pointer",
-              transition: "all .18s ease",
-            }}
-          >
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="m4 8 2 11h12l2-11H4Z" />
-              <path d="m9 8 3-4 3 4M9 12v3M15 12v3" />
-            </svg>
-            {added ? t("added") : t("addToCart")}
-          </button>
-          <button
-            type="button"
-            onClick={onShare}
-            title={t("share")}
-            aria-label={t("share")}
-            className="mia-share-btn"
-            style={{ flex: "0 0 auto", width: 48, height: 48, display: "grid", placeItems: "center", border: "1px solid #e2eaf0", borderRadius: 999, background: "#fff", color: "var(--deep)", cursor: "pointer", transition: "all .18s ease" }}
-          >
-            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <circle cx="18" cy="5" r="3" />
-              <circle cx="6" cy="12" r="3" />
-              <circle cx="18" cy="19" r="3" />
-              <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" />
-            </svg>
-          </button>
-        </div>
+        <button type="button" onClick={onAddToBasket} className={`pd-cart-btn pd-ds-cart${added ? " is-added" : ""}`} aria-live="polite">
+          {added ? tTv("added") : tTv("addToCartPlain")}
+        </button>
       </div>
-
-      <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: -4, fontSize: 12, fontWeight: 700, color: "var(--muted)", lineHeight: 1.7, textAlign: "center" }}>
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#0077b3" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto" }}>
-          <path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z" />
-          <path d="m9 12 2 2 4-4" />
-        </svg>
-        {tCart("platformSecure")}
-      </span>
+      <p className="pd-ds-note">{tTv("secureNote")}</p>
     </div>
   );
 }

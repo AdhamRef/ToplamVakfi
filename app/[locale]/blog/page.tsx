@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { LOCALE_SEO, buildPageMetadata, type Locale } from "@/lib/seo";
+import { getTranslations } from "next-intl/server";
+import { buildPageMetadata } from "@/lib/seo";
 import { slugFor } from "@/lib/minbar/routes";
 import { listArticles, listPostCategories } from "@/lib/minbar/posts";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
@@ -10,20 +11,17 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["blog", "homepage"] as const;
+const NAMESPACES = ["blog", "tvBlog"] as const;
 
 /** Articles change when an editor publishes, not per request. */
 export const revalidate = 60;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  /* The blog's own SEO copy, per locale. This used to borrow the ABOUT page's hero subtitle, so every
-     language's blog listing was described to search engines as the organisation rather than as its
-     articles. `LOCALE_SEO[locale].blog` is the generated source that exists for exactly this. */
-  const seo = LOCALE_SEO[locale as Locale] ?? LOCALE_SEO.en;
+  const t = await getTranslations({ locale, namespace: "tvBlog" });
   return buildPageMetadata(locale, {
-    title: seo.blog.title,
-    description: seo.blog.description,
+    title: t("title"),
+    description: t("lead"),
     path: `/${slugFor("blog", locale)}`,
   });
 }

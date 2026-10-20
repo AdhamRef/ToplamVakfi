@@ -1,158 +1,197 @@
 "use client";
-/* eslint-disable @next/next/no-img-element -- dynamic CMS/category images and the existing brand asset intentionally use raw img tags. */
+/* eslint-disable @next/next/no-img-element -- the brand mark is a fixed local asset served through the image proxy. */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useLocale, useTranslations } from "next-intl";
-import { LOCALES, SUPPORTED_LOCALES, localeDirection } from "@/lib/locales";
+import { LOCALES, SUPPORTED_LOCALES, localeDirection, type SupportedLocale } from "@/lib/locales";
 import { SUPPORTED_CURRENCY_OPTIONS } from "@/lib/supported-currencies";
 import { CURRENCY_COOKIE_UPDATED_EVENT } from "@/components/CurrencyFromUrlSync";
-import { miaPath, type MinbarRoute } from "@/lib/minbar/routes";
+import { miaPath, routeForPathname, type MinbarRoute } from "@/lib/minbar/routes";
+import { ORG } from "@/lib/minbar/org";
 import { useMinbarCartCount } from "@/hooks/useMinbarCart";
 import { CART_BUMP_EVENT, CART_TARGET_ATTR } from "@/lib/minbar/cart-feedback";
-import { useMinbarLabel } from "@/hooks/useMinbarLabel";
 import type { NavCategory } from "@/lib/minbar/categories";
-import HeaderSearch from "./HeaderSearch";
 import { imageSrcSet, imageUrl } from "@/lib/minbar/image-url";
-import { QUICK_DONATE_OPEN_EVENT } from "./quick-donate-styles";
+import HeaderSearch from "./HeaderSearch";
+import ShellIcon, { type ShellIconName } from "./ShellIcons";
+import {
+  ALERT_CLOSED_KEY,
+  LANG_CHOSEN_KEY,
+  LANG_SUGGEST_DISMISSED_KEY,
+  SHELL_DRAWER_OPEN_EVENT,
+} from "./shell-events";
 
 /**
- * Site header  ported from `Minbar/Header.dc.html`.
+ * Site header — `ToplamVakfi-design/Toplum Vakfı Header.dc.html`.
  *
- * Carries the main navigation, the language picker (19 languages; ar and ur are
- * RTL), the currency picker (14 currencies), the cart icon and the account icon.
+ * One fixed stack, measured into the spacer below it:
+ *   1. the "this site is available in …" bar (browser language ≠ page language),
+ *   2. the homepage announcement strip (`Toplum Vakfı Homepage.dc.html`, `.alert-bar`),
+ *   3. the header itself: logo · language pill · currency · nav with the
+ *      design's dropdown groups · search · profile · cart · «تبرع الآن».
  *
- * Notes carried over from the handoff:
- *  - Every icon is drawn SVG matched to its function  no icon font, no emoji.
- *    "All pages" is a 2×2 apps grid rather than a hamburger because it opens a
- *    page index, not a side nav.
- *  - Presence of a language in the picker does not mean its content is
- *    complete; the dot beside each name reflects body-translation status.
- *  - The cart badge reads the shared cart store and updates immediately via
- *    `mia:basket-updated`, plus the standard `storage` event so a second tab
- *    stays in step.
- *  - The spacer below the fixed header is measured from its real height with a
- *    ResizeObserver, never a fixed number  the header grows and shrinks with
- *    the language, the back button and the viewport, and any constant either
- *    overshoots or covers the top of the content.
+ * Under 829px the nav moves into the drawer; under 761px the bottom navigation
+ * (`MobileBottomNav`) carries home / programmes / donate / stories / more, and
+ * the header keeps only the logo with language + currency on one side and
+ * profile + cart on the other.
  *
- * Backend/dashboard hooks left as-is from the handoff:
- *  - `linkOverrides` lets the marketing team retarget any nav label from the
- *    dashboard without touching code; anything not in the map keeps its default.
- *  - the account icon routes to the donor account when signed in and to sign-in
- *    otherwise (`[AUTH-INTEGRATION]`).
+ * Kept from the previous header: the cart badge and its bump on
+ * `CART_BUMP_EVENT` (and `CART_TARGET_ATTR`, the coin's landing point), the
+ * account routing (sign-in with a callback for guests), the admin dashboard
+ * door, `linkOverrides` from the dashboard, the currency cookie shared with
+ * the rest of the app, and a language switch that keeps the visitor on the
+ * same page.
  */
 
-/** Main navigation. `[route, i18n key in the navigation namespace]`. */
-const NAV: ReadonlyArray<readonly [MinbarRoute, string]> = [
+type NavKey = "about" | "programs" | "impact" | "stories" | "partners" | "contact";
+
+interface SubLink {
+  route: MinbarRoute;
+  /** Anchor on the target page, without `#`. */
+  hash?: string;
+  /** Key under `tvShell.nav`. */
+  key: string;
+  icon: ShellIconName;
+}
+
+interface NavGroup {
+  key: NavKey;
+  route: MinbarRoute;
+  /** Two-column panel (`.tv-sub--2`). */
+  wide?: boolean;
+  sub?: readonly SubLink[];
+}
+
+/** The design's navigation, in its order and grouping. */
+const NAV: readonly NavGroup[] = [
+  {
+    key: "about",
+    route: "about",
+    wide: true,
+    sub: [
+      { route: "ourStory", key: "ourStory", icon: "story" },
+      { route: "about", hash: "vision", key: "vision", icon: "eye" },
+      { route: "about", hash: "message", key: "message", icon: "send" },
+      { route: "about", hash: "mission", key: "mission", icon: "flag" },
+      { route: "about", hash: "goals", key: "goals", icon: "target" },
+      { route: "presidentLetter", key: "presidentLetter", icon: "person" },
+      { route: "board", key: "board", icon: "people" },
+    ],
+  },
+  {
+    key: "programs",
+    route: "programs",
+    wide: true,
+    sub: [
+      { route: "programs", hash: "values", key: "values", icon: "sprout" },
+      { route: "programs", hash: "human", key: "human", icon: "people" },
+      { route: "programs", hash: "youth", key: "youth", icon: "trend" },
+      { route: "programs", hash: "community", key: "community", icon: "heart" },
+      { route: "projects", key: "hope", icon: "star" },
+    ],
+  },
+  {
+    key: "impact",
+    route: "reports",
+    sub: [
+      { route: "reports", key: "impact", icon: "chart" },
+      { route: "transparency", key: "transparency", icon: "doc" },
+      { route: "news", key: "news", icon: "news" },
+    ],
+  },
+  { key: "stories", route: "stories" },
+  { key: "partners", route: "partner" },
+  { key: "contact", route: "contact" },
+];
+
+/** Which top-level item lights for the current page (a submenu match lights its parent). */
+const ACTIVE_OF: Partial<Record<MinbarRoute, NavKey>> = {
+  about: "about",
+  ourStory: "about",
+  presidentLetter: "about",
+  board: "about",
+  programs: "programs",
+  programDetail: "programs",
+  projects: "programs",
+  projectDetail: "programs",
+  reports: "impact",
+  transparency: "impact",
+  news: "impact",
+  stories: "stories",
+  partner: "partners",
+  contact: "contact",
+};
+
+/** The drawer's list, as the design orders it. */
+const DRAWER: ReadonlyArray<readonly [MinbarRoute, string]> = [
+  ["about", "about"],
+  ["programs", "programs"],
   ["projects", "projects"],
-  ["aqsa", "aqsa"],
-  ["zakat", "zakat"],
-  ["recurring", "recurring"],
-  ["reports", "reports"],
-  ["blog", "blog"],
+  ["news", "allNews"],
+  ["reports", "impact"],
+  ["stories", "ourStories"],
+  ["partner", "partners"],
+  ["contact", "contact"],
 ];
 
-/** The "all pages" index, grouped exactly as `Component.MENU_GROUPS`. */
-const MENU_GROUPS: ReadonlyArray<{
-  titleKey: string;
-  items: ReadonlyArray<readonly [MinbarRoute, string]>;
-}> = [
-  {
-    titleKey: "groupDonate",
-    items: [
-      ["projects", "allProjects"],
-      ["zakat", "zakat"],
-      ["zakatCalculator", "zakatCalculator"],
-      ["recurring", "recurring"],
-      ["bankAccounts", "bankAccounts"],
-    ],
-  },
-  {
-    titleKey: "groupJerusalemAqsa",
-    items: [
-      ["aqsa", "aqsa"],
-      ["jerusalem", "jerusalem"],
-      ["reports", "reports"],
-    ],
-  },
-  {
-    titleKey: "groupKnowledge",
-    items: [
-      ["blog", "blog"],
-      ["news", "news"],
-      ["zenkiCourse", "zenkiCourse"],
-    ],
-  },
-  {
-    titleKey: "groupFoundation",
-    items: [
-      ["about", "about"],
-      ["contact", "contact"],
-      ["volunteer", "volunteer"],
-      ["partner", "partner"],
-    ],
-  },
-];
+/** The design offers these three; any other currency already in the cookie stays listed. */
+const DESIGN_CURRENCIES = ["USD", "EUR", "TRY"];
 
-const CURRENCY_SYMBOLS: Record<string, string> = Object.fromEntries(
-  SUPPORTED_CURRENCY_OPTIONS.map((c) => [c.code, c.symbol])
-);
+type Dropdown = { id: "lang" | "curr"; top: number; side: number } | null;
 
 export interface HeaderProps {
-  /** Route key of the current page, so its nav link shows the active rule. */
+  /** Route key of the current page; derived from the pathname when absent. */
   active?: MinbarRoute;
-  /** Organisation contact details. Sourced from the dashboard in production. */
+  /** Kept for callers; the WhatsApp line comes from `ORG`. */
   whatsappNumber?: string;
   /**
-   * Dashboard-editable link overrides, keyed by navigation i18n key:
-   * `{ zakat: "/ar/zakat-new" }`. Anything absent keeps its default route.
+   * Dashboard-editable link overrides, keyed by the nav key
+   * (`about`, `programs`, `impact`, `stories`, `partners`, `contact`, `donate`).
    */
   linkOverrides?: Record<string, string>;
-  /** Whether a donor session exists  drives where the account icon points. */
+  /** Whether a donor session exists — drives where the account icon points. */
   signedIn?: boolean;
-  /** An ADMIN session gets a direct door to the dashboard beside the account icon. */
+  /** An ADMIN session gets a direct door to the dashboard. */
   isAdmin?: boolean;
-  /**
-   * Active project categories. When present, the "projects" nav item opens a
-   * dropdown of them, and the "all pages" index lists them for the widths
-   * where the nav is hidden.
-   */
+  /** Kept for callers; the design's menus are fixed and do not list categories. */
   categories?: NavCategory[];
 }
 
-export default function Header({
-  active,
-  whatsappNumber = "905398436050",
-  linkOverrides,
-  signedIn = false,
-  isAdmin = false,
-  categories = [],
-}: HeaderProps) {
-  const locale = useLocale();
+export default function Header({ active, linkOverrides, signedIn = false, isAdmin = false }: HeaderProps) {
+  const locale = useLocale() as SupportedLocale;
   const dir = localeDirection(locale);
-  const tNav = useTranslations("navigation");
-  const tCommon = useTranslations("common");
-  const tCats = useTranslations("CategoryNav");
-  const label = useMinbarLabel();
+  const t = useTranslations("tvShell");
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
+  const route = active ?? routeForPathname(pathname);
+  const activeKey = route ? ACTIVE_OF[route] : undefined;
+  const isHome = route === "home";
 
-  const [localeOpen, setLocaleOpen] = useState(false);
-  /* The desktop pill opens both lists side by side; on a phone the language
-     and the currency each have their own labelled button and open only theirs. */
-  const [localePanel, setLocalePanel] = useState<"both" | "language" | "currency">("both");
-  const [menuOpen, setMenuOpen] = useState(false);
-  /* The "all pages" menu lists the categories when there are any. */
-  const hasCats = categories.length > 0;
   const [currency, setCurrency] = useState("USD");
-  const [showBack, setShowBack] = useState(false);
+  const [dropdown, setDropdown] = useState<Dropdown>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [suggest, setSuggest] = useState<SupportedLocale | null>(null);
+  const [alertOpen, setAlertOpen] = useState(true);
   const basket = useMinbarCartCount();
-  /* Something just went into the basket (`CART_BUMP_EVENT`): the icon jumps
-     and a "+1" rises. Toggled off and on again so a quick second add replays. */
+
+  const closeSearch = useCallback(() => setSearchOpen(false), []);
+  const spacerRef = useRef<HTMLDivElement>(null);
+  const stackRef = useRef<HTMLDivElement>(null);
+
+  const href = useCallback(
+    (r: MinbarRoute, key?: string, hash?: string) =>
+      (key && !hash && linkOverrides?.[key]) || `${miaPath(r, locale)}${hash ? `#${hash}` : ""}`,
+    [linkOverrides, locale]
+  );
+
+  /* ── Cart: the bump and the "added" toast ───────────────────────────── */
   const [cartBump, setCartBump] = useState(false);
+  const [toast, setToast] = useState(false);
+  const lastCount = useRef<number | null>(null);
   useEffect(() => {
     let timer = 0;
     let frame = 0;
@@ -162,7 +201,7 @@ export default function Header({
       window.cancelAnimationFrame(frame);
       frame = window.requestAnimationFrame(() => {
         setCartBump(true);
-        timer = window.setTimeout(() => setCartBump(false), 1300);
+        timer = window.setTimeout(() => setCartBump(false), 600);
       });
     };
     window.addEventListener(CART_BUMP_EVENT, onBump);
@@ -172,43 +211,36 @@ export default function Header({
       window.cancelAnimationFrame(frame);
     };
   }, []);
-
-  const headRef = useRef<HTMLElement>(null);
-  const spacerRef = useRef<HTMLDivElement>(null);
-  const popRef = useRef<HTMLDivElement>(null);
-
-  const href = useCallback(
-    (route: MinbarRoute, key?: string) =>
-      (key && linkOverrides?.[key]) || miaPath(route, locale),
-    [linkOverrides, locale]
-  );
-
-  /* Reserve exactly the header's own height below it. Writing the value rounds
-     it (108.18 → 109), so it never equals the measurement that produced it; a
-     naive observer re-fires on every delivery and the browser logs
-     "ResizeObserver loop completed with undelivered notifications". Hence the
-     guard, and the write inside requestAnimationFrame. */
+  /* The design notifies on every add. The basket count rising is the one
+     signal every add path shares; the cart and checkout pages show the basket
+     themselves, so they stay quiet. */
   useEffect(() => {
-    const head = headRef.current;
-    const spacer = spacerRef.current;
-    if (!head || !spacer) return;
+    const previous = lastCount.current;
+    lastCount.current = basket;
+    if (previous === null || basket <= previous) return;
+    if (route === "cart" || route === "checkout") return;
+    setToast(true);
+    const timer = window.setTimeout(() => setToast(false), 3200);
+    return () => window.clearTimeout(timer);
+  }, [basket, route]);
 
+  /* ── The spacer reserves exactly the fixed stack's height ───────────── */
+  useEffect(() => {
+    const stack = stackRef.current;
+    const spacer = spacerRef.current;
+    if (!stack || !spacer) return;
     let applied = -1;
     const sync = () => {
-      const next = Math.ceil(head.getBoundingClientRect().height);
+      const next = Math.ceil(stack.getBoundingClientRect().height);
       if (Math.abs(next - applied) < 0.5) return;
       applied = next;
       requestAnimationFrame(() => {
         spacer.style.height = `${next}px`;
-        // The phone menu drawer opens right under the header, whatever its height.
         document.documentElement.style.setProperty("--mia-head-h", `${next}px`);
       });
     };
-    // A ResizeObserver delivers its first entry on `observe()`, after the
-    // browser's own layout pass. Measuring synchronously here as well forced a
-    // layout in the middle of hydration (PageSpeed: ~200 ms forced reflow).
     const observer = typeof ResizeObserver !== "undefined" ? new ResizeObserver(sync) : null;
-    if (observer) observer.observe(head);
+    if (observer) observer.observe(stack);
     else sync();
     window.addEventListener("resize", sync);
     return () => {
@@ -217,8 +249,7 @@ export default function Header({
     };
   }, []);
 
-  /* Currency lives in the same cookie the rest of the app reads, so the picker
-     here and `CurrencySelector` elsewhere can never disagree. */
+  /* ── Currency: the cookie the rest of the app reads ─────────────────── */
   useEffect(() => {
     const sync = () => {
       const saved = Cookies.get("currency");
@@ -229,32 +260,62 @@ export default function Header({
     return () => window.removeEventListener(CURRENCY_COOKIE_UPDATED_EVENT, sync);
   }, []);
 
-  /* The back button appears only once the visitor has actually moved between
-     two pages  not on the first page of a session, and not on a reload of the
-     same page. */
+  /* ── Language suggestion: the browser prefers another site language ── */
   useEffect(() => {
     try {
-      const current = window.location.pathname + window.location.search;
-      const last = window.sessionStorage.getItem("mia_last_page");
-      if (last && last !== current) setShowBack(true);
-      window.sessionStorage.setItem("mia_last_page", current);
+      if (window.localStorage.getItem(LANG_CHOSEN_KEY)) return;
+      if (window.localStorage.getItem(LANG_SUGGEST_DISMISSED_KEY) === "1") return;
     } catch {
-      // sessionStorage can throw in private mode; the button simply stays hidden.
+      return;
     }
-  }, [pathname]);
+    const list = navigator.languages?.length ? navigator.languages : [navigator.language || ""];
+    for (const entry of list) {
+      const code = String(entry).slice(0, 2).toLowerCase();
+      if (code === locale) return;
+      if ((SUPPORTED_LOCALES as readonly string[]).includes(code)) {
+        setSuggest(code as SupportedLocale);
+        return;
+      }
+    }
+  }, [locale]);
 
-  /* A new page closes every panel, including via back/forward. */
+  /* ── Announcement strip: homepage only, until dismissed ─────────────── */
   useEffect(() => {
-    setMenuOpen(false);
-    setLocaleOpen(false);
-  }, [pathname]);
+    try {
+      if (window.localStorage.getItem(ALERT_CLOSED_KEY) === "1") setAlertOpen(false);
+    } catch {
+      /* storage blocked: the strip simply stays */
+    }
+  }, []);
 
-  /* On a phone the menu and the language panel are full-height drawers: the
-     page behind them must not scroll, and the floating buttons (WhatsApp and
-     quick donate) step aside  the CSS keys off `data-mia-drawer`. */
-  const drawerOpen = menuOpen || localeOpen;
+  /* ── Panels close on navigation, outside click and Escape ───────────── */
   useEffect(() => {
-    if (!drawerOpen || !window.matchMedia("(max-width: 700px)").matches) return;
+    setDrawerOpen(false);
+    setDropdown(null);
+    setSearchOpen(false);
+  }, [pathname]);
+  useEffect(() => {
+    const open = () => setDrawerOpen(true);
+    window.addEventListener(SHELL_DRAWER_OPEN_EVENT, open);
+    return () => window.removeEventListener(SHELL_DRAWER_OPEN_EVENT, open);
+  }, []);
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setDrawerOpen(false);
+      setDropdown(null);
+      setSearchOpen(false);
+    };
+    const onClick = () => setDropdown(null);
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("click", onClick);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("click", onClick);
+    };
+  }, []);
+  useEffect(() => {
+    if (!drawerOpen) return;
     const root = document.documentElement;
     const previous = root.style.overflow;
     root.style.overflow = "hidden";
@@ -265,705 +326,411 @@ export default function Header({
     };
   }, [drawerOpen]);
 
-  /* Close the popovers on outside click and on Escape  both panels are large
-     and overlay the page, so there has to be a way out that is not the toggle. */
-  useEffect(() => {
-    if (!localeOpen && !menuOpen) return;
-    const onPointer = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (popRef.current && !popRef.current.contains(target)) {
-        setLocaleOpen(false);
-        setMenuOpen(false);
-      }
-    };
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setLocaleOpen(false);
-        setMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", onPointer);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onPointer);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [localeOpen, menuOpen]);
-
-  /* Changing language keeps the visitor on the same page  a hard requirement
-     in DEVELOPER_HANDOFF §11, and the reason this swaps the locale segment
-     rather than pushing the homepage. */
+  /* Changing language keeps the visitor on the same page. */
   const selectLocale = (code: string) => {
-    setLocaleOpen(false);
+    setDropdown(null);
+    setDrawerOpen(false);
+    try {
+      window.localStorage.setItem(LANG_CHOSEN_KEY, code);
+    } catch {
+      /* not remembered; the switch still happens */
+    }
+    if (code === locale) return;
     const rest = pathname.replace(new RegExp(`^/(${SUPPORTED_LOCALES.join("|")})(?=/|$)`), "");
-    router.push(`/${code}${rest || ""}`);
+    router.push(`/${code}${rest || ""}${window.location.search}${window.location.hash}`);
   };
 
   const selectCurrency = (code: string) => {
     Cookies.set("currency", code, { expires: 365 });
     setCurrency(code);
-    setLocaleOpen(false);
+    setDropdown(null);
     window.dispatchEvent(new CustomEvent(CURRENCY_COOKIE_UPDATED_EVENT, { detail: { code } }));
   };
 
-  const currentLocaleMeta = LOCALES[locale as keyof typeof LOCALES] ?? LOCALES.ar;
-  /* Signed-in donors go straight to their account; everyone else lands on
-     sign-in and is returned there afterwards. */
+  const dismissSuggest = () => {
+    setSuggest(null);
+    try {
+      window.localStorage.setItem(LANG_SUGGEST_DISMISSED_KEY, "1");
+    } catch {
+      /* the bar returns next visit */
+    }
+  };
+
+  const closeAlert = () => {
+    setAlertOpen(false);
+    try {
+      window.localStorage.setItem(ALERT_CLOSED_KEY, "1");
+    } catch {
+      /* the strip returns next visit */
+    }
+  };
+
+  /* Menus are fixed under their trigger, aligned to its inline-start edge. */
+  const toggleDropdown = (id: "lang" | "curr") => (event: ReactMouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    if (dropdown?.id === id) {
+      setDropdown(null);
+      return;
+    }
+    const rect = event.currentTarget.getBoundingClientRect();
+    const side = dir === "rtl" ? Math.max(8, window.innerWidth - rect.right) : Math.max(8, rect.left);
+    setDropdown({ id, top: rect.bottom + 8, side });
+  };
+
+  const currencyOptions = SUPPORTED_CURRENCY_OPTIONS.filter((c) => DESIGN_CURRENCIES.includes(c.code) || c.code === currency);
+  const currencySymbol = SUPPORTED_CURRENCY_OPTIONS.find((c) => c.code === currency)?.symbol ?? "$";
   const accountHref = signedIn
     ? miaPath("account", locale)
     : `/auth/signin?callbackUrl=${encodeURIComponent(miaPath("account", locale))}`;
-  const localeA11yLabel = `${tNav("language")} · ${tNav("currency")}`;
+  const donateHref = linkOverrides?.donate || miaPath("projects", locale);
+  const cartHref = miaPath("cart", locale);
+  const cartClass = `${basket > 0 ? " tv-cart-full" : ""}${cartBump ? " tv-bump" : ""}`;
+  const langName = (code: SupportedLocale) => LOCALES[code].nativeLabel;
 
-  const rowClass = "mia-row";
+  const cartBadge = (className: string) => (
+    <span className={`${className}${basket > 0 ? " show" : ""}`} aria-hidden={basket > 0 ? undefined : true}>
+      {basket}
+    </span>
+  );
 
   return (
     <>
-      <div ref={spacerRef} className="mia-head-spacer" aria-hidden="true" />
+      <div ref={spacerRef} className="mia-head-spacer tv-head-spacer" aria-hidden="true" />
 
-      <header ref={headRef} className="mia-head" dir={dir} data-dir={dir}>
-
-        {/* ── Main row ────────────────────────────────────────────────────── */}
-        <div
-          className="mia-main-row"
-          style={{
-            position: "relative",
-            zIndex: 1,
-            maxWidth: 1240,
-            margin: "0 auto",
-            padding: "12px 24px",
-            display: "flex",
-            alignItems: "center",
-            gap: 14,
-          }}
-        >
-          <Link href={miaPath("home", locale)} style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}>
-            <img
-              src={imageUrl("/toplum/logo-mark.png", 64)}
-              srcSet={imageSrcSet("/toplum/logo-mark.png", [64, 128])}
-              sizes="32px"
-              alt={tCommon("orgOfficialName")}
-              width={31}
-              height={40}
-              style={{ height: 40, width: "auto", objectFit: "contain", display: "block", filter: "drop-shadow(0 2px 5px rgba(0,16,33,.10))" }}
-            />
-          </Link>
-
-          <nav
-            className="mia-rail"
-            style={{
-              display: "flex",
-              gap: 18,
-              alignItems: "center",
-              flex: "1 1 auto",
-              minWidth: 0,
-              justifyContent: "center",
-              flexWrap: "nowrap",
-              overflowX: "auto",
-              whiteSpace: "nowrap",
-              fontWeight: 700,
-              fontSize: 14.5,
-            }}
-          >
-            {/* Every item is a plain link, «المشاريع» included: it goes straight
-                to /projects. Categories and programmes are listed in the
-                "all pages" menu. */}
-            {NAV.map(([route, key]) => (
-              <Link
-                key={key}
-                href={href(route, key)}
-                aria-current={active === route ? "page" : undefined}
-                style={{
-                  padding: "5px 0",
-                  color: "#062442",
-                  textDecoration: "none",
-                  borderBottom: `2px solid ${active === route ? "#00A2E0" : "transparent"}`,
-                }}
-              >
-                {label(key)}
-              </Link>
-            ))}
-          </nav>
-
-          <span
-            aria-hidden="true"
-            style={{
-              flex: "0 0 auto",
-              width: 1,
-              height: 26,
-              background: "rgba(6,36,66,.1)",
-              marginInline: 4,
-            }}
-          />
-
-          <HeaderSearch />
-
-          {/* Cart */}
-          <Link
-            href={miaPath("cart", locale)}
-            title={tNav("cart")}
-            aria-label={tNav("cart")}
-            className={`mia-circle mia-cart${basket > 0 ? " mia-cart--full" : ""}${cartBump ? " mia-cart--bump" : ""}`}
-            {...{ [CART_TARGET_ATTR]: "" }}
-            style={{
-              position: "relative",
-              flex: "0 0 auto",
-              display: "grid",
-              placeItems: "center",
-              width: 42,
-              height: 42,
-              borderRadius: "50%",
-              background: "#fff",
-              border: `1px solid ${basket > 0 ? "#00A2E0" : "#e6eef3"}`,
-              boxShadow: basket > 0 ? "0 0 0 4px rgba(0,162,224,.18)" : "none",
-              transition: "all .18s ease",
-            }}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+      <div ref={stackRef} className="tv-header-root" dir={dir}>
+        {suggest ? (
+          <div className="tv-lang-suggest" role="region" aria-label={t("language")}>
+            <span>{t("langSuggest.text", { language: langName(suggest) })}</span>
+            <button
+              className="ls-yes"
+              type="button"
+              onClick={() => {
+                dismissSuggest();
+                selectLocale(suggest);
+              }}
             >
-              <path d="m4 8 2 11h12l2-11H4Z" />
-              <path d="m9 8 3-4 3 4M9 12v3M15 12v3" />
-            </svg>
-            {cartBump ? (
-              <span className="mia-cart-plus" aria-hidden="true">
-                +1
-              </span>
-            ) : null}
-            {basket > 0 ? (
-              <span
-                className="mia-cart-badge"
-                style={{
-                  position: "absolute",
-                  insetInlineStart: -3,
-                  top: -3,
-                  minWidth: 18,
-                  height: 18,
-                  padding: "0 4px",
-                  borderRadius: 999,
-                  background: "#00A2E0",
-                  color: "#062442",
-                  fontSize: 11,
-                  fontWeight: 900,
-                  display: "grid",
-                  placeItems: "center",
-                }}
-              >
-                {basket}
-              </span>
-            ) : null}
-          </Link>
+              {t("langSuggest.switch", { language: langName(suggest) })}
+            </button>
+            <button className="ls-no" type="button" onClick={dismissSuggest}>
+              {t("langSuggest.stay")}
+            </button>
+          </div>
+        ) : null}
 
-          {/* Account  signed-in donors go straight to their account, everyone
-              else lands on sign-in and is returned here afterwards. */}
-          <Link
-            href={accountHref}
-            title={tNav("account")}
-            aria-label={tNav("account")}
-            className="mia-circle mia-circle--account mia-desk-only"
-            style={{
-              position: "relative",
-              flex: "0 0 auto",
-              display: "grid",
-              placeItems: "center",
-              width: 42,
-              height: 42,
-              borderRadius: "50%",
-              border: "1px solid #e6eef3",
-              background: "#fff",
-              boxShadow: "none",
-              transition: "box-shadow .25s ease, transform .18s cubic-bezier(.22,.61,.36,1)",
-            }}
-          >
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-              <circle cx="12" cy="8.5" r="3.6" />
-              <path d="M4.5 19.5a7.5 7.5 0 0 1 15 0" />
-            </svg>
-          </Link>
+        {isHome && alertOpen ? (
+          <div className="tv-alert" role="region" aria-label={t("nav.hope")}>
+            <span className="ab-dot" aria-hidden="true" />
+            <span className="ab-text">
+              <span className="ab-full">{t("alert.full")}</span>
+              <span className="ab-brief">{t("alert.brief")}</span>
+            </span>
+            <Link href={miaPath("projects", locale)}>{t("alert.cta")}</Link>
+            <button className="ab-close" type="button" onClick={closeAlert} aria-label={t("alert.close")}>
+              ✕
+            </button>
+          </div>
+        ) : null}
 
-          <button
-            type="button"
-            className="mia-head-cta"
-            onClick={() => {
-              /* Opens the quick donation pill where the page carries it;
-                 everywhere else the projects page is the place to give. */
-              const taken = !window.dispatchEvent(new Event(QUICK_DONATE_OPEN_EVENT, { cancelable: true }));
-              if (!taken) router.push(href("projects", "projects"));
-            }}
-          >
-            {tCommon("donateNow")}
-          </button>
-
-          {/* Phones only (CSS): dims the page under an open drawer. It sits
-              outside `popRef`, so a tap on it closes the drawer. */}
-          {drawerOpen ? <div className="mia-pop-backdrop" aria-hidden="true" /> : null}
-
-          <div ref={popRef} style={{ display: "contents" }}>
-            {/* Language + currency */}
-            <div data-pop="locale" style={{ position: "relative", flex: "0 0 auto" }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setLocalePanel("both");
-                  setLocaleOpen((v) => !(v && localePanel === "both"));
-                  setMenuOpen(false);
-                }}
-                title={localeA11yLabel}
-                aria-label={localeA11yLabel}
-                aria-expanded={localeOpen && localePanel === "both"}
-                className="mia-locale-btn mia-pill mia-desk-only"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 9,
-                  height: 42,
-                  paddingInline: "12px 6px",
-                  borderRadius: 999,
-                  background: "#fff",
-                  border: "1px solid #e6eef3",
-                  color: "#062442",
-                  fontFamily: "inherit",
-                  fontSize: 13,
-                  fontWeight: 800,
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
-                  transition: "all .18s ease",
-                }}
-              >
-                <GlobeIcon />
-                <span className="mia-locale-label">
-                  {currentLocaleMeta.nativeLabel} · {currency}
-                </span>
-                <span
-                  dir="ltr"
-                  style={{
-                    display: "grid",
-                    placeItems: "center",
-                    minWidth: 22,
-                    height: 22,
-                    padding: "0 4px",
-                    borderRadius: 999,
-                    background: "#eaf6fd",
-                    color: "#0077b3",
-                    flex: "0 0 auto",
-                    fontSize: 11,
-                    fontWeight: 900,
-                    unicodeBidi: "isolate",
-                    lineHeight: 1,
-                  }}
-                >
-                  {CURRENCY_SYMBOLS[currency] ?? "$"}
-                </span>
-              </button>
-
-              {/* Phones: the language and the currency as two buttons that say
-                  what is chosen ("العربية", "$ USD"), each opening its own list. */}
-              <div className="mia-phone-only mia-phone-pills">
+        <header className="tv-header">
+          <div className="tv-header-shell">
+            <div className="tv-header-row">
+              <div className="tv-brand-lang">
+                <Link className="tv-brand" href={miaPath("home", locale)} aria-label={ORG.legalName}>
+                  <img
+                    className="tv-brand-logo"
+                    src={imageUrl("/toplum/logo-mark.png", 64)}
+                    srcSet={imageSrcSet("/toplum/logo-mark.png", [64, 128])}
+                    sizes="34px"
+                    alt={ORG.legalName}
+                    width={31}
+                    height={40}
+                  />
+                </Link>
                 <button
+                  className="tv-lang"
                   type="button"
-                  onClick={() => {
-                    setLocalePanel("language");
-                    setLocaleOpen((v) => !(v && localePanel === "language"));
-                    setMenuOpen(false);
-                  }}
-                  aria-label={`${tNav("language")}: ${currentLocaleMeta.nativeLabel}`}
-                  aria-expanded={localeOpen && localePanel === "language"}
-                  className="mia-phone-pill"
+                  onClick={toggleDropdown("lang")}
+                  aria-label={t("language")}
+                  title={t("language")}
+                  aria-expanded={dropdown?.id === "lang"}
+                  aria-haspopup="menu"
                 >
-                  <GlobeIcon size={15} />
-                  <span className="mia-phone-pill__value" dir={currentLocaleMeta.direction}>{currentLocaleMeta.nativeLabel}</span>
-                  <ChevronIcon />
+                  <ShellIcon name="globe" />
+                  <span className="tv-dd-label" lang={locale}>{langName(locale)}</span>
                 </button>
                 <button
+                  className="tv-curr"
                   type="button"
-                  onClick={() => {
-                    setLocalePanel("currency");
-                    setLocaleOpen((v) => !(v && localePanel === "currency"));
-                    setMenuOpen(false);
-                  }}
-                  aria-label={`${tNav("currency")}: ${currency}`}
-                  aria-expanded={localeOpen && localePanel === "currency"}
-                  className="mia-phone-pill"
+                  onClick={toggleDropdown("curr")}
+                  aria-label={t("currency")}
+                  title={t("currency")}
+                  aria-expanded={dropdown?.id === "curr"}
+                  aria-haspopup="menu"
                 >
-                  <span className="mia-phone-pill__value" dir="ltr">
-                    <b>{CURRENCY_SYMBOLS[currency] ?? "$"}</b> {currency}
-                  </span>
-                  <ChevronIcon />
+                  <span className="tv-curr-symbol" dir="ltr">{currencySymbol}</span>
                 </button>
               </div>
 
-              {localeOpen ? (
-                <div className="mia-pop mia-pop--locale" data-panel={localePanel}>
-                  {localePanel !== "currency" ? (
-                  <div
-                    style={{
-                      padding: 16,
-                      borderInlineEnd: localePanel === "both" ? "1px solid rgba(6,36,66,.1)" : 0,
-                      minWidth: 0,
-                      display: "grid",
-                      gap: 10,
-                      alignContent: "start",
-                    }}
-                  >
-                    <span style={popTitleStyle}>
-                      <GlobeIcon stroke="#00A2E0" size={14} />
-                      {tNav("language")}
-                    </span>
-                    <div style={popListStyle}>
-                      {SUPPORTED_LOCALES.map((code) => {
-                        const meta = LOCALES[code];
-                        const on = code === locale;
-                        return (
-                          <button
-                            key={code}
-                            type="button"
-                            onClick={() => selectLocale(code)}
-                            data-pick={on ? "1" : undefined}
-                            className={rowClass}
-                          >
-                            {/* Green dot = page bodies translated, per
-                                LOCALIZATION_STATUS.md. All 19 completed the
-                                Core Website Localization Pass. */}
-                            <span
-                              aria-hidden="true"
-                              style={{ width: 6, height: 6, borderRadius: "50%", flex: "0 0 auto", background: "#1F7A4D" }}
-                            />
-                            <span dir={meta.direction} style={{ minWidth: 0, whiteSpace: "nowrap", flex: "1 1 auto" }}>
-                              {meta.nativeLabel}
-                            </span>
-                            {on ? <CheckIcon /> : null}
-                            <span dir="ltr" style={{ color: "#00A2E0", fontSize: 10, fontWeight: 900, unicodeBidi: "isolate" }}>
-                              {code}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  ) : null}
-
-                  {localePanel !== "language" ? (
-                  <div style={{ padding: 16, minWidth: 0, display: "grid", gap: 10, alignContent: "start" }}>
-                    <span style={popTitleStyle}>
-                      <CurrencyIcon />
-                      {tNav("currency")}
-                    </span>
-                    <div style={popListStyle}>
-                      {SUPPORTED_CURRENCY_OPTIONS.map((c) => {
-                        const on = c.code === currency;
-                        return (
-                          <button
-                            key={c.code}
-                            type="button"
-                            onClick={() => selectCurrency(c.code)}
-                            data-pick={on ? "1" : undefined}
-                            className={rowClass}
-                          >
-                            <span
-                              dir="ltr"
-                              style={{ unicodeBidi: "isolate", color: "#00A2E0", fontWeight: 900, width: 24, flex: "0 0 24px", fontSize: 13 }}
-                            >
-                              {c.symbol}
-                            </span>
-                            <span dir="ltr" style={{ unicodeBidi: "isolate", fontWeight: 800, fontSize: 12.5, flex: "1 1 auto" }}>
-                              {c.code}
-                            </span>
-                            {on ? <CheckIcon /> : null}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-
-            {/* All pages */}
-            <div data-pop="menu" style={{ position: "relative", flex: "0 0 auto" }}>
-              <button
-                type="button"
-                onClick={() => {
-                  setMenuOpen((v) => !v);
-                  setLocaleOpen(false);
-                }}
-                title={tNav("menu")}
-                aria-label={tNav("menu")}
-                aria-expanded={menuOpen}
-                className="mia-circle mia-menu-btn"
-                style={{
-                  display: "grid",
-                  placeItems: "center",
-                  width: 42,
-                  height: 42,
-                  borderRadius: "50%",
-                  border: "1px solid #e6eef3",
-                  background: "#fff",
-                  cursor: "pointer",
-                  transition: "all .18s ease",
-                }}
-              >
-                <svg className="mia-phone-only" viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-                  {menuOpen ? <path d="M6 6l12 12M18 6 6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-                </svg>
-                <svg className="mia-desk-only" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <rect x="3.5" y="3.5" width="7" height="7" rx="1.4" />
-                  <rect x="13.5" y="3.5" width="7" height="7" rx="1.4" />
-                  <rect x="3.5" y="13.5" width="7" height="7" rx="1.4" />
-                  <rect x="13.5" y="13.5" width="7" height="7" rx="1.4" />
-                </svg>
-              </button>
-
-              {menuOpen ? (
-                <div className="mia-pop mia-pop--menu">
-                  {/* Phones: the header row keeps only the cart, language and
-                      currency, so search and the account live here. */}
-                  <div className="mia-phone-only mia-menu-phone-tools">
-                    <HeaderSearch variant="inline" onNavigate={() => setMenuOpen(false)} />
-                    <Link href={accountHref} onClick={() => setMenuOpen(false)} className="mia-menu-account">
-                      <span className="mia-menu-account__icon" aria-hidden="true">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round">
-                          <circle cx="12" cy="8.5" r="3.6" />
-                          <path d="M4.5 19.5a7.5 7.5 0 0 1 15 0" />
-                        </svg>
-                      </span>
-                      <span>{tNav("account")}</span>
-                    </Link>
-                  </div>
-                  <Link
-                    href={miaPath("home", locale)}
-                    onClick={() => setMenuOpen(false)}
-                    style={{
-                      gridColumn: "1 / -1",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 10,
-                      padding: "12px 14px",
-                      borderRadius: 12,
-                      background: dir === "rtl"
-                        ? "linear-gradient(to left, #1CA3EC, #0F55B8)"
-                        : "linear-gradient(to right, #1CA3EC, #0F55B8)",
-                      color: "#fff",
-                      fontSize: 14.5,
-                      fontWeight: 900,
-                      textDecoration: "none",
-                    }}
-                  >
-                    <span style={{ width: 6, height: 6, background: "#00A2E0", transform: "rotate(45deg)" }} />
-                    {tNav("home")}
-                  </Link>
-
-                  {/* Administrators only. A plain <a>: the dashboard lives
-                      outside the localized tree and must not get a /{locale}
-                      prefix. Styled like the home row so it reads as a door
-                      out of the site, not as one more page in a group. */}
-                  {isAdmin ? (
-                    <a
-                      href="/dashboard"
-                      onClick={() => setMenuOpen(false)}
-                      style={{
-                        gridColumn: "1 / -1",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        padding: "11px 14px",
-                        borderRadius: 12,
-                        background: "#062442",
-                        border: "1px solid rgba(0,162,224,.45)",
-                        color: "#fff",
-                        fontSize: 14,
-                        fontWeight: 900,
-                        textDecoration: "none",
-                      }}
-                    >
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#00A2E0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
-                        <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
-                        <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
-                        <rect x="13.5" y="13.5" width="7" height="7" rx="1.5" />
-                      </svg>
-                      {tNav("dashboard")}
-                    </a>
-                  ) : null}
-
-                  {/* Below 1180px the nav, and with it the categories dropdown,
-                      is hidden; this is where those widths reach them. */}
-                  {hasCats ? (
-                    <div style={{ gridColumn: "1 / -1", display: "grid", gap: 6, minWidth: 0 }}>
-                      <span
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                          padding: "0 4px 6px",
-                          borderBottom: "1px solid rgba(6,36,66,.1)",
-                          fontSize: 11,
-                          fontWeight: 900,
-                          color: "#0077b3",
-                          letterSpacing: ".06em",
-                        }}
+              <nav className="tv-nav" aria-label={t("mainNav")}>
+                {NAV.map((group) =>
+                  group.sub ? (
+                    <div className="tv-ni" key={group.key}>
+                      <Link
+                        href={href(group.route, group.key)}
+                        className={activeKey === group.key ? "active" : undefined}
+                        aria-current={activeKey === group.key ? "page" : undefined}
+                        aria-haspopup="true"
                       >
-                        {tCats("title")}
-                      </span>
-                      <div className="mia-menu-cats">
-                        {categories.map((c) => (
-                          <Link key={c.id} href={c.href} onClick={() => setMenuOpen(false)} className="mia-menu-link mia-menu-cat">
-                            <CategoryThumb image={c.image} size={26} />
-                            <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{c.name}</span>
+                        {t(`nav.${group.key}`)}
+                        <ShellIcon name="caret" className="tv-caret" />
+                      </Link>
+                      <div className={`tv-sub${group.wide ? " tv-sub--2" : ""}`}>
+                        <div className="tv-sub-head">
+                          <b>{t(`nav.${group.key}`)}</b>
+                          <Link className="tv-sub-all" href={href(group.route, group.key)}>
+                            {t("viewAll")}
                           </Link>
-                        ))}
+                        </div>
+                        <div className="tv-sub-grid">
+                          {group.sub.map((item) => (
+                            <Link key={item.key + (item.hash ?? "")} href={href(item.route, undefined, item.hash)}>
+                              <i aria-hidden="true">
+                                <ShellIcon name={item.icon} />
+                              </i>
+                              {t(`nav.${item.key}`)}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  ) : null}
+                  ) : (
+                    <Link
+                      key={group.key}
+                      href={href(group.route, group.key)}
+                      className={activeKey === group.key ? "active" : undefined}
+                      aria-current={activeKey === group.key ? "page" : undefined}
+                    >
+                      {t(`nav.${group.key}`)}
+                    </Link>
+                  )
+                )}
+              </nav>
 
-                  {MENU_GROUPS.map((group) => (
-                    <div key={group.titleKey} style={{ display: "grid", gap: 4, alignContent: "start", minWidth: 0 }}>
-                      <span
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                          padding: "0 4px 6px",
-                          borderBottom: "1px solid rgba(6,36,66,.1)",
-                          fontSize: 11,
-                          fontWeight: 900,
-                          color: "#0077b3",
-                          letterSpacing: ".06em",
-                        }}
-                      >
-                        {tNav(group.titleKey)}
-                      </span>
-                      {group.items.map(([route, key]) => (
-                        <Link
-                          key={key}
-                          href={href(route, key)}
-                          onClick={() => setMenuOpen(false)}
-                          className="mia-menu-link"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 9,
-                            padding: "8px 10px",
-                            borderRadius: 9,
-                            fontSize: 13.5,
-                            fontWeight: 700,
-                            color: "#062442",
-                            textDecoration: "none",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          <span style={{ flex: "0 0 auto", width: 4, height: 4, background: "#00A2E0", transform: "rotate(45deg)" }} />
-                          {label(key)}
-                        </Link>
-                      ))}
-                    </div>
-                  ))}
+              <div className="tv-mcluster">
+                <div className="tv-actions">
+                  <div className="tv-icon-group">
+                    <button
+                      className="tv-search"
+                      type="button"
+                      aria-label={t("search")}
+                      aria-expanded={searchOpen}
+                      aria-controls="tv-search-field"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setSearchOpen((v) => !v);
+                      }}
+                    >
+                      <ShellIcon name="search" />
+                    </button>
+                    {isAdmin ? (
+                      /* A plain <a>: the dashboard lives outside the localized tree. */
+                      <a className="tv-icon-btn" href="/dashboard" aria-label={t("dashboard")} title={t("dashboard")}>
+                        <ShellIcon name="dashboard" />
+                      </a>
+                    ) : null}
+                    <Link className="tv-icon-btn tv-profile" href={accountHref} aria-label={t("profile")} title={t("profile")}>
+                      <ShellIcon name="person" />
+                    </Link>
+                    <Link
+                      className={`tv-icon-btn tv-cart${cartClass}`}
+                      href={cartHref}
+                      aria-label={basket > 0 ? `${t("cart")} (${basket})` : t("cart")}
+                      title={t("cart")}
+                      {...{ [CART_TARGET_ATTR]: "" }}
+                    >
+                      <ShellIcon name="cart" />
+                      {cartBadge("tv-icon-badge")}
+                    </Link>
+                  </div>
+                  <Link className="tv-donate-top" href={donateHref}>
+                    <span className="dn-full">{t("donateNow")}</span>
+                    <span className="dn-short">{t("donateShort")}</span>
+                  </Link>
                 </div>
-              ) : null}
+
+                <div className="tv-mrail">
+                  <Link className="tv-mrail-btn tv-mhome" href={miaPath("home", locale)} aria-label={t("homePage")} title={t("home")}>
+                    <ShellIcon name="home" />
+                  </Link>
+                  <button
+                    className="tv-mrail-btn tv-mrail-lang"
+                    type="button"
+                    onClick={toggleDropdown("lang")}
+                    aria-label={t("language")}
+                    aria-expanded={dropdown?.id === "lang"}
+                    aria-haspopup="menu"
+                  >
+                    <ShellIcon name="globe" />
+                  </button>
+                  <button
+                    className="tv-mrail-btn tv-mrail-curr"
+                    type="button"
+                    onClick={toggleDropdown("curr")}
+                    aria-label={t("currency")}
+                    aria-expanded={dropdown?.id === "curr"}
+                    aria-haspopup="menu"
+                  >
+                    <span dir="ltr">{currencySymbol}</span>
+                  </button>
+                  <Link className="tv-mrail-btn tv-mrail-profile" href={accountHref} aria-label={t("profile")}>
+                    <ShellIcon name="person" />
+                  </Link>
+                  <Link
+                    className={`tv-mrail-btn tv-mrail-cart${cartClass}`}
+                    href={cartHref}
+                    aria-label={basket > 0 ? `${t("cart")} (${basket})` : t("cart")}
+                  >
+                    <ShellIcon name="cart" />
+                    {cartBadge("tv-mrail-badge")}
+                  </Link>
+                </div>
+                <button
+                  className="tv-mobile-menu"
+                  type="button"
+                  aria-label={t("openMenu")}
+                  aria-expanded={drawerOpen}
+                  aria-controls="tv-drawer"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setDrawerOpen(true);
+                  }}
+                >
+                  <ShellIcon name="menu" />
+                </button>
+              </div>
             </div>
           </div>
+        </header>
+      </div>
+
+      <HeaderSearch open={searchOpen} onClose={closeSearch} />
+
+      {dropdown ? (
+        <div
+          className="tv-dropdown-menu open"
+          role="menu"
+          dir={dir}
+          style={dir === "rtl" ? { top: dropdown.top, right: dropdown.side } : { top: dropdown.top, left: dropdown.side }}
+          onClick={(event) => event.stopPropagation()}
+        >
+          {dropdown.id === "lang"
+            ? SUPPORTED_LOCALES.map((code) => (
+                <button
+                  key={code}
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked={code === locale}
+                  lang={code}
+                  dir={LOCALES[code].direction}
+                  className={code === locale ? "on" : undefined}
+                  onClick={() => selectLocale(code)}
+                >
+                  {langName(code)}
+                </button>
+              ))
+            : currencyOptions.map((c) => (
+                <button
+                  key={c.code}
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked={c.code === currency}
+                  dir="ltr"
+                  className={c.code === currency ? "on" : undefined}
+                  onClick={() => selectCurrency(c.code)}
+                >
+                  {c.code} {c.symbol}
+                </button>
+              ))}
         </div>
-      </header>
+      ) : null}
+
+      <div
+        className={`tv-drawer-overlay${drawerOpen ? " open" : ""}`}
+        aria-hidden="true"
+        onClick={() => setDrawerOpen(false)}
+      />
+      <nav
+        id="tv-drawer"
+        className={`tv-drawer${drawerOpen ? " open" : ""}`}
+        dir={dir}
+        aria-label={t("mainNav")}
+        aria-hidden={drawerOpen ? undefined : true}
+        inert={drawerOpen ? undefined : true}
+      >
+        <div className="tv-drawer-head">
+          <img className="tv-brand-logo" src={imageUrl("/toplum/logo-mark.png", 64)} alt={ORG.legalName} width={29} height={38} />
+          <button type="button" onClick={() => setDrawerOpen(false)} aria-label={t("close")}>
+            ✕
+          </button>
+        </div>
+        {DRAWER.map(([r, key]) => (
+          <Link key={key} href={href(r, key)} onClick={() => setDrawerOpen(false)}>
+            {t(`nav.${key}`)}
+          </Link>
+        ))}
+        <div className="tv-drawer-group">
+          <span>{t("myAccount")}</span>
+          <Link href={cartHref} onClick={() => setDrawerOpen(false)}>
+            {t("cart")}
+          </Link>
+          <Link href={accountHref} onClick={() => setDrawerOpen(false)}>
+            {t("profile")}
+          </Link>
+          <Link href={`/${locale}/search`} onClick={() => setDrawerOpen(false)}>
+            {t("searchPage")}
+          </Link>
+          {isAdmin ? (
+            <a href="/dashboard" onClick={() => setDrawerOpen(false)}>
+              {t("dashboard")}
+            </a>
+          ) : null}
+        </div>
+        <div className="tv-drawer-picks">
+          <select aria-label={t("language")} value={locale} onChange={(event) => selectLocale(event.target.value)}>
+            {SUPPORTED_LOCALES.map((code) => (
+              <option key={code} value={code} lang={code}>
+                {langName(code)}
+              </option>
+            ))}
+          </select>
+          <select aria-label={t("currency")} value={currency} onChange={(event) => selectCurrency(event.target.value)}>
+            {currencyOptions.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.code} {c.symbol}
+              </option>
+            ))}
+          </select>
+        </div>
+        <Link className="tv-drawer-donate" href={donateHref} onClick={() => setDrawerOpen(false)}>
+          {t("donateNow")}
+        </Link>
+      </nav>
+
+      <div className={`tv-toast${toast ? " show" : ""}`} role="status" aria-live="polite" dir={dir}>
+        {toast ? (
+          <>
+            <span className="tv-toast-ic" aria-hidden="true">
+              <ShellIcon name="check" />
+            </span>
+            <span className="tv-toast-tx">
+              <b>{t("toast.added")}</b>
+            </span>
+            <Link className="tv-toast-go" href={cartHref} onClick={() => setToast(false)}>
+              {t("toast.viewCart")} (<span dir="ltr">{basket}</span>)
+            </Link>
+          </>
+        ) : null}
+      </div>
     </>
-  );
-}
-
-const popTitleStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 7,
-  fontSize: 11,
-  fontWeight: 900,
-  color: "#5D7187",
-  letterSpacing: ".06em",
-};
-
-const popListStyle: React.CSSProperties = {
-  display: "grid",
-  gap: 2,
-  maxHeight: 300,
-  overflowY: "auto",
-  paddingInlineEnd: 4,
-};
-
-function GlobeIcon({ stroke = "currentColor", size = 17 }: { stroke?: string; size?: number }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width={size}
-      height={size}
-      fill="none"
-      stroke={stroke}
-      strokeWidth="1.8"
-      aria-hidden="true"
-      style={{ opacity: 0.9, flex: "0 0 auto" }}
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M3 12h18M12 3c2.5 2.7 2.5 15 0 18M12 3c-2.5 2.7-2.5 15 0 18" />
-    </svg>
-  );
-}
-
-/**
- * A category's picture as a small rounded tile, or the gold diamond when the
- * category has none. The header ships on every page, so this deliberately does
- * not pull in `CategoryIcon` and its icon set.
- */
-function CategoryThumb({ image, size }: { image: string; size: number }) {
-  return (
-    <span
-      aria-hidden="true"
-      style={{
-        flex: `0 0 ${size}px`,
-        width: size,
-        height: size,
-        borderRadius: Math.round(size / 4),
-        overflow: "hidden",
-        display: "grid",
-        placeItems: "center",
-        background: "linear-gradient(135deg, #062442, #082c50)",
-        boxShadow: "inset 0 0 0 1px rgba(0,162,224,.35)",
-      }}
-    >
-      {image ? (
-        <img src={image} alt="" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-      ) : (
-        <span style={{ width: size / 4, height: size / 4, background: "#00A2E0", transform: "rotate(45deg)" }} />
-      )}
-    </span>
-  );
-}
-
-function CurrencyIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#00A2E0" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 1.8-2.5 2.2-2.5 4M12 16.5h.01" />
-    </svg>
-  );
-}
-
-function ChevronIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto", opacity: 0.8 }}>
-      <path d="m6 9 6 6 6-6" />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#1B6FE0" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M20 6 9 17l-5-5" />
-    </svg>
   );
 }

@@ -1,275 +1,194 @@
 "use client";
+/* eslint-disable @next/next/no-img-element -- the brand mark is a fixed local asset served through the image proxy. */
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { localeDirection } from "@/lib/locales";
 import { miaPath, type MinbarRoute } from "@/lib/minbar/routes";
-import { ORG } from "@/lib/minbar/org";
-import { useMinbarLabel } from "@/hooks/useMinbarLabel";
-import SocialIcon, { type SocialIconName } from "./SocialIcon";
-import type { NavCategory } from "@/lib/minbar/categories";
+import { ORG, ORG_TEL, ORG_WHATSAPP } from "@/lib/minbar/org";
 import { imageSrcSet, imageUrl } from "@/lib/minbar/image-url";
+import ShellIcon from "./ShellIcons";
 
 /**
- * Site footer  Toplum Vakfı design (`ToplamVakfi-design/Toplum Vakfı Footer.dc.html`).
+ * Site footer — `ToplamVakfi-design/Toplum Vakfı Footer.dc.html`.
  *
- * Three link columns plus the identity column (logo, tagline, contact, social),
- * and a closing rule with the legal links and the copyright. A WhatsApp FAB is
- * pinned to the start edge of the viewport.
+ * A wave from the page background into navy, then four columns — newsletter,
+ * contact (from `ORG`) with the social accounts, quick links, the brand mark
+ * with the tagline — and a closing rule with the legal links and the
+ * copyright. The WhatsApp button floats at the inline-end edge.
  *
- * Direction is derived from the locale, never hard-coded  otherwise the footer
- * stays mirrored inside an LTR page.
- *
- * Dashboard hooks from the handoff: `socialLinks` and `columns` may both be
- * supplied per language (different accounts and numbers per market), and the
- * organisation details are the same single source the header uses.
+ * The newsletter form is a message to the team (`POST /api/messages`, subject
+ * GENERAL), so a subscription lands in the dashboard inbox like any other.
  */
 
-interface FooterColumn {
-  titleKey: string;
-  links: ReadonlyArray<{ route: MinbarRoute; key: string }>;
-}
-
-const COLUMNS: readonly FooterColumn[] = [
-  {
-    titleKey: "donate",
-    links: [
-      { route: "projects", key: "allProjects" },
-      { route: "zakat", key: "zakat" },
-      { route: "zakatCalculator", key: "zakatCalculator" },
-      { route: "recurring", key: "recurring" },
-      { route: "cart", key: "cart" },
-    ],
-  },
-  {
-    titleKey: "jerusalem",
-    links: [
-      { route: "aqsa", key: "aqsa" },
-      { route: "jerusalem", key: "jerusalem" },
-      { route: "reports", key: "reports" },
-      { route: "blog", key: "blog" },
-      { route: "news", key: "news" },
-    ],
-  },
-  {
-    titleKey: "about",
-    links: [
-      { route: "about", key: "about" },
-      { route: "contact", key: "contact" },
-      { route: "volunteer", key: "volunteer" },
-      { route: "partner", key: "partner" },
-      { route: "account", key: "account" },
-    ],
-  },
+const QUICK_LINKS: ReadonlyArray<readonly [MinbarRoute, string]> = [
+  ["about", "about"],
+  ["programs", "programs"],
+  ["reports", "impact"],
+  ["transparency", "transparency"],
+  ["news", "news"],
+  ["contact", "contact"],
 ];
 
-/** Shown in the footer's closing rule, as the design places them. */
-const LEGAL_LINKS: ReadonlyArray<{ route: MinbarRoute; key: string }> = [
-  { route: "privacy", key: "privacy" },
-  { route: "terms", key: "terms" },
-  { route: "donationPolicy", key: "donationPolicy" },
-  { route: "cookies", key: "cookies" },
-  { route: "accessibility", key: "accessibility" },
+const LEGAL_LINKS: ReadonlyArray<readonly [MinbarRoute, string]> = [
+  ["privacy", "privacy"],
+  ["terms", "terms"],
+  ["refundPolicy", "refund"],
+  ["paymentDetails", "paymentDetails"],
 ];
 
-export interface FooterProps {
-  orgName?: string;
-  tagline?: string;
-  address?: string;
-  email?: string;
-  phone?: string;
-  whatsappNumber?: string;
-  /** No longer drawn: the Toplum footer is a plain navy band. Kept so existing callers compile. */
-  closingImage?: string;
-  socialLinks?: ReadonlyArray<{ label: string; href: string; icon: SocialIconName }>;
-  /** Active project categories, shown as a band of links under the columns. */
-  categories?: NavCategory[];
-}
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export default function Footer({
-  orgName,
-  tagline,
-  address = ORG.address,
-  email = ORG.email,
-  phone = ORG.phone,
-  whatsappNumber = ORG.whatsapp,
-  socialLinks,
-}: FooterProps) {
+export default function Footer() {
   const locale = useLocale();
   const dir = localeDirection(locale);
-  const tCommon = useTranslations("common");
-  const label = useMinbarLabel();
+  const t = useTranslations("tvShell.footer");
 
-  /* Mobile accordion. On desktop the CSS keeps every list open regardless. */
-  const [openCol, setOpenCol] = useState(-1);
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "done" | "error">("idle");
 
-  const name = orgName || tCommon("orgOfficialName");
-  const lead = tagline;
-  const whatsappHref = `https://wa.me/${whatsappNumber}`;
+  const subscribe = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const value = email.trim();
+    if (!EMAIL_RE.test(value) || state === "sending") return;
+    setState("sending");
+    try {
+      const response = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: "GENERAL",
+          body: `Newsletter subscription: ${value}`,
+          guestEmail: value,
+          locale,
+        }),
+      });
+      setState(response.ok ? "done" : "error");
+    } catch {
+      setState("error");
+    }
+  };
 
-  const social =
-    socialLinks ??
-    ([
-      // Platform names are Latin brand names  unchanged in every language.
-      { label: "WhatsApp", href: whatsappHref, icon: "whatsapp" },
-      { label: "Facebook", href: "https://www.facebook.com/ToplamVakfi", icon: "facebook" },
-      { label: "Instagram", href: "https://www.instagram.com/ToplamVakfi", icon: "instagram" },
-      { label: "YouTube", href: "https://www.youtube.com/@ToplamVakfi", icon: "youtube" },
-      { label: "X", href: "https://x.com/ToplamVakfi", icon: "x" },
-    ] as const);
+  const social = [
+    { href: ORG.social.facebook, label: t("facebook"), icon: <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H8v3h2v6h3v-6h2.5l.5-3H13v-2c0-.6.4-1 1-1z" /></svg> },
+    { href: ORG.social.instagram, label: t("instagram"), icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="3.5" /><circle cx="17.2" cy="6.8" r="1" /></svg> },
+    { href: ORG.social.x, label: t("x"), icon: <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 3H21l-6.6 7.6L21.7 21H16l-4.5-6-5.2 6H3.9l7.1-8.1L2.7 3h5.8l4.1 5.5z" /></svg> },
+    { href: ORG.social.youtube, label: t("youtube"), icon: <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 7.5v9l7.5-4.5z" /></svg> },
+  ];
 
   return (
-    <>
-      <a
-        href={whatsappHref}
-        target="_blank"
-        rel="noopener noreferrer"
-        title={tCommon("contactViaWhatsapp")}
-        aria-label="WhatsApp"
-        className="mia-wa-fab"
-        style={{
-          position: "fixed",
-          insetInlineStart: 22,
-          bottom: "max(22px, env(safe-area-inset-bottom))",
-          zIndex: 70,
-          display: "grid",
-          placeItems: "center",
-          width: 54,
-          height: 54,
-          borderRadius: 999,
-          background: "#25D366",
-          color: "#fff",
-          boxShadow: "0 12px 24px rgba(37,211,102,.32)",
-        }}
-      >
-        <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true">
-          <path d="M12.04 2.5c-5.23 0-9.48 4.24-9.48 9.47 0 1.67.44 3.3 1.28 4.74L2.5 21.5l4.92-1.29a9.45 9.45 0 0 0 4.62 1.18h.01c5.22 0 9.47-4.24 9.47-9.47 0-2.53-.99-4.91-2.78-6.7a9.4 9.4 0 0 0-6.7-2.72Zm0 17.06h-.01a7.87 7.87 0 0 1-4.01-1.1l-.29-.17-2.92.76.78-2.85-.19-.29a7.85 7.85 0 0 1-1.2-4.19c0-4.34 3.53-7.87 7.88-7.87 2.1 0 4.08.82 5.56 2.31a7.82 7.82 0 0 1 2.3 5.57c0 4.34-3.53 7.83-7.9 7.83Zm4.32-5.87c-.24-.12-1.4-.69-1.61-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.18-.7-.63-1.18-1.4-1.32-1.64-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.19-.46-.39-.4-.54-.41h-.46c-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.19 1.1.16 1.52.1.46-.07 1.4-.57 1.6-1.13.2-.55.2-1.03.14-1.13-.06-.1-.22-.16-.46-.28Z" />
-        </svg>
-      </a>
+    <footer className="tv-foot" dir={dir}>
+      <svg className="tv-foot-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 0 H1440 V14 C 1100 44, 760 44, 520 26 S 160 4, 0 22 Z" fill="#f4f8fb" />
+      </svg>
+      <div className="tv-foot-in">
+        <div className="tv-foot-grid">
+          <div className="tv-foot-news">
+            <h4>{t("newsTitle")}</h4>
+            <p>{t("newsLead")}</p>
+            {state === "done" ? (
+              <p className="tv-foot-news-done" role="status">
+                <ShellIcon name="check" />
+                {t("subscribed")}
+              </p>
+            ) : (
+              <form onSubmit={subscribe}>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                    if (state === "error") setState("idle");
+                  }}
+                  placeholder={t("emailPlaceholder")}
+                  aria-label={t("emailLabel")}
+                  autoComplete="email"
+                  dir="auto"
+                />
+                <button type="submit" disabled={state === "sending"} aria-busy={state === "sending"}>
+                  {state === "sending" ? t("subscribing") : t("subscribe")}
+                </button>
+              </form>
+            )}
+            {state === "error" ? (
+              <p className="tv-foot-news-error" role="alert">
+                {t("subscribeError")}
+              </p>
+            ) : null}
+          </div>
 
-      {/* Toplum footer (Toplum Vakfı Footer.dc.html): the page background
-          waves into the deepest navy; identity, the link columns, and a
-          closing rule carrying the copyright and the legal links. */}
-      <footer id="contact" className="mia-foot mia-foot--toplum" dir={dir}>
-        <svg className="mia-foot-wave" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 0h1440v14C1180 44 900 50 640 34 420 20 200 8 0 30Z" />
-        </svg>
-
-        <div className="cols" id="footcols">
-          <div className="mia-foot-id">
-            <span className="mia-foot-logo">
-              <img
-                src={imageUrl("/toplum/logo-mark.png", 128)}
-                srcSet={imageSrcSet("/toplum/logo-mark.png", [128, 256])}
-                sizes="56px"
-                alt={name}
-                width={56}
-                height={73}
-                loading="lazy"
-                decoding="async"
-              />
-            </span>
-            {lead ? <p className="mia-foot-tag">{lead}</p> : null}
-            <ul className="mia-foot-contact">
-              <li>
-                <ContactIcon kind="mail" />
-                <a href={`mailto:${email}`} dir="ltr">{email}</a>
-              </li>
-              <li>
-                <ContactIcon kind="phone" />
-                {/* Latin-script data stays isolated so bidi cannot reorder it. */}
-                <a href={`tel:${phone.replace(/\s/g, "")}`} dir="ltr" style={{ unicodeBidi: "isolate" }}>{phone}</a>
-              </li>
-              <li>
-                <ContactIcon kind="pin" />
-                <span>{address}</span>
-              </li>
-            </ul>
-            <div className="mia-foot-social">
+          <div>
+            <h4>{t("contactTitle")}</h4>
+            <div className="tv-foot-contact">
+              <a href={`mailto:${ORG.email}`}>
+                <ShellIcon name="mail" />
+                <span dir="ltr">{ORG.email}</span>
+              </a>
+              <a href={ORG_TEL}>
+                <ShellIcon name="phone" />
+                <span dir="ltr">{ORG.phone}</span>
+              </a>
+              <span>
+                <ShellIcon name="pin" />
+                <span dir="ltr">{ORG.address}</span>
+              </span>
+            </div>
+            <div className="tv-foot-social">
               {social.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={s.label}
-                  title={s.label}
-                  className="social-ic"
-                >
-                  <SocialIcon name={s.icon} />
+                <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label} title={s.label}>
+                  {s.icon}
                 </a>
               ))}
             </div>
           </div>
 
-          {COLUMNS.map((col, index) => {
-            const open = openCol === index;
-            return (
-              <div key={col.titleKey} className="fcol" data-open={open ? "true" : "false"}>
-                <button
-                  type="button"
-                  className="fcol-head"
-                  onClick={() => setOpenCol(open ? -1 : index)}
-                  aria-expanded={open}
-                >
-                  {label(col.titleKey)}
-                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                </button>
-                <div className="fcol-links">
-                  {col.links.map((link) => (
-                    <Link
-                      key={link.key}
-                      href={miaPath(link.route, locale)}
-                    >
-                      {label(link.key)}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
+          <div>
+            <h4>{t("quickLinks")}</h4>
+            <nav className="tv-foot-links" aria-label={t("quickLinks")}>
+              {QUICK_LINKS.map(([route, key]) => (
+                <Link key={key} href={miaPath(route, locale)}>
+                  {t(key)}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          <div className="tv-foot-brand">
+            <span>
+              <img
+                src={imageUrl("/toplum/logo-mark.png", 128)}
+                srcSet={imageSrcSet("/toplum/logo-mark.png", [128, 256])}
+                sizes="48px"
+                alt={ORG.legalName}
+                width={48}
+                height={62}
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
+            <b>{t("tagline")}</b>
+          </div>
         </div>
 
-        <div className="mia-foot-bottom">
-          <nav className="mia-foot-legal" aria-label={label("legal")}>
-            {LEGAL_LINKS.map((link) => (
-              <Link key={link.key} href={miaPath(link.route, locale)}>
-                {label(link.key)}
+        <div className="tv-foot-legal">
+          <nav aria-label={t("legal")}>
+            {LEGAL_LINKS.map(([route, key]) => (
+              <Link key={key} href={miaPath(route, locale)}>
+                {t(key)}
               </Link>
             ))}
           </nav>
-          <span className="mia-foot-copy">
-            ©{" "}
-            <span dir="ltr" style={{ unicodeBidi: "isolate" }}>
-              {new Date().getFullYear()}
-            </span>{" "}
-            {name} — {tCommon("allRightsReserved")}
-          </span>
+          <span className="tv-foot-copy">{t("copyright", { year: new Date().getFullYear() })}</span>
         </div>
-      </footer>
-    </>
-  );
-}
+      </div>
 
-function ContactIcon({ kind }: { kind: "mail" | "phone" | "pin" }) {
-  return (
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      {kind === "mail" ? (
-        <>
-          <rect x="3" y="5" width="18" height="14" rx="2" />
-          <path d="m4 7 8 6 8-6" />
-        </>
-      ) : kind === "phone" ? (
-        <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" />
-      ) : (
-        <>
-          <path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z" />
-          <circle cx="12" cy="10" r="2.5" />
-        </>
-      )}
-    </svg>
+      <a className="tv-wa" href={ORG_WHATSAPP} target="_blank" rel="noopener noreferrer" aria-label={t("whatsapp")} title={t("whatsapp")}>
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.87 9.87 0 0 0 4.73 1.2h.01c5.46 0 9.91-4.45 9.91-9.91A9.85 9.85 0 0 0 12.04 2zm0 18.15h-.01a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24a8.2 8.2 0 0 1 8.24 8.25c0 4.54-3.7 8.23-8.25 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.7-.8-.23-.09-.39-.13-.56.12-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.13-.15.17-.25.25-.42.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42h-.48a.92.92 0 0 0-.66.31c-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29z" />
+        </svg>
+      </a>
+    </footer>
   );
 }

@@ -15,6 +15,7 @@ import type { Locale } from "@/lib/seo";
 import { getCategoryPage } from "@/lib/minbar/category-page";
 import { pageTemplate, type CategoryPageTemplate } from "@/lib/content/category-page-write";
 import { miaPath, type MinbarRoute } from "@/lib/minbar/routes";
+import { ORG } from "@/lib/minbar/org";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import CategoryLandingPage from "@/components/minbar/categories/CategoryLandingPage";
 import { withIncomingQuery, type IncomingSearchParams } from "@/lib/minbar/redirect-query";
@@ -25,7 +26,7 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["CampaignsPage", "homepage", "projects", "cart"] as const;
+const NAMESPACES = ["CategoryLanding", "cart"] as const;
 
 /** Campaign figures change on donation, not per request. */
 export const revalidate = 60;
@@ -54,6 +55,7 @@ async function fetchCategoryForSeo(idOrSlug: string) {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, locale } = await params;
   const seo = LOCALE_SEO[locale as Locale] ?? LOCALE_SEO.en;
+  const tProjects = await getTranslations({ locale, namespace: "projects.tv" });
   // Always anchor canonical to the requested URL so the parent layout's
   // `/{locale}` canonical can never leak through if the DB lookup fails.
   const requestedCanonical = `${SITE_URL}/${locale}/category/${encodeURIComponent(id)}`;
@@ -67,8 +69,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!category) {
     return {
-      title: seo.campaigns.title,
-      description: seo.campaigns.description,
+      title: tProjects("metaTitle"),
+      description: tProjects("metaDescription"),
       alternates: { canonical: requestedCanonical },
       robots: { index: false, follow: true },
     };
@@ -86,7 +88,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ]);
     arabicLead = tLanding("heroLead", { name, org: tCert("orgName") });
   }
-  const description = (t?.heroLead || t?.description || arabicLead || seo.campaigns.description).slice(0, 200);
+  const description = (t?.heroLead || t?.description || arabicLead || tProjects("metaDescription")).slice(0, 200);
   const image = category.heroImage || category.image || `${SITE_URL}/og-image.jpg`;
 
   let alternates: { canonical: string; languages?: Record<string, string> };
@@ -103,7 +105,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates = { canonical: requestedCanonical };
   }
 
-  const title = `${name} | ${seo.siteName}`;
+  const title = `${name} | ${ORG.legalName}`;
 
   return {
     title,
@@ -114,7 +116,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title,
       description,
       url: alternates.canonical,
-      siteName: seo.siteName,
+      siteName: ORG.legalName,
       locale: OG_LOCALE_MAP[locale as Locale] ?? "en_US",
       type: "website",
       images: [{ url: image, width: 1200, height: 630, alt: name }],

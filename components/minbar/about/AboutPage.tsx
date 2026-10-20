@@ -1,98 +1,66 @@
 "use client";
 
 import { type ReactElement, useEffect, useState } from "react";
+import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
 import { ORG } from "@/lib/minbar/org";
-import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
-import TravelBanner from "@/components/minbar/banners/TravelBanner";
+import AboutSideNav, { ABOUT_PANELS, type AboutPanel } from "@/components/minbar/foundation/AboutSideNav";
 import InnerBanner from "./InnerBanner";
 
 /**
- * About us  ported from `Minbar/من نحن.dc.html`, laid out on the Toplum
- * inner-page template (`ToplamVakfi-design/Toplum Vakfı About.dc.html`): photo
- * banner, a sticky section menu beside the content, an intro card with a
- * photograph, three icon cards, list cards, and a dark closing band.
+ * About us  `ToplamVakfi-design/Toplum Vakfı About.dc.html`.
  *
- * The one page on the site that states who the foundation legally is, so the
- * licence number, address and phone come from `lib/minbar/org.ts` rather than
- * being retyped: the Footer prints the same three facts, and two copies drift.
+ * Photo banner, the About family's side menu, then one of five panels chosen
+ * by the URL hash as in the design: the overview (registration intro beside a
+ * photograph, mission / vision / goal cards, institutional values, the dark
+ * "how to take part" band), and the vision, mission, purpose and goals quote
+ * cards. The banner title and breadcrumb follow the panel.
  *
- * Every block of the handoff is kept, in its order  legal status (the
- * design's registration intro), mission, vision and method, the five
- * objectives, the four departments, the four areas of work, the address and
- * contact, and the closing call. Styles: `styles/minbar/pages/about.css`.
+ * The registration date and registry number come from `lib/minbar/org.ts`.
+ * Styles: `styles/minbar/pages/about.css`.
  */
 
-/** Objective keys, in the order the handoff lists them. */
-const OBJECTIVES = ["objective1", "objective2", "objective3", "objective4", "objective5"] as const;
+const VALUES = ["v1", "v2", "v3", "v4", "v5", "v6", "v7"] as const;
+const TARGETS = ["t1", "t2", "t3", "t4"] as const;
 
-/**
- * The four departments. Each carries only the points it actually has  the
- * finance department has one, and padding it out to match the others would be
- * inventing work the foundation does not claim.
- */
-const DEPARTMENTS: ReadonlyArray<{ title: string; points: readonly string[] }> = [
-  { title: "dept1Title", points: ["dept1P1", "dept1P2", "dept1P3", "dept1P4"] },
-  { title: "dept2Title", points: ["dept2P1", "dept2P2", "dept2P3"] },
-  { title: "dept3Title", points: ["dept3P1"] },
-  { title: "dept4Title", points: ["dept4P1", "dept4P2", "dept4P3"] },
+const TRIO: ReadonlyArray<{ title: string; text: string; icon: ReactElement }> = [
+  { title: "missionTitle", text: "missionText", icon: <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" /> },
+  {
+    title: "visionTitle",
+    text: "visionText",
+    icon: (
+      <>
+        <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+        <circle cx="12" cy="12" r="3" />
+      </>
+    ),
+  },
+  {
+    title: "goalTitle",
+    text: "goalText",
+    icon: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <circle cx="12" cy="12" r="5" />
+        <circle cx="12" cy="12" r="1.5" />
+      </>
+    ),
+  },
 ];
 
-/** The four areas of work, as title/body key pairs. */
-const PILLARS: ReadonlyArray<{ title: string; text: string }> = [
-  { title: "pillar1Title", text: "pillar1Text" },
-  { title: "pillar2Title", text: "pillar2Text" },
-  { title: "pillar3Title", text: "pillar3Text" },
-  { title: "pillar4Title", text: "pillar4Text" },
-];
+const JOIN = ["partner", "donate", "volunteer"] as const;
 
-/** The in-page sections the side menu points at, in page order. */
-const SECTIONS: ReadonlyArray<{ id: string; label: string }> = [
-  { id: "legal", label: "heroTitle" },
-  { id: "mission", label: "sectionMission" },
-  { id: "vision", label: "sectionVision" },
-  { id: "how-we-work", label: "sectionHowWeWork" },
-  { id: "objectives", label: "sectionObjectives" },
-  { id: "departments", label: "sectionDepartments" },
-  { id: "pillars", label: "sectionPillars" },
-];
+function panelFromHash(): AboutPanel {
+  if (typeof window === "undefined") return "about";
+  const key = window.location.hash.slice(1);
+  return (ABOUT_PANELS as readonly string[]).includes(key) ? (key as AboutPanel) : "about";
+}
 
-const ICONS: Record<string, ReactElement> = {
-  mission: <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" />,
-  vision: (
-    <>
-      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
-      <circle cx="12" cy="12" r="3" />
-    </>
-  ),
-  method: (
-    <>
-      <circle cx="12" cy="12" r="9" />
-      <circle cx="12" cy="12" r="5" />
-      <circle cx="12" cy="12" r="1.5" />
-    </>
-  ),
-  pin: (
-    <>
-      <path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11z" />
-      <circle cx="12" cy="10" r="2.5" />
-    </>
-  ),
-  mail: (
-    <>
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path d="m3.5 6.5 8.5 6.5 8.5-6.5" />
-    </>
-  ),
-};
-
-function Icon({ name }: { name: keyof typeof ICONS }) {
+function QuoteMark() {
   return (
-    <span aria-hidden="true" className="fd-ico">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        {ICONS[name]}
-      </svg>
+    <span className="fd-quote-mark" aria-hidden="true">
+      ”
     </span>
   );
 }
@@ -100,165 +68,172 @@ function Icon({ name }: { name: keyof typeof ICONS }) {
 export default function AboutPage() {
   const locale = useLocale();
   const t = useTranslations("about");
-  const tCommon = useTranslations("common");
-  const tNav = useTranslations("navigation");
+  const [panel, setPanel] = useState<AboutPanel>("about");
 
-  /* The side menu marks the section being read. Purely visual: the links are
-     ordinary anchors and work without it. */
-  const [active, setActive] = useState<string>(SECTIONS[0].id);
   useEffect(() => {
-    if (typeof IntersectionObserver === "undefined") return;
-    const nodes = SECTIONS.map((s) => document.getElementById(s.id)).filter((n): n is HTMLElement => Boolean(n));
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const hit = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (hit) setActive(hit.target.id);
-      },
-      { rootMargin: "-110px 0px -60% 0px" },
-    );
-    nodes.forEach((n) => observer.observe(n));
-    return () => observer.disconnect();
+    const show = (scroll: boolean) => {
+      setPanel(panelFromHash());
+      if (scroll) window.scrollTo(0, 0);
+    };
+    show(false);
+    const onHash = () => show(true);
+    window.addEventListener("hashchange", onHash);
+    window.addEventListener("popstate", onHash);
+    return () => {
+      window.removeEventListener("hashchange", onHash);
+      window.removeEventListener("popstate", onHash);
+    };
   }, []);
 
+  const aboutHref = miaPath("about", locale);
+  const title = panel === "about" ? t("heroTitle") : t(`nav.${panel}`);
+  const crumbs =
+    panel === "about"
+      ? [{ label: t("home"), href: miaPath("home", locale) }, { label: t("heroTitle") }]
+      : [{ label: t("home"), href: miaPath("home", locale) }, { label: t("heroTitle"), href: aboutHref }, { label: title }];
+
+  const joinHref: Record<(typeof JOIN)[number], string> = {
+    partner: miaPath("partner", locale),
+    donate: miaPath("projects", locale),
+    volunteer: miaPath("volunteer", locale),
+  };
+
   return (
-    <div className="ab-page fd-page">
-      <InnerBanner
-        id="hero"
-        crumbs={[{ label: tNav("home"), href: miaPath("home", locale) }, { label: t("heroTitle") }]}
-        title={t("heroTitle")}
-        lead={t("heroSubtitle")}
-      />
+    <div className="fd-page fd-p-about">
+      <InnerBanner crumbs={crumbs} crumbLabel={t("crumbLabel")} title={title} lead={t("heroSubtitle")} />
 
       <div className="fd-main">
         <div className="fd-wrap fd-side">
-          <nav className="fd-nav" aria-label={t("heroTitle")}>
-            {SECTIONS.map((s) => (
-              <a key={s.id} href={`#${s.id}`} data-on={active === s.id ? "1" : undefined} aria-current={active === s.id ? "location" : undefined} onClick={() => setActive(s.id)}>
-                {t(s.label)}
-              </a>
-            ))}
-            <span aria-hidden="true" className="fd-nav-sep" />
-            <a href={miaPath("partner", locale)}>{tNav("partner")}</a>
-            <a href={miaPath("volunteer", locale)}>{tNav("volunteer")}</a>
-          </nav>
+          <AboutSideNav
+            active={panel}
+            onShowAbout={() => {
+              setPanel("about");
+              window.scrollTo(0, 0);
+            }}
+          />
 
-          <div className="fd-stack">
-            {/* Legal status  the design's registration intro beside a photograph. */}
-            <article id="legal" className="fd-card fd-intro fd-anchor fd-in" aria-labelledby="ab-legal-title">
-              <div className="fd-intro-text">
-                <span className="fd-eyebrow">{t("sectionLegal")}</span>
-                <h2 id="ab-legal-title">{t("legalText")}</h2>
-                <div className="fd-seal">
-                  <span>
-                    <small>{t("licenseNumberLabel")}</small>
-                    {/* A licence number is Latin digits and a slash: isolated so an
-                        RTL paragraph cannot reorder it into a different number. */}
-                    <span dir="ltr" style={{ unicodeBidi: "isolate", display: "inline-block" }}>
-                      {ORG.licenseNumber}
-                    </span>
-                  </span>
-                  <span>{t("licenseDate")}</span>
+          <div>
+            {panel === "about" ? (
+              <div>
+                <article className="fd-card fd-intro">
+                  <div className="fd-intro-text">
+                    <span className="fd-eyebrow">{t("introEyebrow")}</span>
+                    <h2>{t("introTitle", { date: ORG.registeredOn, registry: ORG.licenseNumber })}</h2>
+                    <p>{t("introText")}</p>
+                    <Link className="fd-pill" href={miaPath("ourStory", locale)}>
+                      <span className="fd-pill-ico" aria-hidden="true">
+                        <span className="fd-arrow">←</span>
+                      </span>
+                      {t("introCta")}
+                    </Link>
+                  </div>
+                  <div className="fd-intro-img" role="img" aria-label={t("introImgAlt")} />
+                </article>
+
+                <div className="fd-trio">
+                  {TRIO.map((card) => (
+                    <article key={card.title} className="fd-card">
+                      <span className="fd-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9">
+                          {card.icon}
+                        </svg>
+                      </span>
+                      <h3>{t(card.title)}</h3>
+                      <p>{t(card.text)}</p>
+                    </article>
+                  ))}
                 </div>
+
+                <Values t={t} />
+
+                <section className="fd-join" aria-label={t("joinLabel")}>
+                  {JOIN.map((key) => (
+                    <article key={key}>
+                      <h3>{t(`join.${key}.title`)}</h3>
+                      <span className="fd-script">{t(`join.${key}.script`)}</span>
+                      <p>{t(`join.${key}.text`)}</p>
+                      <Link href={joinHref[key]}>
+                        {t(`join.${key}.cta`)} <span className="fd-arrow" aria-hidden="true">←</span>
+                      </Link>
+                    </article>
+                  ))}
+                </section>
               </div>
-              <div aria-hidden="true" className="fd-intro-img" />
-            </article>
+            ) : null}
 
-            <div className="fd-trio">
-              <article id="mission" className="fd-card fd-anchor fd-in fd-in-1">
-                <Icon name="mission" />
-                <h2>{t("sectionMission")}</h2>
-                <p>{t("mission")}</p>
-              </article>
-              <article id="vision" className="fd-card fd-anchor fd-in fd-in-1">
-                <Icon name="vision" />
-                <h2>{t("sectionVision")}</h2>
-                <p className="fd-strong">{t("vision")}</p>
-                <p>{t("visionDetail")}</p>
-              </article>
-              <article id="how-we-work" className="fd-card fd-anchor fd-in fd-in-2">
-                <Icon name="method" />
-                <h2>{t("sectionHowWeWork")}</h2>
-                <p>{t("howWeWork")}</p>
-              </article>
-            </div>
+            {panel === "vision" ? (
+              <div>
+                <article className="fd-card fd-quote">
+                  <QuoteMark />
+                  <h2>{t("visionQuote")}</h2>
+                </article>
+                <Values t={t} />
+              </div>
+            ) : null}
 
-            <article id="objectives" className="fd-card fd-pad fd-anchor">
-              <h2 className="fd-h2">{t("sectionObjectives")}</h2>
-              <ol className="fd-list">
-                {OBJECTIVES.map((key) => (
-                  <li key={key}>{t(key)}</li>
-                ))}
-              </ol>
-            </article>
+            {panel === "mission" ? (
+              <article className="fd-card fd-quote">
+                <QuoteMark />
+                <h2>{t("missionQuote")}</h2>
+                <div className="fd-quote-sign">
+                  <span className="fd-script">{t("heroSubtitle")}</span>
+                  <small>{t("mottoLabel")}</small>
+                </div>
+              </article>
+            ) : null}
 
-            <article id="departments" className="fd-card fd-pad fd-anchor">
-              <h2 className="fd-h2">{t("sectionDepartments")}</h2>
-              <div className="fd-tiles">
-                {DEPARTMENTS.map((dept) => (
-                  <div key={dept.title}>
-                    <b>{t(dept.title)}</b>
-                    <ul>
-                      {dept.points.map((point) => (
-                        <li key={point}>{t(point)}</li>
-                      ))}
-                    </ul>
+            {panel === "purpose" ? (
+              <article className="fd-card fd-quote">
+                <QuoteMark />
+                <h2>{t("purposeQuote")}</h2>
+                <span className="fd-quote-rule" aria-hidden="true" />
+                <p>{t("purposeP1")}</p>
+                <p>{t("purposeP2")}</p>
+                <p>{t("purposeP3")}</p>
+              </article>
+            ) : null}
+
+            {panel === "goals" ? (
+              <div>
+                <article className="fd-card fd-quote">
+                  <QuoteMark />
+                  <h2>{t("goalsQuote")}</h2>
+                  <span className="fd-quote-rule" aria-hidden="true" />
+                  <p>{t("goalsP1")}</p>
+                </article>
+                <section className="fd-card fd-quote-sub" aria-labelledby="fd-targets-title">
+                  <h2 id="fd-targets-title" className="fd-h2">
+                    {t("targetsTitle")}
+                  </h2>
+                  <div className="fd-targets">
+                    {TARGETS.map((key) => (
+                      <div key={key}>
+                        <b>{t(`targets.${key}.title`)}</b>
+                        <span>{t(`targets.${key}.text`)}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </section>
               </div>
-            </article>
-
-            <article id="pillars" className="fd-card fd-pad fd-anchor">
-              <h2 className="fd-h2">{t("sectionPillars")}</h2>
-              <div className="fd-tiles">
-                {PILLARS.map((pillar) => (
-                  <div key={pillar.title}>
-                    <b>{t(pillar.title)}</b>
-                    <span>{t(pillar.text)}</span>
-                  </div>
-                ))}
-              </div>
-            </article>
-
-            <div className="fd-pair">
-              <div className="fd-card fd-item">
-                <Icon name="pin" />
-                <span className="fd-item-text">
-                  <small>{t("addressLabel")}</small>
-                  <b>{ORG.address}</b>
-                </span>
-              </div>
-              <div className="fd-card fd-item">
-                <Icon name="mail" />
-                <span className="fd-item-text">
-                  <small>{t("contactLabel")}</small>
-                  <b dir="ltr">{ORG.email}</b>
-                  <b dir="ltr">{ORG.phone}</b>
-                </span>
-              </div>
-            </div>
-
-            <div className="fd-join">
-              <h2>{t("ctaTagline")}</h2>
-              <div className="fd-join-actions">
-                <a href={miaPath("projects", locale)} className="fd-pill">
-                  <span aria-hidden="true" className="fd-pill-ico">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" />
-                    </svg>
-                  </span>
-                  {tCommon("donate")}
-                </a>
-                <a href={miaPath("contact", locale)} className="fd-ghost fd-ghost-dark">
-                  {tNav("contact")}
-                </a>
-              </div>
-            </div>
+            ) : null}
           </div>
         </div>
       </div>
-
-      <ZakatBanner />
-      <TravelBanner />
     </div>
+  );
+}
+
+function Values({ t }: { t: (key: string) => string }) {
+  return (
+    <section className="fd-card fd-values" aria-labelledby="fd-values-title">
+      <h2 id="fd-values-title" className="fd-h2">
+        {t("valuesTitle")}
+      </h2>
+      <ul className="fd-chips">
+        {VALUES.map((key) => (
+          <li key={key}>{t(`values.${key}`)}</li>
+        ))}
+      </ul>
+    </section>
   );
 }

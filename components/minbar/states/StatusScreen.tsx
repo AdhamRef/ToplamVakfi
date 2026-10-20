@@ -49,6 +49,8 @@ export interface StatusScreenProps {
   variant?: "panel" | "dark";
   /** Large figures shown in the dark variant (e.g. "404"). */
   code?: string;
+  /** The checkout bar above the panel (`Payment Error.dc.html` § `.steps`). */
+  bar?: ReactNode;
 }
 
 export default function StatusScreen({
@@ -63,6 +65,7 @@ export default function StatusScreen({
   animate = false,
   variant,
   code,
+  bar,
 }: StatusScreenProps) {
   const palette = TONES[tone];
   const isNotFound = icon === NotFoundIcon;
@@ -117,7 +120,7 @@ export default function StatusScreen({
               {icon}
             </span>
           )}
-          <h1 style={{ margin: "6px 0 0", fontSize: "clamp(20px, 2.4vw, 24px)", fontWeight: 800, color: "#fff", lineHeight: 1.5 }}>{title}</h1>
+          <h1 style={{ margin: "6px 0 0", fontSize: 22, fontWeight: 800, color: "#fff", lineHeight: 1.5 }}>{title}</h1>
           <p style={{ margin: "0 0 10px", maxWidth: "48ch", color: "#b9d3e6", fontSize: 14.5, lineHeight: 1.9 }}>{lead}</p>
           {detailRows}
           {children}
@@ -128,10 +131,11 @@ export default function StatusScreen({
   }
 
   return (
-    <section className="gf-status" style={{ padding: "40px 16px 64px" }}>
+    <section className="gf-status" style={{ padding: bar ? "26px 0 60px" : "40px 16px 64px" }}>
+      {bar ? <div className="gf-status-bar">{bar}</div> : null}
       <div
         className="gf-status-panel"
-        style={{ width: "min(720px, 100%)", margin: "0 auto", display: "grid", justifyItems: "center", gap: 12, padding: 34, background: "#fff", border: "1px solid #e6eef3", borderRadius: 18, boxShadow: "0 16px 34px rgba(2,52,88,.08)", textAlign: "center", boxSizing: "border-box" }}
+        style={{ width: bar ? "min(720px, calc(100% - 32px))" : "min(720px, 100%)", margin: bar ? "20px auto 0" : "0 auto", display: "grid", justifyItems: "center", gap: 12, padding: 34, background: "#fff", border: "1px solid #e6eef3", borderRadius: 18, boxShadow: "0 16px 34px rgba(2,52,88,.08)", textAlign: "center", boxSizing: "border-box" }}
       >
         <span
           className={animate ? "mia-status-glyph mia-status-glyph--animate" : "mia-status-glyph"}
@@ -140,7 +144,7 @@ export default function StatusScreen({
           {icon}
         </span>
 
-        <h1 style={{ margin: 0, fontSize: "clamp(19px, 2.2vw, 23px)", fontWeight: 800, color: "var(--ink)", lineHeight: 1.5 }}>{title}</h1>
+        <h1 style={{ margin: 0, fontSize: 19, fontWeight: 800, color: "var(--ink)", lineHeight: 1.5 }}>{title}</h1>
         <p style={{ margin: "0 0 12px", maxWidth: "56ch", color: "var(--muted)", fontSize: 14, lineHeight: 1.85 }}>{lead}</p>
 
         {detailRows}

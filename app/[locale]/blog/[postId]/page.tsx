@@ -2,17 +2,21 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { buildLocalizedAlternates, buildPageMetadata, SITE_URL } from "@/lib/seo";
 import { messagesFor } from "@/i18n/locale-messages";
-import { getArticle } from "@/lib/minbar/posts";
+import { getArticle, listRelatedArticles } from "@/lib/minbar/posts";
+import { ORG } from "@/lib/minbar/org";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import ArticleDetail from "@/components/minbar/blog/ArticleDetail";
-import { ctaKeyFor } from "@/lib/minbar/blog-cta";
+
 
 interface Props {
   params: Promise<{ locale: string; postId: string }>;
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["blog", "homepage"] as const;
+const NAMESPACES = ["tvBlog"] as const;
+
+/** Category slugs / names that file a post in the newsroom (as `listNews` reads them). */
+const NEWS_KEYS = ["news", "akhbar", "الأخبار", "اخبار"];
 
 /** Articles change when an editor publishes, not per request. */
 export const revalidate = 60;
@@ -68,7 +72,8 @@ export default async function Article({ params }: Props) {
   const article = await getArticle(decodeURIComponent(postId), locale);
   if (!article) notFound();
 
-  const ctaKey = ctaKeyFor(article.category?.slug, article.category?.name);
+  const isNews = NEWS_KEYS.includes(article.category?.slug ?? "") || NEWS_KEYS.includes(article.category?.name ?? "");
+  const related = await listRelatedArticles(article, locale, 3);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -80,8 +85,8 @@ export default async function Article({ params }: Props) {
     dateModified: article.updatedAt,
     mainEntityOfPage: `${SITE_URL}/${locale}/blog/${encodeURIComponent(article.slug)}`,
     ...(article.cover ? { image: [article.cover] } : {}),
-    author: { "@type": "Organization", name: "Minbar Al Aqsa" },
-    publisher: { "@type": "NGO", name: "Minbar Al Aqsa" },
+    author: { "@type": "Organization", name: ORG.legalName },
+    publisher: { "@type": "NGO", name: ORG.legalName },
   };
 
   return (
@@ -91,7 +96,7 @@ export default async function Article({ params }: Props) {
         // JSON-LD has no other insertion point than dangerouslySetInnerHTML.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ArticleDetail article={article} ctaKey={ctaKey} />
+      <ArticleDetail article={article} related={related} isNews={isNews} />
     </MinbarMessages>
   );
 }

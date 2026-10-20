@@ -10,24 +10,19 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["achievements", "homepage"] as const;
+const NAMESPACES = ["tvImpact"] as const;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "achievements" });
+  const t = await getTranslations({ locale, namespace: "tvImpact" });
   return buildPageMetadata(locale, {
-    title: t("reports.title"),
-    description: t("hero.lead"),
+    title: t("title"),
+    description: t("lead"),
     path: `/${slugFor("reports", locale)}`,
   });
 }
 
-/**
- * Achievements and reports  ported from
- * `Minbar/إنجازات وتقارير المؤسسة.dc.html`.
- *
- * `homepage` rides along for the two closing banners.
- */
+/** "Our impact"  laid out as `ToplamVakfi-design/Toplum Vakfı Impact.dc.html`. */
 export default async function Achievements({ params }: Props) {
   const { locale } = await params;
 
