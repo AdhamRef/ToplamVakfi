@@ -32,7 +32,7 @@ const NAMESPACES = ["CategoryLanding", "cart"] as const;
 export const revalidate = 60;
 
 /** Where each bound category is published. */
-const TEMPLATE_ROUTES: Record<CategoryPageTemplate, MinbarRoute> = { aqsa: "aqsa", zakat: "zakat" };
+const TEMPLATE_ROUTES: Record<CategoryPageTemplate, MinbarRoute> = { zakat: "zakat" };
 
 async function fetchCategoryForSeo(idOrSlug: string) {
   return prisma.category.findFirst({

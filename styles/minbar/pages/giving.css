@@ -91,9 +91,10 @@
 .mia-scope .tvg-pj-note::before { content: "✓ "; color: var(--tvg-brand-ink); }
 .mia-scope .tvg-pj-bar { height: 6px; border-radius: 999px; background: #e7f0f6; overflow: hidden; margin-bottom: 6px; }
 .mia-scope .tvg-pj-bar span { display: block; height: 100%; background: linear-gradient(90deg, #00a2e0, #0077b3); }
-.mia-scope[dir="rtl"] .tvg-pj-bar span { margin-inline-start: auto; }
 .mia-scope .tvg-pj-meta { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--tvg-muted); margin-bottom: 12px; }
 .mia-scope .tvg-pj-meta b { color: var(--tvg-ink); }
+/* The design sets this row ltr: raised at the left edge, goal at the right, in both directions. */
+.mia-scope[dir="rtl"] .tvg-pj-meta { flex-direction: row-reverse; }
 .mia-scope .tvg-pj-amt { display: flex; align-items: center; gap: 6px; min-height: 44px; border: 1px solid var(--tvg-line); border-radius: 999px; padding: 0 14px; margin: auto 0 10px; direction: ltr; }
 .mia-scope .tvg-pj-amt span { color: var(--tvg-brand-ink); font-weight: 800; }
 .mia-scope .tvg-pj-amt input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font-family: inherit; font-size: 14px; font-weight: 800; color: var(--tvg-ink); }
@@ -413,4 +414,15 @@
   .mia-scope .tvg-zk-explain p { font-size: 13px !important; }
   .mia-scope .tvg-zp-sec h2 { font-size: 20px !important; }
   .mia-scope .tvg-zp-verse { font-size: 14px !important; }
+}
+
+/* ── Direction and the phone type sizes minbar.css would otherwise force ── */
+.mia-scope[dir="ltr"] .tvg-crumb [aria-hidden="true"] { display: inline-block; transform: scaleX(-1); }
+@media (max-width: 960px) {
+  .mia-scope .tvg-banner h1 { font-size: clamp(38px, 5vw, 62px) !important; line-height: 1.08 !important; }
+  .mia-scope .tvg-pg-feature h2 { font-size: clamp(38px, 5vw, 60px) !important; line-height: 1.1 !important; }
+  .mia-scope .tvg-prog-hero-in h1 { font-size: clamp(26px, 3vw, 38px) !important; }
+  .mia-scope .tvg-prog-sec h2, .mia-scope .tvg-prog-cta h2, .mia-scope .tvg-zp-sec h2 { font-size: 20px !important; }
+  .mia-scope .tvg-ro-info h2 { font-size: 18px !important; }
+  .mia-scope .tvg-sj-form h2, .mia-scope .tvg-gc-dedicate h2, .mia-scope .tvg-mg-builder h2 { font-size: 16px !important; }
 }

@@ -96,7 +96,7 @@ export default function ProjectDetail({ project, updates, gallery, donorCount, c
       {/* No `overflow: hidden` here: it would make this grid the sidebar's
           sticky container and the sidebar would never stick. */}
       <div id="pd-layout" className="pd-container pd-layout">
-        <div className="pd-project-main pd-main">
+        <div className="pd-project-main">
           <h2>{t("story")}</h2>
           {project.body.map((block, index) =>
             block.kind === "h2" ? (

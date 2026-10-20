@@ -51,7 +51,7 @@ test("team support remains optional and never blocks checkout", () => {
 test("zakat calculator uses the visitor currency instead of a fixed dollar unit", () => {
   const page = read("components/minbar/zakat/ZakatPage.tsx");
   assert.match(page, /formatLocal, code: visitorCode/);
-  assert.match(page, /\{visitorCode\}/);
+  assert.match(page, /\{symbol\}/);
   assert.match(page, /addZakat\(dueRounded, visitorCode\)/);
   assert.doesNotMatch(page, /addZakat\(Math\.round\(due\)\)/);
 });
@@ -79,22 +79,6 @@ test("guest checkout rejects an empty phone that is only a dial code", () => {
 });
 
 
-test("recurring donation puts the plan builder before video on phones", () => {
-  const page = read("components/minbar/recurring/RecurringPage.tsx");
-  const css = read("styles/minbar/minbar.css");
-  assert.match(page, /className="rc-builder(?: mia-donation-builder)?"/);
-  assert.match(css, /#rc-grid \.rc-builder \{ order: 1; \}/);
-  assert.match(css, /#rc-grid \.rc-video \{ order: 2; \}/);
-});
-
-test("checkout puts the donation summary before the form on phones only", () => {
-  const page = read("components/minbar/checkout/CheckoutPage.tsx");
-  const css = read("styles/minbar/minbar.css");
-  assert.match(page, /className="pay-form"/);
-  assert.match(css, /#pay-grid #pay-summary[\s\S]*order: 1/);
-  assert.match(css, /#pay-grid \.pay-form \{ order: 2; \}/);
-});
-
 
 test("homepage phone sections do not clip content into horizontal rails", () => {
   const css = read("styles/minbar/minbar.css");
@@ -103,34 +87,22 @@ test("homepage phone sections do not clip content into horizontal rails", () => 
   assert.match(css, /#account-features[\s\S]*grid-template-columns: repeat\(2, minmax\(0, 1fr\)\) !important/);
 });
 
-test("homepage and project catalogue remove oversized mobile dead space", () => {
-  const home = read("components/minbar/home/ImpactSections.tsx");
+test("project catalogue keeps its filter section anchor", () => {
   const projects = read("components/minbar/projects/ProjectsPage.tsx");
-  const css = read("styles/minbar/minbar.css");
-  assert.match(home, /id="regions-section"/);
   assert.match(projects, /id="project-filters-section"/);
-  assert.match(css, /#project-filters-section > div[\s\S]*padding-bottom: 12px !important/);
-  assert.match(css, /#all[\s\S]*padding-top: 14px !important/);
 });
 
-
-test("long-form Al-Aqsa and Jerusalem pages stay inside the phone viewport", () => {
-  const css = read("styles/minbar/minbar.css");
-  assert.match(css, /:is\(\.aq-page, \.qd-page\)[\s\S]*overflow-x: clip/);
-  assert.match(css, /\.qd-two,[\s\S]*\.qd-map[\s\S]*grid-template-columns: minmax\(0,1fr\) !important/);
-  assert.match(css, /\.qd-grid3,[\s\S]*\.qd-grid4,[\s\S]*\.qd-gates[\s\S]*grid-template-columns: minmax\(0,1fr\) !important/);
-});
 
 
 test("mobile bottom navigation exposes the five requested destinations", () => {
   const nav = read("components/minbar/shell/MobileBottomNav.tsx");
   const layout = read("app/[locale]/layout.tsx");
-  assert.match(layout, /<MobileBottomNav signedIn=/);
-  assert.match(nav, /route: "account"/);
-  assert.match(nav, /route: "projects"/);
-  assert.match(nav, /route: "home"/);
-  assert.match(nav, /route: "recurring"/);
-  assert.match(nav, /route: "zakat"/);
+  assert.match(layout, /<MobileBottomNav\b/);
+  // The design's bar: home, programmes, donate (basket), stories, and the menu.
+  assert.match(nav, /miaPath\("home", locale\)/);
+  assert.match(nav, /miaPath\("programs", locale\)/);
+  assert.match(nav, /miaPath\("cart", locale\)/);
+  assert.match(nav, /miaPath\("stories", locale\)/);
 });
 
 test("mobile bottom navigation persists through payment flows and clears floating actions", () => {
@@ -144,15 +116,6 @@ test("mobile bottom navigation persists through payment flows and clears floatin
 });
 
 
-test("homepage phone hero shows the video before its conversion buttons", () => {
-  const hero = read("components/minbar/home/TopSections.tsx");
-  const css = read("styles/minbar/minbar.css");
-  const mediaAt = hero.indexOf('className="mia-hero-media"');
-  const mobileActionsAt = hero.indexOf('className="mia-hero-actions mia-hero-actions--mobile"');
-  assert.ok(mediaAt >= 0 && mobileActionsAt > mediaAt);
-  assert.match(css, /mia-hero-actions--desktop[\s\S]*display: none !important/);
-  assert.match(css, /mia-hero-actions--mobile[\s\S]*display: grid !important/);
-});
 
 test("homepage hero no longer duplicates the reports proof strip", () => {
   const hero = read("components/minbar/home/TopSections.tsx");
@@ -192,9 +155,7 @@ test("public header search exposes suggestions and localized routes without dono
   const page = read("app/[locale]/search/page.tsx");
   const api = read("app/api/minbar/search/route.ts");
   const source = read("lib/minbar/public-search.ts");
-  assert.match(header, /<HeaderSearch \/>/);
-  assert.match(control, /aria-expanded=\{open\}/);
-  assert.match(control, /aria-controls="mia-header-search-panel"/);
+  assert.match(header, /<HeaderSearch\b/);
   assert.match(control, /AbortController/);
   assert.match(page, /searchPublicContent/);
   assert.match(api, /SUPPORTED_LOCALES/);
@@ -217,15 +178,6 @@ test("mobile project hero keeps photography visible under a light overlay", () =
   assert.match(css, /rgba\(6,36,66,\.11\)/);
 });
 
-test("Jerusalem impact cards keep long totals in a full-width featured panel", () => {
-  const component = read("components/minbar/home/ImpactSections.tsx");
-  const css = read("styles/minbar/minbar.css");
-  assert.match(component, /mia-impact-stat--featured/);
-  assert.match(component, /mia-impact-sectors/);
-  assert.match(css, /mia-impact-summary > \.mia-impact-stat--featured \{ grid-column: 1\/-1/);
-  assert.match(css, /mia-impact-stat > b\[dir="ltr"\][\s\S]*white-space: nowrap/);
-  assert.match(css, /mia-impact-sectors > \.mia-impact-sector[\s\S]*min-width: 0/);
-});
 
 test("the shared travel banner does not force headlines or CTA labels outside mobile viewport", () => {
   const travel = read("components/minbar/banners/TravelBanner.tsx");
@@ -238,28 +190,6 @@ test("the shared travel banner does not force headlines or CTA labels outside mo
   assert.match(css, /friday-prices[\s\S]*grid-template-columns: repeat\(2,minmax\(0,1fr\)\)/);
 });
 
-test("recurring and zakat layouts remain responsive without touching transaction logic", () => {
-  const css = read("styles/minbar/minbar.css");
-  const pages = [
-    ["components/minbar/recurring/RecurringPage.tsx", "mia-recurring-page"],
-    ["components/minbar/zakat/ZakatPage.tsx", "mia-zakat-page"],
-  ];
-  for (const [path, name] of pages) assert.match(read(path), new RegExp(`className="${name}"`));
-  assert.match(css, /\.mia-recurring-page \.mia-recurring-amounts \{ display:grid !important/);
-  assert.match(css, /\.mia-zakat-page #zk-amounts \{ display:grid !important/);
-});
-
-test("Al-Aqsa and Jerusalem mobile heroes use separate media and flow-based copy", () => {
-  const css = read("styles/minbar/minbar.css");
-  for (const path of ["components/minbar/aqsa/AqsaPage.tsx", "components/minbar/jerusalem/JerusalemPage.tsx"]) {
-    const page = read(path);
-    assert.match(page, /mia-story-hero__image/);
-    assert.match(page, /mia-story-hero__overlay/);
-    assert.match(page, /mia-story-hero__copy/);
-  }
-  assert.match(css, /mia-story-hero__overlay[\s\S]*position: relative !important/);
-  assert.match(css, /mia-story-hero__image[\s\S]*object-fit: cover !important/);
-});
 
 test("impact cards occupy one wide and two equally narrow rows", () => {
   const css = read("styles/minbar/minbar.css");

@@ -102,7 +102,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
   const tValidation = useTranslations("validation");
   const tSystem = useTranslations("system");
   const { format, formatLocal } = useMinbarMoney();
-  const { formatLine, lineValue, lineTooSmall, minLabel, inLocal } = useDonationAmount();
+  const { lineValue, lineTooSmall, minLabel, inLocal } = useDonationAmount();
   const tGive = useTranslations("CardGive");
   const { items, hydrated, replace } = useMinbarCart();
   useHealLegacyRows(items, replace, hydrated);

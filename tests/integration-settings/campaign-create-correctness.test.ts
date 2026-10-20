@@ -125,7 +125,7 @@ test("creates an Arabic-only campaign", async () => {
 
 test("creates every supported translation supplied by the form", async () => {
   const translations = Object.fromEntries(
-    ["en", "fr", "tr", "id", "pt", "es", "de"].map((locale) => [
+    ["en", "tr", "sq"].map((locale) => [
       locale,
       {
         title: `Title ${locale}`,
@@ -140,7 +140,7 @@ test("creates every supported translation supplied by the form", async () => {
   await createCampaignCreator(memory.dependencies)(parsed);
   assert.deepEqual(
     memory.state.translations.map((translation) => translation.locale).sort(),
-    ["de", "en", "es", "fr", "id", "pt", "tr"],
+    ["en", "sq", "tr"],
   );
 });
 
@@ -149,13 +149,13 @@ test("rolls back the campaign when any translation fails", async () => {
     validBody({
       translations: {
         en: { title: "English", description: "English description" },
-        fr: { title: "Français", description: "Description française" },
+        tr: { title: "Türkçe", description: "Türkçe açıklama" },
       },
     }),
     emptyExtras,
   );
-  const memory = memoryDependencies({ failLocale: "fr" });
-  await assert.rejects(createCampaignCreator(memory.dependencies)(parsed), /translation fr failed/);
+  const memory = memoryDependencies({ failLocale: "tr" });
+  await assert.rejects(createCampaignCreator(memory.dependencies)(parsed), /translation tr failed/);
   assert.equal(memory.state.campaigns.length, 0);
   assert.equal(memory.state.translations.length, 0);
 });

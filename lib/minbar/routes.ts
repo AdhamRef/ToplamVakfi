@@ -28,13 +28,10 @@ export type MinbarRoute =
   | "zakat"
   | "zakatCalculator"
   | "recurring"
-  | "aqsa"
-  | "jerusalem"
   | "reports"
   | "blog"
   | "article"
   | "news"
-  | "zenkiCourse"
   | "about"
   | "contact"
   | "volunteer"
@@ -80,13 +77,10 @@ export const SLUGS: Record<MinbarRoute, string> = {
   zakat: "pay-zakat-to-palestine",
   zakatCalculator: "zakat-calculator",
   recurring: "recurring-donation",
-  aqsa: "al-aqsa-mosque",
-  jerusalem: "al-quds-and-the-old-city",
   reports: "achievements-and-reports",
   blog: "blog",
   article: "blog",
   news: "news",
-  zenkiCourse: "courses/nur-ad-din-zengi",
   about: "about-us",
   contact: "contact-us",
   volunteer: "volunteer",
@@ -142,13 +136,10 @@ export const LEGACY_SLUGS: Partial<Record<SupportedLocale, Partial<Record<Minbar
     zakat: "الزكاة",
     zakatCalculator: "حاسبة-الزكاة",
     recurring: "التبرع-الدوري",
-    aqsa: "المسجد-الأقصى",
-    jerusalem: "القدس-والبلدة-القديمة",
     reports: "إنجازات-وتقارير-المؤسسة",
     blog: "المدونة",
     article: "المدونة",
     news: "الأخبار",
-    zenkiCourse: "دوراتنا/دورة-نور-الدين-زنكي",
     about: "من-نحن",
     contact: "تواصل-معنا",
     volunteer: "تطوع-معنا",
@@ -199,11 +190,8 @@ export const NOINDEX_ROUTES: ReadonlySet<MinbarRoute> = new Set<MinbarRoute>([
  * donation control in reach.
  */
 export const QUICK_DONATE_ROUTES: ReadonlySet<MinbarRoute> = new Set<MinbarRoute>([
-  "aqsa",
-  "jerusalem",
   "reports",
   "news",
-  "zenkiCourse",
   "about",
   "contact",
   "volunteer",

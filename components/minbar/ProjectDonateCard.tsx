@@ -244,7 +244,6 @@ export default function ProjectDonateCard({ project, width, tag }: ProjectDonate
               <button
                 key={index}
                 type="button"
-                data-amt={picked === index && !custom ? "card" : ""}
                 className={picked === index && !custom ? "active" : undefined}
                 aria-pressed={picked === index && !custom}
                 onClick={() => {

@@ -220,6 +220,14 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      /* Al-Aqsa, Al-Quds and the Zenki course pages were retired with the Toplum
+         Vakfı redesign; their indexed and shared URLs land on the homepage. */
+      { source: "/:locale(ar|en|tr|sq)/:page(al-aqsa-mosque|al-quds-and-the-old-city)", destination: "/:locale", permanent: true },
+      { source: "/:locale(ar|en|tr|sq)/courses/:rest*", destination: "/:locale", permanent: true },
+      // Their former Arabic slugs, still indexed.
+      { source: "/:locale(ar|en|tr|sq)/%D8%A7%D9%84%D9%85%D8%B3%D8%AC%D8%AF-%D8%A7%D9%84%D8%A3%D9%82%D8%B5%D9%89", destination: "/:locale", permanent: true },
+      { source: "/:locale(ar|en|tr|sq)/%D8%A7%D9%84%D9%82%D8%AF%D8%B3-%D9%88%D8%A7%D9%84%D8%A8%D9%84%D8%AF%D8%A9-%D8%A7%D9%84%D9%82%D8%AF%D9%8A%D9%85%D8%A9", destination: "/:locale", permanent: true },
+      { source: "/:locale(ar|en|tr|sq)/%D8%AF%D9%88%D8%B1%D8%A7%D8%AA%D9%86%D8%A7/:rest*", destination: "/:locale", permanent: true },
       /* One host. `www` served the same pages as the bare domain, so every page
          existed twice for crawlers; canonicals name the bare domain (lib/seo.ts). */
       {

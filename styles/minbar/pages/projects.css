@@ -449,3 +449,8 @@
   .mia-scope .tvp-filters { margin-bottom: 20px; }
   .mia-scope .tvp-chip { min-height: 44px; padding: 0 16px; }
 }
+/* Longer labels (EN / TR / SQ) wrap the two actions onto two rows rather than
+   clipping them; Arabic keeps the design's single row. */
+.mia-scope .tvpc-actions { flex-wrap: wrap; }
+.mia-scope .tvpc .tvpc-btn { flex: 1.3 1 auto; }
+.mia-scope .tvpc-cart { flex: 1 1 auto; }

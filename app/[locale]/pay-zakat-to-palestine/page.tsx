@@ -11,7 +11,7 @@ interface Props {
 }
 
 /** The page's own namespaces, on top of the shell bundle. */
-const NAMESPACES = ["zakat", "homepage", "quran", "CampaignsPage"] as const;
+const NAMESPACES = ["zakat"] as const;
 
 /** Campaign figures change on donation, not per request. */
 export const revalidate = 60;
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * Zakat  ported from `Minbar/الزكاة.dc.html`.
+ * Pay zakat  laid out on the template of `ToplamVakfi-design/Toplum Vakfı Zakat Calculator.dc.html`.
  *
  * `PRODUCTION_SEO_CONTRACT.md` allows `FAQPage` structured data only where real
  * questions are actually displayed. They are here, so it is emitted; the answers

@@ -46,12 +46,12 @@
 .mia-scope .pd-aside-col { align-self: stretch; min-width: 0; }
 .mia-scope .pd-aside-sticky { position: sticky; top: calc(var(--mia-head-h, 78px) + 52px); }
 
-.mia-scope .pd-main { min-width: 0; }
-.mia-scope .pd-main h2 { margin: 36px 0 14px; color: #062442; font-size: 19px; font-weight: 800; line-height: 1.5; }
-.mia-scope .pd-main > h2:first-child { margin-top: 0; }
-.mia-scope .pd-main p { margin: 0 0 14px; color: #33495e; font-size: 14.5px; line-height: 1.9; overflow-wrap: anywhere; }
-.mia-scope .pd-main .pd-li { position: relative; padding-inline-start: 18px; }
-.mia-scope .pd-main .pd-li > span { position: absolute; inset-inline-start: 2px; top: .8em; width: 6px; height: 6px; border-radius: 50%; background: #00a2e0; }
+.mia-scope .pd-project-main { min-width: 0; }
+.mia-scope .pd-project-main h2 { margin: 36px 0 14px; color: #062442; font-size: 19px; font-weight: 800; line-height: 1.5; }
+.mia-scope .pd-project-main > h2:first-child { margin-top: 0; }
+.mia-scope .pd-project-main p { margin: 0 0 14px; color: #33495e; font-size: 14.5px; line-height: 1.9; overflow-wrap: anywhere; }
+.mia-scope .pd-project-main .pd-li { position: relative; padding-inline-start: 18px; }
+.mia-scope .pd-project-main .pd-li > span { position: absolute; inset-inline-start: 2px; top: .8em; width: 6px; height: 6px; border-radius: 50%; background: #00a2e0; }
 .mia-scope .pd-anchor { scroll-margin-top: calc(var(--mia-head-h, 78px) + 20px); }
 
 /* Fact tiles (`.proj-facts` / `.proj-fact`). */
@@ -80,7 +80,7 @@
 .mia-scope .pd-update { display: grid; gap: 6px; padding: 16px 18px; background: #fff; border: 1px solid #e6eef3; border-radius: 12px; }
 .mia-scope .pd-update time { display: block; color: #0077b3; font-size: 12px; font-weight: 800; }
 .mia-scope .pd-update b { color: #062442; font-size: 14px; font-weight: 800; line-height: 1.6; }
-.mia-scope .pd-main .pd-update p { margin: 0; color: #062442; font-size: 13px; line-height: 1.8; white-space: pre-line; }
+.mia-scope .pd-project-main .pd-update p { margin: 0; color: #062442; font-size: 13px; line-height: 1.8; white-space: pre-line; }
 .mia-scope .pd-update-more { border: 0; padding: 0; background: none; color: #0077b3; font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
 .mia-scope .pd-update-img { display: block; width: 100%; max-height: 460px; margin-top: 6px; object-fit: cover; border-radius: 10px; border: 1px solid #e6eef3; background: #f4f8fb; }
 
@@ -132,7 +132,7 @@
 }
 .mia-scope .pd-ds-freq > button { min-height: 38px; padding: 6px 4px; border: 0; background: transparent; color: #5d7187; font-size: 11.5px; }
 .mia-scope .pd-ds-freq > button:hover { color: #062442; }
-.mia-scope .pd-ds-freq > button[data-pick="1"] { background: #fff; color: #0077b3; box-shadow: 0 2px 6px rgba(2,52,88,.12); }
+.mia-scope .pd-ds-freq > button[aria-checked="true"] { background: #fff; color: #0077b3; box-shadow: 0 2px 6px rgba(2,52,88,.12); }
 
 /* Gift (`.ds-gift`). */
 .mia-scope .pd-ds-gift {
@@ -153,7 +153,7 @@
 .mia-scope .pd-ds-gift-label { color: #0077b3; font-size: 11.5px; font-weight: 800; }
 .mia-scope .pd-ds-gift-channels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
 .mia-scope .pd-ds-gift-channels > button { min-height: 40px; }
-.mia-scope .pd-ds-gift-channels > button[data-pick="1"] { background: #0077b3; border-color: #0077b3; color: #fff; }
+.mia-scope .pd-ds-gift-channels > button[aria-pressed="true"] { background: #0077b3; border-color: #0077b3; color: #fff; }
 .mia-scope .pd-ds-check { display: flex; align-items: center; gap: 8px; color: #5d7187; font-size: 12px; font-weight: 700; cursor: pointer; }
 .mia-scope .pd-ds-check input { width: 16px; height: 16px; min-height: 0 !important; accent-color: #0077b3; }
 
@@ -190,7 +190,10 @@
 /* ── Tablet / phone ───────────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .mia-scope .pd-layout { grid-template-columns: minmax(0, 1fr); gap: 30px; padding: 30px 0 50px; }
-  .mia-scope .pd-aside-col { align-self: auto; }
+  /* The design pins a "تبرع الآن" bar to the phone's bottom edge; the shell's bottom
+     navigation and floating buttons own that edge, so the donation card comes
+     first instead (under the hero). */
+  .mia-scope .pd-aside-col { order: -1; align-self: auto; }
   .mia-scope .pd-aside-sticky { position: static; }
 }
 @media (max-width: 760px) {

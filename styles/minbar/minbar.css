@@ -2075,8 +2075,6 @@
 /* ─────────────────────────────────────────────────────────────────────────────
  * Zakat calculator  ported from Minbar/حاسبة الزكاة.dc.html.
  * ───────────────────────────────────────────────────────────────────────────── */
-
-.mia-scope .zk-card:hover { box-shadow: 0 10px 26px rgba(6,36,66,.08); }
 @keyframes zk-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 @media (max-width: 1000px) {
@@ -2088,8 +2086,6 @@
   /* The nisāb row stacks rather than wrapping into a crowded line. */
   .mia-scope #nisab-row { flex-direction: column !important; align-items: stretch !important; gap: 14px !important; }
   .mia-scope #nisab-row > span:last-child { margin-inline-start: 0 !important; max-width: none !important; }
-  .mia-scope .zk-fields { grid-template-columns: minmax(0,1fr) !important; }
-  .mia-scope .zk-head { padding: 14px 16px !important; }
   .mia-scope #guide-grid { grid-template-columns: minmax(0,1fr) !important; }
   .mia-scope #result { padding: 18px !important; }
 }
@@ -2097,21 +2093,6 @@
 /* ─────────────────────────────────────────────────────────────────────────────
  * Zakat landing  ported from Minbar/الزكاة.dc.html.
  * ───────────────────────────────────────────────────────────────────────────── */
-
-.mia-scope .zk-amt:hover { border-color: var(--gold); }
-.mia-scope .zk-input:focus { outline: 0; border-color: var(--gold); }
-.mia-scope .zk-donate:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 12px 26px rgba(27,111,224,.32); }
-.mia-scope .zk-cart:hover { border-color: var(--gold); background: var(--sand); transform: translateY(-2px); box-shadow: 0 10px 22px rgba(6,36,66,.12); }
-.mia-scope .zk-share:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
-.mia-scope .zk-reset:hover { color: var(--red); }
-.mia-scope .zk-field:hover { border-color: rgba(0,162,224,.5); box-shadow: 0 8px 20px rgba(6,36,66,.06); transform: translateY(-2px); }
-.mia-scope .zk-field:focus-within { border-color: var(--gold); box-shadow: 0 8px 20px rgba(0,162,224,.16); }
-.mia-scope .zk-donate-calc:not(:disabled):hover { filter: brightness(1.08); transform: translateY(-2px); }
-.mia-scope .zk-masraf:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,.22); }
-@media (prefers-reduced-motion: reduce) {
-  .mia-scope .zk-donate:hover, .mia-scope .zk-cart:hover, .mia-scope .zk-share:hover,
-  .mia-scope .zk-field:hover, .mia-scope .zk-masraf:hover, .mia-scope .zk-donate-calc:hover { transform: none; }
-}
 
 @media (max-width: 1000px) {
   .mia-scope #masarif-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
@@ -2121,14 +2102,11 @@
   .mia-scope #zk-result > span:nth-child(3) { padding-inline-start: 0 !important; border-inline-start: 0 !important; }
 }
 @media (max-width: 860px) {
-  .mia-scope #zk-hero-grid, .mia-scope #masarif-head, .mia-scope .zk-two-col,
-  .mia-scope #taajil-main, .mia-scope #zk-videos { grid-template-columns: minmax(0,1fr) !important; }
+  .mia-scope #zk-hero-grid, .mia-scope #masarif-head, .mia-scope #taajil-main, .mia-scope #zk-videos { grid-template-columns: minmax(0,1fr) !important; }
   .mia-scope #zk-hero-grid > span:last-child, .mia-scope #masarif-head > span:last-child { justify-self: start !important; }
-  .mia-scope .zk-two-col span[style*="margin-inline-start"] { margin-inline-start: 0 !important; }
 }
 @media (max-width: 560px) {
   .mia-scope #masarif-grid, .mia-scope #zk-quick-fields { grid-template-columns: minmax(0,1fr) !important; }
-  .mia-scope .zk-card { padding: 20px !important; }
   .mia-scope #zk-ctas > button { flex: 1 1 auto; }
   .mia-scope #taajil blockquote { padding: 22px 20px !important; }
 }
@@ -2924,67 +2902,10 @@
  * `Minbar/القدس والبلدة القديمة.dc.html`.
  * ───────────────────────────────────────────────────────────────────────────── */
 
-.mia-scope .qd-pattern {
-  position: absolute;
-  inset: 0;
-  background-image: url("/toplum/pattern.svg");
-  background-repeat: repeat;
-  background-size: 520px 520px;
-  opacity: .05;
-  pointer-events: none;
-}
-.mia-scope .qd-pattern--dark { opacity: .07; }
-
-@media (max-width: 1080px) {
-  .mia-scope .qd-map { grid-template-columns: minmax(0, 1fr) !important; }
-  .mia-scope .qd-map-side { position: static !important; }
-  .mia-scope .qd-grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  .mia-scope .qd-grid4 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-}
-
-@media (max-width: 900px) {
-  .mia-scope .qd-two { grid-template-columns: minmax(0, 1fr) !important; gap: 32px !important; }
-  .mia-scope .qd-facts { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  /* Every quick fact keeps a rule on its start edge once they wrap. */
-  .mia-scope .qd-facts > div { border-inline-start: 1px solid var(--border) !important; }
-  .mia-scope .qd-facts > div:nth-child(2n + 1) { border-inline-start: 0 !important; }
-  /* The aerial photograph stops carrying the hero: the copy sits below it. */
-  .mia-scope .qd-hero { position: static; padding: 0 !important; grid-template-columns: minmax(0, 1fr) !important; }
-  .mia-scope .qd-hero > div { background: var(--deep) !important; padding: 22px 24px !important; }
-}
-
-@media (max-width: 620px) {
-  .mia-scope .qd-grid3,
-  .mia-scope .qd-grid4,
-  .mia-scope .qd-gates { grid-template-columns: minmax(0, 1fr) !important; }
-  .mia-scope .qd-facts { grid-template-columns: minmax(0, 1fr) !important; }
-  .mia-scope .qd-facts > div { border-inline-start: 0 !important; border-top: 1px solid var(--border); }
-  .mia-scope .qd-page section { padding-top: 44px !important; padding-bottom: 44px !important; }
-}
-
 /* ─────────────────────────────────────────────────────────────────────────────
  * The blessed Al-Aqsa Mosque  ported from `Minbar/المسجد الأقصى.dc.html`.
  * It shares the Al-Quds page's pattern, two-column and grid rules above.
  * ───────────────────────────────────────────────────────────────────────────── */
-
-@media (max-width: 1080px) {
-  .mia-scope .aq-virtues { grid-template-columns: minmax(0, 1fr) !important; }
-  /* Eight milestones over two rows rather than four squeezed columns. */
-  .mia-scope .aq-timeline { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  .mia-scope .aq-timeline > div { margin-inline-start: 0 !important; margin-top: -1px !important; }
-}
-
-@media (max-width: 900px) {
-  /* The 3-D view stops carrying the hero: the copy sits below it. */
-  .mia-scope .aq-hero { position: static; padding: 0 !important; grid-template-columns: minmax(0, 1fr) !important; }
-  .mia-scope .aq-hero > div { background: #0077B3 !important; padding: 22px 24px !important; }
-}
-
-@media (max-width: 620px) {
-  .mia-scope .aq-timeline { grid-template-columns: minmax(0, 1fr) !important; }
-  .mia-scope .aq-mnfacts { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  .mia-scope .aq-page section { padding-top: 44px !important; padding-bottom: 44px !important; }
-}
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * In-page content states  ported from the five state components in the
@@ -3075,30 +2996,15 @@
  * `Minbar/دورة نور الدين زنكي.dc.html`.
  * ───────────────────────────────────────────────────────────────────────────── */
 
-.mia-scope .zk-back:hover { color: var(--gold); }
-.mia-scope .zk-unit { transition: border-color .18s ease, box-shadow .18s ease; }
-.mia-scope .zk-unit:hover { border-color: rgba(0, 162, 224, .45); box-shadow: 0 12px 30px rgba(6, 36, 66, .07); }
-
 @media (max-width: 900px) {
   .mia-scope #zk-hero { grid-template-columns: minmax(0, 1fr) !important; padding: 40px 24px 46px !important; }
-  .mia-scope .zk-2col { grid-template-columns: minmax(0, 1fr) !important; }
-  .mia-scope .zk-formats { grid-template-columns: minmax(0, 1fr) !important; }
   /* The three badges stay on one line rather than wrapping to three rows. */
-  .mia-scope .zk-badges { flex-wrap: nowrap !important; gap: 6px !important; }
-  .mia-scope .zk-badges > span {
-    flex: 0 1 auto !important;
-    min-width: 0;
-    padding: 6px 9px !important;
-    font-size: clamp(9.5px, 2.5vw, 12px) !important;
-    white-space: nowrap;
-  }
 }
 
 @media (max-width: 640px) {
   /* Concepts become a single stacked column rather than ragged pills. */
   .mia-scope #zk-vocab { display: grid !important; grid-template-columns: 1fr !important; gap: 8px !important; }
   .mia-scope #zk-vocab > span { border-radius: 8px !important; padding: 11px 14px !important; font-size: 13px !important; width: 100%; box-sizing: border-box; }
-  .mia-scope .zk-unit { padding: 18px 16px !important; }
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -3660,12 +3566,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
     width: 100%;
     min-width: 0;
   }
-  .mia-scope #zk-amounts .zk-input {
-    flex: 1 1 130px;
-    width: auto !important;
-    min-width: 110px;
-    max-width: 100%;
-  }
   .mia-scope #zk-ctas {
     width: 100%;
     min-width: 0;
@@ -4032,93 +3932,10 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
      Dragging happens on the wrapper so the launcher's own float animation stays intact. */
 
   /* Shared public-page containers: no section may be wider than the viewport. */
-  .mia-scope :is(.aq-page, .qd-page) {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: clip;
-  }
-  .mia-scope :is(.aq-page, .qd-page) section > div:not(.qd-pattern) {
-    min-width: 0;
-    max-width: 100%;
-  }
-  .mia-scope :is(.aq-page, .qd-page) :is(img, svg, video, iframe) {
-    max-width: 100%;
-    height: auto;
-  }
 
   /* Long-form Jerusalem / Al-Aqsa pages: same content order, tighter and clearer. */
-  .mia-scope :is(.aq-page, .qd-page) section {
-    padding-top: 30px !important;
-    padding-bottom: 30px !important;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-two,
-  .mia-scope :is(.aq-page, .qd-page) .qd-map {
-    grid-template-columns: minmax(0,1fr) !important;
-    gap: 22px !important;
-    padding-inline: 16px !important;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-grid3,
-  .mia-scope :is(.aq-page, .qd-page) .qd-grid4,
-  .mia-scope :is(.aq-page, .qd-page) .qd-gates,
-  .mia-scope .aq-page .aq-virtues,
-  .mia-scope .aq-page .aq-timeline {
-    grid-template-columns: minmax(0,1fr) !important;
-    gap: 12px !important;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-facts {
-    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
-    padding-inline: 16px !important;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-facts > div {
-    padding: 18px 12px !important;
-    min-width: 0;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-facts b {
-    font-size: clamp(22px, 7vw, 30px) !important;
-    overflow-wrap: anywhere;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-hero > div {
-    padding: 18px 16px !important;
-    gap: 10px !important;
-    width: 100%;
-    max-width: 100%;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-hero h1 {
-    font-size: clamp(26px, 8vw, 36px) !important;
-    line-height: 1.22 !important;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-hero p {
-    font-size: 14px !important;
-    line-height: 1.8 !important;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-hero a,
-  .mia-scope :is(.aq-page, .qd-page) .qd-hero button {
-    min-height: 44px;
-    white-space: normal !important;
-    text-align: center;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-map-side {
-    position: static !important;
-    top: auto !important;
-  }
 
   /* Dense fact blocks remain readable without forcing horizontal overflow. */
-  .mia-scope .aq-page .aq-mnfacts {
-    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
-    gap: 10px !important;
-  }
-  .mia-scope .aq-page .aq-mnfacts > div {
-    padding: 16px !important;
-    min-width: 0;
-  }
-  .mia-scope .aq-page .aq-timeline > div {
-    margin: 0 !important;
-    padding: 17px 16px !important;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-gates > * {
-    min-width: 0;
-    flex-wrap: wrap;
-  }
 
   /* General public cards and headings: avoid edge collisions while retaining hierarchy. */
   .mia-scope section > div[style*="max-width: 1240"] {
@@ -4135,24 +3952,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   }
 
   /* Buttons inside two-column CTA groups can wrap their labels instead of clipping. */
-}
-
-@media (max-width: 480px) {
-
-  .mia-scope :is(.aq-page, .qd-page) section {
-    padding-top: 24px !important;
-    padding-bottom: 24px !important;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-facts {
-    grid-template-columns: minmax(0,1fr) !important;
-  }
-  .mia-scope .aq-page .aq-mnfacts {
-    grid-template-columns: minmax(0,1fr) !important;
-  }
-  .mia-scope :is(.aq-page, .qd-page) .qd-hero > div > div:last-child,
-  .mia-scope :is(.aq-page, .qd-page) .qd-hero [style*="display: flex"][style*="gap: 10"] {
-    width: 100%;
-  }
 }
 
 
@@ -4883,15 +4682,10 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-scope .mia-zakat-page #zk-hero-grid { padding-block:22px !important; gap:12px !important; }
   .mia-scope .mia-zakat-page #zk-amounts { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px !important; }
   .mia-scope .mia-zakat-page #zk-amounts > * { min-width:0 !important; width:100% !important; padding-inline:8px !important; }
-  .mia-scope .mia-zakat-page #zk-amounts .zk-input { grid-column:1/-1; min-height:46px !important; padding-inline:12px !important; font-size:16px !important; }
   .mia-scope .mia-zakat-page #zk-ctas { display:grid !important; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px !important; }
   .mia-scope .mia-zakat-page #zk-ctas > button { min-width:0; width:100%; height:auto !important; min-height:48px !important; padding:10px 8px !important; white-space:normal !important; font-size:clamp(11px,3.2vw,14px) !important; }
-  .mia-scope .mia-zakat-page #zk-ctas > .zk-share { grid-column:1/-1; width:100%; }
   .mia-scope .mia-zakat-page #zk-quick-fields { grid-template-columns:minmax(0,1fr) !important; }
   .mia-scope .mia-zakat-page #masarif-grid { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:9px !important; }
-  .mia-scope .mia-zakat-page .zk-masraf { min-width:0; padding:14px 11px !important; gap:9px !important; }
-  .mia-scope .mia-zakat-page .zk-masraf b { font-size:13px !important; }
-  .mia-scope .mia-zakat-page .zk-masraf span { font-size:11px !important; overflow-wrap:anywhere; }
   .mia-scope .mia-zakat-page #zk-videos { grid-template-columns:minmax(0,1fr) !important; gap:12px !important; }
   .mia-scope .mia-waqf-page #about > div:not([data-aqsa-pattern]) { padding-top:24px !important; }
   .mia-scope .mia-waqf-page .mia-waqf-picker { padding:15px !important; gap:14px !important; }
@@ -4908,59 +4702,6 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
 
 /* Fix mobile photo/content flow on Jerusalem and Al-Aqsa: section-level
    padding cannot push the media away from its copy. */
-@media (max-width: 900px) {
-  .mia-scope :is(.aq-page,.qd-page) > .mia-story-hero {
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow: hidden !important;
-  }
-  .mia-scope .mia-story-hero__image {
-    display: block !important;
-    flex: none !important;
-    width: 100% !important;
-    height: clamp(170px, 43vw, 330px) !important;
-    min-height: 0 !important;
-    max-height: 330px !important;
-    object-fit: cover !important;
-    object-position: center !important;
-    background: transparent !important;
-  }
-  .mia-scope .mia-story-hero--aqsa .mia-story-hero__image { object-fit: contain !important; object-position: center bottom !important; }
-  .mia-scope .mia-story-hero__overlay {
-    position: relative !important;
-    inset: auto !important;
-    display: block !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    box-sizing: border-box !important;
-  }
-  .mia-scope .mia-story-hero__inner {
-    display: grid !important;
-    grid-template-columns: minmax(0,1fr) !important;
-    width: 100% !important;
-    height: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  .mia-scope .mia-story-hero__copy {
-    box-sizing: border-box !important;
-    display: grid !important;
-    gap: 13px !important;
-    padding: 22px clamp(16px,4vw,28px) 25px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    background: transparent !important;
-  }
-  .mia-scope .mia-story-hero--jerusalem .mia-story-hero__overlay { background: var(--deep); }
-  .mia-scope .mia-story-hero--aqsa .mia-story-hero__overlay { background: #0077B3; }
-  .mia-scope .mia-story-hero__copy h1 { font-size: clamp(24px,5.6vw,33px) !important; line-height: 1.35 !important; overflow-wrap: anywhere; }
-  .mia-scope .mia-story-hero__copy p { max-width: 100% !important; font-size: clamp(13px,3.4vw,16px) !important; line-height: 1.7 !important; }
-  .mia-scope .mia-story-hero__copy > div:last-child { display:flex !important; flex-wrap: wrap !important; width:100%; gap:10px !important; }
-  .mia-scope .mia-story-hero__copy > div:last-child > * { flex: 1 1 175px !important; min-width:0 !important; white-space: normal !important; text-align:center !important; }
-}
 @media (max-width: 760px) {
   /* The primary, high-volume impact card is full width, but the two remaining
      stats share a row instead of leaving an empty opposing grid cell. */

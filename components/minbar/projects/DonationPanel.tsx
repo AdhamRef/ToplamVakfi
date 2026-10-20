@@ -173,7 +173,7 @@ export default function DonationPanel({ project }: { project: MinbarProject; don
             <button
               key={index}
               type="button"
-              data-pick={active ? "1" : ""}
+             
               aria-pressed={active}
               className={active ? "active" : undefined}
               onClick={() => {
@@ -197,15 +197,15 @@ export default function DonationPanel({ project }: { project: MinbarProject; don
             setMinHint(false);
           }}
           inputMode={shares ? "numeric" : "decimal"}
-          placeholder={shares ? tShares("customCountPh") : tGive("otherAmount")}
-          aria-label={shares ? tShares("customCountPh") : tGive("otherAmount")}
+          placeholder={shares ? tShares("customCountPh") : tTv("otherAmount")}
+          aria-label={shares ? tShares("customCountPh") : tTv("otherAmount")}
           className="pd-custom"
         />
       </label>
 
       <div className="pd-ds-freq" role="radiogroup" aria-label={t("frequency")}>
         {FREQUENCIES.map((f) => (
-          <button key={f.id} type="button" role="radio" aria-checked={freq === f.id} data-pick={freq === f.id ? "1" : ""} onClick={() => setFreq(f.id)}>
+          <button key={f.id} type="button" role="radio" aria-checked={freq === f.id} onClick={() => setFreq(f.id)}>
             {t(f.key)}
           </button>
         ))}
@@ -226,10 +226,10 @@ export default function DonationPanel({ project }: { project: MinbarProject; don
             <div className="pd-ds-gift-more">
               <span className="pd-ds-gift-label">{tCart("certSendMethod")}</span>
               <div className="pd-ds-gift-channels">
-                <button type="button" aria-pressed={channels.whatsapp} data-pick={channels.whatsapp ? "1" : ""} onClick={() => setChannels((c) => ({ ...c, whatsapp: !c.whatsapp }))}>
+                <button type="button" aria-pressed={channels.whatsapp} onClick={() => setChannels((c) => ({ ...c, whatsapp: !c.whatsapp }))}>
                   {tCart("sendViaWhatsapp")}
                 </button>
-                <button type="button" aria-pressed={channels.email} data-pick={channels.email ? "1" : ""} onClick={() => setChannels((c) => ({ ...c, email: !c.email }))}>
+                <button type="button" aria-pressed={channels.email} onClick={() => setChannels((c) => ({ ...c, email: !c.email }))}>
                   {tCart("giftChannelEmail")}
                 </button>
               </div>

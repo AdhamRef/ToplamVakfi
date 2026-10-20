@@ -47,7 +47,8 @@ export default function MobileBottomNav() {
         }}
       >
         <ShellIcon name="heartFill" />
-        <span>{t("bnav.donate")}</span>
+        <span className="bn-full">{t("bnav.donate")}</span>
+        <span className="bn-short">{t("donateShort")}</span>
       </a>
       <Link href={miaPath("stories", locale)} aria-current={is("stories")}>
         <ShellIcon name="play" />

@@ -30,6 +30,8 @@ const FAMILIES = [
   { family: "Amiri", query: "Amiri:wght@400;700", dir: "amiri" },
   { family: "Poppins", query: "Poppins:wght@400;500;600;700", dir: "poppins" },
   { family: "Tajawal", query: "Tajawal:wght@400;500;700", dir: "tajawal" },
+  /* The Toplum Vakfı design's handwritten accent (hero scripts, foundation and impact pages). */
+  { family: "Aref Ruqaa", query: "Aref+Ruqaa:wght@400;700", dir: "aref-ruqaa" },
 ];
 
 async function fetchCss(query) {

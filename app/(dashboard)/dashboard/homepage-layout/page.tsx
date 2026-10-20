@@ -81,7 +81,7 @@ export default function HomepageLayoutPage() {
   const [config, setConfig] = useState<HomeLayoutConfig>(DEFAULT_HOME_LAYOUT);
   const [customised, setCustomised] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
-  const [selected, setSelected] = useState<HomeSectionId>("urgent");
+  const [selected, setSelected] = useState<HomeSectionId>("ways");
   const { options, loading: loadingOptions, reload: reloadOptions } = useListOptions();
 
   const dirty = !same(config, saved);

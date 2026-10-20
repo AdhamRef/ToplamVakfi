@@ -10,7 +10,9 @@ import { optionalInt, optionalStr, str } from "./translation-write";
  */
 
 /** The site pages a category may be published as, instead of its own. */
-export const CATEGORY_PAGE_TEMPLATES = ["aqsa", "zakat"] as const;
+/** Pages a category can be bound to. "aqsa" was retired with the Al-Aqsa page;
+ *  a category still stored with it reads as unbound (`pageTemplate()` → null). */
+export const CATEGORY_PAGE_TEMPLATES = ["zakat"] as const;
 export type CategoryPageTemplate = (typeof CATEGORY_PAGE_TEMPLATES)[number];
 
 export function pageTemplate(v: unknown): CategoryPageTemplate | null {

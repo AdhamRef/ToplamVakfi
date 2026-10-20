@@ -138,11 +138,10 @@ export function CategoryPageSection({
             page folds it in where it belongs. */}
         <div className="space-y-1.5">
           <span className="text-xs font-semibold text-slate-600">{dt("الصفحة التي تُنشر بها الحملة")}</span>
-          <Select value={values.pageTemplate || 'own'} onValueChange={(v) => set('pageTemplate', v === 'own' ? '' : v)}>
+          <Select value={values.pageTemplate === 'zakat' ? 'zakat' : 'own'} onValueChange={(v) => set('pageTemplate', v === 'own' ? '' : v)}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="own">{dt("صفحة الحملة التلقائية")}</SelectItem>
-              <SelectItem value="aqsa">{dt("صفحة المسجد الأقصى الثابتة")}</SelectItem>
               <SelectItem value="zakat">{dt("صفحة الزكاة الثابتة")}</SelectItem>
             </SelectContent>
           </Select>

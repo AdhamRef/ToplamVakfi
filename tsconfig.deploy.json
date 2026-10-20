@@ -13,7 +13,7 @@
     "next.config.ts"
   ],
   // Repeated from tsconfig.json: Next reads this file without merging the base exclude list.
-  "exclude": [
+  "exclude": ["minbar", 
     "node_modules",
     // Git-ignored local copies of other projects; absent on the server.
     "gozbebekleri",

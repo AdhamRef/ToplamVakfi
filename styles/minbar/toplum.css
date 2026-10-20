@@ -31,6 +31,15 @@
     url("/toplum/hero-bg.webp") center / cover no-repeat;
 }
 @media (max-width: 760px) {
+  .mia-scope .tv-qd-in { flex-wrap: wrap; gap: 8px; width: 100%; padding: 16px 14px 14px; border-radius: 20px; box-shadow: 0 -10px 34px rgba(3,26,54,.22); }
+  .mia-scope .tv-qd-label { display: inline-flex; order: 0; flex: 1 1 0; min-width: 0; border: 0; padding: 0; font-size: 15px; }
+  .mia-scope .tv-qd-x { order: 1; margin-inline-start: auto; }
+  .mia-scope .tv-qd-fund, .mia-scope .tv-qd-amts, .mia-scope .tv-qd-custom, .mia-scope .tv-qd-go { order: 2; }
+  .mia-scope .tv-qd-fund { display: block; flex: 1 1 100%; }
+  .mia-scope .tv-qd-amts { flex: 1 1 100%; min-width: 0; }
+  .mia-scope .tv-qd-amts button { flex: 1; min-width: 0; padding: 0 6px; }
+  .mia-scope .tv-qd-custom { flex: 1 1 100%; }
+  .mia-scope .tv-qd-go { flex: 1 1 100%; min-height: 50px; }
   .mia-scope .mia-hero-glow,
   [dir="ltr"] .mia-scope .mia-hero-glow {
     background:
@@ -448,15 +457,6 @@
 @media (max-width: 760px) {
   :root[data-qd="on"] { --qd-h: 0px; }
   .mia-scope .tv-qd { bottom: var(--bnav-h, 0px); padding: 0 10px 10px; }
-  .mia-scope .tv-qd-in { flex-wrap: wrap; gap: 8px; width: 100%; padding: 16px 14px 14px; border-radius: 20px; box-shadow: 0 -10px 34px rgba(3,26,54,.22); }
-  .mia-scope .tv-qd-label { display: inline-flex; order: 0; flex: 1 1 0; min-width: 0; border: 0; padding: 0; font-size: 15px; }
-  .mia-scope .tv-qd-x { order: 1; margin-inline-start: auto; }
-  .mia-scope .tv-qd-fund, .mia-scope .tv-qd-amts, .mia-scope .tv-qd-custom, .mia-scope .tv-qd-go { order: 2; }
-  .mia-scope .tv-qd-fund { display: block; flex: 1 1 100%; }
-  .mia-scope .tv-qd-amts { flex: 1 1 100%; min-width: 0; }
-  .mia-scope .tv-qd-amts button { flex: 1; min-width: 0; padding: 0 6px; }
-  .mia-scope .tv-qd-custom { flex: 1 1 100%; }
-  .mia-scope .tv-qd-go { flex: 1 1 100%; min-height: 50px; }
 }
 
 /* ── Footer ── */
@@ -529,4 +529,24 @@
 @media print {
   .mia-scope .tv-header-root, .mia-scope .tv-head-spacer, .mia-scope .tv-foot, .mia-scope .tv-bnav, .mia-scope .tv-qd, .mia-scope .tv-wa,
   .mia-scope .tv-toast, .mia-scope .tv-search-field, .mia-scope .tv-drawer, .mia-scope .tv-drawer-overlay { display: none !important; }
+}
+
+/* Narrow desktops (829–1060px) in LTR: the Latin labels are wider than the
+   design's Arabic ones, so the last three plain links move to the drawer and
+   its menu button appears, instead of the links running into each other. */
+@media (max-width: 1060px) and (min-width: 829px) {
+  .mia-scope[dir="ltr"] .tv-nav > a { display: none; }
+  .mia-scope[dir="ltr"] .tv-mobile-menu { display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; color: var(--tv-ink); background: #fff; border: 1px solid #e3ebf1; cursor: pointer; padding: 0; }
+  .mia-scope[dir="ltr"] .tv-mobile-menu svg { width: 18px; height: 18px; }
+}
+/* Long labels («Donate now», «Programmes») stay on one line in the bottom bar. */
+@media (max-width: 760px) {
+  .mia-scope .tv-bnav a span, .mia-scope .tv-bnav button span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+@media (max-width: 400px) { .mia-scope .tv-bnav a, .mia-scope .tv-bnav button { font-size: 11px; } }
+.mia-scope .tv-bnav .bn-short { display: none; }
+@media (max-width: 400px) { .mia-scope .tv-bnav .bn-full { display: none; } .mia-scope .tv-bnav .bn-short { display: inline; } }
+@media (max-width: 1260px) and (min-width: 829px) {
+  .mia-scope[dir="ltr"] .tv-lang .tv-dd-label { display: none; }
+  .mia-scope[dir="ltr"] .tv-lang { padding: 0 10px; }
 }

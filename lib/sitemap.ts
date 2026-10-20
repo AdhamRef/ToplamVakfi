@@ -40,8 +40,6 @@ const ROUTE_WEIGHTS: Partial<Record<MinbarRoute, { changeFrequency: string; prio
   home: { changeFrequency: "daily", priority: 1.0 },
   projects: { changeFrequency: "daily", priority: 0.9 },
   zakat: { changeFrequency: "weekly", priority: 0.9 },
-  aqsa: { changeFrequency: "weekly", priority: 0.85 },
-  jerusalem: { changeFrequency: "weekly", priority: 0.8 },
   recurring: { changeFrequency: "weekly", priority: 0.8 },
   zakatCalculator: { changeFrequency: "monthly", priority: 0.75 },
   reports: { changeFrequency: "weekly", priority: 0.75 },

@@ -533,10 +533,10 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
                       <ShellIcon name="search" />
                     </button>
                     {isAdmin ? (
-                      /* A plain <a>: the dashboard lives outside the localized tree. */
-                      <a className="tv-icon-btn" href="/dashboard" aria-label={t("dashboard")} title={t("dashboard")}>
+                      /* Outside the localized tree: no locale prefix. */
+                      <Link className="tv-icon-btn" href="/dashboard" aria-label={t("dashboard")} title={t("dashboard")}>
                         <ShellIcon name="dashboard" />
-                      </a>
+                      </Link>
                     ) : null}
                     <Link className="tv-icon-btn tv-profile" href={accountHref} aria-label={t("profile")} title={t("profile")}>
                       <ShellIcon name="person" />
@@ -690,9 +690,9 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
             {t("searchPage")}
           </Link>
           {isAdmin ? (
-            <a href="/dashboard" onClick={() => setDrawerOpen(false)}>
+            <Link href="/dashboard" onClick={() => setDrawerOpen(false)}>
               {t("dashboard")}
-            </a>
+            </Link>
           ) : null}
         </div>
         <div className="tv-drawer-picks">
