@@ -5,6 +5,7 @@ import { youtubeEmbed, youtubeThumb, youtubeWatch } from "@/lib/minbar/content/m
 import type { CmsVideo } from "@/lib/minbar/cms";
 import VideoModal, { useVideoModal } from "@/components/minbar/VideoModal";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
+import { EdBanner } from "@/components/minbar/blog/Editorial";
 
 /**
  * The two video index pages  ported from `Minbar/إنجازاتنا بالفيديو.dc.html`
@@ -16,6 +17,9 @@ import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
  * sent off the site mid-journey. A card that is only a still  a piece the
  * foundation has photographed but not yet filmed  is not a link and carries no
  * play affordance: offering one that plays nothing is worse than offering none.
+ *
+ * Laid out on the Toplum editorial listing template (photo banner with its
+ * wave, 16px-radius tiles on the page background; blog.css `ed-` classes).
  */
 
 export interface VideoGridPageProps {
@@ -35,19 +39,12 @@ export default function VideoGridPage({ videos, titleKey, leadKey }: VideoGridPa
   const shown = videos;
 
   return (
-    <div className="vg-page">
-      <section style={{ position: "relative", background: "var(--deep)", overflow: "hidden" }}>
-        <div aria-hidden="true" className="vg-pattern" />
-        <span aria-hidden="true" className="vg-rule" />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "52px 24px 46px", display: "grid", gap: 12, justifyItems: "start" }}>
-          <h1 style={{ margin: 0, fontSize: "clamp(26px,3vw,42px)", lineHeight: 1.35, fontWeight: 900, color: "#fff" }}>{t(titleKey)}</h1>
-          <p style={{ margin: 0, maxWidth: "62ch", fontSize: 15, lineHeight: 2, color: "rgba(255,255,255,.82)" }}>{t(leadKey)}</p>
-        </div>
-      </section>
+    <div className="vg-page ed-page">
+      <EdBanner title={t(titleKey)} lead={t(leadKey)} />
 
-      <section style={{ position: "relative", padding: "46px 0 60px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <div className="vg-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 18 }}>
+      <section className="ed-main">
+        <div className="ed-wrap">
+          <div className="vg-grid ed-grid">
             {shown.map((video) => {
               const title = video.title;
               const image = video.thumbnail || (video.youtubeId ? youtubeThumb(video.youtubeId) : null);
@@ -60,23 +57,23 @@ export default function VideoGridPage({ videos, titleKey, leadKey }: VideoGridPa
                     aria-label={title}
                     style={{ position: "absolute", inset: 0, backgroundImage: image ? `url('${image}')` : undefined, backgroundColor: image ? undefined : "var(--navy)", backgroundSize: "cover", backgroundPosition: "center" }}
                   />
-                  <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(6,36,66,.92) 10%, rgba(6,36,66,.4) 46%, rgba(6,36,66,.1) 80%)", pointerEvents: "none" }} />
+                  <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(3,26,54,.9) 8%, rgba(3,26,54,.38) 46%, rgba(3,26,54,0) 80%)", pointerEvents: "none" }} />
                   {tag ? (
-                    <span style={{ position: "absolute", insetInlineStart: 12, top: 12, padding: "4px 11px", borderRadius: 999, background: "rgba(6,36,66,.72)", color: "#fff", fontSize: 11, fontWeight: 900 }}>
+                    <span style={{ position: "absolute", insetInlineStart: 14, top: 14, display: "inline-flex", alignItems: "center", minHeight: 26, padding: "0 11px", borderRadius: 999, background: "rgba(3,26,54,.82)", color: "#fff", fontSize: 12, fontWeight: 800 }}>
                       {tag}
                     </span>
                   ) : null}
                   {video.youtubeId ? (
                     <span aria-hidden="true" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
-                      <span style={{ width: 46, height: 46, borderRadius: "50%", background: "rgba(6,36,66,.55)", display: "grid", placeItems: "center", border: "1.5px solid rgba(255,255,255,.6)", color: "#fff" }}>
+                      <span className="ed-play">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
                           <path d="M8 5v14l11-7z" />
                         </svg>
                       </span>
                     </span>
                   ) : null}
-                  <span style={{ position: "absolute", insetInline: 14, bottom: 13, display: "grid", gap: 6 }}>
-                    <b style={{ color: "#fff", fontWeight: 800, fontSize: 15, lineHeight: 1.5 }}>{title}</b>
+                  <span style={{ position: "absolute", insetInline: 16, bottom: 14, display: "grid", gap: 6 }}>
+                    <b style={{ color: "#fff", fontWeight: 800, fontSize: 15.5, lineHeight: 1.5 }}>{title}</b>
                   </span>
                 </>
               );
@@ -84,11 +81,11 @@ export default function VideoGridPage({ videos, titleKey, leadKey }: VideoGridPa
               const frame = {
                 position: "relative" as const,
                 display: "grid",
-                borderRadius: 12,
+                borderRadius: 16,
                 overflow: "hidden",
                 background: "var(--navy)",
                 aspectRatio: "16/10",
-                boxShadow: "0 12px 34px rgba(6,36,66,.12)",
+                boxShadow: "0 12px 28px rgba(2,52,88,.12)",
               };
 
               return video.youtubeId ? (

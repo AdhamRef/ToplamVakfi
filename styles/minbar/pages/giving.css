@@ -1,0 +1,618 @@
+/* Toplum Vakfi page layer: giving. Loaded after toplum.css (app/[locale]/layout.tsx); scoped under .mia-scope. */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Giving products  recurring giving, the zakat calculator, the zakat page and
+ * the waqf page  laid out after `ToplamVakfi-design/`:
+ *   Monthly Giving.dc.html   → RecurringPage   (rc-*)
+ *   Zakat Calculator.dc.html → ZakatCalculator (zc-*) and ZakatPage (zp-*)
+ *   Sadaqah Jariyah.dc.html  → WaqfPage        (wq2-*)
+ * Shared pieces are `gv-*`. Every page wraps its own sections in `.gv-page`,
+ * so the older `minbar.css` rules written against `page > section` (phone
+ * paddings with !important) no longer reach them; the shared banners stay
+ * direct children and keep their own rules.
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+.mia-scope .gv-page { background: #f4f8fb; color: #062442; }
+.mia-scope .gv-wrap { width: min(1180px, calc(100% - 64px)); margin-inline: auto; }
+@media (max-width: 620px) { .mia-scope .gv-wrap { width: calc(100% - 32px); } }
+
+/* ── Inner banner (`in-banner`): a field photograph under a directional navy
+ * fade, closing on the wave into the page background. The photo comes in
+ * through --gv-img. */
+.mia-scope .gv-banner {
+  --gv-img: url("/toplum/hero-bg.webp");
+  position: relative; isolation: isolate; overflow: hidden; color: #fff;
+  min-height: 340px; display: flex; align-items: center; padding: 56px 0 96px; margin-bottom: -2px;
+  background:
+    linear-gradient(270deg, rgba(3,26,54,.95) 0%, rgba(3,26,54,.84) 40%, rgba(3,26,54,.45) 72%, rgba(3,26,54,.2) 100%),
+    var(--gv-img) center / cover no-repeat, #031a36;
+}
+[dir="ltr"] .mia-scope .gv-banner {
+  background:
+    linear-gradient(90deg, rgba(3,26,54,.95) 0%, rgba(3,26,54,.84) 40%, rgba(3,26,54,.45) 72%, rgba(3,26,54,.2) 100%),
+    var(--gv-img) center / cover no-repeat, #031a36;
+}
+.mia-scope .gv-banner::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(0deg, rgba(3,26,54,.6), rgba(3,26,54,0) 45%); }
+.mia-scope .gv-banner::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: -1px; height: 70px; background: #f4f8fb; pointer-events: none;
+  clip-path: path("M0 70 L0 34 C 320 6, 620 58, 960 30 S 1600 0, 2600 26 L2600 70 Z");
+}
+.mia-scope .gv-banner > .gv-wrap { position: relative; z-index: 1; }
+.mia-scope .gv-crumb { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 16px; padding: 0; list-style: none; font-size: 12.5px; font-weight: 700; color: #cfe3f1; }
+.mia-scope .gv-crumb a { color: #cfe3f1; }
+.mia-scope .gv-crumb a:hover { color: #fff; }
+.mia-scope .gv-crumb [aria-hidden="true"] { opacity: .6; }
+.mia-scope .gv-banner h1 {
+  position: relative; margin: 0 0 14px; padding-bottom: 16px; color: #fff;
+  font-size: clamp(34px, 5vw, 58px); font-weight: 900; line-height: 1.2; letter-spacing: -.5px;
+}
+.mia-scope .gv-banner h1::after { content: ""; position: absolute; inset-inline-start: 0; bottom: 0; width: 64px; height: 4px; border-radius: 4px; background: linear-gradient(90deg, #1b6fe0, #27b8f2); }
+.mia-scope .gv-banner p { margin: 0; max-width: 60ch; color: #dbe9f3; font-size: 15.5px; line-height: 1.85; }
+@media (max-width: 760px) {
+  .mia-scope .gv-banner,
+  [dir="ltr"] .mia-scope .gv-banner {
+    min-height: 0; padding: 40px 0 80px;
+    background: linear-gradient(180deg, rgba(3,26,54,.86) 0%, rgba(3,26,54,.94) 100%), var(--gv-img) center / cover no-repeat, #031a36;
+  }
+  .mia-scope .gv-banner p { font-size: 14.5px; }
+}
+
+/* ── Section rhythm and headings ──────────────────────────────────────────── */
+.mia-scope .gv-sec { padding-top: 56px; }
+.mia-scope .gv-page > .gv-sec:last-child { padding-bottom: 70px; }
+.mia-scope .gv-eyebrow { display: block; margin: 0 0 8px; color: #0077b3; font-size: 13px; font-weight: 800; letter-spacing: .02em; }
+.mia-scope .gv-h2 { margin: 0 0 6px; color: #062442; font-size: clamp(22px, 2.4vw, 30px); font-weight: 900; line-height: 1.4; letter-spacing: -.3px; }
+.mia-scope .gv-intro { margin: 0 0 24px; max-width: 66ch; color: #5d7187; font-size: 14px; line-height: 1.9; }
+.mia-scope .gv-h3 { margin: 0 0 6px; color: #062442; font-size: 16px; font-weight: 900; line-height: 1.5; }
+.mia-scope .gv-text { margin: 0; color: #5d7187; font-size: 13.5px; line-height: 1.9; }
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+.mia-scope .gv-card { background: #fff; border: 1px solid #e6eef3; border-radius: 16px; box-shadow: 0 12px 28px rgba(2,52,88,.07); }
+.mia-scope .gv-lift { transition: transform .2s ease, box-shadow .2s ease; }
+.mia-scope .gv-lift:hover { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(2,52,88,.13); }
+.mia-scope .gv-ico {
+  flex: 0 0 auto; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+  background: #eaf5fc; color: #0077b3;
+}
+.mia-scope .gv-num {
+  flex: 0 0 auto; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, #00a2e0, #0077b3); color: #fff; font-size: 15px; font-weight: 900;
+}
+
+/* ── Form controls ────────────────────────────────────────────────────────── */
+.mia-scope .gv-label { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; color: #062442; font-size: 12.5px; font-weight: 800; }
+.mia-scope .gv-hint { display: block; margin-top: 5px; color: #5d7187; font-size: 12px; line-height: 1.7; }
+.mia-scope .gv-input {
+  width: 100%; min-width: 0; min-height: 48px; box-sizing: border-box; padding: 0 14px;
+  border: 1.5px solid #e2eaf0; border-radius: 10px; background: #f2f6f9; color: #062442;
+  font-family: inherit; font-size: 14px; font-weight: 700; outline: none;
+  transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.mia-scope textarea.gv-input { min-height: 0; padding: 11px 14px; line-height: 1.7; resize: vertical; }
+.mia-scope .gv-input::placeholder { color: #8aa0b4; font-weight: 600; }
+.mia-scope .gv-input:hover { border-color: #c9dbe7; }
+.mia-scope .gv-input:focus { border-color: #00a2e0; background: #fff; box-shadow: 0 0 0 3px rgba(0,162,224,.14); }
+.mia-scope .gv-input[aria-invalid="true"] { border-color: #c0392b; background: #fff; }
+/* An input with a fixed unit in front of it (currency code, grams). */
+.mia-scope .gv-affix {
+  display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 14px; box-sizing: border-box; min-width: 0;
+  border: 1.5px solid #e2eaf0; border-radius: 10px; background: #f2f6f9;
+  transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.mia-scope .gv-affix:focus-within { border-color: #00a2e0; background: #fff; box-shadow: 0 0 0 3px rgba(0,162,224,.14); }
+.mia-scope .gv-affix > span { flex: 0 0 auto; color: #5d7187; font-size: 13px; font-weight: 800; unicode-bidi: isolate; }
+.mia-scope .gv-affix input {
+  flex: 1 1 auto; width: 100%; min-width: 0; min-height: 46px; border: 0; background: transparent; outline: none;
+  color: #062442; font-family: inherit; font-size: 15px; font-weight: 800;
+}
+.mia-scope .gv-affix[data-tone="add"] { border-color: rgba(0,162,224,.35); }
+.mia-scope .gv-affix[data-tone="subtract"] { border-color: rgba(179,71,50,.3); }
+
+/* A choice button. Picked = brand-ink fill + white (toplum.css `data-pick`). */
+.mia-scope .gv-chip {
+  min-height: 46px; min-width: 0; padding: 0 12px; box-sizing: border-box;
+  border: 1.5px solid #e2eaf0; border-radius: 10px; background: #f2f6f9; color: #062442;
+  font-family: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer; white-space: nowrap;
+  transition: background .15s ease, border-color .15s ease, color .15s ease, transform .15s ease;
+}
+.mia-scope .gv-chip:hover { border-color: #00a2e0; transform: translateY(-1px); }
+
+/* Segmented control: the picked segment lifts to white with brand-ink text. */
+.mia-scope .gv-seg { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 0; padding: 3px; border: 1px solid #e2eaf0; border-radius: 11px; background: #eef3f7; }
+.mia-scope .gv-seg > button {
+  min-height: 44px; min-width: 0; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 0 8px;
+  border: 0; border-radius: 9px; background: transparent; color: #5d7187;
+  font-family: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer; box-shadow: none;
+  transition: background .2s ease, color .2s ease, box-shadow .2s ease;
+}
+.mia-scope .gv-seg > button:hover { color: #062442; }
+.mia-scope .gv-seg > button[aria-pressed="true"] { background: #fff; color: #0077b3; box-shadow: 0 2px 6px rgba(2,52,88,.12); }
+
+/* One compact line: the amount leads, the rest reads as a sentence. */
+.mia-scope .gv-summary { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 12px; padding: 13px 16px; border: 1px solid #e2ebf1; border-radius: 12px; background: #f7fbfd; }
+.mia-scope .gv-summary > span { color: #5d7187; font-size: 12.5px; font-weight: 700; line-height: 1.7; }
+.mia-scope .gv-summary > b { color: #0077b3; font-size: 20px; font-weight: 900; unicode-bidi: isolate; overflow-wrap: anywhere; }
+
+/* The single CTA gradient, pill, weight 800. */
+.mia-scope .gv-cta {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 52px; padding: 10px 20px; box-sizing: border-box;
+  border: 0; border-radius: 999px; background: var(--cta-gradient); color: #fff; text-align: center;
+  font-family: inherit; font-size: 15px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0,162,224,.34); transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+[dir="rtl"] .mia-scope .gv-cta { background: linear-gradient(270deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); }
+.mia-scope .gv-cta:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,162,224,.44); color: #fff; }
+.mia-scope .gv-cta:disabled,
+[dir="rtl"] .mia-scope .gv-cta:disabled { background: #cfd8de; color: #062442; box-shadow: none; cursor: not-allowed; }
+/* Secondary: white with the brand hairline. */
+.mia-scope .gv-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 10px 20px; box-sizing: border-box;
+  border: 1.5px solid #00a2e0; border-radius: 999px; background: #fff; color: #0077b3;
+  font-family: inherit; font-size: 14.5px; font-weight: 800; cursor: pointer; transition: background .2s ease, transform .2s ease;
+}
+.mia-scope .gv-ghost:hover { background: #eaf6fd; transform: translateY(-2px); }
+.mia-scope .gv-ghost[data-done="1"] { border-color: #1f7a4d; background: rgba(31,122,77,.08); color: #1f7a4d; }
+.mia-scope .gv-fine { margin: 0; color: #5d7187; font-size: 12px; line-height: 1.8; text-align: center; }
+.mia-scope .gv-link {
+  display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 2px 0; border: 0; background: transparent;
+  color: #0077b3; font-family: inherit; font-size: 12.5px; font-weight: 800; cursor: pointer;
+}
+.mia-scope .gv-link:hover { text-decoration: underline; }
+
+/* ── FAQ ──────────────────────────────────────────────────────────────────── */
+.mia-scope .gv-faq { display: grid; gap: 10px; }
+.mia-scope .gv-faq-item { background: #fff; border-radius: 14px; box-shadow: 0 6px 18px rgba(2,52,88,.06); }
+.mia-scope .gv-faq-q {
+  width: 100%; min-height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 18px;
+  border: 0; background: transparent; color: #062442; text-align: start; cursor: pointer;
+  font-family: inherit; font-size: 14.5px; font-weight: 800; line-height: 1.6;
+}
+.mia-scope .gv-faq-sign {
+  flex: 0 0 auto; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+  background: #eaf5fc; color: #0077b3; font-size: 16px; font-weight: 800; line-height: 1;
+}
+.mia-scope .gv-faq-q[aria-expanded="true"] .gv-faq-sign { background: var(--cta-gradient); color: #fff; }
+
+/* ── Closing band: the dark gradient with two glow circles ────────────────── */
+.mia-scope .gv-band {
+  position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: center; justify-content: space-between; gap: 24px 30px; flex-wrap: wrap;
+  padding: 38px 40px; border-radius: 24px; color: #fff;
+  background: linear-gradient(120deg, #021428 0%, #082b50 60%, #04172e 100%);
+}
+.mia-scope .gv-band::before,
+.mia-scope .gv-band::after { content: ""; position: absolute; z-index: -1; border-radius: 50%; pointer-events: none; }
+.mia-scope .gv-band::before { width: 320px; height: 320px; top: -150px; inset-inline-end: -80px; background: radial-gradient(circle, rgba(39,184,242,.28), transparent 68%); }
+.mia-scope .gv-band::after { width: 240px; height: 240px; bottom: -130px; inset-inline-start: 18%; background: radial-gradient(circle, rgba(27,111,224,.26), transparent 70%); }
+.mia-scope .gv-band h2 { margin: 0 0 8px; color: #fff; font-size: clamp(22px, 2.5vw, 32px); font-weight: 900; line-height: 1.35; }
+.mia-scope .gv-band p { margin: 0; color: #b9d3e6; font-size: 14.5px; line-height: 1.9; }
+.mia-scope .gv-band-copy { flex: 1 1 420px; min-width: 0; }
+.mia-scope .gv-band-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+@media (max-width: 620px) {
+  .mia-scope .gv-band { padding: 26px 20px; border-radius: 18px; }
+  .mia-scope .gv-band-actions { width: 100%; }
+  .mia-scope .gv-band-actions > * { flex: 1 1 100%; }
+}
+
+/* ── Video frame ──────────────────────────────────────────────────────────── */
+.mia-scope .gv-video { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 16px; background: #031a36; box-shadow: 0 18px 40px rgba(2,52,88,.16); }
+.mia-scope .gv-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mia-scope .gv-lift:hover, .mia-scope .gv-chip:hover, .mia-scope .gv-cta:hover:not(:disabled), .mia-scope .gv-ghost:hover { transform: none; }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+ * Recurring giving (Monthly Giving)
+ * ═════════════════════════════════════════════════════════════════════════════ */
+/* The hero holds both the sentence and the plan: the builder is the page's
+   main action, so it sits in the first screen. */
+.mia-scope .rc-hero { position: relative; overflow: hidden; color: #fff; background: #031a36; }
+.mia-scope .rc-hero-img { position: absolute; inset: 0; background: url("/toplum/hero-bg.webp") center 32% / cover no-repeat; }
+.mia-scope .rc-hero-img::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(2,20,38,.94) 0%, rgba(2,20,38,.9) 45%, rgba(2,20,38,.86) 78%, rgba(2,20,38,.8) 100%);
+}
+.mia-scope .rc-hero-in { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 48px; align-items: start; padding: 42px 0 clamp(40px, 5vw, 64px); }
+.mia-scope .rc-hero-text { padding-top: 6px; min-width: 0; }
+.mia-scope .rc-kicker { display: block; margin-bottom: 16px; color: #9fdcf7; font-size: 17px; font-weight: 800; letter-spacing: .6px; }
+.mia-scope .rc-hero h1 { margin: 0; color: #fff; font-size: clamp(26px, 3.4vw, 44px); font-weight: 900; line-height: 1.35; letter-spacing: -.5px; }
+.mia-scope .rc-hero h1 em { font-style: normal; color: #4cc5f0; }
+.mia-scope .rc-lede { margin: 22px 0 0; max-width: 52ch; color: #cfe3f2; font-size: 15px; font-weight: 700; line-height: 1.9; }
+.mia-scope .rc-lede + .rc-lede { margin-top: 10px; font-weight: 400; font-size: 14px; line-height: 2; }
+/* The verse, set as the design's sourced quotation. Arabic always. */
+.mia-scope .rc-source { margin: 26px 0 0; padding-inline-start: 14px; border-inline-start: 2px solid rgba(0,162,224,.6); max-width: 60ch; }
+.mia-scope .rc-source-ar { display: block; color: #fff; font-family: var(--font-quran); font-size: clamp(15px, 1.5vw, 18px); line-height: 1.9; }
+.mia-scope .rc-source-tr { display: block; margin-top: 6px; color: #b9d3e6; font-size: 13px; line-height: 1.85; }
+.mia-scope .rc-source-ref { display: block; margin-top: 6px; color: #9fdcf7; font-size: 12.5px; font-weight: 700; }
+
+/* The builder card. Its class list is fixed (`rc-builder mia-donation-builder`),
+   so it is styled through the page root. */
+.mia-scope .mia-recurring-page .rc-builder {
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-content: start; min-width: 0;
+  padding: 24px; border: 1px solid #e6eef3; border-radius: 18px; background: #fff; color: #062442;
+  box-shadow: 0 24px 60px rgba(2,20,38,.34);
+}
+.mia-scope .rc-step-n {
+  flex: 0 0 auto; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+  background: linear-gradient(135deg, #00a2e0, #0077b3); color: #fff; font-size: 11px; font-weight: 900;
+}
+.mia-scope .rc-amounts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.mia-scope .rc-amounts .gv-input { min-height: 46px; text-align: center; font-weight: 800; }
+.mia-scope .rc-amounts .gv-input:not(:placeholder-shown) { border-color: #00a2e0; background: #fff; }
+.mia-scope .rc-schedule { display: grid; gap: 12px; padding: 14px; border: 1px solid #e2ebf1; border-radius: 12px; background: #f7fbfd; }
+.mia-scope .rc-time { display: flex; align-items: center; gap: 10px; }
+.mia-scope .rc-time input { flex: 1 1 auto; min-width: 0; border: 0; background: transparent; outline: none; color: #062442; font-family: inherit; font-size: 15px; font-weight: 900; unicode-bidi: plaintext; }
+/* Fund and day lists: the site's Radix select, in the design's field dress. */
+.mia-scope .mia-recurring-page .rc-sel-trigger { background: #f2f6f9; border: 1.5px solid #e2eaf0; border-radius: 10px; }
+.mia-scope .mia-recurring-page .rc-sel-trigger:hover,
+.mia-scope .mia-recurring-page .rc-sel-trigger[data-state="open"] { border-color: #00a2e0; background: #fff; }
+.mia-scope .mia-recurring-page .rc-sel-trigger.rc-sel-day { background: #fff; min-height: 46px; }
+.mia-scope .mia-recurring-page .rc-sel-trigger .mia-sel-icon { color: #0077b3; }
+.rc-sel-content.rc-sel-day .mia-sel-item[data-state="checked"] { background: #0077b3; color: #fff; }
+
+/* Below the hero */
+.mia-scope .rc-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.mia-scope .rc-step { display: grid; align-content: start; gap: 12px; padding: 22px; }
+.mia-scope .rc-step .gv-ico { width: 52px; height: 52px; }
+.mia-scope .rc-step .gv-ico > span { display: block; width: 30px; height: 30px; background-size: contain; background-repeat: no-repeat; background-position: center; }
+.mia-scope .rc-causes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.mia-scope .rc-cause {
+  position: relative; overflow: hidden; isolation: isolate; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px;
+  min-height: 200px; padding: 20px; border-radius: 16px; color: #fff;
+  background: linear-gradient(160deg, #0b3a78 0%, #082b50 45%, #031a36 100%);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.mia-scope .rc-cause::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .07; background: url("/toplum/pattern.svg") 0 0 / 260px 260px repeat; }
+.mia-scope .rc-cause::after { content: ""; position: absolute; z-index: -1; width: 200px; height: 200px; top: -90px; inset-inline-end: -70px; border-radius: 50%; background: radial-gradient(circle, rgba(39,184,242,.3), transparent 68%); }
+.mia-scope .rc-cause:hover { transform: translateY(-3px); box-shadow: 0 18px 34px rgba(2,52,88,.2); }
+.mia-scope .rc-cause .gv-ico { margin-bottom: auto; background: rgba(255,255,255,.12); color: #7fd6f5; }
+.mia-scope .rc-cause h3 { margin: 14px 0 4px; color: #fff; font-size: 17px; font-weight: 900; line-height: 1.45; }
+.mia-scope .rc-cause p { margin: 0; color: #cfe3f1; font-size: 12.5px; line-height: 1.75; }
+.mia-scope .rc-control { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.mia-scope .rc-what { display: flex; gap: 14px; align-items: flex-start; padding: 24px; }
+.mia-scope .mia-recurring-page .rc-video:hover { transform: none; }
+
+@media (max-width: 1100px) {
+  .mia-scope .rc-steps, .mia-scope .rc-causes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 980px) {
+  .mia-scope .rc-hero-in { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-bottom: 34px; }
+  .mia-scope .rc-lede { max-width: none; }
+  .mia-scope .rc-control { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 620px) {
+  .mia-scope .mia-recurring-page .rc-builder { padding: 20px 17px !important; }
+  .mia-scope .rc-steps { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  /* Eight funds stay two to a row: one per row made a very long column. */
+  .mia-scope .rc-causes { gap: 10px; }
+  .mia-scope .rc-cause { min-height: 150px; padding: 14px; }
+  .mia-scope .rc-cause .gv-ico { width: 36px; height: 36px; }
+  .mia-scope .rc-cause h3 { margin-top: 10px; font-size: 14.5px; }
+  .mia-scope .rc-cause p { font-size: 11.5px; }
+  .mia-scope .rc-kicker { font-size: 15px; margin-bottom: 10px; }
+  .mia-scope .rc-what { padding: 18px; }
+}
+@media (max-width: 380px) {
+  .mia-scope .rc-amounts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mia-scope .rc-amounts .gv-input { grid-column: 1 / -1; }
+  .mia-scope .mia-recurring-page .rc-seg svg { display: none; }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+ * Zakat calculator
+ * ═════════════════════════════════════════════════════════════════════════════ */
+.mia-scope .zc-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 30px; align-items: start; padding: 50px 0 10px; }
+.mia-scope .zc-forms { display: grid; gap: 18px; min-width: 0; }
+.mia-scope .zc-form { padding: 28px 30px; }
+.mia-scope .zc-form-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 20px; }
+.mia-scope .zc-form-head > div { flex: 1 1 auto; }
+.mia-scope .zc-form-head h2 { margin: 0 0 4px; color: #062442; font-size: 17px; font-weight: 800; }
+.mia-scope .zc-form-head p { margin: 0; color: #5d7187; font-size: 12.5px; line-height: 1.8; }
+.mia-scope .zc-form-head b[dir="ltr"] { margin-inline-start: auto; color: #0077b3; font-size: 17px; font-weight: 900; unicode-bidi: isolate; white-space: nowrap; }
+.mia-scope .zc-form-head .gv-ico { width: 40px; height: 40px; }
+.mia-scope .zc-form[data-tone="subtract"] .zc-form-head .gv-ico { background: #fbefec; color: #b34732; }
+.mia-scope .zc-form[data-tone="subtract"] .zc-form-head b[dir="ltr"] { color: #b34732; }
+.mia-scope .zc-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px; }
+.mia-scope .zc-field { display: grid; align-content: start; gap: 0; min-width: 0; }
+.mia-scope .zc-nisab { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 16px 20px; align-items: end; }
+.mia-scope .zc-nisab-modes { display: flex; gap: 8px; }
+.mia-scope .zc-nisab-modes .gv-chip { min-width: 84px; }
+.mia-scope .zc-nisab-value { display: grid; gap: 4px; text-align: end; }
+.mia-scope .zc-nisab-value b { color: #0077b3; font-size: 22px; font-weight: 900; unicode-bidi: isolate; }
+.mia-scope .zc-nisab-note { margin: 16px 0 0; padding-top: 14px; border-top: 1px solid #eef2f5; color: #5d7187; font-size: 12.5px; line-height: 1.8; }
+.mia-scope .zc-disclaimer { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 14px 18px; border: 1px solid #f3e2b8; border-radius: 12px; background: #fff8ec; color: #7a5b12; font-size: 12.5px; line-height: 1.8; }
+.mia-scope .zc-disclaimer > span { flex: 1 1 320px; min-width: 0; }
+.mia-scope .zc-disclaimer .gv-ghost { min-height: 44px; font-size: 13px; }
+
+.mia-scope .zc-result { position: sticky; top: 96px; display: grid; gap: 14px; padding: 28px 26px; text-align: center; box-shadow: 0 18px 40px rgba(2,52,88,.12); }
+.mia-scope .zc-rl { color: #5d7187; font-size: 12.5px; font-weight: 700; }
+.mia-scope .zc-rv { margin: -6px 0 0; color: #0077b3; font-size: clamp(30px, 3.4vw, 40px); font-weight: 900; line-height: 1.2; unicode-bidi: isolate; overflow-wrap: anywhere; }
+.mia-scope .zc-rows { display: grid; gap: 9px; padding: 14px 0; border-block: 1px solid #eef2f5; text-align: start; }
+.mia-scope .zc-rows > span { display: flex; align-items: baseline; gap: 12px; font-size: 13.5px; }
+.mia-scope .zc-rows > span > span { color: #5d7187; font-weight: 700; }
+.mia-scope .zc-rows > span > b { margin-inline-start: auto; color: #062442; unicode-bidi: isolate; white-space: nowrap; }
+.mia-scope .zc-rows > span[data-tone="subtract"] > b { color: #b34732; }
+.mia-scope .zc-net { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; text-align: start; }
+.mia-scope .zc-net b { color: #062442; font-size: 20px; font-weight: 900; unicode-bidi: isolate; }
+.mia-scope .zc-verdict { padding: 11px 14px; border: 1px solid #e2ebf1; border-radius: 12px; background: #f7fbfd; color: #5d7187; font-size: 13px; font-weight: 800; line-height: 1.7; text-align: start; }
+.mia-scope .zc-verdict[data-above="1"] { border-color: rgba(31,122,77,.35); background: rgba(31,122,77,.07); color: #1f7a4d; }
+.mia-scope .zc-target { display: grid; text-align: start; }
+.mia-scope select.gv-input { cursor: pointer; font-weight: 800; }
+.mia-scope .zc-note { margin: 2px 0 0; padding-top: 14px; border-top: 1px solid #eef2f5; color: #5d7187; font-size: 12px; line-height: 1.8; text-align: start; }
+
+.mia-scope .zc-explain { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.mia-scope .zc-list { display: grid; gap: 12px; align-content: start; padding: 24px; }
+.mia-scope .zc-list > h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 4px; font-size: 17px; font-weight: 900; color: #062442; }
+.mia-scope .zc-list > h3::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #00a2e0; box-shadow: 0 0 0 4px #e3f2fb; }
+.mia-scope .zc-list[data-tone="subtract"] > h3::before { background: #b34732; box-shadow: 0 0 0 4px #fbefec; }
+.mia-scope .zc-list > p { display: flex; align-items: baseline; gap: 10px; margin: 0; color: #3d5468; font-size: 13.5px; line-height: 1.85; }
+.mia-scope .zc-list > p::before { content: "✓"; flex: 0 0 auto; color: #0077b3; font-size: 12px; font-weight: 900; }
+.mia-scope .zc-list[data-tone="subtract"] > p::before { content: "–"; color: #b34732; }
+.mia-scope .zc-faq-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+.mia-scope .zc-help { display: grid; gap: 12px; padding: 24px; }
+.mia-scope .zc-share { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; padding: 18px 22px; }
+.mia-scope .zc-share > span { display: flex; align-items: center; gap: 12px; color: #062442; font-size: 14.5px; font-weight: 800; }
+.mia-scope .zc-wa { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: #eaf5fc; color: #1f7a4d; transition: transform .2s ease; }
+.mia-scope .zc-wa:hover { transform: translateY(-2px); }
+
+@media (max-width: 900px) {
+  .mia-scope .zc-wrap { grid-template-columns: minmax(0, 1fr); padding-top: 40px; }
+  .mia-scope .zc-result { position: static; }
+  .mia-scope .zc-faq-grid, .mia-scope .zc-explain { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 620px) {
+  .mia-scope .zc-form { padding: 20px 17px; }
+  .mia-scope .zc-fields { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .zc-nisab { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .zc-nisab-value { text-align: start; }
+  .mia-scope .zc-form-head { flex-wrap: wrap; }
+  .mia-scope .zc-result { padding: 22px 18px; }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+ * Zakat page  the calculator's template: banner, then inputs beside the
+ * giving card.
+ * ═════════════════════════════════════════════════════════════════════════════ */
+.mia-scope .zp-wrap { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 30px; align-items: start; padding-top: 50px; }
+.mia-scope .zp-give { position: sticky; top: 96px; display: grid; gap: 16px; padding: 26px; box-shadow: 0 18px 40px rgba(2,52,88,.12); }
+.mia-scope .zp-give-art { display: block; width: 132px; max-width: 46%; height: auto; margin: -6px auto 0; }
+.mia-scope .zp-amounts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.mia-scope .zp-amounts .gv-input { grid-column: 1 / -1; min-height: 46px; font-weight: 800; }
+.mia-scope .zp-amounts .gv-input:not(:placeholder-shown) { border-color: #00a2e0; background: #fff; }
+.mia-scope .zp-ctas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; gap: 8px; }
+.mia-scope .zp-ctas .gv-cta, .mia-scope .zp-ctas .gv-ghost { min-height: 50px; padding-inline: 12px; font-size: 14px; }
+.mia-scope .zp-share { flex: 0 0 auto; width: 50px; height: 50px; display: grid; place-items: center; border: 1.5px solid #e2eaf0; border-radius: 50%; background: #fff; color: #062442; cursor: pointer; transition: border-color .2s ease, color .2s ease, transform .2s ease; }
+.mia-scope .zp-share:hover { border-color: #00a2e0; color: #0077b3; transform: translateY(-2px); }
+.mia-scope .zp-calc { padding: 28px 30px; display: grid; gap: 20px; }
+.mia-scope .zp-calc-head { display: flex; align-items: flex-start; flex-wrap: wrap; gap: 12px 14px; }
+.mia-scope .zp-calc-head > div:not(.zp-calc-tools) { flex: 1 1 260px; min-width: 0; }
+.mia-scope .zp-calc-head h2 { margin: 0 0 4px; color: #062442; font-size: 17px; font-weight: 800; }
+.mia-scope .zp-calc-head p { margin: 0; color: #5d7187; font-size: 12.5px; line-height: 1.8; }
+.mia-scope .zp-calc-tools { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.mia-scope .zp-calc-tools .gv-ghost { min-height: 44px; font-size: 13px; padding-inline: 16px; }
+.mia-scope .zp-calc-tools .gv-ghost[aria-expanded="true"] { background: #0077b3; border-color: #0077b3; color: #fff; }
+.mia-scope .zp-result { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; align-items: center; gap: 18px 24px; padding: 20px 22px; border: 1px solid #e2ebf1; border-radius: 14px; background: #f7fbfd; }
+.mia-scope .zp-result > span { display: grid; gap: 2px; min-width: 0; }
+.mia-scope .zp-result b { color: #062442; font-size: 22px; font-weight: 900; unicode-bidi: isolate; overflow-wrap: anywhere; }
+.mia-scope .zp-result > span + span { padding-inline-start: 22px; border-inline-start: 1px solid #e2ebf1; }
+.mia-scope .zp-result > span + span b { color: #0077b3; font-size: 28px; }
+.mia-scope .zp-result .gv-cta { width: auto; min-height: 48px; white-space: nowrap; }
+.mia-scope .zp-micro { color: #5d7187; font-size: 11.5px; font-weight: 800; letter-spacing: .03em; }
+
+.mia-scope .zp-split { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); overflow: hidden; }
+.mia-scope .zp-split-art { display: grid; place-items: center; padding: 26px; background: linear-gradient(160deg, #eaf6fd, #f7fbfd); }
+.mia-scope .zp-split-art img { display: block; width: 100%; max-width: 300px; height: auto; }
+.mia-scope .zp-split-text { padding: 30px 32px; align-self: center; }
+.mia-scope .zp-split-text p { margin: 0; color: #3d5468; font-size: 14.5px; line-height: 2; }
+.mia-scope .zp-masarif-head { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 30px; align-items: center; }
+.mia-scope .zp-masarif-head img { display: block; width: 100%; height: auto; }
+.mia-scope .zp-verse { margin: 0 0 22px; padding: 18px 22px; border-inline-start: 3px solid #00a2e0; border-radius: 12px; background: #fff; color: #5d7187; font-size: 14px; line-height: 2; box-shadow: 0 6px 18px rgba(2,52,88,.05); }
+.mia-scope .zp-verse span[lang="ar"] { color: #062442; font-weight: 800; font-family: var(--font-quran); unicode-bidi: isolate; }
+.mia-scope .zp-masarif { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.mia-scope .zp-masraf { position: relative; display: grid; align-content: start; gap: 12px; padding: 22px 20px; min-width: 0; }
+.mia-scope .zp-masraf-n { position: absolute; top: 14px; inset-inline-end: 16px; color: #e3eef5; font-size: 30px; font-weight: 900; line-height: 1; }
+.mia-scope .zp-taajil { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
+.mia-scope .zp-taajil-main { grid-column: 1 / -1; display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 28px; align-items: center; padding: 26px 30px; }
+.mia-scope .zp-taajil-main img { display: block; width: 100%; height: auto; }
+.mia-scope .zp-quote { margin: 0; display: grid; align-content: start; gap: 14px; padding: 26px 28px; }
+.mia-scope .zp-quote::before { content: "”"; display: block; height: 30px; color: #00a2e0; font-size: 56px; font-weight: 900; line-height: 1; }
+.mia-scope .zp-quote p { margin: 0; color: #062442; font-size: 14.5px; line-height: 2; }
+.mia-scope .zp-quote footer { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 14px; border-top: 1px solid #eef2f5; }
+.mia-scope .zp-quote footer img { flex: 0 0 auto; width: 48px; height: 48px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 2px #fff, 0 0 0 4px #00a2e0; }
+.mia-scope .zp-quote footer b { display: block; color: #0077b3; font-size: 14.5px; font-weight: 900; }
+.mia-scope .zp-quote footer span { color: #5d7187; font-size: 12.5px; line-height: 1.6; }
+.mia-scope .zp-videos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+
+@media (max-width: 1000px) {
+  .mia-scope .zp-masarif { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .mia-scope .zp-wrap { grid-template-columns: minmax(0, 1fr); padding-top: 40px; }
+  /* The giving card comes first on a phone: it is the page's action. */
+  .mia-scope .zp-give { position: static; order: -1; }
+  .mia-scope .zp-split, .mia-scope .zp-masarif-head, .mia-scope .zp-taajil, .mia-scope .zp-videos { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .zp-masarif-head img { max-width: 150px; margin-inline: auto; }
+  .mia-scope .zp-split-art img { max-width: 220px; }
+  .mia-scope .zp-taajil-main { grid-template-columns: 140px minmax(0, 1fr); }
+  .mia-scope .zp-result { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .mia-scope .zp-result .gv-cta { grid-column: 1 / -1; width: 100%; }
+}
+@media (max-width: 620px) {
+  .mia-scope .zp-calc, .mia-scope .zp-give { padding: 20px 17px; }
+  .mia-scope .zp-ctas { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .mia-scope .zp-ctas .zp-share { grid-column: 1 / -1; width: 100%; border-radius: 999px; height: 46px; }
+  .mia-scope .zp-ctas .gv-cta, .mia-scope .zp-ctas .gv-ghost { white-space: normal; line-height: 1.35; }
+  .mia-scope .zp-split-text, .mia-scope .zp-quote { padding: 22px 18px; }
+  .mia-scope .zp-taajil-main { grid-template-columns: minmax(0, 1fr); padding: 22px 18px; }
+  .mia-scope .zp-taajil-main img { max-width: 150px; }
+  .mia-scope .zp-masarif { gap: 10px; }
+  .mia-scope .zp-masraf { padding: 16px 14px; gap: 9px; }
+  .mia-scope .zp-masraf .gv-h3 { font-size: 14px; }
+  .mia-scope .zp-masraf .gv-text { font-size: 12px; }
+}
+@media (max-width: 420px) {
+  .mia-scope .zp-result { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .zp-result > span + span { padding-inline-start: 0; border-inline-start: 0; }
+}
+@media (max-width: 380px) {
+  .mia-scope .zp-masarif { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+ * Waqf (Sadaqah Jariyah): banner, a centred intro, two option cards, then the
+ * details card with the live certificate beside it.
+ * ═════════════════════════════════════════════════════════════════════════════ */
+/* `#meter-picker` is the anchor the closing CTA scrolls to; minbar.css pads it
+   on phones, which would double the page gutter here. */
+.mia-scope .mia-waqf-page #meter-picker.gv-wrap { padding-inline: 0 !important; display: block; }
+.mia-scope .wq2-intro { max-width: 820px; margin: 0 auto; padding: 46px 0 0; text-align: center; }
+.mia-scope .wq2-intro p { margin: 0; color: #5d7187; font-size: 14px; line-height: 1.9; }
+.mia-scope .wq2-intro b { display: block; margin-bottom: 4px; color: #062442; font-size: 16px; font-weight: 900; }
+.mia-scope .wq2-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; padding: 26px 0 20px; }
+.mia-scope .wq2-option {
+  position: relative; display: flex; flex-direction: column; justify-content: flex-start; align-items: stretch; width: 100%; overflow: hidden; padding: 0; text-align: start; cursor: pointer;
+  border: 1px solid #e6eef3; border-radius: 16px; background: #fff; color: #062442; font-family: inherit;
+  box-shadow: 0 12px 28px rgba(2,52,88,.07); transition: transform .2s ease, box-shadow .2s ease, outline-color .2s ease;
+}
+/* The shared `data-pick` fill is for chips; an option card shows its pick
+   with the design's outline and check badge instead. */
+.mia-scope .wq2-options button.wq2-option[data-pick="1"] { padding: 0 !important; transform: none; font-weight: 400 !important; background: #fff !important; color: #062442 !important; border-color: #e6eef3 !important; box-shadow: 0 12px 28px rgba(2,52,88,.07) !important; outline: 2px solid #00a2e0; outline-offset: -1px; }
+.mia-scope .wq2-option:hover { transform: translateY(-3px); box-shadow: 0 18px 34px rgba(2,52,88,.13) !important; }
+.mia-scope .wq2-option::after {
+  content: "✓"; position: absolute; top: 14px; inset-inline-start: 14px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%;
+  background: #fff; color: #0077b3; font-weight: 900; box-shadow: 0 4px 12px rgba(2,52,88,.2); opacity: 0; transition: opacity .2s ease;
+}
+.mia-scope .wq2-option[data-pick="1"]::after { opacity: 1; }
+.mia-scope .wq2-media {
+  position: relative; isolation: isolate; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; height: 170px; padding: 20px;
+  background: linear-gradient(135deg, #031a36, #0b3a78); color: #fff; overflow: hidden;
+}
+.mia-scope .wq2-media::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .08; background: url("/toplum/pattern.svg") 0 0 / 260px 260px repeat; }
+.mia-scope .wq2-media::after { content: ""; position: absolute; z-index: -1; width: 220px; height: 220px; top: -100px; inset-inline-end: -60px; border-radius: 50%; background: radial-gradient(circle, rgba(39,184,242,.32), transparent 68%); }
+.mia-scope .wq2-media .gv-ico { width: 54px; height: 54px; background: rgba(255,255,255,.12); color: #7fd6f5; }
+.mia-scope .wq2-media small { display: block; color: #9fd6ef; font-size: 12px; font-weight: 700; }
+.mia-scope .wq2-media b { display: block; color: #fff; font-size: 26px; font-weight: 900; unicode-bidi: isolate; }
+.mia-scope .wq2-body { display: block; flex: 1 1 auto; padding: 18px 20px 20px; }
+.mia-scope .wq2-body > b { display: block; margin-bottom: 4px; font-size: 15.5px; font-weight: 900; }
+.mia-scope .wq2-body > span { display: block; font-weight: 600; color: #5d7187; font-size: 12.5px; line-height: 1.7; }
+
+.mia-scope .wq2-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px); gap: 30px; align-items: start; padding: 28px 30px; margin-bottom: 10px; }
+.mia-scope .wq2-fields { display: grid; gap: 16px; min-width: 0; }
+.mia-scope .wq2-fields > h2 { margin: 0 0 2px; color: #062442; font-size: 16px; font-weight: 800; }
+.mia-scope .wq2-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.mia-scope .wq2-price { padding: 12px 16px; border: 1px solid #e2ebf1; border-radius: 12px; background: #f7fbfd; }
+.mia-scope .wq2-price > span { display: inline-flex; align-items: center; gap: 8px; color: #062442; font-size: 13px; font-weight: 800; }
+.mia-scope .wq2-price > b { color: #0077b3; font-size: 19px; font-weight: 900; unicode-bidi: isolate; }
+.mia-scope .wq2-stepper { display: inline-flex; align-items: stretch; overflow: hidden; border: 1.5px solid #e2eaf0; border-radius: 999px; background: #f2f6f9; }
+.mia-scope .wq2-stepper > b { min-width: 40px; display: grid; place-items: center; padding: 0 4px; color: #062442; font-size: 15.5px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.mia-scope .mia-waqf-page .wq-step { width: 44px; height: 44px; border: 0; background: transparent; color: #0077b3; font-family: inherit; font-size: 19px; font-weight: 800; cursor: pointer; display: grid; place-items: center; transition: background .15s ease; }
+.mia-scope .mia-waqf-page .wq-step:hover { background: #eaf6fd; color: #0077b3; }
+.mia-scope .wq2-total { padding-top: 12px; border-top: 1px solid #eef2f5; }
+.mia-scope .wq2-total > span { color: #5d7187; font-size: 12.5px; font-weight: 800; }
+.mia-scope .wq2-total > b { color: #062442; font-size: 26px; font-weight: 900; unicode-bidi: isolate; }
+.mia-scope .wq2-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 48px; padding: 10px 14px; box-sizing: border-box;
+  border: 1.5px solid #e2eaf0; border-radius: 12px; background: #fff; color: #5d7187; font-family: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer;
+  transition: border-color .18s ease, background .18s ease, color .18s ease;
+}
+.mia-scope .wq2-toggle:hover { border-color: #00a2e0; }
+.mia-scope .wq2-toggle[aria-pressed="true"] { border-color: #0077b3; background: #eaf6fd; color: #062442; }
+.mia-scope .wq2-switch { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: flex-start; width: 40px; height: 22px; padding: 3px; box-sizing: border-box; border-radius: 999px; background: rgba(6,36,66,.18); transition: background .2s ease; }
+.mia-scope .wq2-switch > span { width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+.mia-scope .wq2-toggle[aria-pressed="true"] .wq2-switch { justify-content: flex-end; background: #0077b3; }
+.mia-scope .wq2-actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.mia-scope .wq2-error { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid rgba(192,57,43,.3); border-radius: 10px; background: rgba(192,57,43,.06); color: #b03a2e; font-size: 13px; font-weight: 800; }
+.mia-scope .wq2-cert { display: grid; gap: 10px; justify-items: center; min-width: 0; position: sticky; top: 96px; }
+
+.mia-scope .wq2-film { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 0; overflow: hidden; border-radius: 22px; background: linear-gradient(120deg, #021428 0%, #082b50 60%, #04172e 100%); }
+.mia-scope .wq2-film-copy { position: relative; display: grid; align-content: center; gap: 12px; padding: 36px 40px; }
+.mia-scope .wq2-film-copy h2 { margin: 0; color: #fff; font-size: clamp(22px, 2.4vw, 30px); font-weight: 900; line-height: 1.4; }
+.mia-scope .wq2-film-copy p { margin: 0; color: #b9d3e6; font-size: 14px; line-height: 1.9; }
+.mia-scope .wq2-film .gv-video { border-radius: 0; box-shadow: none; height: 100%; min-height: 0; }
+.mia-scope .wq2-what { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; align-items: start; }
+.mia-scope .wq2-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.mia-scope .wq2-fact { display: grid; gap: 8px; align-content: start; padding: 22px; }
+.mia-scope .wq2-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.mia-scope .wq2-trio > article { display: grid; gap: 10px; align-content: start; padding: 24px; margin: 0; }
+.mia-scope .wq2-trio > article[data-tone="brand"] { background: #eaf6fd; border-color: rgba(0,162,224,.3); box-shadow: none; }
+.mia-scope .wq2-aid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.mia-scope .wq2-aid > div { display: grid; justify-items: center; gap: 12px; padding: 22px 16px; text-align: center; }
+.mia-scope .wq2-aid b { color: #062442; font-size: 14.5px; font-weight: 800; line-height: 1.55; }
+.mia-scope .wq2-goals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.mia-scope .wq2-goals > div { display: grid; gap: 12px; align-content: start; padding: 22px; }
+.mia-scope .wq2-goals p { margin: 0; color: #3d5468; font-size: 13.5px; line-height: 1.95; }
+.mia-scope .wq2-parts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.mia-scope .wq2-parts > div { display: flex; gap: 12px; align-items: flex-start; padding: 18px 20px; }
+.mia-scope .wq2-parts b { display: block; margin-bottom: 4px; color: #062442; font-size: 14.5px; font-weight: 800; }
+.mia-scope .wq2-parts span { color: #5d7187; font-size: 12.5px; line-height: 1.75; }
+.mia-scope .wq2-faq { max-width: 900px; }
+
+@media (max-width: 1000px) {
+  .mia-scope .wq2-form { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .wq2-cert { position: static; }
+  .mia-scope .wq2-aid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mia-scope .wq2-goals, .mia-scope .wq2-parts, .mia-scope .wq2-trio { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .mia-scope .wq2-film, .mia-scope .wq2-what { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .wq2-film .gv-video { aspect-ratio: 16 / 9; height: auto; }
+  .mia-scope .wq2-film-copy { padding: 26px 22px; }
+}
+@media (max-width: 760px) {
+  /* Two units stay side by side on a phone, the price leading each card. */
+  .mia-scope .wq2-options { gap: 10px; padding-top: 20px; }
+  .mia-scope .wq2-media { height: auto; min-height: 118px; gap: 10px; padding: 14px; flex-direction: column-reverse; align-items: flex-start; justify-content: space-between; }
+  .mia-scope .wq2-media .gv-ico { width: 40px; height: 40px; }
+  .mia-scope .wq2-media b { font-size: 20px; }
+  .mia-scope .wq2-body { padding: 12px 14px 14px; }
+  .mia-scope .wq2-body > b { font-size: 14px; }
+  .mia-scope .wq2-option::after { top: 10px; inset-inline-start: auto; inset-inline-end: 10px; width: 26px; height: 26px; }
+}
+@media (max-width: 620px) {
+  .mia-scope .wq2-intro { padding-top: 34px; }
+  .mia-scope .wq2-form { padding: 20px 17px; gap: 18px; }
+  .mia-scope .wq2-facts, .mia-scope .wq2-goals, .mia-scope .wq2-parts, .mia-scope .wq2-trio { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .mia-scope .wq2-aid { gap: 10px; }
+  .mia-scope .wq2-aid > div { padding: 16px 10px; }
+  .mia-scope .wq2-aid b { font-size: 13px; }
+  .mia-scope .wq2-actions .gv-cta, .mia-scope .wq2-actions .gv-ghost { padding-inline: 10px; font-size: 13.5px; white-space: normal; line-height: 1.35; }
+}
+@media (max-width: 340px) {
+  .mia-scope .wq2-options { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mia-scope .wq2-option:hover, .mia-scope .rc-cause:hover, .mia-scope .zp-share:hover, .mia-scope .zc-wa:hover { transform: none; }
+}
+
+/* ── Older minbar.css rules that still reach the new markup ───────────────── */
+@media (max-width: 900px) {
+  /* The certificate stays centred under the details, not pushed to the start. */
+  .mia-scope .mia-waqf-page #waqf-cert-preview { justify-self: center !important; margin-bottom: 0; }
+}
+@media (max-width: 640px) {
+  .mia-scope .mia-waqf-page #about.gv-banner > .gv-wrap { padding-top: 0 !important; }
+}
+@media (max-width: 560px) {
+  /* Three segments share ~300px on a phone: let a long label wrap rather
+     than spill out of its segment. */
+  .mia-scope .mia-recurring-page .gv-seg > .rc-seg { white-space: normal !important; line-height: 1.3; font-size: 12.5px !important; }
+}
+
+/* minbar.css gives every `.mia-scope section` a fixed phone padding
+   (54px under 960px, 22px under 560px) with `section:not(#aqsa):not(#quick)`,
+   whose two ids outrank classes. These pages set their own rhythm, so the
+   selectors below carry three never-used ids to outrank it. */
+@media (max-width: 960px) {
+  .mia-scope section.gv-sec:not(#gv-a):not(#gv-b):not(#gv-c) { padding-top: 44px !important; padding-bottom: 0 !important; }
+  .mia-scope .gv-page > section.gv-sec:last-child:not(#gv-a):not(#gv-b):not(#gv-c) { padding-bottom: 56px !important; }
+  .mia-scope section.gv-banner:not(#gv-a):not(#gv-b):not(#gv-c) { padding-top: 48px !important; padding-bottom: 88px !important; }
+  .mia-scope section.rc-hero:not(#gv-a):not(#gv-b):not(#gv-c),
+  .mia-scope section.gv-plain:not(#gv-a):not(#gv-b):not(#gv-c) { padding-top: 0 !important; padding-bottom: 0 !important; }
+}
+@media (max-width: 760px) {
+  .mia-scope section.gv-banner:not(#gv-a):not(#gv-b):not(#gv-c) { padding-top: 36px !important; padding-bottom: 80px !important; }
+}
+@media (max-width: 560px) {
+  .mia-scope section.gv-sec:not(#gv-a):not(#gv-b):not(#gv-c) { padding-top: 34px !important; }
+  .mia-scope .gv-page > section.gv-sec:last-child:not(#gv-a):not(#gv-b):not(#gv-c) { padding-bottom: 44px !important; }
+}

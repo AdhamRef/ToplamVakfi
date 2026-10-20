@@ -31,57 +31,76 @@ const DownloadIcon = (
   </svg>
 );
 
+/* Toplum Vakfı thank-you (`Thank You.dc.html` § `.certificate`): the document
+   toggles are the design's outline pills (`.btn-outline-full`), the previews sit
+   in the miniature-sheet frame (`.cert-mini`), and each download is a full pill. */
 const rowButton = (tone: "plain" | "gold" | "red"): React.CSSProperties => ({
   display: "inline-flex",
   alignItems: "center",
+  justifyContent: "center",
   gap: 9,
-  height: 46,
+  minHeight: 46,
   padding: "0 20px",
-  borderRadius: 8,
-  border: tone === "gold" ? "1px solid rgba(0,162,224,.55)" : tone === "red" ? "1px solid rgba(27,111,224,.5)" : "1px solid var(--border)",
-  background: tone === "gold" ? "rgba(0,162,224,.1)" : tone === "red" ? "rgba(27,111,224,.08)" : "#fff",
+  borderRadius: 999,
+  border: tone === "plain" ? "1.5px solid #e2eaf0" : "1.5px solid var(--brand)",
+  background: tone === "red" ? "#eaf6fd" : "#fff",
   fontFamily: "inherit",
   fontWeight: 800,
-  fontSize: 14,
-  color: "var(--deep)",
+  fontSize: 13.5,
+  color: tone === "plain" ? "var(--ink)" : "var(--brand-ink)",
   cursor: "pointer",
 });
 
 const panel: React.CSSProperties = {
+  position: "relative",
   width: "100%",
   display: "grid",
   gap: 16,
-  padding: 22,
+  padding: "20px 18px 18px",
   background: "#fff",
-  border: "1px solid var(--border)",
-  borderRadius: 14,
+  border: "1px solid #cfe3ef",
+  borderRadius: 12,
   textAlign: "start",
+  overflow: "hidden",
+  boxSizing: "border-box",
+};
+
+/* The sheet's brand rule along the top edge (`.cm-rule`). */
+const panelRule: React.CSSProperties = {
+  position: "absolute",
+  insetInline: 0,
+  top: 0,
+  height: 4,
+  background: "linear-gradient(90deg, var(--brand), #7fd6f5)",
 };
 
 const downloadLink = (background: string, color: string): React.CSSProperties => ({
-  justifySelf: "center",
+  justifySelf: "stretch",
   display: "inline-flex",
   alignItems: "center",
+  justifyContent: "center",
   gap: 9,
-  height: 46,
+  minHeight: 48,
   padding: "0 24px",
-  borderRadius: 8,
+  borderRadius: 999,
   background,
   color,
-  fontWeight: 900,
+  fontWeight: 800,
   fontSize: 14,
+  textAlign: "center",
   textDecoration: "none",
+  boxShadow: "0 8px 20px rgba(0,162,224,.25)",
 });
 
 const input: React.CSSProperties = {
   height: 46,
   padding: "0 14px",
-  borderRadius: 8,
-  border: "1px solid var(--border)",
+  borderRadius: 10,
+  border: "1.5px solid #e2eaf0",
   background: "#fff",
   fontFamily: "inherit",
   fontSize: 14,
-  color: "var(--deep)",
+  color: "var(--ink)",
 };
 
 export default function DocumentsPanel({
@@ -161,6 +180,7 @@ export default function DocumentsPanel({
 
       {receiptOpen ? (
         <div style={panel}>
+          <span aria-hidden="true" style={panelRule} />
           {documents?.receipt ? (
             <ScaledSheet width={810} height={null} maxWidth={520} className="succ-receipt-canvas">
               <div style={{ width: 810 }}>
@@ -185,7 +205,7 @@ export default function DocumentsPanel({
           ) : (
             <p style={{ margin: 0, textAlign: "center", fontSize: 13.5, color: "var(--muted)" }}>{t("issuing")}</p>
           )}
-          <a href={receiptHref} style={downloadLink("var(--deep)", "#fff")}>
+          <a href={receiptHref} style={downloadLink("var(--cta-gradient)", "#fff")}>
             {DownloadIcon}
             {t("downloadReceipt")}
           </a>
@@ -194,8 +214,9 @@ export default function DocumentsPanel({
 
       {certOpen && documents ? (
         <div style={panel}>
+          <span aria-hidden="true" style={panelRule} />
           <label style={{ display: "grid", gap: 7 }}>
-            <b style={{ fontSize: 13, fontWeight: 800 }}>{t("certNameLabel")}</b>
+            <b style={{ fontSize: 12.5, fontWeight: 800, color: "var(--ink)" }}>{t("certNameLabel")}</b>
             <input value={certName} onChange={(event) => setCertName(event.target.value)} placeholder={t("writeYourName")} style={input} />
           </label>
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "flex-start", gap: 20 }}>
@@ -205,7 +226,7 @@ export default function DocumentsPanel({
               </div>
             </ScaledSheet>
           </div>
-          <a href={certificateHref} style={downloadLink("var(--gold)", "#062442")}>
+          <a href={certificateHref} style={downloadLink("var(--cta-gradient)", "#fff")}>
             {DownloadIcon}
             {t("downloadThankYouCert")}
           </a>
@@ -219,8 +240,9 @@ export default function DocumentsPanel({
         const name = waqfName(index);
         return (
           <div key={key} style={panel}>
+            <span aria-hidden="true" style={panelRule} />
             <label style={{ display: "grid", gap: 7 }}>
-              <b style={{ fontSize: 13, fontWeight: 800 }}>{t("waqfNameLabel")}</b>
+              <b style={{ fontSize: 12.5, fontWeight: 800, color: "var(--ink)" }}>{t("waqfNameLabel")}</b>
               <input value={name} onChange={(event) => setWaqfNames((state) => ({ ...state, [key]: event.target.value }))} placeholder={t("writeYourName")} style={input} />
             </label>
             {/* The face alone, as the handoff previews it; the presentation panel is on the PDF. */}
@@ -242,7 +264,7 @@ export default function DocumentsPanel({
               </div>
             </ScaledSheet>
             {href ? (
-              <a href={href} style={downloadLink("#1B6FE0", "#fff")}>
+              <a href={href} style={downloadLink("var(--cta-gradient)", "#fff")}>
                 {DownloadIcon}
                 {doc.unit === "meter" ? tCart("downloadMeterCert") : tCart("downloadShareCert")}
               </a>

@@ -1,7 +1,7 @@
 "use client";
 
 import { decimalAmount, parseAmount } from "@/lib/minbar/numeric-input";
-import { useEffect, useState, type CSSProperties, type ReactElement } from "react";
+import { useEffect, useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/minbar/ds";
@@ -245,381 +245,294 @@ export default function ZakatPage({
 
   return (
     <div className="mia-zakat-page" style={{ position: "relative" }}>
-      {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section style={{ position: "relative", background: "#fff", borderBottom: "1px solid var(--border)", overflow: "hidden" }}>
-        <div aria-hidden="true" data-aqsa-pattern="" style={pattern(520)} />
-        <div id="zk-hero-grid" style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "54px 24px 56px", display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,.55fr)", gap: 30, alignItems: "center" }}>
-          <div style={{ display: "grid", gap: 18, justifyItems: "start", maxWidth: 640 }}>
-            <h1 style={{ margin: 0, fontSize: "clamp(30px,3.6vw,50px)", lineHeight: 1.3, fontWeight: 900 }}>{t("heroTitle")}</h1>
-            {category?.heroLead ? (
-              <p style={{ margin: 0, maxWidth: "58ch", color: "var(--muted)", fontSize: 16.5, lineHeight: 1.95 }}>{category.heroLead}</p>
-            ) : null}
-
-            <div id="zk-amounts" style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-              {quickAmounts.map((value) => (
-                <button
-                  key={value}
-                  type="button"
-                  data-pick={amount === value && !heroCustom ? "1" : ""}
-                  onClick={() => {
-                    setAmount(value);
-                    setHeroCustom("");
-                  }}
-                  className="zk-amt mia-zakat-amount"
-                  style={{ height: 46, padding: "0 22px", cursor: "pointer", fontFamily: "inherit", fontSize: 15, fontWeight: 800, borderRadius: 8, border: "1px solid var(--border)", background: "#fff", color: "var(--muted)", transition: "all .18s ease" }}
-                >
-                  <span dir="ltr" style={{ unicodeBidi: "isolate" }}>
-                    {showMoney(value, chipCurrency)}
-                  </span>
-                </button>
-              ))}
-              <input
-                value={heroCustom}
-                onChange={(e) => setHeroCustom(decimalAmount(e.target.value))}
-                inputMode="decimal"
-                placeholder={tCommon("customAmount")}
-                aria-label={tCommon("customAmount")}
-                className="zk-input"
-                style={{ height: 46, width: 140, padding: "0 14px", borderRadius: 8, border: "1px solid var(--border)", background: "#fff", fontFamily: "inherit", fontSize: 15, fontWeight: 800, color: "var(--deep)", boxSizing: "border-box", transition: "border-color .18s ease" }}
-              />
-            </div>
-
-            <div id="zk-ctas" style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 6 }}>
-              <button type="button" onClick={onDonateNow} className="zk-donate" style={{ height: 54, padding: "0 30px", border: 0, borderRadius: 999, cursor: "pointer", background: "var(--red)", color: "#fff", fontFamily: "inherit", fontWeight: 900, fontSize: 15, boxShadow: "0 8px 20px rgba(27,111,224,.24)", whiteSpace: "nowrap", transition: "all .2s cubic-bezier(.22,.61,.36,1)" }}>
-                {tCommon("donateNow")}
-              </button>
-              <button
-                type="button"
-                onClick={onAddToCart}
-                className="zk-cart"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 8,
-                  height: 54,
-                  padding: "0 26px",
-                  border: added ? "1px solid var(--green)" : "1.5px solid var(--deep)",
-                  borderRadius: 999,
-                  cursor: "pointer",
-                  background: added ? "var(--green)" : "#fff",
-                  color: added ? "#fff" : "var(--deep)",
-                  fontFamily: "inherit",
-                  fontWeight: 900,
-                  fontSize: 15,
-                  whiteSpace: "nowrap",
-                  transition: "all .2s cubic-bezier(.22,.61,.36,1)",
-                }}
-              >
-                <span aria-hidden="true" style={{ display: "inline-flex" }}>
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="9" cy="20" r="1.4" />
-                    <circle cx="17" cy="20" r="1.4" />
-                    <path d="M3 4h2.2l2.3 11.2a1.6 1.6 0 0 0 1.6 1.3h7.6a1.6 1.6 0 0 0 1.6-1.2L20 8H6" />
-                  </svg>
-                </span>
-                {added ? tCommon("addedToCart") : tCommon("addToCart")}
-              </button>
-              <button type="button" onClick={onShare} title={tCommon("sharePage")} aria-label={tCommon("sharePage")} className="zk-share" style={{ flex: "0 0 auto", width: 54, height: 54, display: "grid", placeItems: "center", border: "1px solid var(--border)", borderRadius: 999, background: "#fff", color: "var(--deep)", cursor: "pointer", transition: "all .18s ease" }}>
-                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <circle cx="18" cy="5" r="3" />
-                  <circle cx="6" cy="12" r="3" />
-                  <circle cx="18" cy="19" r="3" />
-                  <path d="m8.6 10.6 6.8-3.8M8.6 13.4l6.8 3.8" />
-                </svg>
-              </button>
-            </div>
+      <div className="gv-page">
+        {/* ── Banner: the calculator's template (in-banner) ────────────────── */}
+        <section className="gv-banner">
+          <div className="gv-wrap">
+            <h1>{t("heroTitle")}</h1>
+            {category?.heroLead ? <p>{category.heroLead}</p> : null}
           </div>
+        </section>
 
-          <span style={{ display: "block", maxWidth: 380, justifySelf: "end", width: "100%" }}>
-            {/* The category's hero picture takes the coins' slot, shown the same
-                way  the seed gives the bound category the coins themselves. */}
-            <img src={category?.heroImage || "/minbar/assets/zakat-hero-coins.png"} alt={t("heroTitle")} style={{ display: "block", width: "100%", height: "auto" }} />
-          </span>
-        </div>
-      </section>
-
-      {/* ── Quick estimator ──────────────────────────────────────────────── */}
-      <section id="calculator" style={{ background: "#fff", padding: "62px 0", borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <div className="zk-card mia-zakat-calculator" style={{ position: "relative", overflow: "hidden", borderRadius: 22, background: "linear-gradient(180deg, var(--ivory), #fff)", border: "1px solid var(--border)", boxShadow: "0 26px 60px rgba(6,36,66,.09)", padding: 34, display: "grid", gap: 26 }}>
-            <span aria-hidden="true" style={{ position: "absolute", insetInline: 0, top: 0, height: 4, background: "linear-gradient(90deg, var(--green), var(--gold))" }} />
-
-            <div style={{ display: "flex", alignItems: "end", justifyContent: "space-between", gap: 20, flexWrap: "wrap" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                <span aria-hidden="true" style={{ flex: "0 0 auto", display: "grid", placeItems: "center", width: 48, height: 48, borderRadius: 14, background: "rgba(31,122,77,.1)", color: "var(--green)" }}>
-                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        {/* ── Estimator beside the giving card ─────────────────────────────── */}
+        <section id="calculator" className="gv-plain">
+          <div className="gv-wrap zp-wrap">
+            <div className="gv-card zp-calc">
+              <div className="zp-calc-head">
+                <span className="gv-ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="7" width="18" height="12" rx="2.4" />
                     <path d="M3 10.5h18M8 15h2.4" />
                     <circle cx="16" cy="15" r="1.3" />
                   </svg>
                 </span>
                 <div>
-                  <h2 style={{ margin: "0 0 4px", fontSize: "clamp(24px,2.6vw,32px)", lineHeight: 1.2, fontWeight: 900 }}>{tCommon("zakatCalculator")}</h2>
-                  <p style={{ margin: 0, color: "var(--muted)", fontSize: 14.5, lineHeight: 1.7 }}>{t("calcIntroText")}</p>
+                  <h2>{tCommon("zakatCalculator")}</h2>
+                  <p>{t("calcIntroText")}</p>
+                </div>
+                <div className="zp-calc-tools">
+                  <button type="button" onClick={() => setValues({})} className="gv-link" style={{ minHeight: 44 }}>
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5" />
+                    </svg>
+                    {t("reset")}
+                  </button>
+                  <button type="button" onClick={() => setCalcOpen((v) => !v)} aria-expanded={calcOpen} className="gv-ghost">
+                    {calcOpen ? t("collapseCalculator") : t("openCalculator")}
+                    <span aria-hidden="true" style={{ display: "inline-flex", transition: "transform .25s ease", transform: calcOpen ? "rotate(180deg)" : undefined }}>
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </span>
+                  </button>
                 </div>
               </div>
 
-              <button type="button" onClick={() => setValues({})} className="zk-reset" style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "transparent", border: 0, color: "var(--muted)", fontFamily: "inherit", fontWeight: 800, fontSize: 13.5, padding: "8px 4px", cursor: "pointer", transition: "color .18s ease" }}>
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M3 12a9 9 0 1 0 3-6.7M3 4v5h5" />
-                </svg>
-                {t("reset")}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setCalcOpen((v) => !v)}
-                aria-expanded={calcOpen}
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 44, padding: "0 20px", borderRadius: 999, border: "1px solid var(--green)", background: calcOpen ? "var(--green)" : "#fff", color: calcOpen ? "#fff" : "var(--green)", fontFamily: "inherit", fontWeight: 900, fontSize: 14, cursor: "pointer", transition: "all .2s ease" }}
-              >
-                {calcOpen ? t("collapseCalculator") : t("openCalculator")}
-                <span aria-hidden="true" style={{ display: "inline-flex", transition: "transform .25s ease", transform: calcOpen ? "rotate(180deg)" : undefined }}>
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
-                </span>
-              </button>
-            </div>
-
-            {calcOpen ? (
-              <>
-                <div id="zk-quick-fields" style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 16 }}>
-                  {QUICK_FIELDS.map((field) => (
-                    <label key={field.id} className="zk-field" style={{ display: "grid", gap: 12, padding: 18, background: "#fff", border: "1px solid var(--border)", borderRadius: 16, transition: "border-color .18s ease, box-shadow .18s ease, transform .18s ease" }}>
-                      <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <span aria-hidden="true" style={{ flex: "0 0 auto", display: "grid", placeItems: "center", width: 42, height: 42, borderRadius: 12, background: `color-mix(in srgb, ${field.color} 12%, transparent)`, color: field.color }}>
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              {calcOpen ? (
+                <>
+                  <div className="zc-fields">
+                    {QUICK_FIELDS.map((field) => (
+                      <label key={field.id} className="zc-field">
+                        <span className="gv-label">
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke={field.id === "debts" ? "#b34732" : "#0077b3"} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                             {FIELD_ICONS[field.icon]}
                           </svg>
+                          {t(field.labelKey)}
                         </span>
-                        <span style={{ fontSize: 13, fontWeight: 800, color: "var(--deep)" }}>{t(field.labelKey)}</span>
-                      </span>
-                      <span style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0, background: "var(--ivory)", border: "1px solid var(--border)", borderRadius: 10, padding: "0 12px", boxSizing: "border-box" }}>
-                        <span dir="ltr" style={{ flex: "0 0 auto", color: "var(--muted)", fontWeight: 900, fontSize: 13.5, unicodeBidi: "isolate" }}>
-                          {visitorCode}
+                        <span className="gv-affix" dir="ltr" data-tone={field.id === "debts" ? "subtract" : undefined}>
+                          <span>{visitorCode}</span>
+                          <input
+                            value={values[field.id] ?? ""}
+                            onChange={(e) => setValues((v) => ({ ...v, [field.id]: decimalAmount(e.target.value, 12) }))}
+                            inputMode="decimal"
+                            placeholder="0"
+                            aria-label={t(field.labelKey)}
+                          />
                         </span>
-                        <input
-                          value={values[field.id] ?? ""}
-                          onChange={(e) => setValues((v) => ({ ...v, [field.id]: decimalAmount(e.target.value, 12) }))}
-                          inputMode="decimal"
-                          placeholder="0"
-                          aria-label={t(field.labelKey)}
-                          style={{ flex: "1 1 0", width: "100%", minWidth: 0, boxSizing: "border-box", minHeight: 44, border: 0, background: "transparent", fontFamily: "inherit", fontWeight: 800, fontSize: 16, color: "var(--deep)" }}
-                        />
-                      </span>
-                    </label>
-                  ))}
-                </div>
+                      </label>
+                    ))}
+                  </div>
 
-                <div id="zk-result" className="mia-zakat-result" style={{ position: "relative", overflow: "hidden", display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr) auto", alignItems: "center", gap: 24, padding: "26px 28px", background: "linear-gradient(120deg, rgba(31,122,77,.1), rgba(0,162,224,.08))", border: "1px solid rgba(31,122,77,.3)", borderRadius: 18 }}>
-                  <span aria-hidden="true" style={{ position: "absolute", insetInlineEnd: -50, top: -50, width: 180, height: 180, borderRadius: "50%", background: "radial-gradient(circle, rgba(0,162,224,.16), transparent 70%)", pointerEvents: "none" }} />
-                  <span style={{ position: "relative", display: "grid", gap: 4 }}>
-                    <span style={micro}>{t("netZakatWealth")}</span>
-                    <b dir="ltr" style={{ fontSize: 24, color: "var(--deep)", unicodeBidi: "isolate" }}>
-                      {format(base)}
-                    </b>
-                  </span>
-                  <span style={{ position: "relative", display: "grid", gap: 4, paddingInlineStart: 24, borderInlineStart: "1px solid rgba(31,122,77,.28)" }}>
-                    <span style={{ ...micro, color: "var(--green)" }}>{t("zakatDueLabel")}</span>
-                    <b dir="ltr" style={{ fontSize: 32, color: "var(--green)", unicodeBidi: "isolate" }}>
-                      {formatLocal(dueRounded)}
-                    </b>
-                  </span>
-                  <span style={{ position: "relative" }}>
-                    <button
-                      type="button"
-                      onClick={onDonateCalculated}
-                      disabled={!(base > 0)}
-                      className="zk-donate-calc"
-                      style={{
-                        height: 48,
-                        padding: "0 26px",
-                        border: 0,
-                        borderRadius: 999,
-                        cursor: base > 0 ? "pointer" : "not-allowed",
-                        background: base > 0 ? "var(--green)" : "var(--border)",
-                        color: base > 0 ? "#fff" : "var(--muted)",
-                        fontFamily: "inherit",
-                        fontWeight: 900,
-                        fontSize: 14.5,
-                        whiteSpace: "nowrap",
-                        transition: "all .2s cubic-bezier(.22,.61,.36,1)",
-                        boxShadow: base > 0 ? "0 10px 22px rgba(31,122,77,.28)" : "none",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 8,
-                      }}
-                    >
+                  <div className="zp-result" aria-live="polite">
+                    <span>
+                      <span className="zp-micro">{t("netZakatWealth")}</span>
+                      <b dir="ltr">{format(base)}</b>
+                    </span>
+                    <span>
+                      <span className="zp-micro" style={{ color: "#0077b3" }}>
+                        {t("zakatDueLabel")}
+                      </span>
+                      <b dir="ltr">{formatLocal(dueRounded)}</b>
+                    </span>
+                    <button type="button" onClick={onDonateCalculated} disabled={!(base > 0)} className="gv-cta">
                       {t("donateZakatNowArrow")}
                       <ArrowGlyph />
                     </button>
+                  </div>
+
+                  <p className="gv-hint" style={{ margin: 0 }}>
+                    {t("calcFootnote")}
+                  </p>
+                </>
+              ) : null}
+            </div>
+
+            <div className="gv-card zp-give">
+              {/* The category's hero picture takes the coins' slot, shown the same
+                  way  the seed gives the bound category the coins themselves. */}
+              <img src={category?.heroImage || "/minbar/assets/zakat-hero-coins.png"} alt={t("heroTitle")} className="zp-give-art" />
+
+              <div className="zp-amounts">
+                {quickAmounts.map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    data-pick={amount === value && !heroCustom ? "1" : ""}
+                    aria-pressed={amount === value && !heroCustom}
+                    onClick={() => {
+                      setAmount(value);
+                      setHeroCustom("");
+                    }}
+                    className="gv-chip"
+                  >
+                    <span dir="ltr" style={{ unicodeBidi: "isolate" }}>
+                      {showMoney(value, chipCurrency)}
+                    </span>
+                  </button>
+                ))}
+                <input
+                  value={heroCustom}
+                  onChange={(e) => setHeroCustom(decimalAmount(e.target.value))}
+                  inputMode="decimal"
+                  placeholder={tCommon("customAmount")}
+                  aria-label={tCommon("customAmount")}
+                  className="gv-input"
+                />
+              </div>
+
+              <div className="zp-ctas">
+                <button type="button" onClick={onDonateNow} className="gv-cta">
+                  {tCommon("donateNow")}
+                </button>
+                <button type="button" onClick={onAddToCart} className="gv-ghost" data-done={added ? "1" : undefined}>
+                  <span aria-hidden="true" style={{ display: "inline-flex" }}>
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="9" cy="20" r="1.4" />
+                      <circle cx="17" cy="20" r="1.4" />
+                      <path d="M3 4h2.2l2.3 11.2a1.6 1.6 0 0 0 1.6 1.3h7.6a1.6 1.6 0 0 0 1.6-1.2L20 8H6" />
+                    </svg>
+                  </span>
+                  {added ? tCommon("addedToCart") : tCommon("addToCart")}
+                </button>
+                <button type="button" onClick={onShare} title={tCommon("sharePage")} aria-label={tCommon("sharePage")} className="zp-share">
+                  <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="18" cy="5" r="3" />
+                    <circle cx="6" cy="12" r="3" />
+                    <circle cx="18" cy="19" r="3" />
+                    <path d="m8.6 10.6 6.8-3.8M8.6 13.4l6.8 3.8" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── The reward ───────────────────────────────────────────────────── */}
+        <TwoColumn id="reward" image="/minbar/assets/zakat-tree.png" heading={t("rewardTitle")} text={t("rewardText")} />
+
+        {/* ── The eight categories ─────────────────────────────────────────── */}
+        <section id="masarif" className="gv-sec">
+          <div className="gv-wrap">
+            <div className="zp-masarif-head">
+              <div>
+                <h2 className="gv-h2">{t("masarifTitle")}</h2>
+                <p className="gv-intro">{t("masarifSubtext")}</p>
+              </div>
+              <img src="/minbar/assets/zakat-eight-masarif.png" alt={t("masarifTitle")} />
+            </div>
+
+            <p className="zp-verse">
+              {t("masarifIntro")}{" "}
+              {/* At-Tawbah 60. Arabic in every language edition, isolated so bidi
+                  cannot reorder it inside a left-to-right paragraph. */}
+              <span dir="rtl" lang="ar">
+                ﴿إِنَّمَا الصَّدَقَاتُ لِلْفُقَرَاءِ وَالْمَسَاكِينِ وَالْعَامِلِينَ عَلَيْهَا وَالْمُؤَلَّفَةِ قُلُوبُهُمْ وَفِي الرِّقَابِ وَالْغَارِمِينَ وَفِي سَبِيلِ اللَّهِ وَابْنِ السَّبِيلِ﴾
+              </span>{" "}
+               {t("masarifAyahRef")}.
+            </p>
+
+            <div className="zp-masarif">
+              {MASARIF.map((item, i) => (
+                <div key={item.id} className="gv-card gv-lift zp-masraf">
+                  <span aria-hidden="true" className="zp-masraf-n">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="gv-ico">
+                    <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      {MASARIF_ICONS[item.icon]}
+                    </svg>
+                  </span>
+                  <span style={{ display: "block", minWidth: 0 }}>
+                    <b className="gv-h3" style={{ display: "block" }}>
+                      {t(`masraf_${item.id}`)}
+                    </b>
+                    <span className="gv-text" style={{ display: "block", fontSize: 12.5, lineHeight: 1.75 }}>
+                      {t(`masrafDesc_${item.id}`)}
+                    </span>
                   </span>
                 </div>
-
-                <p style={{ margin: 0, color: "var(--muted)", fontSize: 12.5, lineHeight: 1.8 }}>{t("calcFootnote")}</p>
-              </>
-            ) : null}
-          </div>
-        </div>
-      </section>
-
-      {/* ── The reward ───────────────────────────────────────────────────── */}
-      <TwoColumn
-        id="reward"
-        background="var(--sand)"
-        image="/minbar/assets/zakat-tree.png"
-        imageFirst
-        heading={t("rewardTitle")}
-        text={t("rewardText")}
-      />
-
-      {/* ── The eight categories ─────────────────────────────────────────── */}
-      <section id="masarif" style={{ background: "#fff", padding: "62px 0", borderBlock: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <div id="masarif-head" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,.85fr)", gap: 40, alignItems: "center", marginBottom: 30 }}>
-            <div style={{ display: "grid", gap: 8 }}>
-              <h2 style={{ margin: 0, fontSize: "clamp(26px,2.8vw,38px)", lineHeight: 1.2, fontWeight: 900 }}>{t("masarifTitle")}</h2>
-              <p style={{ margin: 0, maxWidth: "60ch", color: "var(--muted)", fontSize: 16, lineHeight: 1.9 }}>{t("masarifSubtext")}</p>
+              ))}
             </div>
-            <span style={{ display: "block", maxWidth: 300, justifySelf: "end" }}>
-              <img src="/minbar/assets/zakat-eight-masarif.png" alt={t("masarifTitle")} style={{ display: "block", width: "100%", height: "auto" }} />
-            </span>
           </div>
+        </section>
 
-          <p style={{ margin: "0 0 26px", maxWidth: "76ch", color: "var(--muted)", fontSize: 16, lineHeight: 1.9 }}>
-            {t("masarifIntro")}{" "}
-            {/* At-Tawbah 60. Arabic in every language edition, isolated so bidi
-                cannot reorder it inside a left-to-right paragraph. */}
-            <span dir="rtl" lang="ar" style={{ unicodeBidi: "isolate", fontWeight: 800, color: "var(--deep)", fontFamily: "var(--font-quran)" }}>
-              ﴿إِنَّمَا الصَّدَقَاتُ لِلْفُقَرَاءِ وَالْمَسَاكِينِ وَالْعَامِلِينَ عَلَيْهَا وَالْمُؤَلَّفَةِ قُلُوبُهُمْ وَفِي الرِّقَابِ وَالْغَارِمِينَ وَفِي سَبِيلِ اللَّهِ وَابْنِ السَّبِيلِ﴾
-            </span>{" "}
-             {t("masarifAyahRef")}.
-          </p>
+        {/* ── Expediting zakat, and the two testimonies ────────────────────── */}
+        <section id="taajil" className="gv-sec">
+          <div className="gv-wrap zp-taajil">
+            <div className="gv-card zp-taajil-main">
+              <img src="/minbar/assets/zakat-hourglass.png" alt={t("expediteTitle")} />
+              <div style={{ minWidth: 0 }}>
+                <h2 className="gv-h2" style={{ marginBottom: 10 }}>
+                  {t("expediteTitle")}
+                </h2>
+                <p className="gv-text" style={{ fontSize: 14.5, lineHeight: 2 }}>
+                  {t("expediteText")}
+                </p>
+              </div>
+            </div>
 
-          <div id="masarif-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: "22px 16px" }}>
-            {MASARIF.map((item, i) => (
-              <div key={item.id} className="zk-masraf" style={{ position: "relative", overflow: "hidden", padding: "22px 18px", background: "var(--deep)", borderRadius: 14, display: "grid", gap: 12, transition: "transform .2s ease, box-shadow .2s ease" }}>
-                <span aria-hidden="true" style={{ position: "absolute", top: 10, insetInlineEnd: 14, fontSize: 34, fontWeight: 900, color: "rgba(255,255,255,.14)", lineHeight: 1 }}>
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span style={{ width: 52, height: 52, borderRadius: 13, background: "rgba(255,255,255,.12)", display: "grid", placeItems: "center", color: "var(--gold)" }}>
-                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    {MASARIF_ICONS[item.icon]}
-                  </svg>
-                </span>
-                <span style={{ display: "grid", gap: 6, minWidth: 0 }}>
-                  <b style={{ fontSize: 16, color: "#fff" }}>{t(`masraf_${item.id}`)}</b>
-                  <span style={{ color: "rgba(255,255,255,.82)", fontSize: 12.5, lineHeight: 1.7 }}>{t(`masrafDesc_${item.id}`)}</span>
-                </span>
+            <Testimony quote={t("testimonial1Quote")} name={t("testimonial1Name")} title={t("scholarTitle")} image="/minbar/assets/sheikh-ali-qaradaghi.jpg" />
+            <Testimony heading={t("expediteNeed")} quote={t("testimonial2Quote")} name={t("testimonial2Name")} title={t("muftiTitle")} image="/minbar/assets/sheikh-ikrima-sabri.jpg" />
+          </div>
+        </section>
+
+        {/* ── Videos ───────────────────────────────────────────────────────── */}
+        <section className="gv-sec">
+          <div className="gv-wrap zp-videos">
+            {/* The category's film, when it has one, takes the first slot; the
+                programme section above does not repeat it. */}
+            {[category?.heroVideoId ? youtubeEmbed(category.heroVideoId) : videoUrl1, videoUrl2].map((url) => (
+              <div key={url} className="gv-video">
+                <iframe
+                  src={url}
+                  title={t("heroTitle")}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Expediting zakat, and the two testimonies ────────────────────── */}
-      <section id="taajil" style={{ background: "#fff", padding: "62px 0", borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <Testimony
-            quote={t("testimonial1Quote")}
-            name={t("testimonial1Name")}
-            title={t("scholarTitle")}
-            image="/minbar/assets/sheikh-ali-qaradaghi.jpg"
-            style={{ marginBottom: 54 }}
-          />
-
-          <div id="taajil-main" style={{ display: "grid", gridTemplateColumns: "auto minmax(0,1fr)", gap: 36, alignItems: "center", marginBottom: 44 }}>
-            <span style={{ display: "block", width: "clamp(170px, 22vw, 250px)" }}>
-              <img src="/minbar/assets/zakat-hourglass.png" alt={t("expediteTitle")} style={{ display: "block", width: "100%", height: "auto" }} />
-            </span>
-            <div style={{ display: "grid", gap: 10, maxWidth: 720 }}>
-              <h2 style={{ margin: 0, fontSize: "clamp(24px,2.6vw,34px)", lineHeight: 1.25, fontWeight: 900 }}>{t("expediteTitle")}</h2>
-              <div style={{ width: 64, height: 3, background: "var(--gold)", borderRadius: 2 }} />
-              <p style={{ margin: 0, color: "var(--muted)", fontSize: 15.5, lineHeight: 1.95 }}>{t("expediteText")}</p>
-            </div>
-          </div>
-
-          <Testimony
-            heading={t("expediteNeed")}
-            quote={t("testimonial2Quote")}
-            name={t("testimonial2Name")}
-            title={t("muftiTitle")}
-            image="/minbar/assets/sheikh-ikrima-sabri.jpg"
-          />
-        </div>
-      </section>
-
-      {/* ── Videos ───────────────────────────────────────────────────────── */}
-      <section style={{ background: "#fff", padding: "62px 0", borderBottom: "1px solid var(--border)" }}>
-        <div id="zk-videos" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 24 }}>
-          {/* The category's film, when it has one, takes the first slot; the
-              programme section above does not repeat it. */}
-          {[category?.heroVideoId ? youtubeEmbed(category.heroVideoId) : videoUrl1, videoUrl2].map((url) => (
-            <div key={url} style={{ position: "relative", width: "100%", aspectRatio: "16/9", borderRadius: 14, overflow: "hidden", boxShadow: "0 18px 50px rgba(6,36,66,.14)" }}>
-              <iframe
-                src={url}
-                title={t("heroTitle")}
-                loading="lazy"
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── FAQ ──────────────────────────────────────────────────────────── */}
-      <section id="faq" style={{ position: "relative", background: "var(--sand)", padding: "62px 0", borderBottom: "1px solid var(--border)", overflow: "hidden" }}>
-        <div aria-hidden="true" data-aqsa-pattern="" style={pattern(520)} />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <h2 style={{ margin: "0 0 18px", fontSize: "clamp(24px,2.6vw,34px)", lineHeight: 1.2, fontWeight: 900 }}>{t("faqTitle")}</h2>
-          <div style={{ display: "grid", borderTop: "1px solid var(--border)", background: "#fff", maxWidth: 900 }}>
-            {FAQS.map((id, i) => {
-              const open = openFaq === i;
-              return (
-                <div key={id} style={{ borderBottom: "1px solid var(--border)" }}>
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaq(open ? -1 : i)}
-                    aria-expanded={open}
-                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, padding: 18, background: "transparent", border: 0, cursor: "pointer", fontFamily: "inherit", fontSize: 16, fontWeight: 800, color: "var(--deep)", textAlign: "start" }}
-                  >
-                    {t(`faq_${id}_q`)}
-                    <span aria-hidden="true" style={{ marginInlineStart: "auto", color: "var(--gold)", fontSize: 18 }}>
-                      {open ? "−" : "+"}
-                    </span>
-                  </button>
-                  <div style={{ maxHeight: open ? 500 : 0, opacity: open ? 1 : 0, padding: open ? "0 18px 18px" : "0 18px", overflow: "hidden", color: "var(--muted)", fontSize: 15, lineHeight: 1.85, transition: "all .3s cubic-bezier(.22,.61,.36,1)" }}>
-                    {t(`faq_${id}_a`)}
+        {/* ── FAQ ──────────────────────────────────────────────────────────── */}
+        <section id="faq" className="gv-sec">
+          <div className="gv-wrap">
+            <h2 className="gv-h2" style={{ marginBottom: 18 }}>
+              {t("faqTitle")}
+            </h2>
+            <div className="gv-faq" style={{ maxWidth: 900 }}>
+              {FAQS.map((id, i) => {
+                const open = openFaq === i;
+                return (
+                  <div key={id} className="gv-faq-item">
+                    <button type="button" onClick={() => setOpenFaq(open ? -1 : i)} aria-expanded={open} className="gv-faq-q">
+                      {t(`faq_${id}_q`)}
+                      <span aria-hidden="true" className="gv-faq-sign">
+                        {open ? "−" : "+"}
+                      </span>
+                    </button>
+                    <div style={{ maxHeight: open ? 500 : 0, opacity: open ? 1 : 0, padding: open ? "0 18px 16px" : "0 18px", overflow: "hidden", color: "var(--muted)", fontSize: 13.5, lineHeight: 1.9, transition: "all .3s cubic-bezier(.22,.61,.36,1)" }}>
+                      {t(`faq_${id}_a`)}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Closing CTA ──────────────────────────────────────────────────── */}
-      <section style={{ position: "relative", background: "var(--deep)", padding: "56px 0", overflow: "hidden" }}>
-        <div aria-hidden="true" data-aqsa-pattern="" style={{ ...pattern(520), opacity: 0.1 }} />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", gap: 28, flexWrap: "wrap" }}>
-          <div style={{ display: "grid", gap: 10, flex: "1 1 460px", minWidth: 0 }}>
-            <h2 style={{ margin: 0, fontSize: "clamp(24px,2.7vw,36px)", lineHeight: 1.3, fontWeight: 900, color: "#fff" }}>{t("ctaTitle")}</h2>
-            <p style={{ margin: 0, color: "rgba(255,255,255,.8)", fontSize: 16, lineHeight: 1.9 }}>{t("ctaText")}</p>
+        {/* ── Closing CTA ──────────────────────────────────────────────────── */}
+        <section className="gv-sec">
+          <div className="gv-wrap">
+            <div className="gv-band">
+              <div className="gv-band-copy">
+                <h2>{t("ctaTitle")}</h2>
+                <p>{t("ctaText")}</p>
+              </div>
+              <div className="gv-band-actions">
+                <Button variant="primary" size="lg" href="#calculator" style={{ whiteSpace: "nowrap", borderRadius: 999 }}>
+                  {t("donateZakatNowArrow")}
+                </Button>
+                <Button variant="outline" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap", borderRadius: 999 }}>
+                  {t("allWaqfProjects")}
+                </Button>
+              </div>
+            </div>
           </div>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <Button variant="primary" size="lg" href="#calculator" style={{ whiteSpace: "nowrap" }}>
-              {t("donateZakatNowArrow")}
-            </Button>
-            <Button variant="outline" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap" }}>
-              {t("allWaqfProjects")}
-            </Button>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       <TravelBanner />
       <IbadanBanner />
@@ -627,84 +540,40 @@ export default function ZakatPage({
   );
 }
 
-/** Image-and-copy band, mirrored by `imageFirst`. */
-function TwoColumn({
-  id,
-  background,
-  image,
-  imageFirst,
-  heading,
-  text,
-}: {
-  id: string;
-  background: string;
-  image: string;
-  imageFirst: boolean;
-  heading: string;
-  text: string;
-}) {
-  const copy = (
-    <div style={{ display: "grid", gap: 14 }}>
-      <h2 style={{ margin: "0 0 6px", fontSize: "clamp(26px,2.8vw,38px)", lineHeight: 1.2, fontWeight: 900 }}>{heading}</h2>
-      <p style={{ margin: 0, color: "var(--muted)", fontSize: 16, lineHeight: 2 }}>{text}</p>
-    </div>
-  );
-  const picture = (
-    <span style={{ display: "block", maxWidth: 340, marginInlineStart: imageFirst ? undefined : "auto" }}>
-      <img src={image} alt="" style={{ display: "block", width: "100%", height: "auto" }} />
-    </span>
-  );
-
+/** Picture-and-copy card (the inner pages' `ab-intro` split). */
+function TwoColumn({ id, image, heading, text }: { id: string; image: string; heading: string; text: string }) {
   return (
-    <section id={id} style={{ position: "relative", background, padding: "62px 0", borderBottom: background === "transparent" ? undefined : "1px solid var(--border)", overflow: "hidden" }}>
-      <div aria-hidden="true" data-aqsa-pattern="" style={pattern(520)} />
-      <div className="zk-two-col" style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: imageFirst ? "minmax(0,.85fr) minmax(0,1fr)" : "minmax(0,1fr) minmax(0,.85fr)", gap: 40, alignItems: "center" }}>
-        {imageFirst ? picture : copy}
-        {imageFirst ? copy : picture}
+    <section id={id} className="gv-sec">
+      <div className="gv-wrap">
+        <div className="gv-card zp-split">
+          <span className="zp-split-art">
+            <img src={image} alt="" />
+          </span>
+          <div className="zp-split-text">
+            <h2 className="gv-h2" style={{ marginBottom: 12 }}>
+              {heading}
+            </h2>
+            <p>{text}</p>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
 /** A scholar's testimony with attribution. */
-function Testimony({
-  heading,
-  quote,
-  name,
-  title,
-  image,
-  style,
-}: {
-  heading?: string;
-  quote: string;
-  name: string;
-  title: string;
-  image: string;
-  style?: CSSProperties;
-}) {
+function Testimony({ heading, quote, name, title, image }: { heading?: string; quote: string; name: string; title: string; image: string }) {
   return (
-    <blockquote style={{ margin: 0, position: "relative", padding: "34px 40px", background: "var(--sand)", borderInlineStart: "3px solid var(--gold)", display: "grid", gap: 14, maxWidth: 760, ...style }}>
-      {heading ? <h3 style={{ margin: 0, fontSize: 19, fontWeight: 900, color: "var(--deep)" }}>{heading}</h3> : null}
-      <p style={{ margin: 0, fontSize: heading ? 15.5 : 17, lineHeight: heading ? 1.95 : 2, color: heading ? "var(--muted)" : "var(--deep)" }}>{quote}</p>
-      <footer style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <img src={image} alt="" style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", border: "2px solid var(--gold)", flex: "0 0 auto" }} />
+    <blockquote className="gv-card zp-quote">
+      {heading ? <h3 className="gv-h3" style={{ fontSize: 17 }}>{heading}</h3> : null}
+      <p>{quote}</p>
+      <footer>
+        <img src={image} alt="" />
         <span style={{ display: "grid", gap: 2 }}>
-          <b style={{ color: "var(--green)", fontSize: 15, fontWeight: 900 }}>{name}</b>
-          <span style={{ color: "var(--muted)", fontSize: 13 }}>{title}</span>
+          <b>{name}</b>
+          <span>{title}</span>
         </span>
       </footer>
     </blockquote>
   );
 }
-
-const micro: CSSProperties = { fontSize: 11, fontWeight: 900, color: "var(--muted)", letterSpacing: ".06em" };
-
-const pattern = (size: number): CSSProperties => ({
-  position: "absolute",
-  inset: 0,
-  backgroundImage: "url('/toplum/pattern.svg')",
-  backgroundRepeat: "repeat",
-  backgroundSize: `${size}px ${size}px`,
-  opacity: 0.05,
-  pointerEvents: "none",
-});

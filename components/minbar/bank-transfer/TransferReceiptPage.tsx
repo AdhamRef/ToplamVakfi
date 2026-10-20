@@ -110,9 +110,9 @@ export default function TransferReceiptPage({ claim: initial, bank, token, donor
               <span key={label} style={{ display: "contents" }}>
                 <span
                   aria-current={current ? "step" : undefined}
-                  style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "8px 14px", borderRadius: 999, border: `1px solid ${current ? (failed ? "var(--red)" : "var(--gold)") : done ? "rgba(31,122,77,.35)" : "var(--border)"}`, background: current || done ? "#fff" : "transparent", color: current || done ? "var(--deep)" : "var(--muted)", fontSize: 13, fontWeight: 800, whiteSpace: "nowrap" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "8px 14px", borderRadius: 999, border: `1px solid ${current ? (failed ? "var(--danger)" : "var(--gold)") : done ? "rgba(31,122,77,.35)" : "var(--border)"}`, background: current || done ? "#fff" : "transparent", color: current || done ? "var(--deep)" : "var(--muted)", fontSize: 13, fontWeight: 800, whiteSpace: "nowrap" }}
                 >
-                  <span style={{ display: "grid", placeItems: "center", width: 22, height: 22, borderRadius: "50%", background: done ? "var(--green)" : current ? (failed ? "var(--red)" : "var(--gold)") : "var(--border)", color: done || failed ? "#fff" : current ? "#062442" : "var(--muted)", fontSize: 12, fontWeight: 900 }}>
+                  <span style={{ display: "grid", placeItems: "center", width: 22, height: 22, borderRadius: "50%", background: done ? "var(--green)" : current ? (failed ? "var(--danger)" : "var(--gold)") : "var(--border)", color: done || failed ? "#fff" : current ? "#062442" : "var(--muted)", fontSize: 12, fontWeight: 900 }}>
                     {done ? (
                       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
                     ) : (
@@ -458,7 +458,7 @@ function UploadForm({
         }}
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
-        style={{ display: "grid", justifyItems: "center", gap: 10, padding: file ? 14 : "28px 18px", border: `2px dashed ${dragging ? "var(--gold)" : error && !file ? "var(--red)" : file ? "rgba(31,122,77,.5)" : "var(--border)"}`, borderRadius: 12, background: dragging ? "rgba(0,162,224,.08)" : file ? "rgba(31,122,77,.05)" : "var(--ivory)", cursor: "pointer", transition: "all .18s ease", textAlign: "center" }}
+        style={{ display: "grid", justifyItems: "center", gap: 10, padding: file ? 14 : "28px 18px", border: `2px dashed ${dragging ? "var(--gold)" : error && !file ? "var(--danger)" : file ? "rgba(31,122,77,.5)" : "var(--border)"}`, borderRadius: 12, background: dragging ? "rgba(0,162,224,.08)" : file ? "rgba(31,122,77,.05)" : "var(--ivory)", cursor: "pointer", transition: "all .18s ease", textAlign: "center" }}
       >
         <input ref={inputRef} type="file" accept={RECEIPT_ACCEPT_ATTR} onChange={(e) => pick(e.target.files?.[0] ?? null)} style={{ display: "none" }} />
         {file ? (
@@ -488,7 +488,7 @@ function UploadForm({
       </div>
 
       {error ? (
-        <p role="alert" style={{ margin: 0, fontSize: 13, fontWeight: 800, color: "var(--red)", lineHeight: 1.7 }}>{errorText(error)}</p>
+        <p role="alert" style={{ margin: 0, fontSize: 13, fontWeight: 800, color: "var(--danger)", lineHeight: 1.7 }}>{errorText(error)}</p>
       ) : null}
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 14 }} className="tr-fields">
@@ -611,7 +611,7 @@ function Field({ label, hint, span, children }: { label: string; hint?: string; 
 }
 
 const TONES = {
-  error: { color: "var(--red)", background: "rgba(27,111,224,.1)" },
+  error: { color: "var(--danger)", background: "var(--danger-tint)" },
   pending: { color: "var(--gold)", background: "rgba(0,162,224,.14)" },
   success: { color: "var(--green)", background: "rgba(31,122,77,.1)" },
 } as const;

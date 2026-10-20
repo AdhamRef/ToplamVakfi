@@ -559,32 +559,49 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
     },
   ];
 
+  /* The design's inputs: 1.5px hairline, 10px radius, brand border on focus (`.pay-field:focus`). */
   const fieldStyle: CSSProperties = {
-    height: 48,
-    border: "1.5px solid var(--border)",
+    height: 46,
+    border: "1.5px solid #e2eaf0",
     borderRadius: 10,
     padding: "0 14px",
-    fontSize: 15,
-    fontWeight: 700,
-    color: "var(--deep)",
-    background: "var(--ivory)",
+    fontSize: 14,
+    fontWeight: 600,
+    color: "var(--ink)",
+    background: "#fff",
     fontFamily: "inherit",
     transition: "border-color .18s ease, background .18s ease",
     width: "100%",
     boxSizing: "border-box",
   };
 
-  const cardFieldStyle: CSSProperties = { ...fieldStyle, height: 46, background: "#fff", border: "1px solid var(--border)", fontSize: 14 };
+  const cardFieldStyle: CSSProperties = { ...fieldStyle };
 
   return (
-    <div style={{ position: "relative" }}>
-      <section style={{ padding: "0 0 18px", paddingTop: 44 }}>
-        <CheckoutSteps id="pay-steps" steps={steps} />
+    /* Toplum Vakfı payment step (`Payment Info.dc.html`): the checkout bar
+       (steps + security cue), then white panels  donor, then method  with
+       the summary beside them, bordered in brand blue along its top. */
+    <div className="gf-checkout" style={{ position: "relative" }}>
+      <section style={{ padding: "0 0 18px", paddingTop: 30 }}>
+        <CheckoutSteps
+          id="pay-steps"
+          steps={steps}
+          maxWidth={1080}
+          trailing={
+            <>
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="4" y="10" width="16" height="10" rx="2" />
+                <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+              </svg>
+              {tSystem("secureConnection")}
+            </>
+          }
+        />
       </section>
 
       <section style={{ padding: "0 0 64px" }}>
-        <div id="pay-grid" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,1.15fr) minmax(0,.85fr)", gap: 40, alignItems: "start" }}>
-          <form ref={formRef} className="pay-form" style={{ display: "grid", gap: 22 }} onSubmit={onSubmit} noValidate>
+        <div id="pay-grid" style={{ maxWidth: 1080, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,.78fr)", gap: 22, alignItems: "start" }}>
+          <form ref={formRef} className="pay-form" style={{ display: "grid", gap: 18, minWidth: 0 }} onSubmit={onSubmit} noValidate>
             {/* ── Donor details ──────────────────────────────────────────── */}
             <div className="pay-card" style={cardBox}>
               <h2 style={headingStyle}>
@@ -602,7 +619,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                   {/* One column while the Facebook button below is commented out; back to
                       "repeat(2,minmax(0,1fr))" when it returns. */}
                   <div id="pay-social" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr)", gap: 10 }}>
-                    <button type="button" onClick={() => signIn("google")} className="pay-social-btn" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 9, height: 48, border: "1.5px solid var(--border)", borderRadius: 10, background: "#fff", fontFamily: "inherit", fontSize: 14, fontWeight: 800, color: "var(--deep)", cursor: "pointer", transition: "border-color .18s ease, box-shadow .18s ease, transform .18s ease" }}>
+                    <button type="button" onClick={() => signIn("google")} className="pay-social-btn" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 9, height: 48, border: "1.5px solid #e2eaf0", borderRadius: 999, background: "#fff", fontFamily: "inherit", fontSize: 14, fontWeight: 800, color: "var(--ink)", cursor: "pointer", transition: "border-color .18s ease, box-shadow .18s ease, transform .18s ease" }}>
                       <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true">
                         <path fill="#4285F4" d="M23.5 12.27c0-.85-.08-1.66-.22-2.45H12v4.64h6.45a5.52 5.52 0 0 1-2.39 3.62v3h3.87c2.26-2.09 3.57-5.17 3.57-8.81Z" />
                         <path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.93-2.91l-3.87-3c-1.07.72-2.44 1.14-4.06 1.14-3.12 0-5.77-2.11-6.71-4.95H1.28v3.1A12 12 0 0 0 12 24Z" />
@@ -622,9 +639,9 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                   </div>
                   <span style={{ textAlign: "center", fontSize: 12, fontWeight: 700, color: "var(--muted)", lineHeight: 1.7 }}>{t("socialAutofillNote")}</span>
                   <div style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--muted)", fontSize: 11.5, fontWeight: 700 }}>
-                    <span aria-hidden="true" style={{ flex: "1 1 auto", height: 1, background: "var(--border)" }} />
+                    <span aria-hidden="true" style={{ flex: "1 1 auto", height: 1, background: "#eef3f7" }} />
                     {t("orFillManually")}
-                    <span aria-hidden="true" style={{ flex: "1 1 auto", height: 1, background: "var(--border)" }} />
+                    <span aria-hidden="true" style={{ flex: "1 1 auto", height: 1, background: "#eef3f7" }} />
                   </div>
                 </>
               ) : null}
@@ -676,8 +693,8 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                 </span>
               ) : null}
 
-              <span style={{ display: "flex", alignItems: "flex-start", gap: 7, width: "100%", fontSize: 12, fontWeight: 800, color: "var(--red)", textAlign: "start", lineHeight: 1.75, minWidth: 0 }}>
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--red)" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ flex: "0 0 auto", marginTop: 3 }}>
+              <span style={{ display: "flex", alignItems: "flex-start", gap: 7, width: "100%", fontSize: 12, fontWeight: 700, color: "var(--muted)", textAlign: "start", lineHeight: 1.75, minWidth: 0 }}>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--brand)" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ flex: "0 0 auto", marginTop: 3 }}>
                   <circle cx="12" cy="12" r="9" />
                   <path d="M12 8h.01M12 11v5" />
                 </svg>
@@ -697,6 +714,8 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                 {t("paymentMethod")}
               </h2>
 
+              {/* The design's method tiles: icon box over the name, the picked
+                  tile outlined in blue with a check in its corner (CSS). */}
               <div id="pay-methods" style={{ display: "flex", gap: 10 }}>
                 {methods.filter((m) => m.id !== "bank" || bankAvailable).map((m) => (
                   <button
@@ -705,9 +724,9 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                     data-pick={method === m.id ? "1" : ""}
                     onClick={() => setMethod(m.id)}
                     className="pay-method"
-                    style={{ flex: "1 1 0", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 46, padding: "0 10px", border: "1px solid var(--border)", background: "#fff", borderRadius: 10, cursor: "pointer", fontFamily: "inherit", transition: "all .18s ease" }}
+                    style={{ position: "relative", flex: "1 1 0", minWidth: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 7, minHeight: 92, padding: "12px 8px", border: "1.5px solid #e2eaf0", background: "#fff", borderRadius: 14, cursor: "pointer", fontFamily: "inherit", color: "var(--ink)", transition: "all .18s ease" }}
                   >
-                    <span aria-hidden="true" style={{ flex: "0 0 auto", color: "var(--muted)" }}>
+                    <span aria-hidden="true" className="pay-method-icon" style={{ flex: "0 0 auto", display: "grid", placeItems: "center", width: 40, height: 40, borderRadius: 12, background: "#f2f6f9", color: "var(--muted)" }}>
                       {m.icon}
                     </span>
                     {/* One word on phones so all three fit on a single row. */}
@@ -718,11 +737,11 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
               </div>
 
               {method === "bank" && selectedBank ? (
-                <div style={{ display: "grid", gap: 12, padding: 16, background: "var(--sand)", border: "1px solid rgba(0,162,224,.4)", borderRadius: 10 }}>
-                  <b style={{ fontSize: 13.5 }}>{t("bankHeading")}</b>
+                <div style={{ display: "grid", gap: 12, padding: "16px 18px", background: "var(--page-bg)", border: "1px solid #e2ebf1", borderRadius: 12 }}>
+                  <b style={{ fontSize: 13.5, color: "var(--ink)" }}>{t("bankHeading")}</b>
                   <label style={{ display: "grid", gap: 6 }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: "var(--muted)" }}>{t("bank")}</span>
-                    <select value={bankId} onChange={(e) => setBankId(e.target.value)} style={{ height: 42, border: "1px solid var(--border)", borderRadius: 8, background: "#fff", padding: "0 12px", fontSize: 13.5, fontWeight: 800, cursor: "pointer", fontFamily: "inherit" }}>
+                    <span style={cardLabelStyle}>{t("bank")}</span>
+                    <select value={bankId} onChange={(e) => setBankId(e.target.value)} className="pay-field" style={{ height: 46, border: "1.5px solid #e2eaf0", borderRadius: 10, background: "#fff", padding: "0 14px", fontSize: 13.5, fontWeight: 800, color: "var(--ink)", cursor: "pointer", fontFamily: "inherit" }}>
                       {banks.map((bank) => (
                         <option key={bank.id} value={bank.id}>
                           {bank.name}
@@ -733,7 +752,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
 
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     {selectedBank.logo ? (
-                      <img src={selectedBank.logo} alt="" style={{ width: 44, height: 44, flex: "0 0 auto", objectFit: "contain", background: "#fff", border: "1px solid var(--border)", borderRadius: 8 }} />
+                      <img src={selectedBank.logo} alt="" style={{ width: 44, height: 44, flex: "0 0 auto", objectFit: "contain", background: "#fff", border: "1px solid #e2ebf1", borderRadius: 10 }} />
                     ) : null}
                     <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
                       <b style={{ fontSize: 13.5 }}>{selectedBank.name}</b>
@@ -754,7 +773,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                             role="radio"
                             aria-checked={active}
                             onClick={() => setBankCurrency(c.code)}
-                            style={{ height: 30, padding: "0 12px", borderRadius: 999, border: `1px solid ${active ? "var(--gold)" : "var(--border)"}`, background: active ? "#fff" : "transparent", color: active ? "var(--deep)" : "var(--muted)", fontFamily: "inherit", fontSize: 12.5, fontWeight: 800, cursor: "pointer", transition: "all .18s ease" }}
+                            style={{ height: 32, padding: "0 14px", borderRadius: 999, border: `1.5px solid ${active ? "#0077b3" : "#e2eaf0"}`, background: active ? "#0077b3" : "#fff", color: active ? "#fff" : "var(--muted)", fontFamily: "inherit", fontSize: 12.5, fontWeight: 800, cursor: "pointer", transition: "all .18s ease" }}
                           >
                             {c.code}
                           </button>
@@ -776,7 +795,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                       dim: bankCurrencies.length > 1 && c.code !== chosenBankCurrency,
                     })),
                   ].map((row) => (
-                    <span key={row.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "10px 12px", background: "#fff", border: `1px solid ${row.dim ? "var(--border)" : row.key.includes(":iban:") ? "var(--gold)" : "var(--border)"}`, borderRadius: 8, opacity: row.dim ? 0.55 : 1, transition: "opacity .18s ease, border-color .18s ease" }}>
+                    <span key={row.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "10px 12px", background: "#fff", border: `1px solid ${row.dim ? "#e2ebf1" : row.key.includes(":iban:") ? "var(--brand)" : "#e2ebf1"}`, borderRadius: 10, opacity: row.dim ? 0.55 : 1, transition: "opacity .18s ease, border-color .18s ease" }}>
                       <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
                         <span style={{ fontSize: 11, fontWeight: 800, color: "var(--muted)" }}>{row.label}</span>
                         {/* An identifier is the one place break-all is allowed. */}
@@ -789,7 +808,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                         onClick={() => copy(row.key, row.value.replace(/\s/g, ""))}
                         aria-label={tCommon("share")}
                         className="pay-copy-btn"
-                        style={{ flex: "0 0 auto", display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 8, border: "1px solid var(--border)", background: "#fff", color: copied === row.key ? "var(--green)" : "var(--muted)", cursor: "pointer", transition: "all .18s ease" }}
+                        style={{ flex: "0 0 auto", display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: "50%", border: "1px solid #e2ebf1", background: "#fff", color: copied === row.key ? "var(--green)" : "var(--muted)", cursor: "pointer", transition: "all .18s ease" }}
                       >
                         {copied === row.key ? (
                           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -805,8 +824,8 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                     </span>
                   ))}
 
-                  <span style={{ display: "flex", alignItems: "flex-start", gap: 7, fontSize: 12.5, color: "var(--deep)", lineHeight: 1.7 }}>
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto", marginTop: 3 }}>
+                  <span style={{ display: "flex", alignItems: "flex-start", gap: 7, fontSize: 12.5, color: "var(--muted)", lineHeight: 1.8 }}>
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto", marginTop: 3 }}>
                       <path d="M12 16V8M8 12l4-4 4 4" />
                       <path d="M4 20h16" />
                     </svg>
@@ -816,8 +835,9 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
               ) : null}
 
               {method === "card" && !needsOwnCardForm ? (
-                <div style={{ display: "grid", gap: 12, justifyItems: "center", padding: "16px 14px", background: "var(--sand)", border: "1px solid var(--border)", borderRadius: 12 }}>
-                  <span style={{ fontSize: 13.5, fontWeight: 800, color: cardRailUnavailable ? "var(--red)" : "var(--deep)", textAlign: "center", lineHeight: 1.8 }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "14px 16px", background: "var(--page-bg)", border: "1px solid #e2ebf1", borderRadius: 12 }}>
+                  {InfoGlyph}
+                  <span style={{ fontSize: 13, fontWeight: 700, color: cardRailUnavailable ? "#b3391f" : "var(--muted)", textAlign: "start", lineHeight: 1.8 }}>
                     {cardRailUnavailable ? t("cardUnavailable") : t("cardOnBankPage")}
                   </span>
                 </div>
@@ -826,7 +846,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
               {method === "card" && needsOwnCardForm && gateway === "STRIPE" ? (
                 /* Stripe's hosted card fields. The number, expiry and CVC are
                    iframes owned by Stripe; this page sees only "complete". */
-                <div className="pay-stripe" style={{ display: "grid", gap: 12, padding: "16px 14px", background: "#fff", border: "1px solid var(--border)", borderRadius: 12 }}>
+                <div className="pay-stripe" style={{ display: "grid", gap: 12, padding: "16px 14px", background: "#fff", border: "1.5px solid #e2eaf0", borderRadius: 12 }}>
                   <Elements stripe={getStripePromise()}>
                     <StripePaymentStep ref={stripeRef} onReadyChange={onStripeReady} labelClass="block text-[12px] font-extrabold text-[var(--muted)] mb-1" />
                   </Elements>
@@ -852,7 +872,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                   </div>
                   <div id="card-fields" style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 14 }}>
                     <label style={{ display: "grid", gap: 6, gridColumn: "1 / -1" }}>
-                      <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{t("cardNumber")}</span>
+                      <span style={cardLabelStyle}>{t("cardNumber")}</span>
                       <input
                         value={cardNumber}
                         onChange={(e) => setCardNumber(digitsOnly(e.target.value, 19))}
@@ -866,7 +886,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                       />
                     </label>
                     <label style={{ display: "grid", gap: 6 }}>
-                      <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{t("cardExpiry")}</span>
+                      <span style={cardLabelStyle}>{t("cardExpiry")}</span>
                       <input
                         value={cardExpiry}
                         onChange={(e) => {
@@ -883,7 +903,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                       />
                     </label>
                     <label style={{ display: "grid", gap: 6 }}>
-                      <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>CVC</span>
+                      <span style={cardLabelStyle}>CVC</span>
                       <input
                         value={cardCvc}
                         onChange={(e) => setCardCvc(digitsOnly(e.target.value, 4))}
@@ -898,7 +918,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                       />
                     </label>
                     <label style={{ display: "grid", gap: 6, gridColumn: "1 / -1" }}>
-                      <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{t("cardHolder")}</span>
+                      <span style={cardLabelStyle}>{t("cardHolder")}</span>
                       <input value={cardName} onChange={(e) => setCardName(e.target.value)} onFocus={() => setCardFocus("name")} autoComplete="cc-name" aria-label={t("cardHolder")} style={cardFieldStyle} />
                     </label>
                   </div>
@@ -906,8 +926,9 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
               ) : null}
 
               {method === "paypal" ? (
-                <div style={{ display: "grid", gap: 12, justifyItems: "center", padding: "16px 14px", background: "var(--sand)", border: "1px solid var(--border)", borderRadius: 12 }}>
-                  <span style={{ fontSize: 13.5, fontWeight: 800, color: "var(--deep)", textAlign: "center", lineHeight: 1.8 }}>{t("paypalRedirect")}</span>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "14px 16px", background: "var(--page-bg)", border: "1px solid #e2ebf1", borderRadius: 12 }}>
+                  {InfoGlyph}
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--muted)", textAlign: "start", lineHeight: 1.8 }}>{t("paypalRedirect")}</span>
                 </div>
               ) : null}
             </div>
@@ -917,7 +938,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                 type="submit"
                 disabled={submitting || !items.length || belowMinimum}
                 className="pay-paypal"
-                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, width: "100%", height: 52, border: 0, borderRadius: 8, background: "#FFC439", color: "#062442", fontFamily: "inherit", fontWeight: 900, fontSize: 15, cursor: "pointer", boxShadow: "0 6px 16px rgba(255,196,57,.35)", boxSizing: "border-box", transition: "filter .18s ease, transform .18s ease" }}
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, width: "100%", height: 52, border: 0, borderRadius: 999, background: "#FFC439", color: "#062442", fontFamily: "inherit", fontWeight: 900, fontSize: 15, cursor: "pointer", boxShadow: "0 6px 16px rgba(255,196,57,.35)", boxSizing: "border-box", transition: "filter .18s ease, transform .18s ease" }}
               >
                 <b style={{ fontStyle: "italic", fontWeight: 900, color: "#253B80", letterSpacing: "-.02em" }}>PayPal</b>
                 <span aria-hidden="true" style={{ width: 1, height: 20, background: "rgba(6,36,66,.2)" }} />
@@ -929,7 +950,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                 disabled={submitting || !items.length || belowMinimum || (method === "card" && cardRailUnavailable)}
                 className="mia-card-cta"
                 aria-busy={submitting}
-                style={{ width: "100%", minHeight: 52, padding: "8px 14px", border: 0, borderRadius: 8, background: "var(--red)", color: "#fff", fontFamily: "inherit", fontWeight: 900, fontSize: 16, cursor: submitting ? "progress" : "pointer", opacity: submitting ? 0.85 : 1, boxShadow: "var(--shadow-cta)", transition: "filter .18s ease" }}
+                style={{ width: "100%", minHeight: 52, padding: "8px 18px", border: 0, borderRadius: 999, background: "var(--cta-gradient)", color: "#fff", fontFamily: "inherit", fontWeight: 800, fontSize: 15, cursor: submitting ? "progress" : "pointer", opacity: submitting ? 0.85 : 1, boxShadow: "0 8px 20px rgba(0,162,224,.3)", transition: "filter .18s ease, transform .2s ease, box-shadow .2s ease" }}
               >
                 {/* The amount sits on the button: on a phone the summary is above
                     the form, so this is the last place the donor sees it. */}
@@ -940,13 +961,13 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
             )}
 
             {error ? (
-              <p role="alert" style={{ margin: 0, textAlign: "center", fontSize: 13, fontWeight: 800, color: "var(--red)" }}>
+              <p role="alert" style={{ margin: 0, padding: "10px 14px", textAlign: "center", fontSize: 13, fontWeight: 800, lineHeight: 1.7, color: "#b3391f", background: "#fdf1ef", border: "1px solid rgba(179,57,31,.25)", borderRadius: 12 }}>
                 {error}
               </p>
             ) : null}
 
-            <p style={{ margin: 0, display: "flex", alignItems: "flex-start", justifyContent: "center", gap: 7, textAlign: "start", fontSize: 12.5, lineHeight: 1.75, color: "var(--muted)" }}>
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto", marginTop: 3 }}>
+            <p style={{ margin: 0, display: "flex", alignItems: "flex-start", justifyContent: "center", gap: 7, textAlign: "start", fontSize: 12, fontWeight: 600, lineHeight: 1.75, color: "var(--muted)" }}>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--brand)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto", marginTop: 3 }}>
                 <rect x="5" y="10.5" width="14" height="9" rx="1.5" />
                 <path d="M8 10.5V7a4 4 0 0 1 8 0v3.5" />
               </svg>
@@ -955,9 +976,9 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
           </form>
 
           {/* ── Summary ──────────────────────────────────────────────────── */}
-          <div id="pay-summary" className="pay-card" style={{ display: "grid", gap: 16, padding: 26, background: "var(--sand)", border: "1px solid rgba(0,162,224,.35)", borderRadius: 14, position: "sticky", top: 92 }}>
-            <h2 style={{ ...headingStyle, fontSize: 18 }}>
-              <span aria-hidden="true" style={{ ...headingIcon, width: 30, height: 30, background: "#fff" }}>
+          <div id="pay-summary" className="pay-card" style={{ ...cardBox, gap: 16, borderTop: "4px solid var(--brand)", position: "sticky", top: 92, minWidth: 0 }}>
+            <h2 style={headingStyle}>
+              <span aria-hidden="true" style={headingIcon}>
                 <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m4 8 2 11h12l2-11H4Z" />
                   <path d="m9 8 3-4 3 4M9 12v3M15 12v3" />
@@ -970,49 +991,49 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
               <div style={{ minHeight: 90 }} />
             ) : items.length ? (
               <>
-                <div style={{ display: "grid", gap: 10, paddingBottom: 14, borderBottom: "1px solid rgba(0,162,224,.3)" }}>
+                <div style={{ display: "grid", gap: 0 }}>
                   {items.map((item, index) => (
-                    <span key={index} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 14 }}>
-                      <span style={{ color: "var(--muted)", minWidth: 0, display: "grid", gap: 2 }}>
+                    <span key={index} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "10px 0", borderBottom: "1px solid #eef3f7", fontSize: 13 }}>
+                      <span style={{ color: "var(--ink)", fontWeight: 700, minWidth: 0, display: "grid", gap: 3 }}>
                         <span>{resolveTitle(item)}</span>
                         {item.shareCount ? (
-                          <span style={{ fontSize: 12, fontWeight: 700 }}>
+                          <span style={summaryTag}>
                             {countLabelFor(item.projectId ? sharesBySlug.get(item.projectId) ?? null : null, item.shareCount, formatNumber(item.shareCount))}
                           </span>
                         ) : null}
                         {item.gift?.recipientName ? (
-                          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--gold)" }}>{tTeam("giftedTo", { name: item.gift.recipientName })}</span>
+                          <span style={summaryTag}>{tTeam("giftedTo", { name: item.gift.recipientName })}</span>
                         ) : null}
                       </span>
-                      <b dir="ltr" style={{ flex: "0 0 auto", unicodeBidi: "isolate" }}>
+                      <b dir="ltr" style={{ flex: "0 0 auto", unicodeBidi: "isolate", color: "var(--ink)", whiteSpace: "nowrap" }}>
                         {formatLine(item)}
                       </b>
                     </span>
                   ))}
                   {teamSupportCharged > 0 ? (
-                    <span style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 14 }}>
-                      <span style={{ color: "var(--muted)", minWidth: 0, display: "grid", gap: 2 }}>
+                    <span style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "10px 0", borderBottom: "1px solid #eef3f7", fontSize: 13 }}>
+                      <span style={{ color: "var(--ink)", fontWeight: 700, minWidth: 0, display: "grid", gap: 3 }}>
                         <span>{tTeam("title")}</span>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: teamRecurring ? "var(--green)" : "var(--muted)" }}>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: teamRecurring ? "var(--brand-ink)" : "var(--muted)" }}>
                           {teamRecurring ? tTeam("recurringNote") : tTeam("oneTimeNote")}
                         </span>
                       </span>
-                      <b dir="ltr" style={{ flex: "0 0 auto", unicodeBidi: "isolate" }}>
+                      <b dir="ltr" style={{ flex: "0 0 auto", unicodeBidi: "isolate", color: "var(--ink)", whiteSpace: "nowrap" }}>
                         {format(teamSupportCharged)}
                       </b>
                     </span>
                   ) : null}
                 </div>
-                <span style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 16, fontWeight: 900 }}>
+                <span style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, paddingTop: 4, fontSize: 17, fontWeight: 800, color: "var(--ink)" }}>
                   {t("total")}
-                  <b dir="ltr" style={{ fontSize: 22, unicodeBidi: "isolate" }}>
+                  <b dir="ltr" style={{ fontSize: 22, fontWeight: 900, color: "var(--brand-ink)", unicodeBidi: "isolate" }}>
                     {totalLabel}
                   </b>
                 </span>
                 {belowMinimum ? (
-                  <span role="alert" style={{ display: "grid", gap: 6, fontSize: 13, lineHeight: 1.7, fontWeight: 800, color: "var(--red)", padding: "10px 12px", background: "rgba(27,111,224,.06)", border: "1px solid rgba(27,111,224,.3)", borderRadius: 8 }}>
+                  <span role="alert" style={{ display: "grid", gap: 6, fontSize: 13, lineHeight: 1.7, fontWeight: 800, color: "#b3391f", padding: "10px 14px", background: "#fdf1ef", border: "1px solid rgba(179,57,31,.25)", borderRadius: 12 }}>
                     {tGive("belowMinCheckout", { amount: minLabel })}
-                    <Link href={miaPath("cart", locale)} style={{ color: "var(--deep)", textDecoration: "underline" }}>
+                    <Link href={miaPath("cart", locale)} style={{ color: "var(--ink)", textDecoration: "underline" }}>
                       {tGive("editInCart")}
                     </Link>
                   </span>
@@ -1022,7 +1043,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                     the cadence  the same next date the consent snapshot
                     records. */}
                 {planFrequency && nextChargeText ? (
-                  <span style={{ display: "grid", gap: 2, fontSize: 12.5, lineHeight: 1.7, color: "var(--deep)", padding: "10px 12px", background: "#fff", border: "1px solid rgba(0,162,224,.4)", borderRadius: 8 }}>
+                  <span style={{ display: "grid", gap: 2, fontSize: 12.5, lineHeight: 1.7, color: "var(--ink)", padding: "12px 14px", background: "var(--page-bg)", border: "1px solid #e2ebf1", borderRadius: 12 }}>
                     <b>{tCommon(planFrequency === "DAILY" ? "freqDaily" : planFrequency === "FRIDAY" ? "freqFriday" : "freqMonthly")}</b>
                     <span>{tRecurring("firstChargeToday", { cadence: tRecurring(planFrequency === "DAILY" ? "cadenceDaily" : planFrequency === "FRIDAY" ? "cadenceFriday" : "cadenceMonthly") })}</span>
                     <span style={{ color: "var(--muted)" }}>{tRecurring("nextChargeOn", { date: nextChargeText })}</span>
@@ -1032,20 +1053,20 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
             ) : (
               <p style={{ margin: 0, padding: "10px 0", color: "var(--muted)", fontSize: 14, lineHeight: 1.8 }}>
                 {t("emptyCart")}{" "}
-                <Link href={miaPath("projects", locale)} style={{ color: "var(--gold)", fontWeight: 800 }}>
+                <Link href={miaPath("projects", locale)} style={{ color: "var(--brand-ink)", fontWeight: 800 }}>
                   {tProjects("allProjects")}
                 </Link>
               </p>
             )}
 
-            <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--muted)", paddingTop: 4, borderTop: "1px solid rgba(0,162,224,.3)" }}>
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <span style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 14px", borderRadius: 12, background: "var(--page-bg)", fontSize: 12.5, fontWeight: 700, color: "var(--muted)" }}>
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#1a7f4b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" />
               </svg>
               {t("receiptNote")}
             </span>
 
-            <Link href={miaPath("cart", locale)} className="cart-add-another" style={{ textAlign: "center", fontSize: 13, fontWeight: 800, color: "var(--muted)" }}>
+            <Link href={miaPath("cart", locale)} className="cart-add-another" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 44, marginTop: -6, textAlign: "center", fontSize: 12.5, fontWeight: 800, color: "var(--brand-ink)" }}>
               {t("backToCart")}
             </Link>
           </div>
@@ -1055,32 +1076,59 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
   );
 }
 
+/* `.panel` in the design: white, hairline border, 16px radius, soft blue shadow. */
 const cardBox: CSSProperties = {
   display: "grid",
   gap: 14,
-  padding: 26,
+  padding: "26px 28px",
   background: "#fff",
-  border: "1px solid var(--border)",
-  borderRadius: 14,
+  border: "1px solid #e6eef3",
+  borderRadius: 16,
+  boxShadow: "0 14px 30px rgba(2,52,88,.07)",
+  boxSizing: "border-box",
 };
 
 const headingStyle: CSSProperties = {
-  margin: 0,
+  margin: "0 0 4px",
   display: "flex",
   alignItems: "center",
   gap: 10,
-  fontSize: 20,
-  fontWeight: 900,
+  fontSize: 17,
+  fontWeight: 800,
+  letterSpacing: "-.2px",
+  color: "var(--ink)",
 };
 
 const headingIcon: CSSProperties = {
+  flex: "0 0 auto",
   display: "grid",
   placeItems: "center",
-  width: 32,
-  height: 32,
-  borderRadius: 9,
-  background: "var(--sand)",
-  color: "var(--gold)",
+  width: 34,
+  height: 34,
+  borderRadius: "50%",
+  background: "#eaf5fc",
+  color: "var(--brand-ink)",
 };
 
-const labelStyle: CSSProperties = { fontSize: 12.5, fontWeight: 800, color: "var(--deep)" };
+const labelStyle: CSSProperties = { fontSize: 12.5, fontWeight: 800, color: "var(--ink)" };
+
+const cardLabelStyle: CSSProperties = { fontSize: 12.5, fontWeight: 800, color: "var(--ink)" };
+
+/* The design's order-item badge (`.order-item small`). */
+const summaryTag: CSSProperties = {
+  justifySelf: "start",
+  padding: "1px 9px",
+  borderRadius: 999,
+  background: "#e6f4fb",
+  color: "var(--ink)",
+  fontSize: 12,
+  fontWeight: 800,
+};
+
+/* The design's redirect-note glyph. */
+const InfoGlyph = (
+  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="var(--brand)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto", marginTop: 3 }}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 8h.01M11 12h1v5h1" />
+  </svg>
+);

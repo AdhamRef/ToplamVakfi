@@ -26,24 +26,25 @@ export default function ProjectUpdatePost({ update, projectTitle }: { update: Mi
   const date = new Intl.DateTimeFormat(locale, { year: "numeric", month: "long", day: "numeric" }).format(posted);
 
   return (
-    <article style={{ display: "grid", gap: 14, padding: 18, background: "#fff", border: "1px solid var(--border)", borderRadius: 14, boxShadow: "0 1px 2px rgba(6,36,66,.04)" }}>
+    /* The design's `.update-item` card: the date in brand ink over the text. */
+    <article style={{ display: "grid", gap: 14, padding: "16px 18px", background: "#fff", border: "1px solid #e6eef3", borderRadius: 12, boxShadow: "0 12px 28px rgba(2,52,88,.05)" }}>
       <header style={{ display: "flex", alignItems: "center", gap: 11 }}>
         <span
           aria-hidden="true"
-          style={{ flex: "0 0 auto", width: 42, height: 42, borderRadius: "50%", border: "1px solid rgba(0,162,224,.45)", background: "#fff center/auto 68% no-repeat url('/toplum/logo-mark.png')" }}
+          style={{ flex: "0 0 auto", width: 42, height: 42, borderRadius: "50%", border: "1px solid #e6eef3", background: "#f4f8fb center/auto 64% no-repeat url('/toplum/logo-mark.png')" }}
         />
         <span style={{ display: "grid", gap: 1, minWidth: 0 }}>
-          <b style={{ fontSize: 14.5, lineHeight: 1.4 }}>{tCommon("orgOfficialName")}</b>
-          <time dateTime={update.createdAt} style={{ fontSize: 12, fontWeight: 700, color: "var(--muted)" }}>
+          <b style={{ fontSize: 14, lineHeight: 1.4, color: "var(--deep)" }}>{tCommon("orgOfficialName")}</b>
+          <time dateTime={update.createdAt} style={{ fontSize: 12, fontWeight: 800, color: "#0077b3" }}>
             {date} · {tExtras("updateBadge")}
           </time>
         </span>
       </header>
 
       <div style={{ display: "grid", gap: 6 }}>
-        {update.title ? <b style={{ fontSize: 16.5, lineHeight: 1.55 }}>{update.title}</b> : null}
+        {update.title ? <b style={{ fontSize: 16, lineHeight: 1.55, fontWeight: 800, color: "var(--deep)" }}>{update.title}</b> : null}
         {update.text ? (
-          <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.95, color: "var(--muted)", whiteSpace: "pre-line", overflowWrap: "anywhere" }}>
+          <p style={{ margin: 0, fontSize: 14, lineHeight: 1.9, color: "#33495e", whiteSpace: "pre-line", overflowWrap: "anywhere" }}>
             {text}
             {long ? (
               <>
@@ -51,7 +52,7 @@ export default function ProjectUpdatePost({ update, projectTitle }: { update: Mi
                 <button
                   type="button"
                   onClick={() => setOpen((v) => !v)}
-                  style={{ border: 0, padding: 0, background: "none", color: "var(--deep)", fontFamily: "inherit", fontSize: 13.5, fontWeight: 900, cursor: "pointer" }}
+                  style={{ border: 0, padding: 0, background: "none", color: "#0077b3", fontFamily: "inherit", fontSize: 13.5, fontWeight: 800, cursor: "pointer" }}
                 >
                   {open ? tExtras("showLess") : tExtras("readMore")}
                 </button>
@@ -70,14 +71,14 @@ export default function ProjectUpdatePost({ update, projectTitle }: { update: Mi
           src={update.image}
           alt={update.title || projectTitle}
           loading="lazy"
-          style={{ display: "block", width: "100%", maxHeight: 520, objectFit: "cover", borderRadius: 12, border: "1px solid var(--border)", background: "var(--sand)" }}
+          style={{ display: "block", width: "100%", maxHeight: 520, objectFit: "cover", borderRadius: 12, border: "1px solid #e6eef3", background: "#f4f8fb" }}
         />
       ) : null}
 
       {update.videoUrl && update.image ? (
         // Both set: the video leads, the photo follows.
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={update.image} alt="" loading="lazy" style={{ display: "block", width: "100%", maxHeight: 420, objectFit: "cover", borderRadius: 12, border: "1px solid var(--border)" }} />
+        <img src={update.image} alt="" loading="lazy" style={{ display: "block", width: "100%", maxHeight: 420, objectFit: "cover", borderRadius: 12, border: "1px solid #e6eef3" }} />
       ) : null}
     </article>
   );

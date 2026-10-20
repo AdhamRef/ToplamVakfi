@@ -37,7 +37,7 @@ export default function SuperCategoryPage({ page }: { page: SuperCategoryContent
   const video = useVideoModal();
 
   return (
-    <div className="ib-page">
+    <div className="ib-page tvsc-page">
       <Hero page={page} rtl={rtl} arrow={arrow} />
 
       {page.blocks.map((block) => (
@@ -51,32 +51,31 @@ export default function SuperCategoryPage({ page }: { page: SuperCategoryContent
 
 /* ── Hero ─────────────────────────────────────────────────────────────────── */
 
-function Hero({ page, rtl, arrow }: { page: SuperCategoryContent; rtl: boolean; arrow: string }) {
+/**
+ * Laid out as `ToplamVakfi-design/Toplum Vakfı Programs.dc.html`'s campaign
+ * banner: the photograph full bleed under a navy fade from the text side, the
+ * copy straight on it (no panel), the first call to action as the CTA pill and
+ * the page background rising into the bottom as the design's wave. The
+ * editor's accent colour stays the base under the photograph. The fade and
+ * the wave live in styles/minbar/pages/projects.css (`tvsc-hero`).
+ */
+function Hero({ page, arrow }: { page: SuperCategoryContent; rtl: boolean; arrow: string }) {
   return (
-    <section style={{ position: "relative", background: page.accentColor, overflow: "hidden" }}>
+    <section className="tvsc-hero" style={{ background: page.accentColor }}>
       {page.heroImage ? (
         /* eslint-disable-next-line @next/next/no-img-element -- fills the section; not a fixed-size image */
         <img
           src={page.heroImage}
           alt=""
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 32%" }}
+          className="tvsc-hero-img"
         />
       ) : null}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: `linear-gradient(to ${rtl ? "left" : "right"}, rgba(6,36,66,.32) 0%, rgba(6,36,66,.1) 38%, transparent 62%)`,
-          pointerEvents: "none",
-        }}
-      />
+      <div aria-hidden="true" className="tvsc-hero-fade" />
 
       {page.logoImage ? (
         <a
           href={page.ctas[0]?.href || "#"}
-          className="ib-logo"
-          style={{ position: "absolute", insetInlineEnd: 24, top: 22, zIndex: 2, display: "grid", placeItems: "center", width: "min(40vw, 216px)", padding: "5px 8px", background: "rgba(255,255,255,.95)", borderRadius: 12, boxShadow: "0 14px 34px rgba(6,36,66,.3)" }}
+          className="ib-logo tvsc-logo"
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- fluid wordmark, sized by its container */}
           <img src={page.logoImage} alt={page.title} style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }} />
@@ -84,58 +83,50 @@ function Hero({ page, rtl, arrow }: { page: SuperCategoryContent; rtl: boolean; 
       ) : null}
 
       <div
-        className="ib-hero"
-        style={{ ...SECTION, position: "relative", padding: "140px 24px 110px", display: "grid", gridTemplateColumns: page.heroVideoId ? "minmax(0,1.1fr) minmax(0,1fr)" : "minmax(0,1fr)", gap: 44, alignItems: "center" }}
+        className="ib-hero tvsc-hero-in"
+        style={{ gridTemplateColumns: page.heroVideoId ? "minmax(0,1.1fr) minmax(0,1fr)" : "minmax(0,1fr)" }}
       >
-        <div style={{ display: "inline-grid", gap: 18, justifyItems: "start", justifySelf: "start", width: "fit-content", padding: "30px 34px", background: "rgba(6,36,66,.55)", borderRadius: 14, backdropFilter: "blur(2px)", boxSizing: "border-box" }}>
-          <h1 style={{ margin: 0, fontSize: "clamp(30px,3.6vw,50px)", lineHeight: 1.3, fontWeight: 900, color: "#fff" }}>{page.title}</h1>
+        <div className="tvsc-hero-copy">
+          <h1>{page.title}</h1>
 
-          {page.subtitle ? (
-            <p style={{ margin: 0, maxWidth: "48ch", fontSize: "clamp(16px,1.6vw,20px)", lineHeight: 1.6, fontWeight: 800, color: "#D6EFF9" }}>{page.subtitle}</p>
-          ) : null}
+          {page.subtitle ? <p className="tvsc-hero-sub">{page.subtitle}</p> : null}
 
           {page.verseArabic ? (
             <p
               dir="rtl"
-              style={{ margin: 0, maxWidth: "48ch", fontFamily: "var(--font-amiri), Almarai, Cairo, sans-serif", fontSize: "clamp(17px,1.9vw,23px)", lineHeight: 1.95, fontWeight: 700, color: "#D6EFF9", unicodeBidi: "isolate" }}
+              className="tvsc-hero-verse"
+              style={{ fontFamily: "var(--font-amiri), Almarai, Cairo, sans-serif", unicodeBidi: "isolate" }}
             >
               {page.verseArabic}
             </p>
           ) : null}
 
           {page.verseTranslation ? (
-            <p style={{ margin: 0, maxWidth: "48ch", fontSize: 14.5, lineHeight: 1.85, color: "rgba(255,255,255,.85)", textWrap: "pretty" }}>
+            <p className="tvsc-hero-trans" style={{ textWrap: "pretty" }}>
               {page.verseTranslation}
             </p>
           ) : null}
 
           {page.verseAttribution ? (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 10.5, color: "rgba(255,255,255,.7)" }}>
-              <span aria-hidden="true" style={{ width: 20, height: 1, background: "rgba(214,239,249,.45)" }} />
+            <span className="tvsc-hero-attr">
+              <span aria-hidden="true" />
               {page.verseAttribution}
-              <span aria-hidden="true" style={{ width: 20, height: 1, background: "rgba(214,239,249,.45)" }} />
+              <span aria-hidden="true" />
             </span>
           ) : null}
 
-          {page.intro ? (
-            <p style={{ margin: 0, maxWidth: "48ch", fontSize: 16.5, lineHeight: 1.95, color: "rgba(255,255,255,.9)" }}>{page.intro}</p>
-          ) : null}
+          {page.intro ? <p className="tvsc-hero-lead">{page.intro}</p> : null}
 
           {page.ctas.length ? (
-            <div className="ib-ctas" style={{ display: "flex", gap: 8, flexWrap: "wrap", maxWidth: "100%" }}>
+            <div className="ib-ctas tvsc-ctas">
               {page.ctas.map((cta, i) => (
                 <a
                   key={cta.href + cta.label}
                   href={cta.href}
-                  className={i === 0 ? undefined : "ib-ghost"}
-                  style={
-                    i === 0
-                      ? { display: "inline-flex", alignItems: "center", gap: 6, height: 48, padding: "0 14px", borderRadius: 10, background: "#fff", border: "1px solid #fff", color: page.accentColor, fontWeight: 900, fontSize: 12.5, whiteSpace: "nowrap" }
-                      : { display: "inline-flex", alignItems: "center", gap: 6, height: 48, padding: "0 14px", borderRadius: 10, border: "1px solid rgba(255,255,255,.5)", color: "#fff", fontWeight: 800, fontSize: 12.5, whiteSpace: "nowrap" }
-                  }
+                  className={i === 0 ? "tv-pill" : "ib-ghost tv-ghost-dark"}
                 >
+                  {i === 0 ? <i aria-hidden="true" style={{ color: page.accentColor }}>{arrow}</i> : null}
                   {cta.label}
-                  {i === 0 ? <span aria-hidden="true">{arrow}</span> : null}
                 </a>
               ))}
             </div>
@@ -143,7 +134,7 @@ function Hero({ page, rtl, arrow }: { page: SuperCategoryContent; rtl: boolean; 
         </div>
 
         {page.heroVideoId ? (
-          <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", borderRadius: 14, overflow: "hidden", background: "#062442", boxShadow: "0 24px 60px rgba(3,26,54,.45)", border: "1px solid rgba(255,255,255,.22)" }}>
+          <div className="tvsc-hero-film">
             <iframe
               src={youtubeEmbed(page.heroVideoId)}
               title={page.title}
@@ -165,16 +156,10 @@ function Hero({ page, rtl, arrow }: { page: SuperCategoryContent; rtl: boolean; 
 function BlockHeading({ block }: { block: SuperCategoryBlockContent }) {
   if (!block.title && !block.eyebrow && !block.subtitle) return null;
   return (
-    <div style={{ display: "grid", gap: 4 }}>
-      {block.eyebrow ? (
-        <span style={{ fontSize: 12, fontWeight: 900, color: "#0077B3", letterSpacing: ".04em" }}>{block.eyebrow}</span>
-      ) : null}
-      {block.title ? (
-        <h2 style={{ margin: 0, fontSize: "clamp(22px,2.3vw,31px)", lineHeight: 1.3, fontWeight: 900, letterSpacing: "-.01em" }}>{block.title}</h2>
-      ) : null}
-      {block.subtitle ? (
-        <span style={{ color: "var(--muted)", fontSize: 13.5, lineHeight: 1.7 }}>{block.subtitle}</span>
-      ) : null}
+    <div className="tv-head">
+      {block.eyebrow ? <span className="tv-eyebrow">{block.eyebrow}</span> : null}
+      {block.title ? <h2 className="tv-h2">{block.title}</h2> : null}
+      {block.subtitle ? <span className="tv-sub">{block.subtitle}</span> : null}
     </div>
   );
 }
@@ -204,13 +189,9 @@ function Block({
        else an editor needs to say in its own words. */
     case "TEXT":
       return (
-        <section id={anchor} style={{ position: "relative", zIndex: 1, padding: "16px 0 0" }}>
-          <div
-            style={{ maxWidth: 900, margin: "0 auto", padding: "26px 28px", background: "var(--sand)", borderInlineStart: "3px solid var(--gold)", borderRadius: 4, display: "grid", gap: 10 }}
-          >
-            {block.eyebrow ? (
-              <span style={{ fontSize: 12, fontWeight: 900, color: "#0077B3", letterSpacing: ".04em" }}>{block.eyebrow}</span>
-            ) : null}
+        <section id={anchor} style={{ position: "relative", zIndex: 1, padding: "30px 24px 0" }}>
+          <div className="tv-card tvsc-text">
+            {block.eyebrow ? <span className="tv-eyebrow">{block.eyebrow}</span> : null}
             {block.title ? (
               <h3 style={{ margin: 0, fontSize: "clamp(19px,2vw,24px)", lineHeight: 1.4, fontWeight: 900 }}>{block.title}</h3>
             ) : null}
@@ -222,7 +203,8 @@ function Block({
                 href={block.linkUrl}
                 target={block.linkUrl.startsWith("http") ? "_blank" : undefined}
                 rel={block.linkUrl.startsWith("http") ? "noopener noreferrer" : undefined}
-                style={{ width: "fit-content", minHeight: 44, display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13.5, fontWeight: 900, color: "#1B6FE0" }}
+                className="tv-ghost"
+                style={{ width: "fit-content" }}
               >
                 {block.linkLabel} <span aria-hidden="true">{arrow}</span>
               </a>
@@ -238,9 +220,9 @@ function Block({
         <section id={anchor} style={{ position: "relative", zIndex: 1, padding: "34px 0 0" }}>
           <div style={NARROW}>
             {block.title ? (
-              <h2 style={{ margin: "0 0 14px", fontSize: "clamp(20px,2.1vw,27px)", fontWeight: 900 }}>{block.title}</h2>
+              <h2 className="tv-h2" style={{ marginBottom: 16 }}>{block.title}</h2>
             ) : null}
-            <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", borderRadius: 12, overflow: "hidden", boxShadow: "0 18px 44px rgba(6,36,66,.16)" }}>
+            <div style={{ position: "relative", width: "100%", aspectRatio: "16/9", borderRadius: 18, overflow: "hidden", boxShadow: "0 24px 50px rgba(2,52,88,.18)" }}>
               <iframe
                 src={youtubeEmbed(block.youtubeId)}
                 title={block.title || page.title}
@@ -261,7 +243,7 @@ function Block({
           <div style={{ ...SECTION, display: "grid", gap: 18 }}>
             <BlockHeading block={block} />
             {block.campaigns.length ? (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 22, justifyContent: "center" }}>
+              <div className="tv-card-grid">
                 {block.campaigns.map((project) => (
                   <ProjectDonateCard key={project.id} project={project} />
                 ))}
@@ -279,13 +261,13 @@ function Block({
       if (!series || !series.episodes.length) return null;
       const listId = series.youtubePlaylistUrl.match(/list=([\w-]+)/)?.[1] ?? null;
       return (
-        <section id={anchor} style={{ position: "relative", zIndex: 1, padding: "0 0 56px", borderTop: "1px solid var(--border)" }}>
-          <div style={{ ...SECTION, padding: "48px 24px 0", display: "grid", gap: 18 }}>
+        <section id={anchor} className="tvsc-band" style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ ...SECTION, display: "grid", gap: 18 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
               <div style={{ display: "grid", gap: 3 }}>
-                <b style={{ fontSize: "clamp(19px,2vw,25px)", fontWeight: 900 }}>{block.title || series.title}</b>
+                <b className="tv-h2">{block.title || series.title}</b>
                 {block.subtitle || series.description ? (
-                  <span style={{ color: "var(--muted)", fontSize: 13.5 }}>{block.subtitle || series.description}</span>
+                  <span className="tv-sub">{block.subtitle || series.description}</span>
                 ) : null}
               </div>
               {series.youtubePlaylistUrl ? (
@@ -293,8 +275,7 @@ function Block({
                   href={series.youtubePlaylistUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="prg-all"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 8, height: 44, padding: "0 20px", borderRadius: 8, background: "var(--sand)", border: "1px solid rgba(0,162,224,.5)", fontWeight: 800, fontSize: 14, whiteSpace: "nowrap", color: "var(--deep)" }}
+                  className="prg-all tv-ghost"
                   onClick={(event) => {
                     if (!listId || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
                     event.preventDefault();
@@ -314,14 +295,14 @@ function Block({
                   href={episode.url || youtubeWatch(episode.youtubeId)}
                   className="prg-ep"
                   aria-label={episode.title || series.title}
-                  style={{ display: "grid", gap: 8, overflow: "hidden", borderRadius: 8, color: "inherit", textDecoration: "none" }}
+                  style={{ display: "grid", gap: 10, overflow: "hidden", borderRadius: 14, color: "inherit", textDecoration: "none" }}
                   onClick={(event) => {
                     if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
                     event.preventDefault();
                     onPlay(youtubeEmbed(episode.youtubeId, { autoplay: true }));
                   }}
                 >
-                  <span style={{ position: "relative", display: "block", aspectRatio: "16/9", borderRadius: 8, overflow: "hidden", background: "var(--navy)" }}>
+                  <span style={{ position: "relative", display: "block", aspectRatio: "16/9", borderRadius: 14, overflow: "hidden", background: "var(--navy)", boxShadow: "0 12px 28px rgba(2,52,88,.12)" }}>
                     <span
                       aria-hidden="true"
                       className="prg-thumb"
@@ -359,11 +340,12 @@ function Block({
               <Link
                 key={post.id}
                 href={miaPath("article", locale, post.slug)}
-                style={{ display: "grid", gridTemplateRows: "auto 1fr", background: "#fff", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", boxShadow: "0 10px 30px rgba(6,36,66,.06)" }}
+                className="tv-card tv-lift"
+                style={{ display: "grid", gridTemplateRows: "auto 1fr", overflow: "hidden" }}
               >
                 <span style={{ display: "block", aspectRatio: "16/9", background: `var(--sand) url('${post.cover ?? ""}') center/cover` }} />
-                <span style={{ display: "grid", gap: 6, padding: "14px 16px 16px" }}>
-                  <b style={{ fontSize: 15, lineHeight: 1.5, fontWeight: 900 }}>{post.title}</b>
+                <span style={{ display: "grid", gap: 6, padding: "16px 18px 18px" }}>
+                  <b style={{ fontSize: 15.5, lineHeight: 1.5, fontWeight: 800, color: "var(--deep)" }}>{post.title}</b>
                   {post.excerpt ? (
                     <span style={{ fontSize: 13, lineHeight: 1.75, color: "var(--muted)" }}>{post.excerpt}</span>
                   ) : null}
@@ -388,7 +370,7 @@ function Block({
                 onClick={() => onPlay(youtubeEmbed(v.youtubeId, { autoplay: true, start: v.startSeconds ?? undefined }))}
                 style={{ display: "grid", gap: 8, padding: 0, border: 0, background: "none", cursor: "pointer", font: "inherit", textAlign: "start" }}
               >
-                <span style={{ position: "relative", display: "block", aspectRatio: "16/9", borderRadius: 10, overflow: "hidden", background: "var(--navy)" }}>
+                <span style={{ position: "relative", display: "block", aspectRatio: "16/9", borderRadius: 14, overflow: "hidden", background: "var(--navy)", boxShadow: "0 12px 28px rgba(2,52,88,.12)" }}>
                   <span
                     aria-hidden="true"
                     className="prg-thumb"
@@ -415,7 +397,7 @@ function Block({
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 16 }}>
             {block.playlists.map((p) => (
               <Link key={p.id} href={miaPath("programs", locale)} style={{ display: "grid", gap: 8 }}>
-                <span style={{ display: "block", aspectRatio: "16/9", borderRadius: 10, background: `var(--navy) url('${p.coverImage || (p.episodes[0] ? youtubeThumb(p.episodes[0].youtubeId) : "")}') center/cover` }} />
+                <span style={{ display: "block", aspectRatio: "16/9", borderRadius: 14, boxShadow: "0 12px 28px rgba(2,52,88,.12)", background: `var(--navy) url('${p.coverImage || (p.episodes[0] ? youtubeThumb(p.episodes[0].youtubeId) : "")}') center/cover` }} />
                 <b style={{ fontSize: 14, lineHeight: 1.5, fontWeight: 800 }}>{p.title}</b>
               </Link>
             ))}
@@ -435,7 +417,7 @@ function Block({
                 href={c.isExternal && c.externalUrl ? c.externalUrl : miaPath("courses", locale)}
                 style={{ display: "grid", gap: 8 }}
               >
-                <span style={{ display: "block", aspectRatio: "16/9", borderRadius: 10, background: `var(--navy) url('${c.coverImage}') center/cover` }} />
+                <span style={{ display: "block", aspectRatio: "16/9", borderRadius: 14, boxShadow: "0 12px 28px rgba(2,52,88,.12)", background: `var(--navy) url('${c.coverImage}') center/cover` }} />
                 <b style={{ fontSize: 14, lineHeight: 1.5, fontWeight: 800 }}>{c.title}</b>
               </Link>
             ))}
@@ -457,9 +439,10 @@ function Block({
                 href={d.fileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ display: "grid", gap: 10, padding: 14, background: "#fff", border: "1px solid var(--border)", borderRadius: 12, boxShadow: "0 10px 30px rgba(6,36,66,.06)" }}
+                className="tv-card tv-lift"
+                style={{ display: "grid", gap: 10, padding: 14 }}
               >
-                <span style={{ display: "block", aspectRatio: "3/4", borderRadius: 8, background: `var(--sand) url('${d.coverImage}') center/cover` }} />
+                <span style={{ display: "block", aspectRatio: "3/4", borderRadius: 10, background: `var(--sand) url('${d.coverImage}') center/cover` }} />
                 <b style={{ fontSize: 14, lineHeight: 1.5, fontWeight: 800 }}>{d.title}</b>
                 {d.author || d.year ? (
                   <span style={{ fontSize: 12, color: "var(--muted)" }}>{d.author || d.year}</span>

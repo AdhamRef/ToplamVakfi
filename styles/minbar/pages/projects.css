@@ -1,0 +1,334 @@
+/* Toplum Vakfi page layer: projects. Loaded after toplum.css (app/[locale]/layout.tsx); scoped under .mia-scope. */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Projects catalogue, programme (super category) and category pages, laid out
+ * as `ToplamVakfi-design/Toplum Vakfı Projects.dc.html`, `… Programs.dc.html`
+ * and `… Program - Aytam.dc.html`.
+ *
+ * minbar.css still carries the old Minbar phone rules for these pages (many
+ * with !important, some asserted by tests/integration-settings). The new
+ * markup uses `tv*-` classes so most of them no longer match; where an old
+ * id/class had to stay, the override below repeats its selector (same or
+ * higher specificity, later in the cascade).
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Shared pieces ────────────────────────────────────────────────────────── */
+.mia-scope .tv-head { display: grid; gap: 6px; }
+.mia-scope .tv-eyebrow { display: block; color: #0077b3; font-size: 13px; font-weight: 800; }
+.mia-scope .tv-h2 { margin: 0; font-size: clamp(22px, 2.4vw, 28px); line-height: 1.3; font-weight: 900; letter-spacing: -.3px; color: #062442; }
+.mia-scope .tv-sub { color: #5d7187; font-size: 13.5px; line-height: 1.7; }
+.mia-scope .tv-card { background: #fff; border: 1px solid #e6eef3; border-radius: 16px; box-shadow: 0 12px 28px rgba(2,52,88,.07); }
+.mia-scope .tv-lift { color: inherit; transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+.mia-scope .tv-lift:hover { transform: translateY(-4px); box-shadow: 0 22px 44px rgba(2,52,88,.14); border-color: rgba(0,162,224,.28); }
+.mia-scope .tv-card-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: clamp(14px, 1.3vw, 22px);
+}
+.mia-scope .tv-card-grid > * { min-width: 0; }
+
+/* Primary pill (`in-pill`): the CTA gradient, a white disc carrying the arrow
+   at the start. */
+.mia-scope .tv-pill {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px;
+  padding-inline: 8px 22px; border: 0; border-radius: 999px;
+  background: linear-gradient(90deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%);
+  color: #fff; font-size: 14px; font-weight: 800; white-space: nowrap; text-decoration: none;
+  box-shadow: 0 10px 24px rgba(0,162,224,.36); transition: transform .2s ease, box-shadow .2s ease;
+}
+[dir="rtl"] .mia-scope .tv-pill,
+.mia-scope[dir="rtl"] .tv-pill { background: linear-gradient(270deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); }
+.mia-scope .tv-pill:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,162,224,.5); color: #fff; }
+.mia-scope .tv-pill > i {
+  display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; border-radius: 50%;
+  background: #fff; color: #0077b3; font-style: normal; font-size: 15px; line-height: 1;
+}
+/* Secondary pill on a dark surface. */
+.mia-scope .tv-ghost-dark {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 22px;
+  border-radius: 999px; border: 1.5px solid rgba(255,255,255,.45); background: transparent;
+  color: #fff; font-size: 14px; font-weight: 800; white-space: nowrap; text-decoration: none;
+  transition: background .2s ease, border-color .2s ease;
+}
+.mia-scope .tv-ghost-dark:hover { background: rgba(255,255,255,.08); border-color: #fff; color: #fff; }
+/* Secondary pill on a light surface (`in-ghost`). */
+.mia-scope .tv-ghost {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 20px;
+  border-radius: 999px; border: 1.5px solid #00a2e0; background: #fff;
+  color: #0077b3; font-size: 13.5px; font-weight: 800; white-space: nowrap; text-decoration: none;
+  transition: background .2s ease;
+}
+.mia-scope .tv-ghost:hover { background: #eaf6fd; color: #0077b3; }
+
+/* ── Projects catalogue ───────────────────────────────────────────────────── */
+.mia-scope .mia-projects-page { background: #f4f8fb; }
+.mia-scope .mia-projects-page .tvp-wrap,
+.mia-scope .mia-projects-page .tvp-hero-in {
+  width: min(1180px, calc(100% - clamp(32px, 5vw, 64px))); margin-inline: auto; min-width: 0;
+}
+
+/* Carousel card. */
+.mia-scope .mia-projects-page .mia-projects-hero { position: relative; padding: 26px 0 0 !important; margin: 0 !important; background: transparent !important; border: 0; }
+.mia-scope .mia-projects-page .tvp-hero-in { position: relative; }
+.mia-scope .tvp-stage {
+  position: relative; height: clamp(240px, 34vw, 520px); overflow: hidden;
+  border-radius: clamp(14px, 1.4vw, 24px); background: #031a36; box-shadow: 0 24px 50px rgba(2,52,88,.18);
+  touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab;
+}
+.mia-scope .tvp-stage:active { cursor: grabbing; }
+.mia-scope .tvp-stage:focus-visible { outline: 3px solid #00a2e0; outline-offset: 3px; }
+.mia-scope .tvp-slide { position: absolute; inset: 0; transition: opacity .5s ease; }
+.mia-scope .tvp-slide-img { position: absolute; inset: 0; display: block; background-size: cover; background-position: center; transform: scale(1.02); }
+.mia-scope .tvp-slide-shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(0deg, rgba(2,20,38,.86) 8%, rgba(2,20,38,.35) 45%, rgba(2,20,38,.08)); }
+.mia-scope .tvp-slide-info {
+  position: absolute; z-index: 1; bottom: clamp(22px, 3vw, 48px); inset-inline-start: clamp(20px, 3vw, 56px);
+  max-width: min(520px, 70%); display: flex; flex-direction: column; align-items: flex-start; gap: 14px; color: #fff;
+}
+.mia-scope .tvp-slide-info h2 { margin: 0; color: #fff; font-size: clamp(20px, 2.6vw, 40px); font-weight: 900; line-height: 1.25; text-wrap: pretty; }
+.mia-scope .tvp-slide-cta {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 clamp(20px, 2vw, 30px);
+  border-radius: 999px; background: linear-gradient(90deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%);
+  color: #fff; font-size: clamp(12.5px, 1vw, 14.5px); font-weight: 800; white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(0,162,224,.42); transition: transform .2s ease, box-shadow .2s ease;
+}
+[dir="rtl"] .mia-scope .tvp-slide-cta,
+.mia-scope[dir="rtl"] .tvp-slide-cta { background: linear-gradient(270deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); }
+.mia-scope .tvp-slide-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(0,162,224,.55); color: #fff; }
+
+/* Arrows: white discs inside the card's edges; on wide screens, in the margin
+   beside it as in the design. */
+.mia-scope .tvp-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 5;
+  width: clamp(40px, 3.2vw, 54px); height: clamp(40px, 3.2vw, 54px); display: grid; place-items: center;
+  border: 0; border-radius: 50%; background: rgba(255,255,255,.94); color: #062442; cursor: pointer;
+  box-shadow: 0 10px 24px rgba(2,52,88,.24); transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+.mia-scope .tvp-arrow:hover { background: #00a2e0; color: #fff; transform: translateY(-50%) scale(1.06); }
+.mia-scope .tvp-arrow--prev { inset-inline-start: 14px; }
+.mia-scope .tvp-arrow--next { inset-inline-end: 14px; }
+@media (min-width: 1320px) {
+  .mia-scope .tvp-arrow--prev { inset-inline-start: calc(-1 * (clamp(40px, 3.2vw, 54px) + 30px)); }
+  .mia-scope .tvp-arrow--next { inset-inline-end: calc(-1 * (clamp(40px, 3.2vw, 54px) + 30px)); }
+}
+.mia-scope .tvp-dots { display: flex; justify-content: center; gap: 8px; margin-top: 18px; }
+.mia-scope .tvp-dots > button {
+  position: relative; width: 9px; height: 9px; padding: 0; border: 0; border-radius: 999px;
+  background: #d3e3ec; cursor: pointer; transition: background .25s ease, width .25s ease;
+}
+/* A 9px dot with a 25px hit area. */
+.mia-scope .tvp-dots > button::after { content: ""; position: absolute; inset: -8px -4px; }
+.mia-scope .tvp-dots > button[data-dot="1"] { width: 26px; background: #00a2e0; }
+
+/* Filter pill bar: one white pill holding the chips, scrolling sideways once
+   it no longer fits. */
+.mia-scope .mia-projects-page #project-filters-section { position: relative; padding: 26px 0 0 !important; background: transparent; overflow: visible; }
+.mia-scope .mia-projects-page #project-filters-section > div { padding: 0 !important; gap: 0 !important; }
+.mia-scope .mia-projects-page .proj-filters-wrap { margin-inline: 0 !important; min-width: 0; }
+.mia-scope .mia-projects-page .proj-filters-wrap::after { display: none !important; }
+.mia-scope .tvp-filters {
+  display: flex; flex-wrap: nowrap; gap: 6px; padding: 6px; width: fit-content; max-width: 100%;
+  background: #fff; border: 1px solid #e6eef3; border-radius: 999px; box-shadow: 0 6px 18px rgba(2,52,88,.06);
+  overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity; animation: tvp-fade-up .5s cubic-bezier(.22,.61,.36,1) both;
+}
+.mia-scope .tvp-filters::-webkit-scrollbar { display: none; }
+.mia-scope .tvp-chip {
+  flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px;
+  border: 0; border-radius: 999px; background: transparent; color: #5d7187; cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 700; white-space: nowrap; text-decoration: none;
+  scroll-snap-align: start; transition: background .2s ease, color .2s ease;
+}
+.mia-scope .tvp-chip:hover { background: #f2f7fa; color: #062442; }
+.mia-scope .tvp-chip:focus-visible { outline: 2px solid #00a2e0; outline-offset: -2px; }
+.mia-scope .tvp-chip[data-cat="1"] { background: #0077b3; color: #fff; box-shadow: 0 6px 14px -6px rgba(0,119,179,.55); }
+.mia-scope .tvp-chip-ico { display: inline-flex; width: 15px; height: 15px; flex: 0 0 15px; }
+@keyframes tvp-fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mia-scope .tvp-filters { animation: none; } }
+
+/* Card grid. */
+.mia-scope .mia-projects-page #all { position: relative; padding: 30px 0 50px !important; background: transparent; overflow: visible !important; }
+.mia-scope .mia-projects-page #all > div { padding-inline: 0 !important; }
+.mia-scope .tvp-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: clamp(14px, 1.3vw, 22px);
+}
+.mia-scope .tvp-grid > * { min-width: 0; max-width: 100%; }
+.mia-scope .tvp-more {
+  min-height: 48px; padding: 0 30px; border-radius: 999px; border: 1.5px solid #e2eaf0; background: #fff;
+  color: #062442; font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 6px 18px rgba(2,52,88,.06); transition: border-color .2s ease, color .2s ease, transform .2s ease;
+}
+.mia-scope .tvp-more:hover { border-color: #00a2e0; color: #0077b3; transform: translateY(-2px); }
+
+@media (max-width: 760px) {
+  .mia-scope .mia-projects-page .mia-projects-hero { padding-top: 16px !important; }
+  .mia-scope .tvp-stage { height: 260px; }
+  .mia-scope .tvp-arrow { width: 36px; height: 36px; }
+  .mia-scope .tvp-arrow--prev { inset-inline-start: 10px; }
+  .mia-scope .tvp-arrow--next { inset-inline-end: 10px; }
+  .mia-scope .tvp-slide-info { inset-inline-start: 18px; bottom: 18px; max-width: calc(100% - 36px); }
+  .mia-scope .tvp-slide-info h2 { font-size: 19px; }
+  .mia-scope .mia-projects-page #project-filters-section { padding-top: 20px !important; }
+  .mia-scope .tvp-filters {
+    width: 100%; padding: 5px; gap: 4px;
+    /* Fade only the far (inline-end) edge, so the first chip stays crisp. */
+    -webkit-mask-image: linear-gradient(270deg, #000 calc(100% - 22px), transparent);
+    mask-image: linear-gradient(270deg, #000 calc(100% - 22px), transparent);
+  }
+  [dir="ltr"] .mia-scope .tvp-filters,
+  .mia-scope[dir="ltr"] .tvp-filters {
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent);
+    mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent);
+  }
+  .mia-scope .tvp-chip { padding: 0 16px; font-size: 12.5px; }
+  .mia-scope .mia-projects-page #all { padding: 20px 0 calc(32px + env(safe-area-inset-bottom, 0px)) !important; }
+}
+@media (max-width: 420px) {
+  .mia-scope .tvp-stage { height: 220px; }
+  /* The arrows would sit on the title; swipe and the dots remain. */
+  .mia-scope .tvp-arrow { display: none; }
+}
+
+/* ── Programme page (super category) ──────────────────────────────────────── */
+.mia-scope .tvsc-page { background: #f4f8fb; padding-bottom: 64px; }
+.mia-scope .tvsc-hero {
+  position: relative; isolation: isolate; overflow: hidden; min-height: 520px; box-sizing: border-box;
+  display: flex; align-items: center; padding: 72px 0 96px; color: #fff;
+}
+.mia-scope .tvsc-hero-img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center 32%; }
+.mia-scope .tvsc-hero-fade {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    linear-gradient(270deg, rgba(3,26,54,.94) 0%, rgba(3,26,54,.82) 38%, rgba(3,26,54,.35) 68%, rgba(3,26,54,.1) 100%),
+    linear-gradient(0deg, rgba(3,26,54,.55), rgba(3,26,54,0) 40%);
+}
+[dir="ltr"] .mia-scope .tvsc-hero-fade,
+.mia-scope[dir="ltr"] .tvsc-hero-fade {
+  background:
+    linear-gradient(90deg, rgba(3,26,54,.94) 0%, rgba(3,26,54,.82) 38%, rgba(3,26,54,.35) 68%, rgba(3,26,54,.1) 100%),
+    linear-gradient(0deg, rgba(3,26,54,.55), rgba(3,26,54,0) 40%);
+}
+/* The design's wave: the page background rising into the hero. */
+.mia-scope .tvsc-hero::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: -1px; height: 60px; z-index: 0; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath fill='%23f4f8fb' d='M0 60V30C200 6 400 50 640 28s520-28 800-6v38Z'/%3E%3C/svg%3E") bottom / 100% 100% no-repeat;
+}
+.mia-scope .tvsc-logo {
+  position: absolute; z-index: 2; top: 22px; inset-inline-end: 24px; display: grid; place-items: center;
+  width: min(40vw, 216px); padding: 6px 10px; border-radius: 14px; background: rgba(255,255,255,.95);
+  box-shadow: 0 14px 34px rgba(3,26,54,.3);
+}
+.mia-scope .tvsc-page .ib-hero.tvsc-hero-in {
+  position: relative; z-index: 1; width: min(1240px, calc(100% - 40px)); margin-inline: auto; padding: 0 !important;
+  display: grid; gap: 44px; align-items: center;
+}
+.mia-scope .tvsc-page .tvsc-hero-in > .tvsc-hero-copy {
+  display: grid; gap: 14px; justify-items: start; max-width: 600px; padding: 0 !important; color: #fff;
+}
+.mia-scope .tvsc-hero-copy h1 { margin: 0; color: #fff; font-size: clamp(38px, 5vw, 60px); line-height: 1.1; font-weight: 900; letter-spacing: -.8px; }
+.mia-scope .tvsc-hero-sub { margin: 0; color: #7fd6f5; font-size: clamp(20px, 2.4vw, 28px); line-height: 1.45; font-weight: 800; }
+.mia-scope .tvsc-hero-verse { margin: 0; max-width: 48ch; color: #cfe3f1; font-size: clamp(17px, 1.9vw, 23px); line-height: 1.95; font-weight: 700; }
+.mia-scope .tvsc-hero-trans { margin: 0; max-width: 52ch; color: #dbe9f3; font-size: 14.5px; line-height: 1.85; }
+.mia-scope .tvsc-hero-attr { display: inline-flex; align-items: center; gap: 8px; color: #b9d3e6; font-size: 11.5px; font-weight: 700; }
+.mia-scope .tvsc-hero-attr > span { width: 20px; height: 1px; background: rgba(207,227,241,.5); }
+.mia-scope .tvsc-hero-lead { margin: 0; max-width: 56ch; color: #dbe9f3; font-size: 15.5px; line-height: 1.85; }
+.mia-scope .tvsc-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; max-width: 100%; }
+.mia-scope .tvsc-hero-film {
+  position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 18px;
+  background: #062442; border: 1px solid rgba(255,255,255,.22); box-shadow: 0 24px 60px rgba(3,26,54,.45);
+}
+/* Free text panel. */
+.mia-scope .tvsc-text {
+  position: relative; max-width: 900px; margin: 0 auto; padding: 26px 28px; display: grid; gap: 10px;
+  border-inline-start: 4px solid #00a2e0;
+}
+/* The playlist band sits on white, as the design's linked-projects band. */
+.mia-scope .tvsc-band { margin-top: 44px; padding: 50px 0 56px; background: #fff; }
+@media (max-width: 900px) {
+  .mia-scope .tvsc-page .ib-hero.tvsc-hero-in { gap: 26px; }
+}
+@media (max-width: 760px) {
+  .mia-scope .tvsc-hero { min-height: 0; align-items: flex-start; padding: 48px 0 100px; }
+  .mia-scope .tvsc-page .tvsc-hero-in > .tvsc-hero-copy { justify-items: stretch; }
+  .mia-scope .tvsc-hero-attr { justify-self: start; }
+  .mia-scope .tvsc-hero:has(.tvsc-logo) { padding-top: 104px; }
+  .mia-scope .tvsc-hero-fade,
+  [dir="ltr"] .mia-scope .tvsc-hero-fade,
+  .mia-scope[dir="ltr"] .tvsc-hero-fade { background: linear-gradient(0deg, rgba(3,26,54,.95) 0%, rgba(3,26,54,.8) 55%, rgba(3,26,54,.45) 100%); }
+  .mia-scope .tvsc-page .ib-hero.tvsc-hero-in { width: calc(100% - 32px); }
+  .mia-scope .tvsc-hero-copy h1 { font-size: 36px; }
+  .mia-scope .tvsc-hero-sub { font-size: 20px; }
+  .mia-scope .tvsc-hero-lead { font-size: 14.5px; }
+  .mia-scope .tvsc-ctas > a { flex: 1 1 100%; justify-content: center; }
+  .mia-scope .tvsc-text { padding: 22px 20px; }
+}
+
+/* ── Category (programme) landing page ────────────────────────────────────── */
+.mia-scope .tvc-page { background: #f4f8fb; }
+.mia-scope .tvc-page .tvc-wrap,
+.mia-scope .tvc-page .cat-hero.tvc-hero-in {
+  width: min(1180px, calc(100% - clamp(32px, 5vw, 64px))); margin-inline: auto; min-width: 0;
+}
+/* minbar.css pads every `.cat-page section > div` on phones; the width above
+   already carries the gutter. */
+.mia-scope .tvc-page section > div { padding-inline: 0 !important; }
+
+.mia-scope .tvc-hero {
+  position: relative; isolation: isolate; overflow: hidden; min-height: 452px; box-sizing: border-box;
+  display: flex; align-items: flex-end; padding: 60px 0 34px; background: #031a36; color: #fff;
+}
+.mia-scope .tvc-hero-img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; }
+.mia-scope .tvc-hero-fade {
+  position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(0deg, rgba(2,20,38,.88) 0%, rgba(2,20,38,.5) 48%, rgba(2,20,38,.15) 100%);
+}
+.mia-scope .tvc-page .cat-hero.tvc-hero-in {
+  position: relative; z-index: 1; padding: 0 !important; display: grid; gap: 40px !important; align-items: end;
+}
+.mia-scope .tvc-page .cat-hero-box.tvc-hero-copy {
+  display: grid; gap: 14px; justify-items: start; justify-self: start; padding: 0 !important;
+  background: none; border-radius: 0; color: #fff;
+}
+.mia-scope .tvc-hero-copy h1 { margin: 0; color: #fff; font-size: clamp(28px, 3.4vw, 44px); line-height: 1.2; font-weight: 900; letter-spacing: -.5px; }
+.mia-scope .tvc-hero-copy p { margin: 0; max-width: 58ch; color: #dbe9f3; font-size: 15.5px; line-height: 1.85; }
+.mia-scope .tvc-hero-ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+
+.mia-scope .tvc-stats-wrap { padding-top: 30px; }
+.mia-scope .tvc-sec { padding: 56px 0; }
+.mia-scope .tvc-sec--white { background: #fff; }
+.mia-scope .tvc-stats-wrap + .tvc-sec { padding-top: 30px; }
+.mia-scope .tvc-sec:not(.tvc-sec--white) + .tvc-sec:not(.tvc-sec--white) { padding-top: 0; }
+.mia-scope .tvc-sec--last { padding-bottom: 64px; }
+.mia-scope .tvc-center { text-align: center; }
+
+/* "Be part of this programme": the donation box on the dark band. */
+.mia-scope .tvc-cta {
+  position: relative; overflow: hidden; padding: 60px 0;
+  background: linear-gradient(120deg, #021428 0%, #082b50 60%, #04172e 100%);
+}
+.mia-scope .tvc-cta::before {
+  content: ""; position: absolute; width: 420px; height: 420px; border-radius: 50%; pointer-events: none;
+  top: -180px; inset-inline-end: -120px; background: radial-gradient(circle, rgba(39,184,242,.22), transparent 70%);
+}
+.mia-scope .tvc-page .tvc-wrap.tvc-cta-in { position: relative; width: min(920px, calc(100% - 32px)); }
+.mia-scope .tvc-cta-in > div > div:first-child { flex-direction: column; align-items: center !important; text-align: center; gap: 6px !important; }
+.mia-scope .tvc-cta .cat-donate-title { color: #fff; }
+.mia-scope .tvc-cta .cat-donate-note { color: #b9d3e6 !important; }
+
+@media (max-width: 900px) {
+  .mia-scope .tvc-page .cat-hero.tvc-hero-in { grid-template-columns: minmax(0, 1fr) !important; gap: 22px !important; }
+  .mia-scope .tvc-page .cat-hero-box.tvc-hero-copy { justify-self: stretch; }
+  .mia-scope .tvc-page #category-projects { padding-block: 40px !important; }
+  .mia-scope .tvc-page #category-donate { padding-block: 44px !important; }
+}
+@media (max-width: 760px) {
+  .mia-scope .tvc-hero { min-height: 360px; padding: 40px 0 26px; }
+  .mia-scope .tvc-hero-copy p { font-size: 14.5px; }
+  .mia-scope .tvc-sec { padding: 40px 0; }
+  .mia-scope .tvc-stats-wrap + .tvc-sec { padding-top: 24px; }
+  .mia-scope .tvc-cta::before { display: none; }
+}
+@media (max-width: 640px) {
+  /* minbar.css shrinks the old hero buttons to fit one row; the pills share it. */
+  .mia-scope .tvc-page .cat-hero-box > div > a.tv-pill { padding-inline: 6px 14px !important; }
+  .mia-scope .tvc-page .cat-hero-box > div > a.tv-pill > i { flex-basis: 28px; width: 28px; height: 28px; }
+}

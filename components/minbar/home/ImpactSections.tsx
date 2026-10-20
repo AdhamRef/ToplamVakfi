@@ -29,34 +29,27 @@ export function PathSection() {
     text: t(`pathStep${n}Text`),
   }));
 
+  /* The Toplum design's «لماذا تثق بنا» panel: one white sheet, the heading
+     with its pill link, and a numbered card per step. */
   return (
-    <section id="path" style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(234,243,249,.11), rgba(234,243,249,.36))", padding: "48px 0", overflow: "hidden" }}>
-      <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-        <div style={{ display: "flex", alignItems: "end", justifyContent: "space-between", gap: 20, flexWrap: "wrap", marginBottom: 22 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{t("howItWorksTitle")}</h2>
-          <ViewAllLink href={miaPath("reports", locale)}>{t("viewReports")}</ViewAllLink>
-        </div>
-        <div id="path-steps" style={{ display: "grid", gridTemplateColumns: "repeat(5,minmax(0,1fr))" }}>
-          {steps.map((step, i) => (
-            <div
-              key={step.title}
-              style={{
-                display: "grid",
-                gap: 12,
-                alignContent: "start",
-                padding: "8px 26px 8px 0",
-                background: "transparent",
-                borderInlineEnd: i === steps.length - 1 ? "0" : "1px solid var(--border)",
-              }}
-            >
-              <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                <span style={{ fontSize: 34, fontWeight: 900, color: "var(--gold-2)", lineHeight: 1.15 }}>{step.num}</span>
-                <span style={{ flex: "1 1 auto", height: 1, background: "var(--border)" }} />
-              </span>
-              <b style={{ fontSize: 20, lineHeight: 1.35 }}>{step.title}</b>
-              <span style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.8, maxWidth: "26ch" }}>{step.text}</span>
-            </div>
-          ))}
+    <section id="path" className="tv-sec" style={{ position: "relative", zIndex: 1 }}>
+      <div className="tv-wrap">
+        <div className="tv-panel">
+          <div className="tv-sec-head">
+            <h2 className="tv-h2">{t("howItWorksTitle")}</h2>
+            <ViewAllLink href={miaPath("reports", locale)} variant="pill">{t("viewReports")}</ViewAllLink>
+          </div>
+          <div id="path-steps" className="tv-steps">
+            {steps.map((step) => (
+              <div key={step.title} className="tv-step">
+                <span className="tv-step-head">
+                  <i className="tv-step-num">{step.num}</i>
+                  <b>{step.title}</b>
+                </span>
+                <span className="tv-step-text">{step.text}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -66,7 +59,11 @@ export function PathSection() {
 /* ── Impact figures ─────────────────────────────────────────────────────────
  * The official totals from the foundation's achievements record; the labels come
  * from the translated `achievements` bundle. Figures are rendered `dir="ltr"`
- * and isolated so bidi cannot reorder a grouped number. */
+ * and isolated so bidi cannot reorder a grouped number.
+ *
+ * Laid out as the Toplum design's figures strip (`.hs-stats`): an icon chip,
+ * the figure and its label per column between hairlines, then the sectors as
+ * small white cards. The icons are decoration only. */
 const SECTORS = [
   { key: "secWaqf", projects: 37, beneficiaries: 436_529 },
   { key: "secHoly", projects: 201, beneficiaries: 1_208_675 },
@@ -76,6 +73,15 @@ const SECTORS = [
   { key: "secHealth", projects: 27, beneficiaries: 309_732 },
 ] as const;
 
+const METRIC_ICONS = [
+  /* services: a heart in an open hand */
+  "M12 13.5s-3.6-2.2-4.6-4.4C6.7 7.6 7.6 6 9.2 6c1 0 1.7.5 2 1.1h1.6C13.1 6.5 13.8 6 14.8 6c1.6 0 2.5 1.6 1.8 3.1-1 2.2-4.6 4.4-4.6 4.4ZM3.5 15.5l3.2-.9c.9-.2 1.8 0 2.5.5l2.3 1.6h3.3a1.2 1.2 0 0 1 0 2.4h-4.3M3.5 20.5l2.8-.8c.6-.2 1.3-.1 1.9.2l2.4 1.1c.7.3 1.5.4 2.2.1l6.9-3.1a1.3 1.3 0 0 0-1-2.4l-3.4 1.2",
+  /* projects: a building */
+  "M12 3v2.5M8 10a4 4 0 0 1 8 0M5 20V12h14v8M9.5 20v-4a2.5 2.5 0 0 1 5 0v4M3.5 20h17",
+  /* sectors: the globe */
+  "M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17ZM3.5 12h17M12 3.5c2.4 2.4 3.5 5.4 3.5 8.5s-1.1 6.1-3.5 8.5c-2.4-2.4-3.5-5.4-3.5-8.5S9.6 5.9 12 3.5Z",
+];
+
 export function ImpactSection() {
   const locale = useLocale();
   const t = useTranslations("homepage");
@@ -83,57 +89,45 @@ export function ImpactSection() {
   const { formatNumber } = useMinbarMoney();
 
   const metrics = [
-    { value: formatNumber(3_026_088), label: tAch("bigServices"), note: tAch("noteServices"), color: "var(--deep)", featured: true },
-    { value: formatNumber(936), label: tAch("bigProjects"), note: tAch("yearsTitle"), color: "var(--gold-2)", featured: false },
+    { value: formatNumber(3_026_088), label: tAch("bigServices"), note: tAch("noteServices"), featured: true },
+    { value: formatNumber(936), label: tAch("bigProjects"), note: tAch("yearsTitle"), featured: false },
     {
       value: formatNumber(6),
       label: tAch("sectorsLabel"),
       note: SECTORS.map((s) => tAch(s.key)).join(" · "),
-      color: "var(--deep)",
       featured: false,
     },
   ];
 
   return (
-    <section id="stats" className="mia-impact-section" style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(234,243,249,.16), rgba(234,243,249,.46))", padding: "48px 0", borderTop: "1px solid var(--border)", overflow: "hidden" }}>
-      <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-        <div style={{ display: "flex", alignItems: "end", justifyContent: "space-between", gap: 24, flexWrap: "wrap", marginBottom: 22 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{t("ourImpact")}</h2>
+    <section id="stats" className="mia-impact-section tv-sec" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
+      <div className="tv-wrap">
+        <div className="tv-sec-head">
+          <h2 className="tv-h2">{t("ourImpact")}</h2>
           <ViewAllLink href={miaPath("reports", locale)}>{t("reportsPage")}</ViewAllLink>
         </div>
 
-        <div id="impact-metrics" className="mia-impact-summary" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", borderTop: "1px solid var(--border)" }}>
+        <div id="impact-metrics" className="mia-impact-summary tv-stats">
           {metrics.map((metric, i) => (
-            <div
-              key={metric.label}
-              className={metric.featured ? "mia-impact-stat mia-impact-stat--featured" : "mia-impact-stat"}
-              style={{
-                display: "grid",
-                gap: 10,
-                padding: "34px 28px 34px 0",
-                alignContent: "start",
-                justifyItems: "start",
-                borderInlineEnd: i === metrics.length - 1 ? "0" : "1px solid var(--border)",
-              }}
-            >
-              <b dir="ltr" style={{ justifySelf: "start", fontSize: "clamp(34px,3.4vw,48px)", lineHeight: 1.1, fontWeight: 900, letterSpacing: "-.02em", unicodeBidi: "isolate", color: metric.color }}>
-                {metric.value}
-              </b>
-              <span style={{ color: "var(--deep)", fontSize: 15, fontWeight: 800, lineHeight: 1.5 }}>{metric.label}</span>
-              <span style={{ color: "var(--muted)", fontSize: 12.5, lineHeight: 1.6 }}>{metric.note}</span>
+            <div key={metric.label} className={metric.featured ? "mia-impact-stat mia-impact-stat--featured tv-stat" : "mia-impact-stat tv-stat"}>
+              <i className="tv-stat-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={METRIC_ICONS[i]} />
+                </svg>
+              </i>
+              <b dir="ltr" className="tv-stat-value">{metric.value}</b>
+              <span className="tv-stat-label">{metric.label}</span>
+              <span className="tv-stat-note">{metric.note}</span>
             </div>
           ))}
         </div>
 
-        <div id="sector-metrics" className="mia-impact-sectors" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(170px,1fr))", gap: 14, marginTop: 34 }}>
+        <div id="sector-metrics" className="mia-impact-sectors tv-sectors">
           {SECTORS.map((sector) => (
-            <div key={sector.key} className="mia-impact-sector" style={{ display: "grid", gap: 5, alignContent: "start", padding: "18px 20px", background: "#fff", border: "1px solid var(--border)", borderRadius: 8, boxShadow: "0 10px 30px rgba(6,36,66,.06)" }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 900, color: "#0077b3" }}>
-                <span aria-hidden="true" style={{ flex: "0 0 auto", width: 5, height: 5, background: "var(--gold)", transform: "rotate(45deg)" }} />
-                {tAch(sector.key)}
-              </span>
+            <div key={sector.key} className="mia-impact-sector tv-sector">
+              <span className="tv-sector-name">{tAch(sector.key)}</span>
               <span style={{ display: "flex", alignItems: "baseline", gap: 6, flexWrap: "wrap" }}>
-                <b className="mia-impact-sector-value" dir="ltr" style={{ fontSize: "clamp(22px,2vw,30px)", lineHeight: 1.15, fontWeight: 900, letterSpacing: "-.02em", color: "var(--deep)", unicodeBidi: "isolate" }}>
+                <b className="mia-impact-sector-value tv-sector-value" dir="ltr">
                   {formatNumber(sector.beneficiaries)}
                 </b>
                 <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{tAch("unitBeneficiaries")}</span>
@@ -164,14 +158,14 @@ export function UrgentProjectsSection({ projects }: { projects: MinbarProject[] 
   if (!projects.length) return null;
 
   return (
-    <section id="urgent" style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(234,243,249,.20), rgba(234,243,249,.50))", borderBottom: "1px solid var(--border)", padding: "44px 0 36px", overflow: "hidden" }}>
+    <section id="urgent" className="tv-sec tv-sec--urgent" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
       <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
         <Rail
           id="urgent-rail"
           step={348}
           prevLabel={tCommon("prev")}
           nextLabel={tCommon("next")}
-          heading={<h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{t("urgentProjects")}</h2>}
+          heading={<h2 className="tv-h2">{t("urgentProjects")}</h2>}
           action={<ViewAllLink href={miaPath("projects", locale)}>{tProjects("allProjects")}</ViewAllLink>}
         >
           {projects.map((project) => (
@@ -197,8 +191,8 @@ export function RegionCards({ images }: { images: { quds: string; aqsa: string; 
       href: miaPath("projects", locale),
       image: images.quds,
       overlay: "linear-gradient(-90deg, rgba(6,36,66,.9) 8%, rgba(6,36,66,.45) 70%, rgba(6,36,66,.25))",
-      ctaBackground: "var(--gold)",
-      ctaColor: "var(--deep)",
+      ctaBackground: "var(--cta-gradient)",
+      ctaColor: "#fff",
     },
     {
       title: t("aqsaProjectsTitle"),
@@ -207,7 +201,7 @@ export function RegionCards({ images }: { images: { quds: string; aqsa: string; 
       href: miaPath("aqsa", locale),
       image: images.aqsa,
       overlay: "linear-gradient(-90deg, rgba(6,36,66,.9) 8%, rgba(6,36,66,.45) 70%, rgba(6,36,66,.25))",
-      ctaBackground: "var(--deep)",
+      ctaBackground: "var(--cta-gradient)",
       ctaColor: "#fff",
     },
     {
@@ -217,25 +211,25 @@ export function RegionCards({ images }: { images: { quds: string; aqsa: string; 
       href: miaPath("projects", locale),
       image: images.relief,
       overlay: "linear-gradient(-90deg, rgba(8,44,80,.92) 8%, rgba(8,44,80,.5) 70%, rgba(6,36,66,.3))",
-      ctaBackground: "var(--red)",
+      ctaBackground: "var(--cta-gradient)",
       ctaColor: "#fff",
     },
   ];
 
   return (
-    <section id="regions-section" className="mia-regions-section" style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(234,243,249,.36), rgba(234,243,249,.64))", padding: "48px 0 0" }}>
+    <section id="regions-section" className="mia-regions-section tv-sec" style={{ position: "relative", zIndex: 1 }}>
       <div id="regions" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 18 }}>
         {cards.map((card) => (
           /* The card is a column the full height of the row: title and copy at
              the top, the button pinned to the foot  so the three buttons sit
              on one line however long each card's copy runs. */
-          <Link key={card.title} href={card.href} className="mia-region-card" style={{ position: "relative", display: "flex", flexDirection: "column", minHeight: 260, overflow: "hidden", background: "var(--deep)", borderRadius: 14, boxShadow: "0 12px 28px rgba(6,36,66,.12)" }}>
+          <Link key={card.title} href={card.href} className="mia-region-card" style={{ position: "relative", display: "flex", flexDirection: "column", minHeight: 260, overflow: "hidden", background: "var(--deep)", borderRadius: 16, boxShadow: "0 12px 28px rgba(2,52,88,.12)" }}>
             <span role="img" aria-label={card.title} style={{ position: "absolute", inset: 0, display: "block", backgroundImage: cssImage(card.image, 420), backgroundSize: "cover", backgroundPosition: "center" }} />
             <span style={{ position: "absolute", inset: 0, background: card.overlay }} />
             <span className="mia-region-card__body" style={{ position: "relative", flex: "1 1 auto", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 12, padding: 32 }}>
               <b style={{ color: "#fff", fontSize: "clamp(24px,2.4vw,32px)", fontWeight: 900, lineHeight: 1.25 }}>{card.title}</b>
               <span style={{ color: "rgba(255,255,255,.82)", fontSize: 15, lineHeight: 1.8, maxWidth: "44ch" }}>{card.text}</span>
-              <span className="mia-region-card__cta" style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 46, padding: "0 20px", marginTop: "auto", background: card.ctaBackground, color: card.ctaColor, fontWeight: 800, fontSize: 15, borderRadius: 8 }}>
+              <span className="mia-region-card__cta" style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 46, padding: "0 20px", marginTop: "auto", background: card.ctaBackground, color: card.ctaColor, fontWeight: 800, fontSize: 15, borderRadius: 999, boxShadow: "0 10px 24px rgba(0,162,224,.35)" }}>
                 {card.cta}
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="mia-arrow-next">
                   <path d="M14 6l-6 6 6 6" />

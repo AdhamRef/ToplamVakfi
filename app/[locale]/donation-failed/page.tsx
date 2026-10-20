@@ -256,51 +256,62 @@ export default function DonationFailedPage() {
   const Arrow = isRtl ? ArrowLeft : ArrowRight;
 
   return (
-    <main className="min-h-screen bg-gray-50" dir={isRtl ? "rtl" : "ltr"}>
+    /* Toplum Vakfı payment error (`Payment Error.dc.html`): the page
+       background, one white card with the error glyph in a pale red disc, the
+       explanation and the way on; every block below is a white card in the
+       same language. */
+    <main className="min-h-screen bg-[#f4f8fb]" dir={isRtl ? "rtl" : "ltr"}>
       <Toaster position="top-center" />
 
       {/* ───────────────────────────── Hero ───────────────────────────────── */}
-      <section className="bg-gradient-to-br from-rose-600 via-rose-600 to-rose-700">
-        <div className="max-w-3xl mx-auto px-4 py-12 sm:py-14 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-white/15 border border-white/30 mb-5 shadow-lg shadow-rose-900/20">
-            <AlertCircle className="w-8 h-8 text-white" strokeWidth={2.25} />
+      <section className="px-4 pt-8 sm:pt-10">
+        <div className="max-w-3xl mx-auto rounded-[18px] border border-[#e6eef3] bg-white px-5 py-8 sm:p-[34px] text-center shadow-[0_16px_34px_rgba(2,52,88,.08)]">
+          <div className="inline-flex items-center justify-center w-[68px] h-[68px] rounded-full bg-[#fdeaea] text-[#d64545] mb-[18px]">
+            <AlertCircle className="w-8 h-8" strokeWidth={2} />
           </div>
-          <Badge className="bg-white/15 hover:bg-white/20 border-white/30 text-white/95 backdrop-blur-sm font-semibold uppercase tracking-wider text-[11px] mb-4">
-            {t("badge")}
-          </Badge>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight mb-3">
+          <div>
+            <Badge className="rounded-full border-transparent bg-[#fdeaea] hover:bg-[#fdeaea] text-[#b3391f] font-extrabold text-[12px] px-3 py-1 mb-3">
+              {t("badge")}
+            </Badge>
+          </div>
+          <h1 className="text-[21px] sm:text-[24px] font-extrabold text-[#062442] leading-snug mb-2.5">
             {t("title")}
           </h1>
-          <p className="text-white/85 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+          <p className="text-[#5d7187] text-[13.5px] sm:text-[14.5px] max-w-xl mx-auto leading-[1.85]">
             {t("description")}
           </p>
-          <p className="mt-3 text-white/70 text-xs sm:text-sm">{t("reassurance")}</p>
-          <a
-            href="#donate-again"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-[#A5243D] shadow-lg shadow-rose-900/25 transition-transform hover:-translate-y-0.5"
-          >
-            <ShieldCheck className="w-4 h-4" />
-            {t("alternate.cta")}
-          </a>
+          <p className="mt-2 inline-flex items-center justify-center gap-1.5 text-[#5d7187] text-[12.5px] font-bold">
+            <ShieldCheck className="w-4 h-4 text-[#00a2e0] shrink-0" />
+            {t("reassurance")}
+          </p>
+          <div>
+            <a
+              href="#donate-again"
+              className="mt-6 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-[linear-gradient(90deg,#1b6fe0_0%,#1ca3ec_72%,#27b8f2_100%)] px-7 text-sm font-extrabold text-white shadow-[0_8px_20px_rgba(0,162,224,.3)] transition-transform hover:-translate-y-0.5"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              {t("alternate.cta")}
+            </a>
+          </div>
         </div>
       </section>
 
-      <div className="max-w-3xl mx-auto px-4 py-8 sm:py-10 space-y-6 sm:space-y-8">
+      <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8 space-y-5 sm:space-y-6">
         {/* ───────────── Donate again: hosted card form ──────────────────── */}
         {/* A separate, hosted payment page that does not depend on the card
             rails that just failed  the first thing a donor sees, so trying
             again is one step, not a hunt through the advice below. */}
         <section
           id="donate-again"
-          className="scroll-mt-6 rounded-2xl border-2 border-[#A5243D]/30 bg-white shadow-xl shadow-[#A5243D]/10 ring-4 ring-[#A5243D]/5 overflow-hidden"
+          className="scroll-mt-28 rounded-[18px] border border-[#e6eef3] bg-white shadow-[0_12px_30px_rgba(2,52,88,.07)] overflow-hidden"
         >
-          <div className="bg-gradient-to-br from-[#A5243D] to-[#7D1830] px-5 py-4 sm:px-7 sm:py-5 text-white">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 border border-white/25 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider">
+          <div className="bg-[linear-gradient(120deg,#021428_0%,#082b50_60%,#04172e_100%)] px-5 py-5 sm:px-7 sm:py-6 text-white">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#00a2e0] px-3 py-0.5 text-[12px] font-extrabold text-[#031a36]">
               <ShieldCheck className="w-3.5 h-3.5" />
               {t("alternate.badge")}
             </span>
-            <h2 className="mt-2 text-xl sm:text-2xl font-extrabold leading-tight">{t("alternate.title")}</h2>
-            <p className="mt-1 text-sm text-white/85 leading-relaxed">{t("alternate.description")}</p>
+            <h2 className="mt-2.5 text-xl sm:text-2xl font-extrabold leading-tight">{t("alternate.title")}</h2>
+            <p className="mt-1 text-sm text-[#b9d3e6] leading-relaxed">{t("alternate.description")}</p>
           </div>
           <iframe
             src="https://charitygiving.net/iframe/eyJpdiI6IkxubFNEQnNnbU50R2V4dG5TeHg0dVE9PSIsInZhbHVlIjoiVkkwYkdUcnpwRHFsczd4dkRLY0Z2QT09IiwibWFjIjoiYjI5NTU5ZGZmZjdhMjllNTgwMzk2NTlhNTdlYzY3MjQwYWNiMjM1MzFmNjMxYjA1NTBmZGI4MDIxYTM4ODRjMyIsInRhZyI6IiJ9"
@@ -313,8 +324,8 @@ export default function DonationFailedPage() {
 
         {/* ───────────── Loading skeleton (waiting on donation fetch) ─────── */}
         {loading && (
-          <Card className="p-6 flex items-center justify-center gap-3 text-gray-500">
-            <Loader2 className="w-5 h-5 animate-spin" />
+          <Card className="p-6 flex items-center justify-center gap-3 rounded-2xl border-[#e6eef3] bg-white text-[#5d7187] shadow-[0_12px_28px_rgba(2,52,88,.07)]">
+            <Loader2 className="w-5 h-5 animate-spin text-[#00a2e0]" />
             <span className="text-sm">{t("loading")}</span>
           </Card>
         )}
@@ -322,32 +333,30 @@ export default function DonationFailedPage() {
         {/* ───────────── Error explanation card ──────────────────────────── */}
         {!loading && (
           <Card
-            className={`p-5 sm:p-7 border-2 ${
-              isHard
-                ? "border-rose-200 bg-rose-50/50"
-                : "border-amber-200 bg-amber-50/50"
+            className={`p-5 sm:p-7 rounded-2xl border bg-white shadow-[0_12px_28px_rgba(2,52,88,.07)] ${
+              isHard ? "border-[#f3d2cc]" : "border-amber-200"
             }`}
           >
             <div className="flex items-start gap-4">
               <div
-                className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${
-                  isHard ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700"
+                className={`shrink-0 w-12 h-12 rounded-full flex items-center justify-center ${
+                  isHard ? "bg-[#fdeaea] text-[#d64545]" : "bg-amber-100 text-amber-700"
                 }`}
               >
                 <ErrorIcon className="w-6 h-6" />
               </div>
               <div className="min-w-0 flex-1">
                 <p
-                  className={`text-[11px] uppercase tracking-wider font-bold mb-1 ${
-                    isHard ? "text-rose-700" : "text-amber-700"
+                  className={`text-[12px] font-extrabold mb-1 ${
+                    isHard ? "text-[#b3391f]" : "text-amber-700"
                   }`}
                 >
                   {isHard ? t("severityHard") : t("severitySoft")}
                 </p>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 leading-tight">
+                <h2 className="text-xl sm:text-[22px] font-extrabold text-[#062442] leading-snug">
                   {tErrors(`${resolved.key}.title`)}
                 </h2>
-                <p className="text-sm sm:text-base text-gray-700 mt-2 leading-relaxed">
+                <p className="text-sm sm:text-[15px] text-[#5d7187] mt-2 leading-[1.85]">
                   {tErrors(`${resolved.key}.reason`)}
                 </p>
               </div>
@@ -355,21 +364,21 @@ export default function DonationFailedPage() {
 
             {/* What to do  actionable steps */}
             <div className="mt-5 sm:mt-6 ps-0 sm:ps-16">
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-3 flex items-center gap-2">
+              <h3 className="text-[14px] font-extrabold text-[#062442] mb-3 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 {t("howToFixTitle")}
               </h3>
-              <p className="text-sm text-gray-700 leading-relaxed mb-3">
+              <p className="text-sm text-[#33495e] leading-[1.85] mb-3">
                 {tErrors(`${resolved.key}.fix`)}
               </p>
               <ul className="space-y-2">
                 {fixTips.map((tip, idx) => (
-                  <li key={tip.key} className="flex items-start gap-2.5 text-sm text-gray-700">
+                  <li key={tip.key} className="flex items-start gap-2.5 text-sm text-[#33495e]">
                     <span
                       className={`shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold mt-0.5 ${
                         idx === 0
-                          ? "bg-[#A5243D] text-white"
-                          : "bg-gray-200 text-gray-600"
+                          ? "bg-[#0077b3] text-white"
+                          : "bg-[#eef4f8] text-[#5d7187]"
                       }`}
                     >
                       {idx + 1}
@@ -383,11 +392,11 @@ export default function DonationFailedPage() {
             {/* Raw provider message  hidden by default to avoid scaring donors */}
             {donation?.providerErrorMessage && (
               <details className="mt-5 sm:mt-6 ps-0 sm:ps-16 group">
-                <summary className="text-xs font-medium text-gray-500 hover:text-gray-700 cursor-pointer select-none inline-flex items-center gap-1.5">
+                <summary className="text-xs font-bold text-[#5d7187] hover:text-[#0077b3] cursor-pointer select-none inline-flex items-center gap-1.5 min-h-[44px]">
                   <HelpCircle className="w-3.5 h-3.5" />
                   {t("rawMessageToggle")}
                 </summary>
-                <div className="mt-2 p-3 rounded-lg bg-gray-100 border border-gray-200">
+                <div className="mt-2 p-3 rounded-[10px] bg-[#f4f8fb] border border-[#e2ebf1]">
                   <p className="text-xs text-gray-700 font-mono leading-relaxed break-words">
                     {donation.providerErrorMessage}
                   </p>
@@ -405,14 +414,14 @@ export default function DonationFailedPage() {
 
         {/* Alternative donation form, also available from a message without a donationId. */}
         {!loading && donation?.status !== "PAID" && (
-          <Card className="p-5 sm:p-7 border-2 border-[#A5243D]/20 bg-white">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">
+          <Card className="p-5 sm:p-7 rounded-2xl border border-[#e6eef3] bg-white shadow-[0_12px_28px_rgba(2,52,88,.07)]">
+            <h2 className="text-lg sm:text-xl font-extrabold text-[#062442] mb-3">
               {t("retry.title")} · CharityGiving
             </h2>
-            <p className="text-sm text-gray-600 leading-relaxed mb-5">
+            <p className="text-sm text-[#5d7187] leading-[1.85] mb-5">
               {CHARITY_GIVING_NOTICES[locale] ?? CHARITY_GIVING_NOTICES.en}
             </p>
-            <div className="mx-auto w-full max-w-[400px] overflow-hidden rounded-xl border border-gray-200">
+            <div className="mx-auto w-full max-w-[400px] overflow-hidden rounded-[14px] border border-[#e6eef3]">
               <iframe
                 src={CHARITY_GIVING_IFRAME_URL}
                 title="CharityGiving"
@@ -429,7 +438,7 @@ export default function DonationFailedPage() {
                 href={CHARITY_GIVING_IFRAME_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-[#A5243D] hover:text-[#7D1830] text-sm font-semibold underline underline-offset-4"
+                className="inline-flex min-h-[44px] items-center gap-2 text-[#0077b3] hover:text-[#00a2e0] text-sm font-extrabold underline underline-offset-4"
               >
                 CharityGiving <Arrow className="w-4 h-4" />
               </a>
@@ -439,26 +448,26 @@ export default function DonationFailedPage() {
 
         {/* ───────────── Donation summary + Retry ────────────────────────── */}
         {!loading && donation && (
-          <Card className="p-5 sm:p-7 border-2 border-[#A5243D]/20 bg-gradient-to-br from-[#A5243D]/5 to-white">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-9 h-9 rounded-lg bg-[#A5243D]/10 text-[#A5243D] flex items-center justify-center">
+          <Card className="p-5 sm:p-7 rounded-2xl border border-[#e6eef3] bg-white shadow-[0_12px_28px_rgba(2,52,88,.07)]">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-10 h-10 rounded-full bg-[#eaf5fc] text-[#0077b3] flex items-center justify-center">
                 <RefreshCw className="w-4.5 h-4.5" />
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-gray-900">{t("retry.title")}</h3>
+              <h3 className="text-lg sm:text-xl font-extrabold text-[#062442]">{t("retry.title")}</h3>
             </div>
-            <p className="text-sm text-gray-600 leading-relaxed mb-5">{t("retry.description")}</p>
+            <p className="text-sm text-[#5d7187] leading-[1.85] mb-5">{t("retry.description")}</p>
 
             {/* Mini donation receipt */}
-            <div className="rounded-xl bg-white border border-gray-200 p-4 mb-5">
+            <div className="rounded-xl bg-[#f4f8fb] p-4 mb-5">
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                  <p className="text-[12px] font-bold text-[#5d7187]">
                     {t("retry.amountLabel")}
                   </p>
-                  <p className="text-2xl font-extrabold text-gray-900 mt-0.5">
+                  <p className="text-2xl font-black text-[#062442] mt-0.5">
                     {formattedAmount}
                     {isMonthly && (
-                      <span className="text-sm font-medium text-gray-500 ms-1.5">
+                      <span className="text-sm font-medium text-[#5d7187] ms-1.5">
                         {t("retry.perMonth")}
                       </span>
                     )}
@@ -466,24 +475,24 @@ export default function DonationFailedPage() {
                 </div>
                 <Badge
                   variant="outline"
-                  className="border-[#A5243D]/30 text-[#A5243D] bg-[#A5243D]/5"
+                  className="rounded-full border-[#00a2e0]/35 text-[#062442] bg-[#eaf6fd] font-extrabold"
                 >
                   {isMonthly ? t("retry.monthly") : t("retry.oneTime")}
                 </Badge>
               </div>
               {donation.items && donation.items.length > 0 && (
-                <ul className="mt-3 pt-3 border-t border-gray-100 space-y-1">
+                <ul className="mt-3 pt-3 border-t border-[#e3edf4] space-y-1">
                   {donation.items.slice(0, 4).map((it) => (
                     <li
                       key={it.id}
-                      className="text-xs sm:text-sm text-gray-700 flex items-center gap-2 truncate"
+                      className="text-xs sm:text-sm text-[#33495e] flex items-center gap-2 truncate"
                     >
-                      <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#00a2e0] shrink-0" />
                       <span className="truncate">{it.campaign?.title ?? "—"}</span>
                     </li>
                   ))}
                   {donation.items.length > 4 && (
-                    <li className="text-xs text-gray-500">
+                    <li className="text-xs text-[#5d7187]">
                       {t("retry.moreItems", { count: donation.items.length - 4 })}
                     </li>
                   )}
@@ -495,7 +504,7 @@ export default function DonationFailedPage() {
               onClick={handleRetry}
               disabled={retrying}
               size="lg"
-              className="w-full sm:w-auto bg-[#A5243D] hover:bg-[#7D1830] text-white font-semibold gap-2 px-6"
+              className="w-full sm:w-auto min-h-[50px] rounded-full bg-[linear-gradient(90deg,#1b6fe0_0%,#1ca3ec_72%,#27b8f2_100%)] hover:brightness-105 text-white font-extrabold gap-2 px-7 shadow-[0_8px_20px_rgba(0,162,224,.3)]"
             >
               {retrying ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -505,18 +514,18 @@ export default function DonationFailedPage() {
               {isMonthly ? t("retry.ctaMonthly") : t("retry.cta")}
               <Arrow className="w-4 h-4" />
             </Button>
-            <p className="text-xs text-gray-500 mt-2.5">{t("retry.securedBy")}</p>
+            <p className="text-xs text-[#5d7187] mt-2.5">{t("retry.securedBy")}</p>
           </Card>
         )}
 
         {/* Even without a donationId, give the user a path forward */}
         {!loading && !donation && (
-          <Card className="p-5 sm:p-7 text-center border-2 border-[#A5243D]/20 bg-[#A5243D]/5">
-            <h3 className="text-lg font-bold text-gray-900 mb-2">{t("noDonation.title")}</h3>
-            <p className="text-sm text-gray-600 mb-5">{t("noDonation.description")}</p>
+          <Card className="p-5 sm:p-7 text-center rounded-2xl border border-[#e6eef3] bg-white shadow-[0_12px_28px_rgba(2,52,88,.07)]">
+            <h3 className="text-lg font-extrabold text-[#062442] mb-2">{t("noDonation.title")}</h3>
+            <p className="text-sm text-[#5d7187] leading-[1.85] mb-5">{t("noDonation.description")}</p>
             <Link
               href="/campaigns"
-              className="inline-flex items-center gap-2 bg-[#A5243D] hover:bg-[#7D1830] text-white font-semibold text-sm px-5 py-2.5 rounded-full transition-colors"
+              className="inline-flex min-h-[46px] items-center gap-2 bg-[linear-gradient(90deg,#1b6fe0_0%,#1ca3ec_72%,#27b8f2_100%)] text-white font-extrabold text-sm px-6 rounded-full shadow-[0_8px_20px_rgba(0,162,224,.3)] transition-transform hover:-translate-y-0.5"
             >
               {t("noDonation.cta")}
               <Arrow className="w-4 h-4" />
@@ -526,10 +535,10 @@ export default function DonationFailedPage() {
       </div>
 
       {/* ───────────────────────── Bank transfer fallback ──────────────── */}
-      <div className="border-y border-amber-100 bg-amber-50">
+      <div className="border-y border-[#d7ecf8] bg-[#eaf6fd]">
         <div className="max-w-3xl mx-auto px-4 py-4 text-center">
-          <p className="text-sm text-amber-800 font-medium flex items-center justify-center gap-2">
-            <Landmark className="w-4 h-4" />
+          <p className="text-sm text-[#062442] font-bold flex items-center justify-center gap-2">
+            <Landmark className="w-4 h-4 shrink-0 text-[#0077b3]" />
             {t("manualFallback")}
           </p>
         </div>

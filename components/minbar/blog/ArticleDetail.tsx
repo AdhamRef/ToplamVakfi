@@ -13,7 +13,13 @@ import TravelBanner from "@/components/minbar/banners/TravelBanner";
 import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 
 /**
- * An article  ported from `Minbar/تفاصيل المقال.dc.html`.
+ * An article  laid out after `ToplamVakfi-design/Toplum Vakfı Blog Article -
+ * Values.dc.html` (and its twin `News Article - Saudi Visit`); styles in
+ * `styles/minbar/pages/blog.css`, `ed-` classes.
+ *
+ * On the page background: the category and the blog as a small meta line, the
+ * title, the byline with the share button, the wide rounded cover, then the
+ * body in a 720px reading column. The closing call follows.
  *
  * CMS content may arrive as:
  * - clean HTML (<h2>, <p>, lists)
@@ -36,6 +42,7 @@ export default function ArticleDetail({ article, ctaKey }: ArticleDetailProps) {
   const locale = useLocale();
   const dir = localeDirection(locale);
   const t = useTranslations("blog");
+  const tCommon = useTranslations("common");
 
   const blocks = useMemo(() => contentToBlocks(article.content), [article.content]);
   const body = blocks.length
@@ -60,103 +67,33 @@ export default function ArticleDetail({ article, ctaKey }: ArticleDetailProps) {
   };
 
   return (
-    <div className="art-page">
-      <section style={{ padding: "44px 0 30px" }}>
-        <div style={{ maxWidth: 780, margin: "0 auto", padding: "0 24px" }}>
-          <Link
-            href={miaPath("blog", locale)}
-            style={{ fontSize: 14, fontWeight: 800, color: "var(--muted)" }}
-          >
-            {backArrow} {t("backToBlog")}
-          </Link>
-        </div>
-      </section>
-
-      <section style={{ padding: "0 0 50px" }}>
-        <article
-          style={{
-            maxWidth: 780,
-            margin: "0 auto",
-            padding: "0 24px",
-            display: "grid",
-            gap: 18,
-          }}
-        >
-          <h1
-            className="art-in"
-            style={{
-              margin: 0,
-              fontSize: "clamp(26px,3vw,36px)",
-              lineHeight: 1.35,
-              fontWeight: 900,
-            }}
-          >
-            {article.title}
-          </h1>
-
-          <div
-            className="art-in art-in-1"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              paddingBottom: 4,
-              borderBottom: "1px solid var(--border)",
-            }}
-          >
-            <span
-              aria-hidden="true"
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: "50%",
-                background: "var(--sand)",
-                display: "grid",
-                placeItems: "center",
-                fontSize: 13,
-                fontWeight: 900,
-                color: "var(--deep)",
-                flex: "0 0 auto",
-              }}
-            >
-              {authorInitial}
-            </span>
-
-            <div
-              style={{
-                display: "grid",
-                gap: 1,
-                lineHeight: 1.5,
-                minWidth: 0,
-              }}
-            >
-              <b style={{ fontSize: 13.5, fontWeight: 800 }}>{author}</b>
+    <div className="art-page ed-page">
+      <article>
+        <section className="ed-article-hero">
+          <div className="ed-wrap">
+            <div className="ed-meta-top art-in">
+              {article.category ? (
+                <>
+                  <span className="ed-cat">{article.category.name}</span>
+                  <span aria-hidden="true">·</span>
+                </>
+              ) : null}
+              <Link href={miaPath("blog", locale)}>{tCommon("blogTitle")}</Link>
             </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: 8,
-                marginInlineStart: "auto",
-              }}
-            >
+            <h1 className="art-in">{article.title}</h1>
+
+            <div className="ed-byline art-in art-in-1">
+              <span aria-hidden="true" className="ed-avatar">
+                {authorInitial}
+              </span>
+              <b style={{ fontSize: 13.5, fontWeight: 800, color: "var(--deep)", minWidth: 0 }}>{author}</b>
               <button
                 type="button"
                 onClick={share}
                 aria-label={t("shareArticle")}
                 title={t("shareArticle")}
-                className="art-share"
-                style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: "50%",
-                  border: "1px solid var(--border)",
-                  background: "#fff",
-                  cursor: "pointer",
-                  display: "grid",
-                  placeItems: "center",
-                  color: "var(--deep)",
-                }}
+                className="ed-share"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -176,72 +113,26 @@ export default function ArticleDetail({ article, ctaKey }: ArticleDetailProps) {
                 </svg>
               </button>
             </div>
+
+            {article.cover ? (
+              <span className="ed-cover art-in art-in-2">
+                {/* eslint-disable-next-line @next/next/no-img-element -- covers are arbitrary CMS URLs, not a known-host set */}
+                <img src={article.cover} alt={article.imageAlt || article.title} />
+              </span>
+            ) : null}
           </div>
+        </section>
 
-          {article.cover ? (
-            <span
-              className="art-in art-in-2"
-              style={{
-                position: "relative",
-                display: "block",
-                aspectRatio: "16/9",
-                background: "var(--sand)",
-                borderRadius: 12,
-                overflow: "hidden",
-              }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element -- covers are arbitrary CMS URLs, not a known-host set */}
-              <img
-                src={article.cover}
-                alt={article.imageAlt || article.title}
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            </span>
-          ) : null}
-
-          <div
-            className="art-in art-in-3"
-            style={{
-              display: "grid",
-              gap: 18,
-              fontSize: 16,
-              lineHeight: 1.95,
-              color: "var(--deep)",
-              marginTop: 8,
-            }}
-          >
+        <div className="ed-wrap">
+          <div className="ed-prose art-in art-in-3">
             {body.map((block, index) => {
               if (block.kind === "h2") {
-                return (
-                  <h2
-                    key={index}
-                    style={{
-                      margin: "10px 0 0",
-                      fontSize: 20,
-                      fontWeight: 900,
-                    }}
-                  >
-                    {block.text}
-                  </h2>
-                );
+                return <h2 key={index}>{block.text}</h2>;
               }
 
               if (block.kind === "li") {
                 return (
-                  <p
-                    key={index}
-                    style={{
-                      margin: 0,
-                      paddingInlineStart: 16,
-                      position: "relative",
-                    }}
-                  >
+                  <p key={index} className="ed-li">
                     <span aria-hidden="true">• </span>
                     {block.text}
                   </p>
@@ -249,39 +140,22 @@ export default function ArticleDetail({ article, ctaKey }: ArticleDetailProps) {
               }
 
               return (
-                <p key={index} style={{ margin: 0, whiteSpace: "pre-line" }}>
+                <p key={index} style={{ whiteSpace: "pre-line" }}>
                   {block.text}
                 </p>
               );
             })}
-          </div>
 
-          {article.category ? (
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: 8,
-                paddingTop: 6,
-              }}
-            >
-              <span
-                style={{
-                  display: "inline-flex",
-                  padding: "6px 13px",
-                  borderRadius: 999,
-                  background: "var(--sand)",
-                  fontSize: 12.5,
-                  fontWeight: 800,
-                  color: "var(--muted)",
-                }}
-              >
-                {article.category.name}
-              </span>
+            <div className="ed-tags">
+              {article.category ? <span className="ed-chip">{article.category.name}</span> : null}
+              <Link href={miaPath("blog", locale)} className="ed-back" style={{ marginInlineStart: "auto" }}>
+                <span aria-hidden="true">{backArrow}</span> {t("backToBlog")}
+              </Link>
             </div>
-          ) : null}
-        </article>
-      </section>
+          </div>
+        </div>
+
+      </article>
 
       <ArticleCta ctaKey={ctaKey} />
 

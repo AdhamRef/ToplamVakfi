@@ -1,0 +1,158 @@
+/* Toplum Vakfi page layer: project-detail. Loaded after toplum.css (app/[locale]/layout.tsx); scoped under .mia-scope. */
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Project page (ProjectDetail, DonationPanel, RestorationPage) laid out on
+ * `ToplamVakfi-design/Toplum Vakfı Project - *.dc.html`:
+ *  - a full-bleed photo hero (`.proj-hero-img`), title and tags over its foot.
+ *    The design runs it behind a glass header; the app's header is a solid
+ *    bar with its own spacer, so the hero starts under it (design 492px less
+ *    the 78px header);
+ *  - `.proj-layout`: story 1.7fr beside a sticky donation sidebar 1fr, 40px
+ *    apart, 50px / 70px above and below; one column (sidebar first) on
+ *    tablets and phones;
+ *  - fact tiles, update cards and the sidebar card as drawn there.
+ * Old `#pd-top` / `#pd-body` rules in minbar.css belonged to the previous
+ * layout; the few that still reach these elements are neutralised below.
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+.mia-scope .pd-page { background: #f4f8fb; }
+.mia-scope .pd-container { width: min(1180px, calc(100% - 64px)); margin-inline: auto; box-sizing: border-box; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.mia-scope .pd-hero { min-height: 414px; }
+.mia-scope .pd-hero-inner { padding: 72px 0 34px; }
+.mia-scope .pd-crumbs a { color: inherit; transition: color .18s ease; }
+.mia-scope .pd-crumbs a:hover { color: #fff; }
+.mia-scope .pd-tag-lg {
+  display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 999px;
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
+  color: #fff; font-size: 12px; font-weight: 700; line-height: 1.6;
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  transition: background .18s ease, border-color .18s ease;
+}
+.mia-scope a.pd-tag-lg:hover { background: rgba(255,255,255,.26); border-color: rgba(255,255,255,.55); }
+
+/* The carousel as a banner: dots move to the top so they clear the title. */
+.mia-scope .pd-hero-media--banner .pd-hero-dots { bottom: auto !important; top: 20px; }
+.mia-scope .pd-hero-media--banner:focus-visible { outline-offset: -4px; }
+.mia-scope .pd-hero-media--banner .pd-hero-nav { z-index: 3; }
+.mia-scope .pd-hero-media--banner .pd-hero-nav:hover { background: var(--gold); color: #fff; }
+
+/* Outlined white pill on the dark hero (the restoration page's jump link). */
+.mia-scope .pd-ghost-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 24px;
+  border-radius: 999px; border: 1.5px solid rgba(255,255,255,.45); color: #fff;
+  font-size: 15px; font-weight: 800; transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.mia-scope .pd-ghost-btn:hover { border-color: #fff; }
+
+/* ── Story + sidebar ──────────────────────────────────────────────────────── */
+.mia-scope .pd-layout {
+  display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 40px;
+  padding: 50px 0 70px; align-items: start;
+}
+/* The column runs the row's full height so its content can stick in it. */
+.mia-scope .pd-aside-col { align-self: stretch; }
+.mia-scope .pd-aside-sticky { position: sticky; top: calc(var(--mia-head-h, 78px) + 22px); }
+
+/* minbar.css (≤640px) pads `#pd-body` as if it were the page grid; it is now
+   the tab block inside the story column. */
+.mia-scope .pd-layout #pd-body { padding-inline: 0 !important; }
+
+/* Fact tiles (`.proj-facts` / `.proj-fact`). */
+.mia-scope .pd-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+.mia-scope .pd-fact {
+  display: grid; gap: 4px; align-content: center; justify-items: center; min-width: 0;
+  padding: 16px; background: #fff; border: 1px solid #e6eef3; border-radius: 12px; text-align: center;
+}
+.mia-scope .pd-fact b { font-size: 20px; line-height: 1.4; font-weight: 800; color: #0077b3; overflow-wrap: anywhere; }
+.mia-scope .pd-fact span { font-size: 12px; line-height: 1.6; color: var(--muted); }
+.mia-scope .pd-facts--values { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+.mia-scope .pd-facts--values .pd-fact span:not(.pd-fact-dot) { font-size: 13px; font-weight: 700; color: var(--deep); }
+.mia-scope .pd-fact-dot { display: block; width: 8px; height: 8px; margin-bottom: 4px; border-radius: 999px; background: var(--gold); }
+
+/* Icon chip beside a section heading. */
+.mia-scope .pd-icon-chip {
+  flex: 0 0 38px; display: grid; place-items: center; width: 38px; height: 38px;
+  border-radius: 12px; background: #eaf6fd; color: #0077b3;
+}
+
+/* Tabs: pills; the picked one is the brand-ink fill (CLAUDE.md). The old
+   underline rule in minbar.css is outranked here. */
+.mia-scope .pd-layout .pd-tab {
+  height: 42px; padding: 0 18px; border: 1px solid #e2eaf0; border-radius: 999px;
+  background: #fff; color: var(--muted); font-family: inherit; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: background .18s ease, border-color .18s ease, color .18s ease;
+}
+.mia-scope .pd-layout .pd-tab:hover { border-color: var(--gold); color: var(--deep); }
+.mia-scope .pd-layout .pd-tab[data-tab="1"] {
+  background: #0077b3 !important; border-color: #0077b3 !important; color: #fff !important;
+  box-shadow: 0 6px 14px -6px rgba(0,119,179,.55);
+}
+.mia-scope .pd-layout .pd-tab:focus-visible { outline: 3px solid rgba(0,162,224,.45); outline-offset: 2px; }
+
+.mia-scope .pd-card { background: #fff; border: 1px solid #e6eef3; border-radius: 12px; }
+
+/* Zakat / waqf cross-links: a dark band card and a light one, side by side. */
+.mia-scope .pd-cross-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.mia-scope .pd-cross {
+  position: relative; overflow: hidden; display: grid; gap: 8px; align-content: start;
+  padding: 22px; border-radius: 16px; transition: transform .2s ease, box-shadow .2s ease;
+}
+.mia-scope .pd-cross:hover { transform: translateY(-4px); box-shadow: 0 22px 44px rgba(2,52,88,.14); }
+.mia-scope .pd-cross--zakat { background: linear-gradient(120deg, #021428 0%, #082b50 60%, #04172e 100%); color: #fff; }
+.mia-scope .pd-cross--zakat:hover { filter: none; }
+/* The design's glow circle in the band's far corner. */
+.mia-scope .pd-cross--zakat::after {
+  content: ""; position: absolute; inset-inline-end: -60px; top: -60px; width: 180px; height: 180px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(39,184,242,.32), rgba(39,184,242,0) 70%); pointer-events: none;
+}
+.mia-scope .pd-cross--waqf { background: #fff; border: 1px solid #e6eef3; box-shadow: 0 12px 28px rgba(2,52,88,.07); }
+.mia-scope .pd-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 800; letter-spacing: .06em; }
+.mia-scope .pd-eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--gold); }
+
+/* ── Donation sidebar (`.donate-sidebar`) ─────────────────────────────────── */
+.mia-scope .pd-fill { background: linear-gradient(90deg, var(--gold), #4fc3f7); }
+[dir="rtl"] .mia-scope .pd-fill { background: linear-gradient(270deg, var(--gold), #4fc3f7); }
+.mia-scope .pd-cta { background: var(--cta-gradient); }
+[dir="rtl"] .mia-scope .pd-cta { background: linear-gradient(270deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); }
+.mia-scope .pd-cta:hover { filter: brightness(.95); transform: translateY(-1px); }
+.mia-scope .pd-cta:disabled { transform: none; filter: none; }
+.mia-scope .pd-custom::placeholder { color: #8aa0b4; font-weight: 600; }
+.mia-scope .pd-custom:focus,
+.mia-scope .pd-donate input:focus,
+.mia-scope .pd-page textarea:focus { outline: none; border-color: var(--gold) !important; box-shadow: 0 0 0 3px rgba(0,162,224,.15); }
+.mia-scope .pd-donate .mia-share-btn:hover { border-color: var(--gold); background: #eaf6fd; }
+.mia-scope .pd-outline-btn:hover { border-color: var(--gold) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mia-scope .pd-cross:hover, .mia-scope .pd-cta:hover { transform: none; }
+}
+
+/* ── Tablet / phone ───────────────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .mia-scope .pd-layout { grid-template-columns: minmax(0, 1fr); gap: 30px; padding: 30px 0 50px; }
+  /* The sidebar comes first: the hero already carries the title and opening. */
+  .mia-scope .pd-aside-col { order: -1; align-self: auto; }
+  .mia-scope .pd-aside-sticky { position: static; }
+}
+@media (max-width: 760px) {
+  .mia-scope .pd-hero { min-height: 340px; }
+  .mia-scope .pd-hero-inner { padding: 64px 0 26px; }
+  .mia-scope .pd-hero h1 { font-size: 25px !important; }
+  /* Arrows sit above the title block instead of across it. */
+  .mia-scope .pd-hero-media--banner .pd-hero-nav { top: 60px; transform: none; }
+}
+@media (max-width: 640px) {
+  .mia-scope .pd-container { width: calc(100% - 32px); }
+  .mia-scope .pd-layout .pd-tab { height: 44px; }
+}
+@media (max-width: 560px) {
+  .mia-scope .pd-cross-row { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .pd-facts { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+  .mia-scope .pd-facts--values { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  /* minbar.css turns the tab row into a sideways scroller; room for the
+     picked pill's shadow so it is not clipped. */
+  .mia-scope .pd-layout .pd-tabs { padding-block: 2px 10px; }
+}

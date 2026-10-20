@@ -41,7 +41,8 @@ function Frame({
         gap: 14,
         textAlign: "center",
         padding: "60px 24px",
-        ...(sand ? { background: "var(--sand)", borderRadius: 14 } : {}),
+        /* Toplum Vakfı empty card (`.pg-empty` on `.in-card`): white, hairline, soft shadow. */
+        ...(sand ? { background: "#fff", border: "1px solid #e6eef3", borderRadius: 18, boxShadow: "0 12px 30px rgba(2,52,88,.07)", padding: "44px 20px" } : {}),
       }}
     >
       {children}
@@ -49,8 +50,8 @@ function Frame({
   );
 }
 
-function Glyph({ children, tone = "gold", background = "var(--sand)", size = 60 }: { children: ReactNode; tone?: "gold" | "muted" | "red"; background?: string; size?: number }) {
-  const color = tone === "gold" ? "var(--gold)" : tone === "red" ? "var(--red)" : "var(--muted)";
+function Glyph({ children, tone = "gold", background = "#eaf5fc", size = 60 }: { children: ReactNode; tone?: "gold" | "muted" | "red"; background?: string; size?: number }) {
+  const color = tone === "gold" ? "var(--brand-ink)" : tone === "red" ? "#d64545" : "var(--muted)";
   return (
     <span aria-hidden="true" className="st-in" style={{ display: "grid", placeItems: "center", width: size, height: size, borderRadius: "50%", background, color }}>
       {children}
@@ -70,13 +71,13 @@ export function NoResults({ onReset }: { onReset?: () => void }) {
   const t = useTranslations("system");
   return (
     <Frame>
-      <Glyph tone="muted">
+      <Glyph tone="muted" background="#eef4f8">
         <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
           <circle cx="10.5" cy="10.5" r="6.5" />
           <path d="m20 20-4.35-4.35" />
         </svg>
       </Glyph>
-      <h3 className="st-in st-in-1" style={{ margin: 0, fontSize: 18, fontWeight: 900 }}>{t("noResultsTitle")}</h3>
+      <h3 className="st-in st-in-1" style={{ margin: 0, fontSize: 18, fontWeight: 900, color: "var(--ink)" }}>{t("noResultsTitle")}</h3>
       <p className="st-in st-in-2" style={{ margin: 0, maxWidth: "40ch", color: "var(--muted)", fontSize: 14.5, lineHeight: 1.85 }}>
         {t("noResultsLead")}
       </p>
@@ -85,7 +86,7 @@ export function NoResults({ onReset }: { onReset?: () => void }) {
           type="button"
           onClick={onReset}
           className="st-in st-in-3 st-reset"
-          style={{ height: 44, padding: "0 22px", borderRadius: 8, border: "1px solid var(--border)", background: "#fff", fontFamily: "inherit", fontSize: 13.5, fontWeight: 800, color: "var(--deep)", cursor: "pointer", minWidth: 44 }}
+          style={{ height: 44, padding: "0 22px", borderRadius: 999, border: "1.5px solid var(--brand)", background: "#fff", fontFamily: "inherit", fontSize: 13.5, fontWeight: 800, color: "var(--brand-ink)", cursor: "pointer", minWidth: 44 }}
         >
           {t("resetFilters")}
         </button>
@@ -100,19 +101,19 @@ export function NoProjects() {
   const t = useTranslations("system");
   return (
     <Frame sand>
-      <Glyph background="#fff">
+      <Glyph>
         <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M4 7h16M4 12h16M4 17h10" />
         </svg>
       </Glyph>
-      <h3 className="st-in st-in-1" style={{ margin: 0, fontSize: 18, fontWeight: 900 }}>{t("noProjectsTitle")}</h3>
+      <h3 className="st-in st-in-1" style={{ margin: 0, fontSize: 18, fontWeight: 900, color: "var(--ink)" }}>{t("noProjectsTitle")}</h3>
       <p className="st-in st-in-2" style={{ margin: 0, maxWidth: "42ch", color: "var(--muted)", fontSize: 14.5, lineHeight: 1.85 }}>
         {t("noProjectsLead")}
       </p>
       <Link
         href={miaPath("projects", locale)}
         className="st-in st-in-3 st-cta"
-        style={{ height: 42, display: "inline-flex", alignItems: "center", padding: "0 22px", borderRadius: 8, background: "var(--deep)", color: "#fff", fontSize: 13.5, fontWeight: 800 }}
+        style={{ minHeight: 44, display: "inline-flex", alignItems: "center", padding: "0 24px", borderRadius: 999, background: "var(--cta-gradient)", color: "#fff", fontSize: 13.5, fontWeight: 800, boxShadow: "0 8px 20px rgba(0,162,224,.3)" }}
       >
         {t("allProjectsCta")}
       </Link>
@@ -167,19 +168,19 @@ export function ContentSkeleton({ count = 3 }: { count?: number }) {
 export function ContentError({ onRetry }: { onRetry: () => void }) {
   const t = useTranslations("system");
   return (
-    <div style={{ display: "grid", justifyItems: "center", gap: 12, textAlign: "center", padding: "44px 24px", background: "var(--sand)", borderRadius: 12 }}>
-      <Glyph tone="red" background="rgba(27,111,224,.1)" size={50}>
+    <div style={{ display: "grid", justifyItems: "center", gap: 12, textAlign: "center", padding: "44px 24px", background: "#fff", border: "1px solid #e6eef3", borderRadius: 18, boxShadow: "0 12px 30px rgba(2,52,88,.07)" }}>
+      <Glyph tone="red" background="#fdeaea" size={50}>
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 9v4M12 17h.01" />
           <path d="M10.3 3.9 2.5 18a1.6 1.6 0 0 0 1.4 2.4h16.2a1.6 1.6 0 0 0 1.4-2.4L13.7 3.9a1.6 1.6 0 0 0-2.8 0Z" />
         </svg>
       </Glyph>
-      <p className="st-in st-in-1" style={{ margin: 0, fontSize: 15, fontWeight: 800 }}>{t("contentLoadFailed")}</p>
+      <p className="st-in st-in-1" style={{ margin: 0, fontSize: 15, fontWeight: 800, color: "var(--ink)" }}>{t("contentLoadFailed")}</p>
       <button
         type="button"
         onClick={onRetry}
         className="st-in st-in-2 st-reset"
-        style={{ height: 40, padding: "0 18px", borderRadius: 8, border: "1px solid rgba(6,36,66,.12)", background: "#fff", fontFamily: "inherit", fontSize: 13, fontWeight: 800, color: "var(--deep)", cursor: "pointer" }}
+        style={{ height: 44, padding: "0 22px", borderRadius: 999, border: "1.5px solid var(--brand)", background: "#fff", fontFamily: "inherit", fontSize: 13, fontWeight: 800, color: "var(--brand-ink)", cursor: "pointer" }}
       >
         {t("retryCta")}
       </button>

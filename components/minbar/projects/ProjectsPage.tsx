@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { localeDirection } from "@/lib/locales";
 import { miaPath } from "@/lib/minbar/routes";
 import type { MinbarProject } from "@/lib/minbar/projects";
 import ProjectDonateCard from "@/components/minbar/ProjectDonateCard";
@@ -61,7 +60,6 @@ export interface ProjectsPageProps {
 
 export default function ProjectsPage({ projects, slides }: ProjectsPageProps) {
   const locale = useLocale();
-  const dir = localeDirection(locale);
   const t = useTranslations("projects");
   const tCommon = useTranslations("common");
   const tHome = useTranslations("homepage");
@@ -108,59 +106,19 @@ export default function ProjectsPage({ projects, slides }: ProjectsPageProps) {
   }, [hasMore, category]);
 
   return (
+    /* Toplum Vakfı Projects.dc.html: on the plain page background, the
+       carousel card, the filter pill bar and the card grid share one 1180px
+       container. Layout lives in styles/minbar/pages/projects.css under the
+       `tvp-*` classes; the ids and the classes below that the phone rules in
+       minbar.css and the regression tests name are kept. */
     <div className="mia-projects-page" style={{ position: "relative" }}>
-      <div
-        aria-hidden="true"
-        data-aqsa-pattern=""
-        style={{
-          position: "fixed",
-          inset: 0,
-          backgroundImage: "url('/toplum/pattern.svg')",
-          backgroundRepeat: "repeat",
-          backgroundSize: "620px 620px",
-          opacity: 0.085,
-          pointerEvents: "none",
-          zIndex: 0,
-        }}
-      />
-      <img
-        src="/minbar/assets/aqsa-dome-line.png"
-        alt=""
-        aria-hidden="true"
-        style={{ position: "fixed", left: "50%", top: "74%", transform: "translate(-50%,-50%)", width: "62vw", maxWidth: 900, height: "auto", opacity: 0.1, pointerEvents: "none", zIndex: 0 }}
-      />
-
       <ProjectsHero slides={slides} />
 
-      <section id="project-filters-section" style={{ position: "relative", background: "var(--ivory)", overflow: "hidden" }}>
-        <div
-          aria-hidden="true"
-          data-aqsa-pattern=""
-          style={{ position: "absolute", inset: 0, backgroundImage: "url('/toplum/pattern.svg')", backgroundRepeat: "repeat", backgroundSize: "520px 520px", opacity: 0.05, pointerEvents: "none" }}
-        />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "30px 24px 34px", display: "grid", gap: 18 }}>
+      <section id="project-filters-section" className="tvp-filters-section">
+        <div className="tvp-wrap">
           <div className="proj-filters-wrap">
-            <div className="mia-rail" id="proj-filters" style={{ display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center", paddingBottom: 4 }}>
+            <div className="tvp-filters" id="tvp-filters">
             {categories.map((c) => {
-              const style = {
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                height: 40,
-                padding: "0 16px",
-                cursor: "pointer",
-                fontFamily: "inherit",
-                borderRadius: 999,
-                fontSize: 14,
-                fontWeight: 800,
-                whiteSpace: "nowrap" as const,
-                transition: "all .18s ease",
-                border: "1px solid var(--border)",
-                background: "#fff",
-                color: "var(--muted)",
-                textDecoration: "none",
-              };
-
               if (c.kind === "link") {
                 const href =
                   c.route === "zakat" ? miaPath("zakat", locale)
@@ -168,8 +126,8 @@ export default function ProjectsPage({ projects, slides }: ProjectsPageProps) {
                       : c.route === "ibadan" ? miaPath("ibadanProject", locale)
                         : miaPath("restorationProject", locale);
                 return (
-                  <a key={c.id} href={href} className="proj-cat" style={style}>
-                    <span style={{ display: "inline-flex", width: 15, height: 15 }}>
+                  <a key={c.id} href={href} className="tvp-chip">
+                    <span className="tvp-chip-ico">
                       <CategoryIcon name={c.icon} />
                     </span>
                     {c.label}
@@ -188,10 +146,9 @@ export default function ProjectsPage({ projects, slides }: ProjectsPageProps) {
                     setCategory(c.id);
                     setLimit(PAGE_SIZE);
                   }}
-                  className="proj-cat"
-                  style={style}
+                  className="tvp-chip"
                 >
-                  <span style={{ display: "inline-flex", width: 15, height: 15 }}>
+                  <span className="tvp-chip-ico">
                     <CategoryIcon name={c.icon} />
                   </span>
                   {c.label}
@@ -203,10 +160,10 @@ export default function ProjectsPage({ projects, slides }: ProjectsPageProps) {
         </div>
       </section>
 
-      <section id="all" style={{ position: "relative", background: "transparent", padding: "46px 0 66px", overflow: "hidden" }}>
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gap: 24 }}>
+      <section id="all" className="tvp-list">
+        <div className="tvp-wrap" style={{ display: "grid", gap: 24 }}>
           {visible.length ? (
-            <div className="proj-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 22, justifyContent: "center" }}>
+            <div className="tvp-grid">
               {visible.map((project) => (
                 <ProjectDonateCard key={project.slug} project={project} />
               ))}
@@ -219,13 +176,8 @@ export default function ProjectsPage({ projects, slides }: ProjectsPageProps) {
           )}
 
           {remaining > 0 ? (
-            <div ref={sentinelRef} style={{ display: "flex", justifyContent: "center", paddingTop: 26 }} aria-live="polite">
-              <button
-                type="button"
-                onClick={() => setLimit((n) => n + PAGE_SIZE)}
-                className="proj-more"
-                style={{ height: 50, padding: "0 30px", borderRadius: 999, border: "1px solid var(--border)", background: "#fff", color: "var(--deep)", fontFamily: "inherit", fontSize: 15, fontWeight: 900, cursor: "pointer", transition: "all .18s ease" }}
-              >
+            <div ref={sentinelRef} style={{ display: "flex", justifyContent: "center", paddingTop: 10 }} aria-live="polite">
+              <button type="button" onClick={() => setLimit((n) => n + PAGE_SIZE)} className="tvp-more">
                 {tCommon("loadMore", { count: remaining })}
               </button>
             </div>

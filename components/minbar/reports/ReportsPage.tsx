@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { localeDirection } from "@/lib/locales";
 import { miaPath } from "@/lib/minbar/routes";
 import { drive } from "@/lib/minbar/content/media";
 import { ORG_WHATSAPP } from "@/lib/minbar/org";
@@ -29,14 +28,12 @@ import {
 import type { CmsDocument } from "@/lib/minbar/cms";
 
 /**
- * Achievements and reports  ported from
- * `Minbar/إنجازات وتقارير المؤسسة.dc.html`.
- *
- * The site's one dark page, and its longest: a photographic hero, the
- * foundation's approved totals, three full-bleed scenes each built around a
- * single figure, testimonies from the field, the six programmes with their
- * share of resources, the response timeline, the published documents, and a
- * closing call.
+ * Achievements and reports  first ported from
+ * `Minbar/إنجازات وتقارير المؤسسة.dc.html`, now laid out on the Toplum inner
+ * page system of `ToplamVakfi-design/Toplum Vakfı Impact.dc.html` and
+ * `… Transparency.dc.html`: a photographic navy banner closing on the wave,
+ * then the light page with white figure cards, rounded field-photo panels,
+ * giving-path cards, and the documents as a list of white rows.
  *
  * Every figure comes from `lib/minbar/achievements.ts`, which carries the
  * handoff's rule with it: these are approved published numbers, replaced only
@@ -48,15 +45,16 @@ import type { CmsDocument } from "@/lib/minbar/cms";
  * eleven photographs.
  */
 
-const SECTION = { maxWidth: 1240, margin: "0 auto", padding: "0 24px" } as const;
-const SECTION_TITLE = {
-  margin: 0,
-  fontSize: "clamp(30px,3.4vw,50px)",
-  lineHeight: 1.2,
-  fontWeight: 900,
-  color: "#fff",
-  letterSpacing: "-.02em",
-} as const;
+/** Glyph for each sector card, matched to what the sector funds. */
+const SECTOR_ICONS: Record<string, string> = {
+  secWaqf: "home",
+  secHoly: "landmark",
+  secEdu: "graduation-cap",
+  secSocial: "users",
+  secEcon: "trend",
+  secHealth: "heart-pulse",
+};
+const BIG_STAT_ICONS = ["layers", "hands"] as const;
 
 /** A block that fades and lifts into place the first time it is scrolled to. */
 function Rise({ children, style, className }: { children: ReactNode; style?: React.CSSProperties; className?: string }) {
@@ -69,11 +67,11 @@ function Rise({ children, style, className }: { children: ReactNode; style?: Rea
 }
 
 /** A reported figure that counts up when it comes into view. */
-function Figure({ value, style, dir = "ltr" }: { value: number; style: React.CSSProperties; dir?: "ltr" }) {
+function Figure({ value, style, className, dir = "ltr" }: { value: number; style?: React.CSSProperties; className?: string; dir?: "ltr" }) {
   const { format } = useMinbarNumber();
   const { ref, value: shown } = useMinbarCountUp(value);
   return (
-    <b ref={ref as React.Ref<HTMLElement>} dir={dir} style={{ unicodeBidi: "isolate", ...style }}>
+    <b ref={ref as React.Ref<HTMLElement>} dir={dir} className={className} style={{ unicodeBidi: "isolate", ...style }}>
       {format(shown)}
     </b>
   );
@@ -85,61 +83,50 @@ function useMinbarNumber() {
   return { format: formatNumber } as const;
 }
 
+/** The design's section head: a small brand eyebrow, the title, its lead. */
+function Head({ eyebrow, title, lead }: { eyebrow?: string; title: string; lead?: string }) {
+  return (
+    <Rise className="rpx-head">
+      {eyebrow ? <span className="rpx-eyebrow">{eyebrow}</span> : null}
+      <h2 className="rpx-h2">{title}</h2>
+      {lead ? <p className="rpx-sub">{lead}</p> : null}
+    </Rise>
+  );
+}
+
 export default function ReportsPage({ reports }: { reports: CmsDocument[] }) {
   const locale = useLocale();
-  const rtl = localeDirection(locale) === "rtl";
   const t = useTranslations("achievements");
   const tCommon = useTranslations("common");
   const { formatNumber } = useMinbarMoney();
 
-  /* The scene gradients run from the edge the copy sits against, so a scene
-     reads the same way round in Arabic as it does in English. */
-  const sceneGradient = (side: "start" | "end") => {
-    const fromStart = side === "start" ? !rtl : rtl;
-    return `linear-gradient(${fromStart ? "90deg" : "-90deg"}, rgba(6,36,66,.96) 22%, rgba(6,36,66,.72) 58%, rgba(6,36,66,.35))`;
-  };
-
-  const chipStyle: React.CSSProperties = {
-    justifySelf: "start",
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 8,
-    padding: "7px 14px",
-    borderRadius: 999,
-    background: "rgba(255,255,255,.07)",
-    border: "1px solid rgba(0,162,224,.4)",
-    color: "rgba(255,255,255,.7)",
-    fontSize: 12,
-    fontWeight: 800,
-  };
+  const fieldScenes = SCENES.filter((scene) => !scene.gold);
+  const featureScenes = SCENES.filter((scene) => scene.gold);
 
   return (
-    <div className="rp-page">
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section className="rp-hero" style={{ position: "relative", minHeight: "92vh", display: "grid", alignItems: "end", overflow: "hidden", background: "#062442" }}>
+    <div className="rp-page rpx-page">
+      {/* ── Banner ────────────────────────────────────────────────────────────
+          The inner-page banner: a field photograph under the directional navy
+          fade, closing on the wave into the page background. */}
+      <section className="rpx-banner">
         {/* eslint-disable-next-line @next/next/no-img-element -- Drive-hosted, outside the configured image domains */}
-        <img src={drive(HERO_IMAGE, 2000)} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-        <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, #062442 6%, rgba(6,36,66,.72) 46%, rgba(6,36,66,.35))", pointerEvents: "none" }} />
-        <div aria-hidden="true" className="rp-pattern rp-pattern--hero" />
-        <div className="rp-hero-copy" style={{ ...SECTION, position: "relative", width: "100%", padding: "0 24px 92px", display: "grid", gap: 22, justifyItems: "start" }}>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 12, fontWeight: 900, color: "var(--gold)", letterSpacing: ".16em" }}>
-            {t("hero.eyebrow")}
-          </span>
+        <img src={drive(HERO_IMAGE, 2000)} alt="" className="rpx-banner-img" />
+        <span aria-hidden="true" className="rpx-banner-fade" />
+        <div className="rpx-wrap rp-hero-copy rpx-banner-in">
+          <span className="rpx-banner-eyebrow">{t("hero.eyebrow")}</span>
           {/* The title carries a `<br>` in every language's translation  it is
               the one place the report chooses where the headline breaks. */}
           <h1
-            style={{ margin: 0, fontSize: "clamp(38px,6vw,90px)", lineHeight: 1.16, fontWeight: 900, color: "#fff", letterSpacing: "-.02em" }}
+            className="rpx-banner-h1"
             // Reviewed translation copy whose only markup is a line break.
             dangerouslySetInnerHTML={{ __html: t.raw("hero.title") as string }}
           />
-          <p style={{ margin: 0, maxWidth: "46ch", fontSize: "clamp(16px,1.5vw,20px)", lineHeight: 1.9, color: "rgba(255,255,255,.84)" }}>
-            {t("hero.lead")}
-          </p>
-          <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", marginTop: 8 }}>
+          <p className="rpx-banner-lead">{t("hero.lead")}</p>
+          <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap", marginTop: 6 }}>
             <Button variant="primary" size="lg" href="#gaza" style={{ whiteSpace: "nowrap" }}>
               {t("hero.cta")}
             </Button>
-            <span className="rp-scroll" style={{ display: "inline-flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,.6)", fontSize: 13, fontWeight: 700 }}>
+            <span className="rp-scroll" style={{ display: "inline-flex", alignItems: "center", gap: 10, color: "#cfe3f1", fontSize: 13, fontWeight: 700 }}>
               {t("hero.scroll")}
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 5v14M6 13l6 6 6-6" />
@@ -149,306 +136,243 @@ export default function ReportsPage({ reports }: { reports: CmsDocument[] }) {
         </div>
       </section>
 
-      {/* ── Totals ────────────────────────────────────────────────────────── */}
-      <section id="totals" style={{ position: "relative", background: "#0D1C25", padding: "88px 0", borderBlock: "1px solid rgba(0,162,224,.28)", overflow: "hidden" }}>
-        <div style={{ ...SECTION, position: "relative", display: "grid", gap: 44 }}>
-          <Rise style={{ display: "grid", gap: 12, justifyItems: "center", textAlign: "center" }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, fontWeight: 900, color: "var(--gold)", letterSpacing: ".16em" }}>
-              {t("yearsTitle")}
-            </span>
-          </Rise>
-
-          <div className="rp-bigstats" style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", borderTop: "1px solid rgba(0,162,224,.35)" }}>
-            {BIG_STATS.map((stat, index) => (
-              <Rise
-                key={stat.labelKey}
-                style={{
-                  display: "grid",
-                  gap: 10,
-                  padding: "30px 26px 30px 0",
-                  alignContent: "start",
-                  justifyItems: "start",
-                  borderInlineEnd: index === BIG_STATS.length - 1 ? "0" : "1px solid rgba(255,255,255,.14)",
-                }}
-              >
-                <Figure
-                  value={stat.count}
-                  style={{ fontSize: "clamp(44px,6.4vw,96px)", lineHeight: 1.08, fontWeight: 900, color: "var(--gold)", letterSpacing: "-.035em" }}
-                />
-                <b style={{ color: "#fff", fontSize: "clamp(16px,1.6vw,20px)", lineHeight: 1.45 }}>{t(stat.labelKey)}</b>
-              </Rise>
-            ))}
-          </div>
-
-          <div style={{ display: "grid", gap: 20 }}>
-            <b style={{ fontSize: "clamp(20px,2vw,26px)", fontWeight: 900, color: "#fff" }}>{t("sectorsTitle")}</b>
-            <div className="rp-sectors" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 16 }}>
-              {SECTOR_STATS.map((sector) => (
-                <Rise
-                  key={sector.labelKey}
-                  style={{ display: "grid", gap: 8, alignContent: "start", padding: "22px 24px", border: "1px solid rgba(255,255,255,.12)", borderRadius: 8, background: "rgba(255,255,255,.045)" }}
-                >
-                  <span style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-                    <Figure
-                      value={sector.beneficiaries}
-                      style={{ fontSize: "clamp(30px,3.4vw,46px)", lineHeight: 1.1, fontWeight: 900, color: "#fff", letterSpacing: "-.02em" }}
-                    />
-                    <span style={{ color: "rgba(255,255,255,.7)", fontSize: 14, fontWeight: 800 }}>{t("unitBeneficiaries")}</span>
+      <div className="rpx-main">
+        <div className="rpx-wrap">
+          {/* ── Totals ────────────────────────────────────────────────────── */}
+          <section id="totals" className="rpx-sec rpx-sec--first">
+            <Head title={t("yearsTitle")} />
+            <div className="rpx-bigstats">
+              {BIG_STATS.map((stat, index) => (
+                <Rise key={stat.labelKey} className="rpx-card rpx-stat">
+                  <span className="rpx-ico" aria-hidden="true">
+                    <ProgramIcon name={BIG_STAT_ICONS[index % BIG_STAT_ICONS.length]} />
                   </span>
-                  <b style={{ color: "var(--gold)", fontSize: 16.5, lineHeight: 1.4 }}>{t(sector.labelKey)}</b>
-                  <span style={{ color: "rgba(255,255,255,.66)", fontSize: 13.5, lineHeight: 1.7 }}>
-                    <b dir="ltr" style={{ unicodeBidi: "isolate", color: "rgba(255,255,255,.9)" }}>
-                      {formatNumber(sector.projects)}
-                    </b>{" "}
-                    {t("unitProjects")}
+                  <Figure value={stat.count} className="rpx-stat-num" />
+                  <span className="rpx-stat-label">{t(stat.labelKey)}</span>
+                </Rise>
+              ))}
+            </div>
+
+            <h3 className="rpx-h3">{t("sectorsTitle")}</h3>
+            <div className="rpx-sectors">
+              {SECTOR_STATS.map((sector) => (
+                <Rise key={sector.labelKey} className="rpx-card rpx-sector">
+                  <span className="rpx-ico" aria-hidden="true">
+                    <ProgramIcon name={SECTOR_ICONS[sector.labelKey] ?? "layers"} />
+                  </span>
+                  <span style={{ display: "grid", gap: 4, minWidth: 0 }}>
+                    <b className="rpx-sector-label">{t(sector.labelKey)}</b>
+                    <span style={{ display: "flex", alignItems: "baseline", gap: 7, flexWrap: "wrap" }}>
+                      <Figure value={sector.beneficiaries} className="rpx-sector-num" />
+                      <span className="rpx-muted" style={{ fontSize: 12.5, fontWeight: 700 }}>{t("unitBeneficiaries")}</span>
+                    </span>
+                    <span className="rpx-pill">
+                      <b dir="ltr" style={{ unicodeBidi: "isolate" }}>{formatNumber(sector.projects)}</b> {t("unitProjects")}
+                    </span>
                   </span>
                 </Rise>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      {/* ── The three scenes ──────────────────────────────────────────────── */}
-      {SCENES.map((scene) => (
-        <section
-          key={scene.id}
-          id={scene.id}
-          data-scene
-          className="rp-scene"
-          style={{ position: "relative", minHeight: scene.gold ? "100vh" : "96vh", display: "grid", alignItems: "center", overflow: "hidden", background: "#062442" }}
-        >
-          <SceneImage id={scene.image} />
-          <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: sceneGradient(scene.side), pointerEvents: "none" }} />
-
-          <div className="rp-scene-inner" style={{ ...SECTION, position: "relative", width: "100%", padding: "88px 24px", display: "grid", gap: scene.gold ? 40 : 0 }}>
-            <div
-              className="rp-scene-copy"
-              style={{
-                display: "grid",
-                gap: 16,
-                justifyItems: "start",
-                maxWidth: scene.gold ? "62%" : "56%",
-                justifySelf: scene.side === "start" ? "start" : "end",
-              }}
-            >
-              <Figure
-                value={scene.count}
-                style={{
-                  fontSize: scene.gold ? "clamp(86px,13vw,200px)" : "clamp(72px,11vw,168px)",
-                  lineHeight: 1.06,
-                  fontWeight: 900,
-                  color: scene.gold ? "var(--gold)" : "#fff",
-                  letterSpacing: scene.gold ? "-.045em" : "-.04em",
-                }}
-              />
-              <b style={{ fontSize: scene.gold ? "clamp(24px,2.6vw,38px)" : "clamp(22px,2.4vw,34px)", lineHeight: 1.32, fontWeight: 900, color: "#fff" }}>
-                {t(`${scene.prefix}.label`)}
-              </b>
-              <p style={{ margin: 0, maxWidth: "46ch", fontSize: 17, lineHeight: 1.95, color: "rgba(255,255,255,.82)" }}>
-                {t(`${scene.prefix}.text`)}
-              </p>
-              {scene.gold ? null : <span style={chipStyle}>{t(`${scene.prefix}.chip`)}</span>}
-            </div>
-
-            {scene.gold ? (
-              <>
-                <div className="rp-qudsmetrics" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", borderTop: "1px solid rgba(0,162,224,.4)" }}>
-                  {QUDS_METRICS.map((metric, index) => (
-                    <Rise
-                      key={metric.labelKey}
-                      style={{
-                        display: "grid",
-                        gap: 12,
-                        padding: "38px 30px 8px",
-                        alignContent: "start",
-                        justifyItems: "start",
-                        borderInlineStart: index === 0 ? "0" : "1px solid rgba(255,255,255,.14)",
-                      }}
-                    >
-                      <Figure
-                        value={metric.count}
-                        style={{ fontSize: "clamp(44px,5.6vw,82px)", lineHeight: 1.06, fontWeight: 900, color: "#fff", letterSpacing: "-.03em" }}
-                      />
-                      <b style={{ color: "#fff", fontSize: 18, lineHeight: 1.45 }}>{t(metric.labelKey)}</b>
-                      <span style={{ color: "rgba(255,255,255,.62)", fontSize: 13.5, lineHeight: 1.75 }}>{t(metric.noteKey)}</span>
-                    </Rise>
-                  ))}
+          {/* ── The three scenes ──────────────────────────────────────────────
+              The field panels: rounded photographs with the figure, its label
+              and its source set on the lower fade. */}
+          <div className="rpx-scenes">
+            {fieldScenes.map((scene) => (
+              <section key={scene.id} id={scene.id} data-scene className="rpx-scene">
+                <SceneImage id={scene.image} />
+                <span aria-hidden="true" className="rpx-scene-fade" />
+                <div className="rpx-scene-copy">
+                  <span className="rpx-scene-eyebrow">{t(`${scene.prefix}.eyebrow`)}</span>
+                  <Figure value={scene.count} className="rpx-scene-num" />
+                  <b className="rpx-scene-label">{t(`${scene.prefix}.label`)}</b>
+                  <p className="rpx-scene-text">{t(`${scene.prefix}.text`)}</p>
+                  <SceneChip>{t(`${scene.prefix}.chip`)}</SceneChip>
                 </div>
-                <span style={chipStyle}>{t(`${scene.prefix}.chip`)}</span>
-              </>
-            ) : null}
-          </div>
-        </section>
-      ))}
-
-      {/* ── Voices ────────────────────────────────────────────────────────── */}
-      <section id="voices" style={{ position: "relative", background: "#031A36", padding: "96px 0", overflow: "hidden" }}>
-        <div aria-hidden="true" className="rp-pattern rp-pattern--voices" />
-        <div style={{ ...SECTION, position: "relative" }}>
-          <Rise style={{ display: "grid", gap: 14, marginBottom: 44 }}>
-            <h2 style={SECTION_TITLE}>{t("voices.title")}</h2>
-            <p style={{ margin: 0, maxWidth: "56ch", color: "rgba(255,255,255,.75)", fontSize: 17, lineHeight: 1.9 }}>{t("voices.lead")}</p>
-          </Rise>
-
-          <Rail step={360} prevLabel={tCommon("previous")} nextLabel={tCommon("next")} controlStyle="rounded">
-            {VOICES.map((voice) => (
-              <figure
-                key={voice.whoKey}
-                className="rp-voice"
-                style={{ margin: 0, flex: "0 0 340px", display: "grid", alignContent: "start", background: "rgba(255,255,255,.05)", border: "1px solid rgba(0,162,224,.3)", borderRadius: 8, overflow: "hidden" }}
-              >
-                <span style={{ position: "relative", display: "block", aspectRatio: "4 / 3", background: "rgba(6,36,66,.7)" }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element -- Drive-hosted, outside the configured image domains */}
-                  <img
-                    src={drive(voice.image, 1200)}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-                  />
-                </span>
-                <figcaption style={{ display: "grid", gap: 12, padding: 24 }}>
-                  <span style={{ color: "#fff", fontSize: 17, lineHeight: 1.9 }}>{t(voice.quoteKey)}</span>
-                  <span style={{ display: "grid", gap: 3, paddingTop: 12, borderTop: "1px solid rgba(0,162,224,.28)" }}>
-                    <b style={{ color: "var(--gold)", fontSize: 14 }}>{t(voice.whoKey)}</b>
-                    <span style={{ color: "rgba(255,255,255,.55)", fontSize: 12.5 }}>{t(voice.whereKey)}</span>
-                  </span>
-                </figcaption>
-              </figure>
-            ))}
-          </Rail>
-        </div>
-      </section>
-
-      {/* ── Programmes ────────────────────────────────────────────────────── */}
-      <section id="programs" style={{ position: "relative", background: "#062442", padding: "96px 0", borderTop: "1px solid rgba(0,162,224,.3)", overflow: "hidden" }}>
-        <div style={{ ...SECTION, position: "relative" }}>
-          <Rise style={{ display: "grid", gap: 14, marginBottom: 44 }}>
-            <h2 style={SECTION_TITLE}>{t("programs.title")}</h2>
-            <p style={{ margin: 0, maxWidth: "60ch", color: "rgba(255,255,255,.75)", fontSize: 17, lineHeight: 1.9 }}>{t("programs.lead")}</p>
-          </Rise>
-
-          <div style={{ display: "grid", borderTop: "1px solid rgba(255,255,255,.12)" }}>
-            {PROGRAMS.map((program) => (
-              <Rise key={program.titleKey} className="rp-program">
-                <span className="rp-program-icon" aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 40, height: 40, borderRadius: 10, background: "rgba(0,162,224,.14)", color: "var(--gold)" }}>
-                  <ProgramIcon name={program.icon} />
-                </span>
-                <span className="rp-program-title" style={{ display: "grid", gap: 5, minWidth: 0 }}>
-                  <b style={{ color: "#fff", fontSize: 21, lineHeight: 1.35 }}>{t(program.titleKey)}</b>
-                  <span style={{ color: "rgba(255,255,255,.6)", fontSize: 13 }}>
-                    {t("programs.kpiPrefix")} {t(program.kpiKey)}
-                  </span>
-                </span>
-                <span className="rp-program-text" style={{ display: "grid", gap: 9, minWidth: 0 }}>
-                  <span style={{ color: "rgba(255,255,255,.72)", fontSize: 14.5, lineHeight: 1.8 }}>{t(program.textKey)}</span>
-                  <span style={{ display: "block", height: 6, background: "rgba(255,255,255,.1)", borderRadius: 999, overflow: "hidden" }}>
-                    <span style={{ display: "block", height: "100%", width: `${program.share}%`, background: "var(--gold)", borderRadius: 999 }} />
-                  </span>
-                </span>
-                <b dir="ltr" className="rp-program-share" style={{ fontSize: 30, fontWeight: 900, color: "var(--gold)", unicodeBidi: "isolate", letterSpacing: "-.02em", textAlign: "end" }}>
-                  {formatNumber(program.share)}%
-                </b>
-              </Rise>
+              </section>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* ── Timeline ──────────────────────────────────────────────────────── */}
-      <section id="timeline" style={{ position: "relative", background: "#031A36", padding: "96px 0", overflow: "hidden" }}>
-        <div aria-hidden="true" className="rp-pattern rp-pattern--timeline" />
-        <div style={{ ...SECTION, position: "relative" }}>
-          <Rise style={{ display: "grid", gap: 14, marginBottom: 44 }}>
-            <h2 style={SECTION_TITLE}>{t("timeline.title")}</h2>
-          </Rise>
-          <div style={{ display: "grid" }}>
-            {MILESTONES.map((milestone, index) => (
-              <Rise key={milestone.titleKey} className="rp-milestone">
-                <b style={{ color: "var(--gold)", fontSize: 14, fontWeight: 900, paddingTop: 4 }}>{t(milestone.whenKey)}</b>
-                {/* Latin digits, matched to every other figure on the page. */}
-                <span dir="ltr" style={{ display: "grid", placeItems: "center", width: 44, height: 44, borderRadius: 8, background: "rgba(0,162,224,.16)", border: "1px solid rgba(0,162,224,.5)", color: "var(--gold)", fontWeight: 900, fontSize: 16, unicodeBidi: "isolate" }}>
-                  {index + 1}
-                </span>
-                <span style={{ display: "grid", gap: 7, minWidth: 0 }}>
-                  <b style={{ color: "#fff", fontSize: 21, lineHeight: 1.35 }}>{t(milestone.titleKey)}</b>
-                  <span style={{ color: "rgba(255,255,255,.7)", fontSize: 15, lineHeight: 1.9, maxWidth: "62ch" }}>{t(milestone.textKey)}</span>
-                </span>
-              </Rise>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Documents ─────────────────────────────────────────────────────── */}
-      <section id="reports" style={{ position: "relative", background: "#062442", padding: "96px 0", borderTop: "1px solid rgba(0,162,224,.3)", overflow: "hidden" }}>
-        <div className="rp-reports" style={{ ...SECTION, position: "relative", display: "grid", gridTemplateColumns: "minmax(0,.8fr) minmax(0,1.2fr)", gap: 44, alignItems: "start" }}>
-          <Rise className="rp-reports-side" style={{ display: "grid", gap: 16, justifyItems: "start", position: "sticky", top: 92 }}>
-            <h2 style={SECTION_TITLE}>{t("reports.title")}</h2>
-            <p style={{ margin: 0, maxWidth: "42ch", color: "rgba(255,255,255,.72)", fontSize: 16, lineHeight: 1.9 }}>{t("reports.lead")}</p>
-            <Button variant="outline" href={ORG_WHATSAPP} target="_blank" rel="noopener noreferrer" style={{ whiteSpace: "nowrap" }}>
-              {t("reports.cta")}
-            </Button>
-          </Rise>
-
-          <div style={{ display: "grid", borderTop: reports.length ? "1px solid rgba(255,255,255,.12)" : "0" }}>
-            {reports.length === 0 ? (
-              /* The handoff drops its own empty state in here on a white card,
-                 because the section around it is dark. */
-              <div style={{ background: "#fff", borderRadius: 14, overflow: "hidden" }}>
-                <NoReports />
+          {featureScenes.map((scene) => (
+            <section key={scene.id} id={scene.id} data-scene className="rpx-sec rpx-feature">
+              <div className="rpx-scene rpx-scene--feature" data-side={scene.side}>
+                <SceneImage id={scene.image} />
+                <span aria-hidden="true" className="rpx-scene-fade" />
+                <div className="rpx-scene-copy">
+                  <span className="rpx-scene-eyebrow">{t(`${scene.prefix}.eyebrow`)}</span>
+                  <Figure value={scene.count} className="rpx-scene-num rpx-scene-num--accent" />
+                  <b className="rpx-scene-label">{t(`${scene.prefix}.label`)}</b>
+                  <p className="rpx-scene-text">{t(`${scene.prefix}.text`)}</p>
+                  <SceneChip>{t(`${scene.prefix}.chip`)}</SceneChip>
+                </div>
               </div>
-            ) : null}
-            {reports.map((report) => (
-              <a
-                key={report.id}
-                href={report.fileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rp-report"
-                style={{ display: "flex", alignItems: "center", gap: 16, padding: "22px 4px", borderBottom: "1px solid rgba(255,255,255,.12)", color: "#fff" }}
-              >
-                <span style={{ display: "grid", gap: 4, minWidth: 0 }}>
-                  <b style={{ fontSize: 17.5, lineHeight: 1.45, color: "#fff" }}>{report.title}</b>
-                  <span style={{ color: "rgba(255,255,255,.55)", fontSize: 13 }}>
-                    PDF{report.year ? ` · ${report.year}` : ""}{report.description ? ` · ${report.description}` : ""}
-                  </span>
-                </span>
-                <span style={{ marginInlineStart: "auto", flex: "0 0 auto", padding: "6px 12px", borderRadius: 999, background: "rgba(255,255,255,.07)", border: "1px solid rgba(255,255,255,.16)", color: "rgba(255,255,255,.66)", fontSize: 12, fontWeight: 900, whiteSpace: "nowrap" }}>
-                  {t("reportStatusAvailable")}
-                </span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
+              <div className="rpx-qudsmetrics">
+                {QUDS_METRICS.map((metric) => (
+                  <Rise key={metric.labelKey} className="rpx-card rpx-metric">
+                    <Figure value={metric.count} className="rpx-stat-num" />
+                    <b style={{ color: "var(--ink, #062442)", fontSize: 15.5, lineHeight: 1.5 }}>{t(metric.labelKey)}</b>
+                    <span className="rpx-muted" style={{ fontSize: 13, lineHeight: 1.8 }}>{t(metric.noteKey)}</span>
+                  </Rise>
+                ))}
+              </div>
+            </section>
+          ))}
 
-      {/* ── Closing call ──────────────────────────────────────────────────── */}
-      <section className="rp-closing" style={{ position: "relative", minHeight: "62vh", display: "grid", alignItems: "center", background: "#062442", overflow: "hidden" }}>
-        {/* eslint-disable-next-line @next/next/no-img-element -- Drive-hosted, outside the configured image domains */}
-        <img src={drive(CLOSING_IMAGE, 2000)} alt="" loading="lazy" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-        <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, #062442 12%, rgba(6,36,66,.78) 58%, rgba(6,36,66,.45))", pointerEvents: "none" }} />
-        <div style={{ ...SECTION, position: "relative", width: "100%", padding: "72px 24px", display: "grid", gap: 20, justifyItems: "center", textAlign: "center" }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(28px,3.6vw,52px)", lineHeight: 1.25, fontWeight: 900, color: "#fff", letterSpacing: "-.02em" }}>
-            {t("closing.title")}
-          </h2>
-          <p style={{ margin: 0, maxWidth: "52ch", color: "rgba(255,255,255,.82)", fontSize: 17, lineHeight: 1.9 }}>{t("closing.lead")}</p>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: 6 }}>
-            <Button variant="primary" size="lg" href={miaPath("projects", locale)} style={{ whiteSpace: "nowrap" }}>
-              {t("closing.cta1")}
-            </Button>
-            <Button variant="gold" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap" }}>
-              {t("closing.cta2")}
-            </Button>
-          </div>
+          {/* ── Voices ────────────────────────────────────────────────────── */}
+          <section id="voices" className="rpx-sec">
+            <Head eyebrow={t("voices.eyebrow")} title={t("voices.title")} lead={t("voices.lead")} />
+            <Rail step={360} prevLabel={tCommon("previous")} nextLabel={tCommon("next")} controlStyle="rounded">
+              {VOICES.map((voice) => (
+                <figure key={voice.whoKey} className="rp-voice rpx-card rpx-voice" style={{ margin: 0, flex: "0 0 320px" }}>
+                  <span className="rpx-voice-img">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- Drive-hosted, outside the configured image domains */}
+                    <img src={drive(voice.image, 1200)} alt="" loading="lazy" decoding="async" />
+                  </span>
+                  <figcaption style={{ display: "grid", gap: 12, padding: "18px 20px 20px" }}>
+                    <span style={{ color: "#33495e", fontSize: 14.5, lineHeight: 1.95 }}>{t(voice.quoteKey)}</span>
+                    <span style={{ display: "grid", gap: 2, paddingTop: 12, borderTop: "1px solid #e3edf4" }}>
+                      <b style={{ color: "#0077b3", fontSize: 14 }}>{t(voice.whoKey)}</b>
+                      <span className="rpx-muted" style={{ fontSize: 12.5 }}>{t(voice.whereKey)}</span>
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </Rail>
+          </section>
+
+          {/* ── Programmes ────────────────────────────────────────────────────
+              The design's giving-path cards: a navy head that curves into the
+              card, the programme's glyph on the seam, then its copy and share. */}
+          <section id="programs" className="rpx-sec">
+            <Head eyebrow={t("programs.eyebrow")} title={t("programs.title")} lead={t("programs.lead")} />
+            <div className="rpx-programs">
+              {PROGRAMS.map((program) => (
+                <Rise key={program.titleKey} className="rpx-card rpx-program">
+                  <span className="rpx-program-head" aria-hidden="true">
+                    <span className="rpx-program-badge">
+                      <ProgramIcon name={program.icon} />
+                    </span>
+                  </span>
+                  <span className="rpx-program-body">
+                    <small className="rpx-program-kpi">
+                      {t("programs.kpiPrefix")} {t(program.kpiKey)}
+                    </small>
+                    <b className="rpx-program-title">{t(program.titleKey)}</b>
+                    <span className="rpx-program-text">{t(program.textKey)}</span>
+                    <span className="rpx-program-foot">
+                      <span className="rpx-bar" aria-hidden="true">
+                        <span style={{ width: `${program.share}%` }} />
+                      </span>
+                      <b dir="ltr" style={{ unicodeBidi: "isolate", color: "#0077b3", fontSize: 15, fontWeight: 900 }}>
+                        {formatNumber(program.share)}%
+                      </b>
+                    </span>
+                  </span>
+                </Rise>
+              ))}
+            </div>
+          </section>
+
+          {/* ── Timeline ──────────────────────────────────────────────────── */}
+          <section id="timeline" className="rpx-sec">
+            <Head eyebrow={t("timeline.eyebrow")} title={t("timeline.title")} />
+            <div className="rpx-card rpx-timeline">
+              {MILESTONES.map((milestone, index) => (
+                <Rise key={milestone.titleKey} className="rpx-milestone">
+                  {/* Latin digits, matched to every other figure on the page. */}
+                  <span dir="ltr" className="rpx-milestone-n">{index + 1}</span>
+                  <span style={{ display: "grid", gap: 4, minWidth: 0 }}>
+                    <small className="rpx-eyebrow" style={{ marginBottom: 0 }}>{t(milestone.whenKey)}</small>
+                    <b style={{ color: "#062442", fontSize: 18, lineHeight: 1.45, fontWeight: 900 }}>{t(milestone.titleKey)}</b>
+                    <span style={{ color: "#3d5468", fontSize: 14, lineHeight: 1.95, maxWidth: "72ch" }}>{t(milestone.textKey)}</span>
+                  </span>
+                </Rise>
+              ))}
+            </div>
+          </section>
+
+          {/* ── Documents ─────────────────────────────────────────────────────
+              The Transparency page's document list: one white row per
+              published report, opening its file. */}
+          <section id="reports" className="rpx-sec">
+            <div className="rpx-reports">
+              <Rise className="rpx-reports-side">
+                <span className="rpx-eyebrow">{t("reports.eyebrow")}</span>
+                <h2 className="rpx-h2">{t("reports.title")}</h2>
+                <p className="rpx-sub" style={{ lineHeight: 1.9 }}>{t("reports.lead")}</p>
+                <a href={ORG_WHATSAPP} target="_blank" rel="noopener noreferrer" className="rpx-ghost">
+                  {t("reports.cta")}
+                </a>
+              </Rise>
+
+              <div style={{ display: "grid", gap: 10, alignContent: "start" }}>
+                {reports.length === 0 ? (
+                  /* The empty state sits in the design's dashed placeholder card. */
+                  <div className="rpx-empty">
+                    <NoReports />
+                  </div>
+                ) : null}
+                {reports.map((report) => (
+                  <a key={report.id} href={report.fileUrl} target="_blank" rel="noopener noreferrer" className="rp-report rpx-report">
+                    <span className="rpx-report-ico" aria-hidden="true">
+                      <ProgramIcon name="document" size={18} />
+                    </span>
+                    <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
+                      <b className="rpx-report-title">{report.title}</b>
+                      <span className="rpx-muted" style={{ fontSize: 12.5 }}>
+                        PDF{report.year ? ` · ${report.year}` : ""}{report.description ? ` · ${report.description}` : ""}
+                      </span>
+                    </span>
+                    <span className="rpx-report-status">{t("reportStatusAvailable")}</span>
+                    <span className="rpx-report-arrow" aria-hidden="true">
+                      <ProgramIcon name="arrow" size={15} />
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── Closing call ──────────────────────────────────────────────────
+              The design's dark band: the closing photograph under the navy
+              gradient, rounded like the page's other large panels. */}
+          <section className="rpx-sec rpx-closing">
+            {/* eslint-disable-next-line @next/next/no-img-element -- Drive-hosted, outside the configured image domains */}
+            <img src={drive(CLOSING_IMAGE, 2000)} alt="" loading="lazy" className="rpx-closing-img" />
+            <span aria-hidden="true" className="rpx-closing-fade" />
+            <div style={{ position: "relative", display: "grid", gap: 16, justifyItems: "center", textAlign: "center", padding: "56px 24px" }}>
+              <h2 style={{ margin: 0, fontSize: "clamp(24px,3vw,38px)", lineHeight: 1.3, fontWeight: 900, color: "#fff", letterSpacing: "-.02em" }}>
+                {t("closing.title")}
+              </h2>
+              <p style={{ margin: 0, maxWidth: "52ch", color: "#b9d3e6", fontSize: 15.5, lineHeight: 1.9 }}>{t("closing.lead")}</p>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: 6 }}>
+                <Button variant="primary" size="lg" href={miaPath("projects", locale)} style={{ whiteSpace: "nowrap" }}>
+                  {t("closing.cta1")}
+                </Button>
+                <Button variant="outline" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap" }}>
+                  {t("closing.cta2")}
+                </Button>
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
 
       <ZakatBanner />
       <TravelBanner />
       <IbadanBanner />
     </div>
+  );
+}
+
+/** The source line of a field panel, as the design's place caption. */
+function SceneChip({ children }: { children: ReactNode }) {
+  return (
+    <span className="rpx-scene-chip">
+      <ProgramIcon name="pin" size={13} />
+      {children}
+    </span>
   );
 }
 

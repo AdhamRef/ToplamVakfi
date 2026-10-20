@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import CertificateFrame, { CertificateRule, CERT_BRAND_INK, CERT_NAVY } from "./CertificateFrame";
 import type { ThanksCertificateProps } from "./ThanksCertificate";
 
 /**
@@ -9,33 +9,8 @@ import type { ThanksCertificateProps } from "./ThanksCertificate";
  * wants a tall frame. Same props, same wording, laid out for A4 portrait.
  */
 
-const GOLD = "#00A2E0";
 const SERIF = "var(--font-amiri), Amiri, serif";
 const SANS = "var(--font-cairo), Cairo, system-ui, sans-serif";
-
-const GROUND: CSSProperties = {
-  position: "absolute",
-  inset: 0,
-  pointerEvents: "none",
-  background: [
-    "radial-gradient(circle at 50% 34%, rgba(255,255,255,.9) 0 38%, rgba(234,243,249,.55) 100%)",
-    "repeating-conic-gradient(from 45deg at 0 0, rgba(0,162,224,.13) 0deg 90deg, transparent 90deg 180deg) 0 0/30px 30px",
-    "radial-gradient(circle at 0 0, transparent 68%, rgba(0,162,224,.16) 69% 71%, transparent 72%) 0 0/30px 30px",
-    "radial-gradient(circle at 100% 100%, transparent 68%, rgba(0,162,224,.16) 69% 71%, transparent 72%) 0 0/30px 30px",
-    "repeating-linear-gradient(45deg, rgba(0,162,224,.07) 0 1px, transparent 1px 15px)",
-    "repeating-linear-gradient(-45deg, rgba(0,162,224,.07) 0 1px, transparent 1px 15px)",
-  ].join(", "),
-};
-
-const corner = (v: "top" | "bottom", h: "start" | "end"): CSSProperties => ({
-  position: "absolute",
-  [v]: "2.4%",
-  [h === "start" ? "insetInlineStart" : "insetInlineEnd"]: "2.4%",
-  width: 92,
-  height: 92,
-  [v === "top" ? "borderTop" : "borderBottom"]: `6px solid ${GOLD}`,
-  [h === "start" ? "borderInlineStart" : "borderInlineEnd"]: `6px solid ${GOLD}`,
-});
 
 export default function ThanksCertificatePortrait({ donorName, copy, verse, duaVerse, dir, assetBase = "" }: ThanksCertificateProps) {
   const asset = (file: string) => `${assetBase}/minbar/assets/${file}`;
@@ -46,17 +21,8 @@ export default function ThanksCertificatePortrait({ donorName, copy, verse, duaV
       dir={dir}
       style={{ position: "relative", width: "100%", maxWidth: 760, margin: "0 auto", aspectRatio: "1/1.414", containerType: "inline-size", background: "#FFFFFF", boxShadow: "0 26px 70px rgba(6,36,66,.18)", overflow: "hidden", fontFamily: SANS, color: "#062442" }}
     >
-      <div aria-hidden="true" style={GROUND} />
-      {/* eslint-disable-next-line @next/next/no-img-element -- decorative sheet artwork */}
-      <img src={asset("aqsa-dome-line.png")} alt="" aria-hidden="true" style={{ position: "absolute", insetInline: "12%", bottom: "7%", width: "76%", height: "auto", opacity: 0.09, pointerEvents: "none" }} />
-
-      <div aria-hidden="true" style={{ position: "absolute", inset: "2.4%", border: `2.5px solid ${GOLD}` }} />
-      <div aria-hidden="true" style={{ position: "absolute", inset: "3.4%", border: "1px solid rgba(0,162,224,.55)" }} />
-      <div aria-hidden="true" style={{ position: "absolute", inset: "4.4%", border: "1px dashed rgba(0,162,224,.5)" }} />
-      <div aria-hidden="true" style={corner("top", "start")} />
-      <div aria-hidden="true" style={corner("top", "end")} />
-      <div aria-hidden="true" style={corner("bottom", "start")} />
-      <div aria-hidden="true" style={corner("bottom", "end")} />
+      {/* The official-document frame: navy band, guilloche, inner rule, medallions. */}
+      <CertificateFrame watermark={asset("logo-mark.png")} />
 
       <div style={{ position: "relative", height: "100%", padding: "8.5% 10% 7%", display: "grid", gridTemplateRows: "auto auto 1fr auto", textAlign: "center", boxSizing: "border-box" }}>
         <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
@@ -67,14 +33,16 @@ export default function ThanksCertificatePortrait({ donorName, copy, verse, duaV
           {verse.translation ? <p style={{ margin: 0, width: "94%", fontSize: "clamp(9px,1.4cqw,12px)", lineHeight: 1.7, color: "#0F55B8", opacity: 0.85 }}>{verse.translation}</p> : null}
         </div>
 
-        <div style={{ display: "grid", justifyItems: "center", gap: 16, paddingTop: "4%" }}>
-          <h1 style={{ margin: 0, fontFamily: SERIF, fontSize: "clamp(38px,9.6cqw,78px)", fontWeight: 700, letterSpacing: ".04em", color: "#1B6FE0", lineHeight: 1.7, whiteSpace: "nowrap" }}>{copy.title}</h1>
+        {/* The design's title block: navy Cairo over the engraved rule. */}
+        <div style={{ display: "grid", justifyItems: "center", gap: 14, paddingTop: "4%" }}>
+          <h1 style={{ margin: 0, fontFamily: SANS, fontSize: "clamp(30px,7.4cqw,62px)", fontWeight: 900, letterSpacing: "-.01em", color: CERT_NAVY, lineHeight: 1.4, whiteSpace: "nowrap" }}>{copy.title}</h1>
+          <CertificateRule width="40%" />
         </div>
 
         <div style={{ display: "grid", alignContent: "center", justifyItems: "center", gap: "3.4%" }}>
           <div style={{ display: "grid", justifyItems: "center", gap: 10, width: "84%" }}>
             <span style={{ fontSize: "clamp(10px,1.9cqw,14px)", fontWeight: 700, color: "#5D7187", whiteSpace: "nowrap" }}>{copy.nameLabel}</span>
-            <span style={{ display: "grid", placeItems: "center", width: "100%", minHeight: 46, padding: "4px 6px", fontSize: "clamp(14px,3.4cqw,27px)", fontWeight: 800, color: "#062442", whiteSpace: "nowrap" }}>{donorName}</span>
+            <span style={{ display: "grid", placeItems: "center", minWidth: "60%", maxWidth: "100%", minHeight: 46, padding: "4px 6px 6px", borderBottom: "1.5px dotted #9fc0d6", fontSize: "clamp(14px,3.4cqw,27px)", fontWeight: 900, color: CERT_BRAND_INK, whiteSpace: "nowrap" }}>{donorName}</span>
           </div>
 
           <p style={{ margin: 0, width: "94%", fontSize: "clamp(10px,2cqw,15px)", lineHeight: 2.1, color: "#031A36" }}>{copy.body}</p>

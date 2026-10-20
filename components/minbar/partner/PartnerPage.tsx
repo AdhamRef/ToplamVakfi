@@ -3,10 +3,14 @@
 import { type FormEvent, type ReactElement, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { track } from "@vercel/analytics";
-import { localeDirection } from "@/lib/locales";
+import { miaPath } from "@/lib/minbar/routes";
+import InnerBanner from "@/components/minbar/about/InnerBanner";
 
 /**
- * Become a partner  ported from `Minbar/كن شريكا.dc.html`.
+ * Become a partner  ported from `Minbar/كن شريكا.dc.html`, laid out on the
+ * Toplum inner-page template (`ToplamVakfi-design/Toplum Vakfı Partners.dc.html`):
+ * the photo banner, the partnership tracks as white list rows, and the lead
+ * form card beside them. Styles (`.fd-*`) live in `styles/minbar/pages/about.css`.
  *
  * Three partnership tracks, then a short lead form. The handoff's `submitLead()`
  * is a placeholder timer; this posts to `POST /api/messages` under the
@@ -41,11 +45,14 @@ const EMAIL_RE = /\S+@\S+\.\S+/;
 
 function field(invalid: boolean) {
   return {
-    height: 46,
-    border: `1px solid ${invalid ? "var(--red)" : "var(--border)"}`,
+    width: "100%",
+    minHeight: 46,
+    border: `1.5px solid ${invalid ? "#b3261e" : "#e3edf4"}`,
     borderRadius: 10,
     padding: "0 14px",
     fontSize: 14,
+    background: "#fbfdff",
+    color: "#062442",
     boxSizing: "border-box" as const,
     unicodeBidi: "plaintext" as const,
   };
@@ -53,8 +60,8 @@ function field(invalid: boolean) {
 
 export default function PartnerPage() {
   const locale = useLocale();
-  const dir = localeDirection(locale);
   const t = useTranslations("partner");
+  const tNav = useTranslations("navigation");
 
   const [org, setOrg] = useState("");
   const [email, setEmail] = useState("");
@@ -68,8 +75,6 @@ export default function PartnerPage() {
   useEffect(() => () => clearTimeout(shakeTimer.current), []);
 
   const emailValid = EMAIL_RE.test(email);
-  // The Toplum page banner: the dark navy gradient (ToplamVakfi-design/CLAUDE.md).
-  const heroGradient = `linear-gradient(${dir === "rtl" ? 240 : 120}deg, #021428 0%, #082b50 60%, #04172e 100%)`;
 
   const fail = () => {
     setError(t("errorValidation"));
@@ -122,73 +127,54 @@ export default function PartnerPage() {
   };
 
   return (
-    <div className="pt-page">
-      <section style={{ position: "relative", zIndex: 1, background: heroGradient, overflow: "hidden" }}>
-        <span aria-hidden="true" className="pt-hero-pattern" />
-        <div className="pt-hero" style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "70px 24px", display: "grid", gap: 14, justifyItems: "start" }}>
-          {/* The handoff computes this eyebrow and then never places it. It is
-              translated in all 19 languages, so it is rendered here where it
-              was plainly meant to go. */}
-          <span className="pt-in" style={{ fontSize: 12.5, fontWeight: 900, letterSpacing: ".08em", textTransform: "uppercase", color: "rgba(255,255,255,.75)" }}>
-            {t("eyebrow")}
-          </span>
-          <h1 className="pt-in pt-in-1" style={{ margin: 0, fontSize: "clamp(28px,3.2vw,42px)", lineHeight: 1.3, fontWeight: 900, color: "#fff" }}>
-            {t("heroTitle")}
-          </h1>
-          <p className="pt-in pt-in-2" style={{ margin: 0, maxWidth: "58ch", fontSize: 15.5, lineHeight: 1.9, color: "rgba(255,255,255,.88)" }}>
-            {t("metaDescription")}
-          </p>
-        </div>
-      </section>
+    <div className="pt-page fd-page">
+      {/* The handoff computes the eyebrow and then never places it. It is
+          translated in all 19 languages, so it sits above the title. */}
+      <InnerBanner
+        crumbs={[{ label: tNav("home"), href: miaPath("home", locale) }, { label: t("heroTitle") }]}
+        eyebrow={t("eyebrow")}
+        title={t("heroTitle")}
+        lead={t("metaDescription")}
+      />
 
-      <section style={{ position: "relative", zIndex: 1, background: "#fff", borderBottom: "1px solid var(--border)", padding: "56px 0" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gap: 22 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(21px,2vw,27px)", fontWeight: 900 }}>{t("tracksTitle")}</h2>
-          <div className="pt-grid3">
-            {TRACKS.map((item) => (
-              <div
-                key={item.title}
-                className="pt-track"
-                style={{ display: "grid", gap: 10, alignContent: "start", padding: 24, background: "var(--sand)", borderTop: "3px solid var(--gold)", borderRadius: 4 }}
-              >
-                <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 9, background: "rgba(0,162,224,.14)", color: "var(--gold)" }}>
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    {ICONS[item.icon]}
-                  </svg>
-                </span>
-                <b style={{ fontSize: 17, lineHeight: 1.4 }}>{t(item.title)}</b>
-                <span style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.85 }}>{t(item.text)}</span>
-              </div>
-            ))}
+      <div className="fd-main">
+        <div className="fd-wrap fd-two">
+          <div className="pt-in">
+            <h2 className="fd-h2">{t("tracksTitle")}</h2>
+            <div className="fd-rows">
+              {TRACKS.map((item) => (
+                <article key={item.title} className="fd-card fd-track-row pt-track">
+                  <span aria-hidden="true" className="fd-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      {ICONS[item.icon]}
+                    </svg>
+                  </span>
+                  <div style={{ minWidth: 0 }}>
+                    <h3>{t(item.title)}</h3>
+                    <p>{t(item.text)}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
 
-      <section style={{ position: "relative", zIndex: 1, background: "var(--sand)", padding: "56px 0" }}>
-        <div style={{ maxWidth: 780, margin: "0 auto", padding: "0 24px" }}>
           {sent ? (
-            <div style={{ display: "grid", justifyItems: "center", gap: 14, padding: "44px 30px", textAlign: "center", background: "#fff", border: "1px solid var(--border)", borderRadius: 12, boxShadow: "0 12px 32px rgba(6,36,66,.08)" }}>
-              <span className="pt-pop" style={{ display: "grid", placeItems: "center", width: 56, height: 56, borderRadius: "50%", background: "rgba(31,122,77,.12)", color: "var(--green)" }}>
+            <div className="fd-card fd-done" role="status">
+              <span className="pt-pop fd-done-ico">
                 <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
               </span>
-              <h2 style={{ margin: 0, fontSize: 20, fontWeight: 900 }}>{t("sentTitle")}</h2>
-              <p style={{ margin: 0, maxWidth: "40ch", color: "var(--muted)", fontSize: 14.5, lineHeight: 1.9 }}>{t("sentText")}</p>
+              <h2>{t("sentTitle")}</h2>
+              <p>{t("sentText")}</p>
             </div>
           ) : (
-            <form
-              id="pform"
-              onSubmit={onSubmit}
-              noValidate
-              className={`pt-in pt-in-2${shake ? " pt-shake" : ""}`}
-              style={{ display: "grid", gap: 16, padding: 32, background: "#fff", border: "1px solid var(--border)", borderTop: "3px solid var(--gold)", borderRadius: 12, boxShadow: "0 12px 32px rgba(6,36,66,.08)" }}
-            >
-              <h2 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 900 }}>{t("formTitle")}</h2>
+            <form id="pform" onSubmit={onSubmit} noValidate className={`fd-card fd-form pt-in pt-in-2${shake ? " pt-shake" : ""}`}>
+              <h2>{t("formTitle")}</h2>
 
-              <div className="pt-pair" style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 14 }}>
-                <label style={{ display: "grid", gap: 6 }}>
-                  <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{t("fieldOrg")}</span>
+              <div className="fd-pair pt-pair">
+                <label>
+                  <span className="fd-label">{t("fieldOrg")}</span>
                   <input
                     value={org}
                     onChange={(e) => setOrg(e.target.value)}
@@ -197,8 +183,8 @@ export default function PartnerPage() {
                     style={field(Boolean(error) && !org.trim())}
                   />
                 </label>
-                <label style={{ display: "grid", gap: 6 }}>
-                  <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{t("fieldEmail")}</span>
+                <label>
+                  <span className="fd-label">{t("fieldEmail")}</span>
                   <input
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -211,34 +197,34 @@ export default function PartnerPage() {
                 </label>
               </div>
 
-              <label style={{ display: "grid", gap: 6 }}>
-                <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{t("fieldType")}</span>
+              <label>
+                <span className="fd-label">{t("fieldType")}</span>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={4}
-                  style={{ ...field(false), height: "auto", padding: "12px 14px", resize: "vertical" }}
+                  style={{ ...field(false), minHeight: 120, padding: "12px 14px", resize: "vertical" }}
                 />
               </label>
 
               {error ? (
-                <span role="alert" style={{ fontSize: 13, fontWeight: 700, color: "var(--red)" }}>
+                <span role="alert" className="fd-error">
                   {error}
                 </span>
               ) : null}
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="pt-submit"
-                style={{ height: 48, border: 0, borderRadius: 8, cursor: submitting ? "not-allowed" : "pointer", width: "fit-content", padding: "0 26px", background: "var(--red)", color: "#fff", fontFamily: "inherit", fontWeight: 900, fontSize: 15, transition: "filter .18s ease" }}
-              >
+              <button type="submit" disabled={submitting} className="pt-submit fd-pill">
+                <span aria-hidden="true" className="fd-pill-ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" />
+                  </svg>
+                </span>
                 {submitting ? t("submitLabelSending") : t("submitLabel")}
               </button>
             </form>
           )}
         </div>
-      </section>
+      </div>
     </div>
   );
 }

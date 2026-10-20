@@ -30,6 +30,14 @@ import { listNavSuperCategories } from "@/lib/minbar/super-category";
 import "@/styles/minbar/minbar.css";
 import "@/styles/minbar/locale-fonts.css";
 import "@/styles/minbar/toplum.css";
+import "@/styles/minbar/pages/home.css";
+import "@/styles/minbar/pages/projects.css";
+import "@/styles/minbar/pages/project-detail.css";
+import "@/styles/minbar/pages/giving-flow.css";
+import "@/styles/minbar/pages/about.css";
+import "@/styles/minbar/pages/blog.css";
+import "@/styles/minbar/pages/giving.css";
+import "@/styles/minbar/pages/reports.css";
 
 // Valid public locales derive from the single source of truth (enabled set).
 const VALID_LOCALES = SUPPORTED_LOCALES;

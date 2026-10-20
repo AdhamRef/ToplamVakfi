@@ -65,13 +65,16 @@ export default function WaqfCertificatePreview({
           width: "100%",
           maxWidth: 420,
           justifySelf: "center",
+          /* The design's plaque: a navy frame with a fine inner ring, the
+             certificate sheet set inside it. */
           background:
-            "repeating-linear-gradient(45deg, rgba(0,162,224,0) 0 8px, rgba(0,162,224,.5) 8px 9px), repeating-linear-gradient(-45deg, rgba(0,162,224,0) 0 8px, rgba(0,162,224,.5) 8px 9px), #f4f8fb",
-          border: "7px solid #0089cb",
-          boxShadow: "0 18px 40px rgba(6,36,66,.12)",
+            "repeating-linear-gradient(45deg, rgba(127,214,245,0) 0 9px, rgba(127,214,245,.12) 9px 10px), repeating-linear-gradient(-45deg, rgba(127,214,245,0) 0 9px, rgba(127,214,245,.12) 9px 10px), linear-gradient(135deg, #031a36, #0b3a78)",
+          border: "1px solid #0b3a78",
+          borderRadius: 16,
+          boxShadow: "inset 0 0 0 1px rgba(255,255,255,.18), inset 0 0 0 4px #031a36, 0 18px 40px rgba(2,52,88,.16)",
         }}
       >
-        <div style={{ position: "absolute", inset: 18, border: "1.5px solid #0089cb", background: "#fff", padding: "20px 20px 16px", display: "grid", gridTemplateRows: "auto auto auto 1fr auto", textAlign: "center", gap: 8 }}>
+        <div style={{ position: "absolute", inset: 16, border: "1px solid rgba(0,162,224,.45)", borderRadius: 10, background: "#fff", boxShadow: "0 0 0 3px rgba(0,162,224,.16)", padding: "20px 20px 16px", display: "grid", gridTemplateRows: "auto auto auto 1fr auto", textAlign: "center", gap: 8 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <span style={{ display: "grid", gap: 3, justifyItems: "center" }}>
               <span style={microLabel}>{countLabel}</span>
@@ -132,7 +135,7 @@ export default function WaqfCertificatePreview({
           </div>
         </div>
       </div>
-      <p id="waqf-cert-preview-note" data-open={open ? "1" : "0"} style={{ margin: 0, maxWidth: 420, fontSize: 11.5, lineHeight: 1.7, color: "var(--muted)", textAlign: "center" }}>
+      <p id="waqf-cert-preview-note" data-open={open ? "1" : "0"} style={{ margin: 0, maxWidth: 420, fontSize: 12, lineHeight: 1.8, color: "#5d7187", textAlign: "center" }}>
         {t("waqfPreviewNumberNote")}
       </p>
     </div>
@@ -146,7 +149,7 @@ const boxed: React.CSSProperties = {
   height: 24,
   padding: "0 6px",
   border: "1px solid #9fc4dc",
-  borderRadius: 3,
+  borderRadius: 6,
   display: "grid",
   placeItems: "center",
   fontWeight: 800,

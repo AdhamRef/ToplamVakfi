@@ -1,7 +1,6 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { localeDirection } from "@/lib/locales";
 import { miaPath } from "@/lib/minbar/routes";
 import { imageForSlug, galleryFor, youtubeEmbed } from "@/lib/minbar/content/media";
 import type { MinbarProject } from "@/lib/minbar/projects";
@@ -13,7 +12,9 @@ import { NoProjects } from "@/components/minbar/states/ContentStates";
 
 /**
  * Restoring the homes of Al-Quds  ported from
- * `Minbar/مشروع ترميم منازل القدس.dc.html`.
+ * `Minbar/مشروع ترميم منازل القدس.dc.html`, laid out on the Toplum project
+ * template (`ToplamVakfi-design/Toplum Vakfı Project - *.dc.html`): a
+ * full-bleed photo hero, then the story beside a sticky programme sidebar.
  *
  * The programme page for the foundation's largest Al-Quds commitment: what it
  * is, why it matters, the five values it works to, the homes currently open for
@@ -59,8 +60,6 @@ const ICONS = {
   heart: <path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" />,
 } as const;
 
-const SECTION = { maxWidth: 1240, margin: "0 auto", padding: "0 24px" } as const;
-
 export interface RestorationPageProps {
   /** Homes and restoration campaigns open for support, from the catalogue. */
   projects: MinbarProject[];
@@ -75,7 +74,6 @@ export interface RestorationPageProps {
 
 export default function RestorationPage({ projects, restored, goal }: RestorationPageProps) {
   const locale = useLocale();
-  const rtl = localeDirection(locale) === "rtl";
   const t = useTranslations("projects");
   const tCommon = useTranslations("common");
   const { formatNumber } = useMinbarMoney();
@@ -85,33 +83,36 @@ export default function RestorationPage({ projects, restored, goal }: Restoratio
   const pct = goal > 0 ? Math.min(Math.round((restored / goal) * 100), 100) : 0;
 
   return (
-    <div className="rest-page">
-      {/* ── Hero ──────────────────────────────────────────────────────────── */}
-      <section style={{ position: "relative", background: "var(--deep)", overflow: "hidden" }}>
+    <div className="rest-page pd-page">
+      {/* ── Hero: the programme photo full-bleed, the title over its foot ──
+          The project template's hero, starting under the app's solid header
+          rather than behind it. */}
+      <section className="pd-hero" style={{ position: "relative", display: "flex", alignItems: "flex-end", background: "#031a36", overflow: "hidden" }}>
         {hero ? (
           <span
             role="img"
             aria-label={t("restHeroTitle")}
-            style={{ position: "absolute", inset: 0, backgroundImage: `url('${hero}')`, backgroundSize: "cover", backgroundPosition: "center" }}
+            style={{ position: "absolute", inset: 0, backgroundImage: `url('${hero}')`, backgroundSize: "cover", backgroundPosition: "center 30%" }}
           />
         ) : null}
         <div
           aria-hidden="true"
-          style={{ position: "absolute", inset: 0, background: `linear-gradient(to ${rtl ? "left" : "right"}, rgba(6,36,66,.35) 0%, rgba(6,36,66,.15) 38%, transparent 62%)`, pointerEvents: "none" }}
+          style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(2,20,38,.84) 0%, rgba(2,20,38,.5) 45%, rgba(2,20,38,.18) 100%)", pointerEvents: "none" }}
         />
-        <div className="rest-hero" style={{ ...SECTION, position: "relative", padding: "140px 24px 110px", display: "grid", gridTemplateColumns: "minmax(0,1.05fr) minmax(0,.95fr)", gap: 44, alignItems: "end" }}>
-          <div className="rest-in" style={{ display: "grid", gap: 18, justifyItems: "start", padding: "26px 28px", background: "rgba(6,36,66,.55)", borderRadius: 14, backdropFilter: "blur(2px)" }}>
-            <h1 style={{ margin: 0, fontSize: "clamp(30px,3.6vw,50px)", lineHeight: 1.3, fontWeight: 900, color: "#fff" }}>{t("restHeroTitle")}</h1>
-            <p style={{ margin: 0, maxWidth: "58ch", fontSize: 16.5, lineHeight: 1.95, color: "rgba(255,255,255,.9)" }}>{t("restHeroLead")}</p>
-            <a
-              href="#current-projects"
-              className="rest-jump"
-              style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 52, padding: "0 24px", borderRadius: 10, border: "1px solid rgba(255,255,255,.5)", color: "#fff", fontWeight: 800, fontSize: 15.5, transition: "all .18s ease" }}
-            >
-              {t("currentRestorationsTitle")}
-            </a>
-          </div>
-          <div className="rest-in rest-in-1" style={{ position: "relative", width: "100%", aspectRatio: "16/9", borderRadius: 14, overflow: "hidden", background: "#062442", boxShadow: "0 24px 60px rgba(3,26,54,.45)", border: "1px solid rgba(255,255,255,.22)" }}>
+        <div className="pd-container pd-hero-inner rest-in" style={{ position: "relative", display: "grid", gap: 14, justifyItems: "start", color: "#fff" }}>
+          <h1 style={{ margin: 0, maxWidth: "30ch", fontSize: "clamp(26px,3vw,38px)", lineHeight: 1.4, fontWeight: 800, color: "#fff" }}>{t("restHeroTitle")}</h1>
+          <p style={{ margin: 0, maxWidth: "62ch", fontSize: 15, lineHeight: 1.9, color: "#cfe3f1" }}>{t("restHeroLead")}</p>
+          <a href="#current-projects" className="rest-jump pd-ghost-btn">
+            {t("currentRestorationsTitle")}
+          </a>
+        </div>
+      </section>
+
+      {/* ── Story beside the programme sidebar ───────────────────────────── */}
+      <div className="pd-container pd-layout" style={{ position: "relative", zIndex: 1 }}>
+        <div className="pd-project-main" style={{ display: "grid", gap: 34, minWidth: 0, alignContent: "start" }}>
+          {/* Project film, from the handoff's hero embed. */}
+          <div className="rest-in" style={{ position: "relative", width: "100%", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", background: "#031a36", border: "1px solid #e6eef3", boxShadow: "0 12px 28px rgba(2,52,88,.07)" }}>
             <iframe
               src={youtubeEmbed(VIDEO_ID)}
               title={t("restHeroTitle")}
@@ -122,126 +123,111 @@ export default function RestorationPage({ projects, restored, goal }: Restoratio
               allowFullScreen
             />
           </div>
-        </div>
-      </section>
 
-      {/* ── Programme progress ────────────────────────────────────────────── */}
-      <section style={{ position: "relative", zIndex: 1, background: "var(--navy)", padding: "26px 0" }}>
-        <div className="rest-stats" style={{ ...SECTION, display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 18, textAlign: "center" }}>
-          <div className="rest-in" style={{ display: "grid", gap: 4 }}>
-            <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: "clamp(24px,2.4vw,32px)", fontWeight: 900, color: "var(--gold)" }}>{formatNumber(restored)}</b>
-            <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.72)" }}>{t("restStatHomes")}</span>
-          </div>
-          <div className="rest-in rest-in-1" style={{ display: "grid", gap: 4 }}>
-            <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: "clamp(24px,2.4vw,32px)", fontWeight: 900, color: "var(--gold)" }}>{formatNumber(goal)}</b>
-            <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.72)" }}>{t("restStatGoal")}</span>
-          </div>
-        </div>
-        <div style={{ maxWidth: 1240, margin: "18px auto 0", padding: "0 24px" }}>
-          <div
-            role="progressbar"
-            aria-valuenow={pct}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            style={{ height: 6, borderRadius: 999, background: "rgba(255,255,255,.14)", overflow: "hidden" }}
-          >
-            <span className="rest-bar" style={{ display: "block", height: "100%", width: `${pct}%`, borderRadius: 999, background: "var(--gold)" }} />
-          </div>
-        </div>
-      </section>
-
-      {/* ── Values, and the homes open now ────────────────────────────────── */}
-      <section id="current-projects" style={{ position: "relative", zIndex: 1, background: "var(--sand)", padding: "46px 0 52px", overflow: "hidden" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 24px", display: "grid", gap: 20 }}>
-          <div className="rest-values" style={{ display: "grid", gridTemplateColumns: "repeat(5,minmax(0,1fr))", gap: 10 }}>
-            {VALUES.map((value) => (
-              <span
-                key={value}
-                className="rest-value"
-                style={{ position: "relative", display: "grid", alignContent: "center", justifyItems: "center", minHeight: 86, padding: "14px 12px", background: "#fff", border: "1px solid var(--border)", borderTop: "3px solid var(--gold)", borderRadius: 8, boxShadow: "0 1px 2px rgba(6,36,66,.05)", fontSize: 12.5, fontWeight: 800, color: "var(--deep)", textAlign: "center", lineHeight: 1.65 }}
-              >
-                {t(value)}
-              </span>
-            ))}
-          </div>
-
-          <div style={{ display: "grid", gap: 6 }}>
-            <b style={{ fontSize: 18 }}>{t("currentRestorationsTitle")}</b>
-            <span style={{ color: "var(--muted)", fontSize: 13.5, lineHeight: 1.85 }}>{t("currentRestorationsLead")}</span>
-          </div>
-
-          {projects.length ? (
-            <div className="rest-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 16 }}>
-              {projects.map((project) => (
-                <ProjectDonateCard key={project.id} project={project} />
-              ))}
-            </div>
-          ) : (
-            /* The handoff's own cards are illustrative placeholders. Rather than
-               ship invented houses with invented totals, an empty catalogue says
-               so and offers the way to every other project. */
-            <NoProjects />
-          )}
-        </div>
-      </section>
-
-      {/* ── Why, what, and the impact ─────────────────────────────────────── */}
-      <section style={{ position: "relative", zIndex: 1, padding: "60px 0 24px" }}>
-        <div className="rest-cards" style={{ ...SECTION, display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 18 }}>
+          {/* Why, what, and the impact  the template's story sections. */}
           {CARDS.map((card) => (
-            <div key={card.title} className="rest-card" style={{ display: "grid", gap: 10, padding: 24, background: "var(--sand)", borderRadius: 8, borderTop: "3px solid var(--gold)" }}>
-              <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 38, height: 38, borderRadius: 9, background: "#fff", color: "var(--gold)" }}>
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  {ICONS[card.icon]}
-                </svg>
-              </span>
-              <b style={{ fontSize: 15.5 }}>{t(card.title)}</b>
-              <span style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.9 }}>{t(card.body)}</span>
+            <div key={card.title} style={{ display: "grid", gap: 12 }}>
+              <h2 style={{ margin: 0, display: "flex", alignItems: "center", gap: 12, fontSize: 19, lineHeight: 1.5, fontWeight: 800, color: "var(--deep)" }}>
+                <span aria-hidden="true" className="pd-icon-chip">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    {ICONS[card.icon]}
+                  </svg>
+                </span>
+                {t(card.title)}
+              </h2>
+              <p style={{ margin: 0, fontSize: 15, lineHeight: 1.95, color: "#33495e" }}>{t(card.body)}</p>
             </div>
           ))}
-        </div>
-      </section>
 
-      {/* ── Completed work ────────────────────────────────────────────────── */}
-      <section style={{ position: "relative", zIndex: 1, padding: "0 0 56px" }}>
-        {/* minmax(0,1fr): a grid track sizes to its widest child by default, and
-            the rail is a long strip of photos, so it stretched the page sideways. */}
-        <div style={{ ...SECTION, display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 20 }}>
-          <b style={{ fontSize: "clamp(21px,2vw,27px)", fontWeight: 900 }}>{t("restAchievements")}</b>
-          <Rail step={340} prevLabel={t("restAchievements")} nextLabel={t("restAchievements")}>
-            {gallery.map((photo, index) => (
-              <span
-                key={`${index}-${photo}`}
-                style={{ flex: "0 0 min(320px, 82vw)", position: "relative", display: "block", aspectRatio: "4/3", borderRadius: 12, overflow: "hidden", background: "var(--sand)" }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element -- Drive-hosted, outside the configured image domains */}
-                <img
-                  src={photo}
-                  alt=""
-                  loading={index < 2 ? undefined : "lazy"}
-                  decoding="async"
-                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              </span>
+          {/* The five values, as the template's fact tiles. */}
+          <div className="pd-facts pd-facts--values">
+            {VALUES.map((value) => (
+              <div key={value} className="pd-fact rest-value">
+                <span aria-hidden="true" className="pd-fact-dot" />
+                <span>{t(value)}</span>
+              </div>
             ))}
-          </Rail>
-        </div>
-      </section>
-
-      {/* ── Give to the programme ─────────────────────────────────────────── */}
-      <section id="donate" style={{ position: "relative", zIndex: 1, background: "var(--ivory)", padding: "0 0 56px" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 24px", display: "grid", gap: 16 }}>
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-            <b style={{ fontSize: 18 }}>{t("restDonateTitle")}</b>
-            <span style={{ color: "var(--muted)", fontSize: 13 }}>{t("restDonateNote")}</span>
           </div>
-          {/* Each home above carries its own amounts; this is the way to give
-             to the programme rather than to one house. */}
-          <Button variant="primary" size="lg" href={miaPath("projects", locale)} style={{ justifySelf: "start", whiteSpace: "nowrap" }}>
-            {tCommon("donate")}
-          </Button>
+
+          {/* ── The homes open now ──────────────────────────────────────── */}
+          <div id="current-projects" style={{ display: "grid", gap: 16, scrollMarginTop: 100 }}>
+            <div style={{ display: "grid", gap: 6 }}>
+              <h2 style={{ margin: 0, fontSize: 19, lineHeight: 1.5, fontWeight: 800, color: "var(--deep)" }}>{t("currentRestorationsTitle")}</h2>
+              <p style={{ margin: 0, color: "var(--muted)", fontSize: 14, lineHeight: 1.85 }}>{t("currentRestorationsLead")}</p>
+            </div>
+            {projects.length ? (
+              <div className="rest-grid" style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 16 }}>
+                {projects.map((project) => (
+                  <ProjectDonateCard key={project.id} project={project} />
+                ))}
+              </div>
+            ) : (
+              /* The handoff's own cards are illustrative placeholders. Rather than
+                 ship invented houses with invented totals, an empty catalogue says
+                 so and offers the way to every other project. */
+              <NoProjects />
+            )}
+          </div>
+
+          {/* ── Completed work ──────────────────────────────────────────── */}
+          {/* minmax(0,1fr): a grid track sizes to its widest child by default, and
+              the rail is a long strip of photos, so it stretched the page sideways. */}
+          <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", gap: 16 }}>
+            <h2 style={{ margin: 0, fontSize: 19, lineHeight: 1.5, fontWeight: 800, color: "var(--deep)" }}>{t("restAchievements")}</h2>
+            <Rail step={300} prevLabel={t("restAchievements")} nextLabel={t("restAchievements")}>
+              {gallery.map((photo, index) => (
+                <span
+                  key={`${index}-${photo}`}
+                  style={{ flex: "0 0 min(280px, 78vw)", position: "relative", display: "block", aspectRatio: "4/3", borderRadius: 12, overflow: "hidden", background: "#eaf1f6", border: "1px solid #e6eef3" }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element -- Drive-hosted, outside the configured image domains */}
+                  <img
+                    src={photo}
+                    alt=""
+                    loading={index < 2 ? undefined : "lazy"}
+                    decoding="async"
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                </span>
+              ))}
+            </Rail>
+          </div>
         </div>
-      </section>
+
+        {/* ── Programme sidebar: progress, and the way to give ────────────── */}
+        <aside className="pd-aside-col" style={{ minWidth: 0 }}>
+          <div
+            id="donate"
+            className="pd-aside-sticky pd-donate rest-in rest-in-1"
+            style={{ display: "grid", gap: 16, padding: 26, background: "#fff", border: "1px solid #e6eef3", borderRadius: 18, boxShadow: "0 16px 34px rgba(2,52,88,.1)" }}
+          >
+            <b style={{ fontSize: 16, lineHeight: 1.5, fontWeight: 800, color: "var(--deep)" }}>{t("restDonateTitle")}</b>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 10 }}>
+              <div className="pd-fact">
+                <b dir="ltr" style={{ unicodeBidi: "isolate" }}>
+                  {formatNumber(restored)}
+                </b>
+                <span>{t("restStatHomes")}</span>
+              </div>
+              <div className="pd-fact">
+                <b dir="ltr" style={{ unicodeBidi: "isolate" }}>
+                  {formatNumber(goal)}
+                </b>
+                <span>{t("restStatGoal")}</span>
+              </div>
+            </div>
+            <div role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} style={{ height: 8, borderRadius: 999, background: "#eef3f7", overflow: "hidden" }}>
+              <span className="rest-bar pd-fill" style={{ display: "block", height: "100%", width: `${pct}%`, borderRadius: 999 }} />
+            </div>
+            <span style={{ fontSize: 12.5, lineHeight: 1.8, color: "var(--muted)" }}>{t("restDonateNote")}</span>
+            {/* Each home above carries its own amounts; this is the way to give
+               to the programme rather than to one house. */}
+            <Button variant="primary" size="lg" href={miaPath("projects", locale)} style={{ width: "100%", justifyContent: "center", whiteSpace: "nowrap" }}>
+              {tCommon("donate")}
+            </Button>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

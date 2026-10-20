@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
 import type { MinbarProject, MinbarProjectComment, MinbarProjectUpdate } from "@/lib/minbar/projects";
+import { useMinbarMoney } from "@/hooks/useMinbarMoney";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
 import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
@@ -17,11 +18,17 @@ import ProjectUpdatePost from "./ProjectUpdatePost";
 import ConciergeEntry from "@/components/minbar/concierge/ConciergeEntry";
 
 /**
- * Project detail  ported from `Minbar/تفاصيل مشروع.dc.html`.
+ * Project detail  laid out on `ToplamVakfi-design/Toplum Vakfı Project - *.dc.html`.
  *
- * Breadcrumb, hero, the sticky donation panel, a tabbed body (about / field
- * updates / gallery), a project FAQ with zakat and waqf cross-links, and
- * related projects.
+ * A full-bleed photo hero (the campaign's photos, swipeable when there are
+ * several) carrying the breadcrumb, the category tags, the title and the
+ * opening of the description; under it the design's two columns: the story
+ * (video, key facts, the tabbed body  about / field updates / gallery /
+ * donors' messages  the project FAQ and the zakat and waqf cross-links)
+ * beside the sticky donation sidebar; then related projects.
+ *
+ * The design draws its hero behind a glass header. The app's header is a
+ * solid fixed bar with its own spacer, so the hero starts under it instead.
  *
  * Every campaign field the page can show is shown: the whole formatted
  * description, the campaign's own video and photos, each category it is filed
@@ -45,6 +52,10 @@ export interface ProjectDetailProps {
 /** The hero shows the opening of the description; the About tab has all of it. */
 const HERO_SUMMARY_MAX = 280;
 
+/** The design's body copy and section headings inside the story column. */
+const BODY_P = { margin: 0, fontSize: 15, lineHeight: 1.95, color: "#33495e" } as const;
+const SECTION_H2 = { margin: 0, fontSize: 19, lineHeight: 1.5, fontWeight: 800, color: "var(--deep)" } as const;
+
 export default function ProjectDetail({ project, updates, gallery, related, donorCount, comments }: ProjectDetailProps) {
   const locale = useLocale();
   const t = useTranslations("projects");
@@ -52,6 +63,7 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
   const tNav = useTranslations("navigation");
   const tHome = useTranslations("homepage");
   const tExtras = useTranslations("ProjectExtras");
+  const { format } = useMinbarMoney();
   const summary = project.text.length > HERO_SUMMARY_MAX ? `${project.text.slice(0, HERO_SUMMARY_MAX - 1).trimEnd()}…` : project.text;
 
   const tabs = [
@@ -75,8 +87,23 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* The design's fact tiles, from the campaign's own figures only: where it
+     works, what it has raised, and its target when it has one. */
+  const hasFinancials = project.goal != null && project.goal > 0;
+  const facts: Array<{ key: string; value: string; label: string; figure?: boolean }> = [
+    ...(project.regionLabel ? [{ key: "region", value: project.regionLabel, label: t("factRegion") }] : []),
+    ...(hasFinancials || project.raised > 0
+      ? [{ key: "raised", value: format(project.raised), label: hasFinancials ? tCommon("raised") : t("raisedSoFar"), figure: true }]
+      : []),
+    ...(hasFinancials ? [{ key: "goal", value: format(project.goal as number), label: tCommon("goal"), figure: true }] : []),
+  ];
+
+  /* The region is normally the first category too; it is only drawn as its
+     own tag when no category link already says it. */
+  const regionTag = project.regionLabel && !project.categories.some((category) => category.label === project.regionLabel) ? project.regionLabel : null;
+
   return (
-    <div style={{ position: "relative" }}>
+    <div className="pd-page" style={{ position: "relative" }}>
       <div
         aria-hidden="true"
         data-aqsa-pattern=""
@@ -86,96 +113,84 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
           backgroundImage: "url('/toplum/pattern.svg')",
           backgroundRepeat: "repeat",
           backgroundSize: "620px 620px",
-          opacity: 0.075,
+          opacity: 0.05,
           pointerEvents: "none",
           zIndex: 0,
         }}
       />
-      <img
-        src="/minbar/assets/aqsa-dome-line.png"
-        alt=""
-        aria-hidden="true"
-        style={{ position: "fixed", left: "50%", top: "76%", transform: "translate(-50%,-50%)", width: "58vw", maxWidth: 860, height: "auto", opacity: 0.1, pointerEvents: "none", zIndex: 0 }}
-      />
 
-      {/* Breadcrumb  `PRODUCTION_SEO_CONTRACT.md` asks for BreadcrumbList
-          structured data on detail pages; it is emitted by the route. */}
-      <nav aria-label={tNav("home")} style={{ position: "relative", zIndex: 1, background: "rgba(255,255,255,.86)", borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "11px 24px", display: "flex", alignItems: "center", gap: 9, fontSize: 12.5, fontWeight: 700, color: "var(--muted)", flexWrap: "wrap" }}>
-          <Link href={miaPath("home", locale)}>{tNav("home")}</Link>
-          <span aria-hidden="true" style={{ color: "var(--gold)" }}>
-            <ArrowGlyph size={11} />
-          </span>
-          <Link href={miaPath("projects", locale)}>{tNav("projects")}</Link>
-          <span aria-hidden="true" style={{ color: "var(--gold)" }}>
-            <ArrowGlyph size={11} />
-          </span>
-          <span style={{ color: "var(--deep)" }}>{project.title}</span>
-        </div>
-      </nav>
+      {/* ── Hero: the photo full-bleed, the title over its foot ─────────── */}
+      <section className="pd-hero" style={{ position: "relative", zIndex: 1, display: "flex", alignItems: "flex-end", overflow: "hidden", background: "#031a36" }}>
+        <ProjectHeroMedia images={project.images.length ? project.images : project.image ? [project.image] : []} title={project.title} banner />
 
-      {/* No `overflow: hidden` on this section: it would make the section the
-          donation panel's sticky container, so the panel's `top: 122px` would
-          count from the section's edge and push it ~90px below the image
-          beside it (and it would never stick). Only the ornament is clipped. */}
-      <section style={{ position: "relative", zIndex: 1, padding: "34px 0 40px" }}>
-        <span aria-hidden="true" style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
-          <svg viewBox="0 0 220 220" style={{ position: "absolute", insetInlineEnd: -40, top: -30, width: 220, height: 220, opacity: 0.06 }}>
-            <path d="M110 220V140a70 70 0 0 1 70-70h40" fill="none" stroke="var(--gold)" strokeWidth="2" />
-            <circle cx="180" cy="70" r="5" fill="var(--gold)" />
-          </svg>
-        </span>
+        {/* Click-through except for its links, so the photos still swipe. */}
+        <div className="pd-container pd-hero-inner" style={{ position: "relative", zIndex: 1, display: "grid", gap: 12, justifyItems: "start", color: "#fff", pointerEvents: "none" }}>
+          {/* Breadcrumb  `PRODUCTION_SEO_CONTRACT.md` asks for BreadcrumbList
+              structured data on detail pages; it is emitted by the route. */}
+          <nav aria-label={tNav("home")} className="pd-crumbs" style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, fontWeight: 700, color: "#cfe3f1", flexWrap: "wrap", pointerEvents: "auto" }}>
+            <Link href={miaPath("home", locale)}>{tNav("home")}</Link>
+            <span aria-hidden="true" style={{ display: "inline-flex", color: "#7fd6f5" }}>
+              <ArrowGlyph size={11} />
+            </span>
+            <Link href={miaPath("projects", locale)}>{tNav("projects")}</Link>
+            <span aria-hidden="true" style={{ display: "inline-flex", color: "#7fd6f5" }}>
+              <ArrowGlyph size={11} />
+            </span>
+            <span style={{ color: "#fff" }}>{project.title}</span>
+          </nav>
 
-        <div id="pd-top" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,1.32fr) minmax(330px,.68fr)", gap: 34, alignItems: "start" }}>
-          <div className="pd-project-main" style={{ display: "grid", gap: 18, minWidth: 0 }}>
-            <ProjectHeroMedia images={project.images.length ? project.images : project.image ? [project.image] : []} title={project.title}>
-              {project.regionLabel ? (
-                <span style={{ position: "absolute", insetInlineStart: 16, top: 16, display: "inline-flex", alignItems: "center", gap: 7, padding: "6px 13px", borderRadius: 999, background: "rgba(6,36,66,.78)", color: "#fff", fontSize: 12, fontWeight: 900 }}>
-                  <span aria-hidden="true" style={{ width: 5, height: 5, background: "var(--gold)", transform: "rotate(45deg)" }} />
-                  {project.regionLabel}
-                </span>
-              ) : null}
-            </ProjectHeroMedia>
+          {regionTag || project.categories.length ? (
+            <nav aria-label={tExtras("categories")} style={{ display: "flex", flexWrap: "wrap", gap: 8, pointerEvents: "auto" }}>
+              {regionTag ? <span className="pd-tag-lg">{regionTag}</span> : null}
+              {project.categories.map((category) => (
+                <Link
+                  key={category.id}
+                  /* By id: the category route resolves it to the canonical, localised page. */
+                  href={`/${locale}/category/${category.id}`}
+                  className="pd-tag-lg"
+                >
+                  {category.label}
+                </Link>
+              ))}
+            </nav>
+          ) : null}
 
-            <div className="pd-project-summary" style={{ display: "grid", gap: 12 }}>
-              <h1 style={{ margin: 0, fontSize: "clamp(27px,3vw,40px)", lineHeight: 1.32, fontWeight: 900, letterSpacing: "-.01em" }}>{project.title}</h1>
-              <p style={{ margin: 0, maxWidth: "66ch", fontSize: 16.5, lineHeight: 1.95, color: "var(--muted)" }}>{summary}</p>
-              {project.categories.length ? (
-                <nav aria-label={tExtras("categories")} style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
-                  {project.categories.map((category) => (
-                    <Link
-                      key={category.id}
-                      /* By id: the category route resolves it to the canonical, localised page. */
-                      href={`/${locale}/category/${category.id}`}
-                      style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 12px", borderRadius: 999, border: "1px solid rgba(0,162,224,.5)", background: "var(--sand)", color: "#0077b3", fontSize: 12.5, fontWeight: 900 }}
-                    >
-                      <span aria-hidden="true" style={{ width: 5, height: 5, background: "var(--gold)", transform: "rotate(45deg)" }} />
-                      {category.label}
-                    </Link>
-                  ))}
-                </nav>
-              ) : null}
-            </div>
-
-            {project.videoUrl ? (
-              <div className="pd-project-video" style={{ display: "grid", gap: 10 }}>
-                <b style={{ fontSize: 15.5 }}>{tExtras("video")}</b>
-                <ProjectVideo url={project.videoUrl} title={project.title} />
-              </div>
-            ) : null}
-          </div>
-
-          <DonationPanel project={project} donorCount={donorCount} />
-          <div className="pd-project-concierge">
-            <ConciergeEntry intent="current_page" />
-          </div>
+          <h1 style={{ margin: 0, maxWidth: "30ch", fontSize: "clamp(26px,3vw,38px)", lineHeight: 1.4, fontWeight: 800, color: "#fff" }}>{project.title}</h1>
+          {summary ? <p style={{ margin: 0, maxWidth: "70ch", fontSize: 15, lineHeight: 1.9, color: "#cfe3f1" }}>{summary}</p> : null}
         </div>
       </section>
 
-      <section style={{ position: "relative", zIndex: 1, padding: "48px 0 8px" }}>
-        <div id="pd-body" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,1.32fr) minmax(300px,.68fr)", gap: 34, alignItems: "start" }}>
-          <div style={{ display: "grid", gap: 22, minWidth: 0 }}>
-            <div className="pd-tabs" style={{ display: "flex", gap: 4, borderBottom: "1px solid var(--border)", flexWrap: "wrap" }}>
+      {/* ── Story beside the donation sidebar ────────────────────────────── */}
+      {/* No `overflow: hidden` here: it would make this grid the sidebar's
+          sticky container and the sidebar would never stick. */}
+      <div id="pd-layout" className="pd-container pd-layout" style={{ position: "relative", zIndex: 1 }}>
+        <div className="pd-project-main" style={{ display: "grid", gap: 30, minWidth: 0, alignContent: "start" }}>
+          {project.videoUrl ? (
+            <div className="pd-project-video" style={{ display: "grid", gap: 14 }}>
+              <h2 style={SECTION_H2}>{tExtras("video")}</h2>
+              <ProjectVideo url={project.videoUrl} title={project.title} />
+            </div>
+          ) : null}
+
+          {facts.length ? (
+            <div className="pd-facts">
+              {facts.map((fact) => (
+                <div key={fact.key} className="pd-fact">
+                  {fact.figure ? (
+                    <b dir="ltr" style={{ unicodeBidi: "isolate" }}>
+                      {fact.value}
+                    </b>
+                  ) : (
+                    <b>{fact.value}</b>
+                  )}
+                  <span>{fact.label}</span>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          <div id="pd-body" style={{ display: "grid", gap: 20, minWidth: 0, scrollMarginTop: 100 }}>
+            <div className="pd-tabs" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
               {tabs.map((item) => (
                 <button
                   key={item.id}
@@ -183,7 +198,6 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
                   data-tab={tab === item.id ? "1" : ""}
                   onClick={() => setTab(item.id)}
                   className="pd-tab"
-                  style={{ height: 46, padding: "0 17px", border: 0, borderBottom: "3px solid transparent", background: "transparent", color: "var(--muted)", fontFamily: "inherit", fontSize: 15, fontWeight: 900, cursor: "pointer", transition: "all .18s ease" }}
                 >
                   {item.label}
                 </button>
@@ -191,31 +205,31 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
             </div>
 
             {tab === "about" ? (
-              <div style={{ display: "grid", gap: 20 }}>
-                {/* The description as written in the dashboard's editor 
+              <div style={{ display: "grid", gap: 14 }}>
+                {/* The description as written in the dashboard's editor
                     headings, paragraphs and list items. */}
                 {project.body.map((block, index) =>
                   block.kind === "h2" ? (
-                    <h2 key={index} style={{ margin: "6px 0 0", fontSize: 20, lineHeight: 1.5, fontWeight: 900 }}>{block.text}</h2>
+                    <h2 key={index} style={{ ...SECTION_H2, marginTop: index === 0 ? 0 : 18 }}>{block.text}</h2>
                   ) : block.kind === "li" ? (
-                    <p key={index} style={{ margin: 0, display: "flex", gap: 10, fontSize: 16.5, lineHeight: 2, color: "var(--muted)" }}>
-                      <span aria-hidden="true" style={{ flex: "0 0 auto", width: 6, height: 6, marginTop: 14, background: "var(--gold)", transform: "rotate(45deg)" }} />
+                    <p key={index} style={{ ...BODY_P, display: "flex", gap: 10 }}>
+                      <span aria-hidden="true" style={{ flex: "0 0 auto", width: 6, height: 6, marginTop: 12, borderRadius: 999, background: "var(--gold)" }} />
                       <span>{block.text}</span>
                     </p>
                   ) : (
-                    <p key={index} style={{ margin: 0, fontSize: 16.5, lineHeight: 2, color: "var(--muted)" }}>{block.text}</p>
+                    <p key={index} style={BODY_P}>{block.text}</p>
                   )
                 )}
                 {/* Two standing paragraphs the handoff shows on every project:
                     how the work is executed, and how it is verified. */}
-                <p style={{ margin: 0, fontSize: 16.5, lineHeight: 2, color: "var(--muted)" }}>{t("execParagraph", { region: project.regionLabel ?? tCommon("regionGeneral") })}</p>
-                <p style={{ margin: 0, fontSize: 16.5, lineHeight: 2, color: "var(--muted)" }}>{t("verifyParagraph")}</p>
+                <p style={BODY_P}>{t("execParagraph", { region: project.regionLabel ?? tCommon("regionGeneral") })}</p>
+                <p style={BODY_P}>{t("verifyParagraph")}</p>
               </div>
             ) : null}
 
             {tab === "updates" ? (
               /* Updates read as a feed of posts from the field  newest first. */
-              <div style={{ display: "grid", gap: 16 }}>
+              <div style={{ display: "grid", gap: 14 }}>
                 {updates.map((update) => (
                   <ProjectUpdatePost key={update.id} update={update} projectTitle={project.title} />
                 ))}
@@ -225,67 +239,80 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
             {tab === "comments" ? <ProjectComments projectId={project.id} initial={comments} /> : null}
 
             {tab === "gallery" ? (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(210px,1fr))", gap: 12 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px,1fr))", gap: 12 }}>
                 {gallery.map((src, i) => (
                   <span
                     key={src}
                     role="img"
                     aria-label={`${project.title}  ${i + 1}`}
-                    style={{ display: "block", aspectRatio: "4/3", borderRadius: 10, backgroundImage: `url('${src}')`, backgroundSize: "cover", backgroundPosition: "center", border: "1px solid var(--border)" }}
+                    style={{ display: "block", aspectRatio: "4/3", borderRadius: 12, backgroundImage: `url('${src}')`, backgroundSize: "cover", backgroundPosition: "center", border: "1px solid #e6eef3" }}
                   />
                 ))}
               </div>
             ) : null}
           </div>
 
-          <div style={{ display: "grid", gap: 14, alignContent: "start", minWidth: 0 }}>
-            <div style={{ display: "grid", gap: 12, padding: 22, background: "#fff", border: "1px solid var(--border)", borderRadius: 12 }}>
-              <b style={{ fontSize: 15.5 }}>{t("projectFaq")}</b>
+          {/* ── Project FAQ ─────────────────────────────────────────────── */}
+          <div style={{ display: "grid", gap: 14 }}>
+            <h2 style={SECTION_H2}>{t("projectFaq")}</h2>
+            <div style={{ display: "grid", gap: 12 }}>
               {[
                 { q: t("faqZakatQ"), a: t("faqZakatYes") },
                 { q: t("faqTrackQ"), a: t("faqTrackA") },
                 { q: t("faqRecurringQ"), a: t("faqRecurringA") },
               ].map((faq) => (
-                <span key={faq.q} style={{ display: "grid", gap: 5, paddingBottom: 12, borderBottom: "1px solid var(--border)" }}>
-                  <b style={{ fontSize: 14, lineHeight: 1.6 }}>{faq.q}</b>
+                <div key={faq.q} className="pd-card" style={{ display: "grid", gap: 6, padding: "16px 18px" }}>
+                  <b style={{ fontSize: 14.5, lineHeight: 1.6, color: "var(--deep)" }}>{faq.q}</b>
                   <span style={{ fontSize: 13.5, lineHeight: 1.85, color: "var(--muted)" }}>{faq.a}</span>
-                </span>
+                </div>
               ))}
             </div>
+          </div>
 
-            <Link href={miaPath("zakat", locale)} className="pd-cross pd-cross--zakat" style={{ display: "grid", gap: 7, padding: "20px 22px", borderRadius: 12, background: "linear-gradient(to left, #14603C, #1F7A4D)", color: "#fff" }}>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 11.5, fontWeight: 900, letterSpacing: ".06em", color: "#C9EAD6" }}>
-                <span aria-hidden="true" style={{ width: 5, height: 5, background: "var(--gold)", transform: "rotate(45deg)" }} />
+          {/* ── Zakat and waqf cross-links ──────────────────────────────── */}
+          <div className="pd-cross-row">
+            <Link href={miaPath("zakat", locale)} className="pd-cross pd-cross--zakat">
+              <span className="pd-eyebrow" style={{ color: "#cfe3f1" }}>
                 {tNav("zakat")}
               </span>
               <b style={{ color: "#fff", fontSize: 17, lineHeight: 1.5 }}>{tHome("zakatBannerTitle")}</b>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13.5, fontWeight: 800, color: "#BFE6F7" }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13.5, fontWeight: 800, color: "#7fd6f5" }}>
                 {tCommon("zakatToPalestine")}
                 <ArrowGlyph />
               </span>
             </Link>
 
-            <Link href={miaPath("waqf", locale)} style={{ display: "grid", gap: 7, padding: "20px 22px", borderRadius: 12, background: "var(--sand)", border: "1px solid rgba(0,162,224,.5)" }}>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 11.5, fontWeight: 900, letterSpacing: ".06em", color: "#0077b3" }}>
-                <span aria-hidden="true" style={{ width: 5, height: 5, background: "var(--gold)", transform: "rotate(45deg)" }} />
+            <Link href={miaPath("waqf", locale)} className="pd-cross pd-cross--waqf">
+              <span className="pd-eyebrow" style={{ color: "#0077b3" }}>
                 {tNav("waqf")}
               </span>
-              <b style={{ fontSize: 17, lineHeight: 1.5 }}>{tHome("waqfTitle")}</b>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13.5, fontWeight: 800, color: "var(--red)" }}>
+              <b style={{ fontSize: 17, lineHeight: 1.5, color: "var(--deep)" }}>{tHome("waqfTitle")}</b>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13.5, fontWeight: 800, color: "#0077b3" }}>
                 {tCommon("contributeWaqf")}
                 <ArrowGlyph />
               </span>
             </Link>
           </div>
         </div>
-      </section>
+
+        {/* The sidebar column runs the full height of the row so its content
+            can stick beside the story. */}
+        <aside className="pd-aside-col" style={{ minWidth: 0 }}>
+          <div className="pd-aside-sticky" style={{ display: "grid", gap: 14 }}>
+            <DonationPanel project={project} donorCount={donorCount} />
+            <div className="pd-project-concierge">
+              <ConciergeEntry intent="current_page" />
+            </div>
+          </div>
+        </aside>
+      </div>
 
       {related.length ? (
-        <section style={{ position: "relative", zIndex: 1, padding: "42px 0 56px" }}>
-          <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gap: 20 }}>
+        <section style={{ position: "relative", zIndex: 1, padding: "0 0 70px" }}>
+          <div className="pd-container" style={{ display: "grid", gap: 20 }}>
             <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 18, flexWrap: "wrap" }}>
-              <h2 style={{ margin: 0, fontSize: "clamp(22px,2.3vw,30px)", fontWeight: 900 }}>{t("relatedProjects")}</h2>
-              <Link href={miaPath("projects", locale)} style={{ fontSize: 14, fontWeight: 800, color: "var(--red)", display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <h2 style={{ margin: 0, fontSize: "clamp(22px,2.3vw,28px)", fontWeight: 800, color: "var(--deep)" }}>{t("relatedProjects")}</h2>
+              <Link href={miaPath("projects", locale)} style={{ fontSize: 14, fontWeight: 800, color: "#0077b3", display: "inline-flex", alignItems: "center", gap: 6 }}>
                 {t("allProjects")}
                 <ArrowGlyph />
               </Link>
@@ -295,16 +322,16 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
                 <Link
                   key={item.slug}
                   href={miaPath("projectDetail", locale, item.slug)}
-                  className="mia-lift"
-                  style={{ position: "relative", display: "flex", flexDirection: "column", minHeight: 260, borderRadius: 14, overflow: "hidden", background: "var(--deep)", border: "1px solid var(--border)" }}
+                  className="mia-lift pd-related-card"
+                  style={{ position: "relative", display: "flex", flexDirection: "column", minHeight: 260, borderRadius: 16, overflow: "hidden", background: "#031a36", border: "1px solid #e6eef3", boxShadow: "0 12px 28px rgba(2,52,88,.07)" }}
                 >
                   {item.image ? (
                     <span role="img" aria-label={item.title} style={{ position: "absolute", inset: 0, display: "block", backgroundImage: `url('${item.image}')`, backgroundSize: "cover", backgroundPosition: "center" }} />
                   ) : null}
-                  <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(6,36,66,.95) 28%, rgba(6,36,66,.2) 74%)" }} />
-                  <span style={{ position: "relative", marginTop: "auto", display: "grid", gap: 7, padding: 18 }}>
-                    {item.regionLabel ? <span style={{ fontSize: 11.5, fontWeight: 900, color: "#BFE6F7" }}>{item.regionLabel}</span> : null}
-                    <b style={{ color: "#fff", fontSize: 17, lineHeight: 1.45 }}>{item.title}</b>
+                  <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(2,20,38,.9) 22%, rgba(2,20,38,.15) 74%)" }} />
+                  <span style={{ position: "relative", marginTop: "auto", display: "grid", gap: 8, justifyItems: "start", padding: 18 }}>
+                    {item.regionLabel ? <span className="pd-tag-lg">{item.regionLabel}</span> : null}
+                    <b style={{ color: "#fff", fontSize: 17, lineHeight: 1.45, fontWeight: 800 }}>{item.title}</b>
                   </span>
                 </Link>
               ))}

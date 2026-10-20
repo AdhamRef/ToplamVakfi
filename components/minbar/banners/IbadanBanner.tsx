@@ -31,9 +31,9 @@ export default function IbadanBanner() {
   return (
     <section id="ibadan-banner" style={{ position: "relative", zIndex: 1, padding: "0 0 56px", color: "#062442" }}>
       <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-        <div className="ibadan-wrap" style={{ position: "relative", borderRadius: 16, overflow: "hidden", background: "#0F55B8", boxShadow: "0 18px 44px rgba(6,36,66,.14)" }}>
+        <div className="ibadan-wrap" style={{ position: "relative", borderRadius: 20, overflow: "hidden", background: "#031A36", boxShadow: "0 14px 34px rgba(2,52,88,.12)" }}>
           <div style={{ position: "relative", zIndex: 3, display: "grid", justifyItems: "center", gap: 6, textAlign: "center", padding: "14px 24px 12px", background: "#F4F8FB", borderBottom: "1px solid rgba(0,162,224,.4)" }}>
-            <p dir="rtl" style={{ margin: 0, fontFamily: "var(--font-quran)", fontSize: "clamp(15px,1.6vw,19px)", lineHeight: 1.7, fontWeight: 800, color: "#0F55B8", textWrap: "balance" }}>
+            <p dir="rtl" style={{ margin: 0, fontFamily: "var(--font-quran)", fontSize: "clamp(15px,1.6vw,19px)", lineHeight: 1.7, fontWeight: 800, color: "#0077B3", textWrap: "balance" }}>
               {verse.arabic}
             </p>
             {verse.translation ? (
@@ -60,12 +60,12 @@ export default function IbadanBanner() {
               alt={t("ibadanSubtitle")}
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 32%" }}
             />
-            <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(6,36,66,.86) 0%, rgba(6,36,66,.38) 46%, rgba(6,36,66,.06) 72%, transparent 100%)", pointerEvents: "none" }} />
+            <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(3,26,54,.88) 0%, rgba(3,26,54,.38) 46%, rgba(3,26,54,.06) 72%, rgba(3,26,54,0) 100%)", pointerEvents: "none" }} />
 
             <Link
               href={projectHref}
               className="ibadan-logo"
-              style={{ position: "absolute", insetInlineEnd: 18, top: 18, zIndex: 3, display: "grid", placeItems: "center", width: "min(26vw, 140px)", padding: "8px 12px", background: "rgba(255,255,255,.95)", borderRadius: 10, boxShadow: "0 12px 30px rgba(6,36,66,.28)" }}
+              style={{ position: "absolute", insetInlineEnd: 18, top: 18, zIndex: 3, display: "grid", placeItems: "center", width: "min(26vw, 140px)", padding: "8px 12px", background: "rgba(255,255,255,.95)", borderRadius: 14, boxShadow: "0 12px 30px rgba(6,36,66,.28)" }}
             >
               <img src={imageUrl(logo, 140)} alt={t("ibadanHeading1")} width={locale === "ar" ? 969 : 1080} height={locale === "ar" ? 504 : 514} loading="lazy" decoding="async" style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }} />
             </Link>
@@ -84,14 +84,14 @@ export default function IbadanBanner() {
                 <Link
                   href={projectHref}
                   className="ibadan-cta mia-campaign-banner-button"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 46, padding: "0 24px", borderRadius: 8, background: "#1B6FE0", color: "#fff", fontWeight: 900, fontSize: 14.5, whiteSpace: "normal", textAlign: "center", overflowWrap: "anywhere", textDecoration: "none", boxShadow: "0 10px 26px rgba(27,111,224,.4)" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 46, padding: "0 24px", borderRadius: 999, background: "var(--cta-gradient)", color: "#fff", fontWeight: 800, fontSize: 14.5, whiteSpace: "normal", textAlign: "center", overflowWrap: "anywhere", textDecoration: "none", boxShadow: "0 10px 24px rgba(0,162,224,.4)" }}
                 >
                   {tCommon("donate")}
                 </Link>
                 <Link
                   href={projectHref}
                   className="ibadan-cta"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 46, padding: "0 24px", borderRadius: 8, background: "rgba(255,255,255,.94)", color: "#0F55B8", fontWeight: 900, fontSize: 14.5, whiteSpace: "nowrap", textDecoration: "none" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 46, padding: "0 24px", borderRadius: 999, background: "rgba(255,255,255,.94)", color: "#0077B3", fontWeight: 800, fontSize: 14.5, whiteSpace: "nowrap", textDecoration: "none" }}
                 >
                   {t("learnProject")}
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="mia-arrow-next">

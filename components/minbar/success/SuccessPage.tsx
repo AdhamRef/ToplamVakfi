@@ -9,6 +9,7 @@ import { formatMoney } from "@/lib/minbar/money";
 import { addToCart, type CartFreqKey } from "@/lib/minbar/cart";
 import type { MinbarDonationSummary } from "@/lib/minbar/donation";
 import { Button } from "@/components/minbar/ds";
+import { CheckoutSteps, type CheckoutStep } from "@/components/minbar/cart/CheckoutSteps";
 import type { SuccessDocuments } from "@/lib/certificates/documents";
 import Confetti from "./Confetti";
 import DocumentsPanel from "./DocumentsPanel";
@@ -169,117 +170,126 @@ export default function SuccessPage({
   const stepBadge = (active: boolean) =>
     ({
       flex: "0 0 auto",
-      width: 22,
-      height: 22,
+      width: 24,
+      height: 24,
       borderRadius: "50%",
-      background: active ? "var(--gold)" : "var(--sand)",
-      color: active ? "var(--deep)" : "var(--muted)",
+      background: active ? "var(--cta-gradient)" : "#e9eff3",
+      color: active ? "#fff" : "var(--muted)",
       display: "grid",
       placeItems: "center",
       fontSize: 12,
       fontWeight: 900,
     }) as const;
 
+  /* A picked chip on a light surface: brand-ink fill, white text. */
   const chip = (active: boolean) =>
     ({
       flex: "1 1 0",
       height: 44,
-      borderRadius: 8,
-      border: `1px solid ${active ? "var(--gold)" : "var(--border)"}`,
-      background: active ? "rgba(0,162,224,.14)" : "#fff",
-      color: "var(--deep)",
+      borderRadius: 999,
+      border: `1.5px solid ${active ? "#0077b3" : "#e2eaf0"}`,
+      background: active ? "#0077b3" : "#fff",
+      color: active ? "#fff" : "var(--ink)",
       fontFamily: "inherit",
       fontWeight: 800,
       fontSize: 13.5,
       cursor: "pointer",
     }) as const;
 
+  /* The basket → payment → confirmation rail, every step passed. */
+  const steps: CheckoutStep[] = [
+    { n: 1, label: tCart("stepCart"), current: false, enabled: false, done: true },
+    { n: 2, label: tCart("stepDetails"), current: false, enabled: false, done: true },
+    { n: 3, label: tCart("stepConfirm"), current: true, enabled: true, done: true },
+  ];
+
+  /* Toplum Vakfı thank-you (`Thank You.dc.html`): the completed checkout bar,
+     then one white card  the green check, the thanks, the receipt rows on the
+     page background, the documents in a dashed certificate box, the
+     invitation to give again, and the two ways on. */
   return (
-    <div className="succ-page">
+    <div className="succ-page gf-success" style={{ padding: "30px 0 70px" }}>
       <Confetti />
 
-      {/* ── The confirmation ──────────────────────────────────────────── */}
-      <section className="succ-hero" style={{ position: "relative", overflow: "hidden", background: "linear-gradient(180deg, #062442 0%, #031A36 100%)", color: "#fff" }}>
-        <div aria-hidden="true" data-aqsa-pattern="" style={{ position: "absolute", inset: 0, backgroundImage: "url('/toplum/pattern.svg')", backgroundRepeat: "repeat", backgroundSize: "420px 420px", opacity: 0.07, pointerEvents: "none" }} />
-        <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 60% 70% at 50% 0%, rgba(0,162,224,.28), transparent 70%)", pointerEvents: "none" }} />
-        <span aria-hidden="true" style={{ position: "absolute", bottom: 0, insetInline: 0, height: 1, background: "linear-gradient(90deg, transparent, rgba(0,162,224,.7), transparent)" }} />
+      <section style={{ padding: "0 0 18px" }}>
+        <CheckoutSteps id="succ-steps" steps={steps} maxWidth={768} />
+      </section>
 
-        <div style={{ position: "relative", maxWidth: 720, margin: "0 auto", padding: "56px 24px 48px", display: "grid", justifyItems: "center", gap: 18, textAlign: "center" }}>
-          <span className="succ-mark" aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 84, height: 84, borderRadius: "50%", background: "linear-gradient(135deg, #7FD6F5, #00A2E0)", color: "#062442", boxShadow: "0 18px 44px rgba(0,162,224,.35), 0 0 0 10px rgba(0,162,224,.12)" }}>
-            <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 6 9 17l-5-5" />
+      <section>
+        <div className="gf-success-panel" style={{ width: "min(720px, calc(100% - 32px))", margin: "0 auto", display: "grid", justifyItems: "center", gap: 20, padding: 34, background: "#fff", border: "1px solid #e6eef3", borderRadius: 18, boxShadow: "0 16px 34px rgba(2,52,88,.08)", textAlign: "center", boxSizing: "border-box" }}>
+          {/* ── The confirmation ──────────────────────────────────────────── */}
+          <span className="succ-mark" aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 68, height: 68, borderRadius: "50%", background: "#e6f9ee", color: "#1a9d5c" }}>
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 12l5 5L20 6" />
             </svg>
           </span>
 
-          <div className="succ-in succ-in-1" style={{ display: "grid", gap: 6 }}>
-            <span style={{ fontSize: 13, fontWeight: 900, letterSpacing: ".06em", color: "#7FD6F5" }}>{t("paymentSuccess")}</span>
-            <h1 style={{ margin: 0, fontSize: "clamp(28px,3.4vw,42px)", lineHeight: 1.25, fontWeight: 900, color: "#fff" }}>
+          <div className="succ-in succ-in-1" style={{ display: "grid", gap: 6, marginTop: -6 }}>
+            <span style={{ fontSize: 13, fontWeight: 800, color: "var(--brand-ink)" }}>{t("paymentSuccess")}</span>
+            <h1 style={{ margin: 0, fontSize: "clamp(20px,2.6vw,26px)", lineHeight: 1.4, fontWeight: 800, color: "var(--ink)" }}>
               {firstName ? t("successThanksName", { name: firstName }) : t("successThanks")}
             </h1>
-            <p style={{ margin: 0, fontSize: 16.5, lineHeight: 1.9, color: "rgba(255,255,255,.82)" }}>{t("successAccepted")}</p>
+            <p style={{ margin: 0, fontSize: 14, lineHeight: 1.85, color: "var(--muted)" }}>{t("successAccepted")}</p>
           </div>
 
           {/* Al-Baqarah 261  the verse on spending in the way of Allah. Always
               in Arabic and the Qur'anic face; the meaning follows in the
               visitor's language outside Arabic sessions. */}
-          <figure className="succ-in succ-in-2" style={{ margin: 0, maxWidth: 640, display: "grid", gap: 10, padding: "18px 22px", background: "rgba(255,255,255,.06)", border: "1px solid rgba(0,162,224,.35)", borderRadius: 14 }}>
-            <blockquote dir="rtl" style={{ margin: 0, fontFamily: "var(--font-quran)", fontSize: "clamp(18px,2.1vw,24px)", lineHeight: 1.95, color: "#D6EFF9", fontWeight: 700, textWrap: "balance" }}>
+          <figure className="succ-in succ-in-2" style={{ position: "relative", overflow: "hidden", margin: 0, width: "100%", display: "grid", gap: 10, padding: "18px 22px", background: "linear-gradient(135deg, #f2fbff, #fff)", border: "1px solid #d7ecf8", borderRadius: 14, boxSizing: "border-box" }}>
+            <div aria-hidden="true" data-aqsa-pattern="" style={{ position: "absolute", inset: 0, backgroundImage: "url('/toplum/pattern.svg')", backgroundRepeat: "repeat", backgroundSize: "320px 320px", opacity: 0.05, pointerEvents: "none" }} />
+            <blockquote dir="rtl" style={{ position: "relative", margin: 0, fontFamily: "var(--font-quran)", fontSize: "clamp(18px,2.1vw,23px)", lineHeight: 1.95, color: "var(--ink)", fontWeight: 700, textWrap: "balance" }}>
               {verse.arabic}
             </blockquote>
             {verse.translation ? (
-              <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.8, color: "rgba(255,255,255,.78)", textWrap: "pretty" }}>{verse.translation}</p>
+              <p style={{ position: "relative", margin: 0, fontSize: 13.5, lineHeight: 1.8, color: "var(--muted)", textWrap: "pretty" }}>{verse.translation}</p>
             ) : null}
-            <figcaption dir="rtl" style={{ fontSize: 11.5, fontWeight: 900, color: "#00A2E0", unicodeBidi: "isolate" }}>{verse.label}</figcaption>
+            <figcaption dir="rtl" style={{ position: "relative", fontSize: 12, fontWeight: 900, color: "var(--brand-ink)", unicodeBidi: "isolate" }}>{verse.label}</figcaption>
           </figure>
 
-          <p className="succ-in succ-in-3" style={{ margin: 0, display: "grid", gap: 2, fontSize: 14.5, lineHeight: 1.8, color: "rgba(255,255,255,.86)" }}>
+          <p className="succ-in succ-in-3" style={{ margin: 0, display: "grid", gap: 2, fontSize: 14, lineHeight: 1.8, color: "var(--ink)" }}>
             <span style={{ fontWeight: 800 }}>{t("successHadith")}</span>
-            <span style={{ fontSize: 11.5, color: "rgba(255,255,255,.58)" }}>{t("successHadithSource")}</span>
+            <span style={{ fontSize: 12, color: "var(--muted)" }}>{t("successHadithSource")}</span>
           </p>
-        </div>
-      </section>
 
-      <section style={{ padding: "36px 0 52px" }}>
-        <div style={{ maxWidth: 640, margin: "0 auto", padding: "0 24px", display: "grid", justifyItems: "center", gap: 20, textAlign: "center" }}>
-          <p className="succ-in succ-in-3" style={{ margin: 0, fontSize: 15, lineHeight: 1.9, color: "var(--muted)" }}>
+          <p className="succ-in succ-in-3" style={{ margin: 0, fontSize: 13.5, lineHeight: 1.85, color: "var(--muted)" }}>
             {t("successLead")}
           </p>
 
-          {/* ── What was given, line by line ───────────────────────────── */}
-          <div className="succ-in succ-in-3" style={{ width: "100%", display: "grid", gap: 14, padding: 22, background: "#fff", border: "1px solid var(--border)", borderRadius: 14, textAlign: "start", boxShadow: "0 12px 34px rgba(6,36,66,.06)" }}>
-            <b style={{ fontSize: 15, fontWeight: 900 }}>{t("successDetails")}</b>
+          {/* ── What was given, line by line (the design's receipt box) ──── */}
+          <div className="succ-in succ-in-3" style={{ width: "100%", display: "grid", padding: "6px 18px", background: "var(--page-bg)", borderRadius: 12, textAlign: "start", boxSizing: "border-box" }}>
+            <b style={{ padding: "12px 0 6px", fontSize: 14.5, fontWeight: 900, color: "var(--ink)" }}>{t("successDetails")}</b>
 
-            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: 8 }}>
+            <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid" }}>
               {(donation.lines.length ? donation.lines : [{ title: tCart("typeProject"), amount: donation.donationAmount, image: null, shares: null }]).map((line, i) => (
-                <li key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", background: "var(--sand)", borderRadius: 10 }}>
-                  <span aria-hidden="true" style={{ flex: "0 0 auto", width: 44, height: 44, borderRadius: 9, background: line.image ? `url('${line.image}') center/cover` : "rgba(0,162,224,.16)", display: "grid", placeItems: "center", color: "var(--gold)" }}>
+                <li key={i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 0", borderBottom: "1px solid #e6eef3" }}>
+                  <span aria-hidden="true" style={{ flex: "0 0 auto", width: 42, height: 42, borderRadius: 10, background: line.image ? `url('${line.image}') center/cover` : "#eaf5fc", display: "grid", placeItems: "center", color: "var(--brand-ink)" }}>
                     {line.image ? null : (
-                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" /></svg>
+                      <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" /></svg>
                     )}
                   </span>
                   <span style={{ minWidth: 0, flex: "1 1 auto", display: "grid", gap: 2 }}>
-                    <b style={{ fontSize: 14, lineHeight: 1.45, fontWeight: 800 }}>{line.title}</b>
+                    <b style={{ fontSize: 13.5, lineHeight: 1.5, fontWeight: 800, color: "var(--ink)" }}>{line.title}</b>
                     {line.shares ? <span style={{ fontSize: 12, color: "var(--muted)" }}>{t("successShares", { count: line.shares })}</span> : null}
                   </span>
-                  <b dir="ltr" style={{ flex: "0 0 auto", unicodeBidi: "isolate", fontSize: 15, fontWeight: 900, color: "var(--deep)" }}>{money(locale, line.amount, donation.currency)}</b>
+                  <b dir="ltr" style={{ flex: "0 0 auto", unicodeBidi: "isolate", fontSize: 14, fontWeight: 900, color: "var(--ink)" }}>{money(locale, line.amount, donation.currency)}</b>
                 </li>
               ))}
             </ul>
 
             {hasExtras ? (
-              <div style={{ display: "grid", gap: 6, paddingTop: 12, borderTop: "1px dashed var(--border)" }}>
+              <div style={{ display: "grid" }}>
                 <SummaryRow label={t("successGift")} value={money(locale, donation.donationAmount, donation.currency)} ltr />
                 {donation.teamSupport > 0 ? <SummaryRow label={t("successTeam")} value={money(locale, donation.teamSupport, donation.currency)} ltr /> : null}
                 {donation.fees > 0 ? <SummaryRow label={t("successFees")} value={money(locale, donation.fees, donation.currency)} ltr /> : null}
               </div>
             ) : null}
 
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, paddingTop: 12, borderTop: "2px solid var(--deep)" }}>
-              <b style={{ fontSize: 15, fontWeight: 900 }}>{t("successPaid")}</b>
-              <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: 24, fontWeight: 900, color: "var(--deep)" }}>{amountText}</b>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12, padding: "14px 0", borderBottom: "1px solid #e6eef3" }}>
+              <b style={{ fontSize: 14.5, fontWeight: 900, color: "var(--ink)" }}>{t("successPaid")}</b>
+              <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: 22, fontWeight: 900, color: "var(--brand-ink)" }}>{amountText}</b>
             </div>
 
-            <div style={{ display: "grid", gap: 6, paddingTop: 12, borderTop: "1px solid var(--border)", fontSize: 13 }}>
+            <div style={{ display: "grid" }}>
               {/* The official number once issued; until the webhook lands, the
                   handoff's "being issued". The internal id is never shown as a
                   receipt number. */}
@@ -289,28 +299,36 @@ export default function SuccessPage({
             </div>
           </div>
 
-          {/* ── The documents, and sharing the good ────────────────────── */}
-          <DocumentsPanel
-            documents={documents}
-            donationId={donation.id}
-            accessToken={accessToken}
-            donorName={donation.donorName ?? ""}
-            extraButtons={
-              <button
-                type="button"
-                onClick={share}
-                className="succ-link"
-                style={{ display: "inline-flex", alignItems: "center", gap: 9, height: 46, padding: "0 20px", borderRadius: 8, border: "1px solid var(--border)", background: "#fff", fontFamily: "inherit", fontWeight: 800, fontSize: 14, color: copied ? "var(--green)" : "var(--deep)", cursor: "pointer" }}
-              >
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.6" /><circle cx="6" cy="12" r="2.6" /><circle cx="18" cy="19" r="2.6" /><path d="M8.8 13.4l6.4 3.9M15.2 6.7l-6.4 3.9" /></svg>
-                {copied ? t("successCopied") : t("successShare")}
-              </button>
-            }
-          />
+          {/* ── The documents, and sharing the good (the dashed certificate box) ── */}
+          <div className="gf-cert-box" style={{ width: "100%", display: "grid", justifyItems: "center", gap: 14, padding: "22px 18px", border: "1.5px dashed rgba(0,162,224,.4)", borderRadius: 14, background: "linear-gradient(135deg, #f2fbff, #fff)", boxSizing: "border-box" }}>
+            <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 44, height: 44, borderRadius: "50%", background: "#eaf6fd", color: "var(--brand)" }}>
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="8" r="5" />
+                <path d="M8.5 13 7 21l5-3 5 3-1.5-8" />
+              </svg>
+            </span>
+            <DocumentsPanel
+              documents={documents}
+              donationId={donation.id}
+              accessToken={accessToken}
+              donorName={donation.donorName ?? ""}
+              extraButtons={
+                <button
+                  type="button"
+                  onClick={share}
+                  className="succ-link"
+                  style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 9, minHeight: 46, padding: "0 20px", borderRadius: 999, border: "1.5px solid #e2eaf0", background: "#fff", fontFamily: "inherit", fontWeight: 800, fontSize: 13.5, color: copied ? "var(--green)" : "var(--ink)", cursor: "pointer" }}
+                >
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.6" /><circle cx="6" cy="12" r="2.6" /><circle cx="18" cy="19" r="2.6" /><path d="M8.8 13.4l6.4 3.9M15.2 6.7l-6.4 3.9" /></svg>
+                  {copied ? t("successCopied") : t("successShare")}
+                </button>
+              }
+            />
+          </div>
 
           {donation.recurring ? (
-            <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", gap: 14, padding: "20px 24px", background: "var(--deep)", borderRadius: 12, textAlign: "start" }}>
-              <span aria-hidden="true" style={{ flex: "0 0 auto", width: 44, height: 44, borderRadius: "50%", background: "rgba(31,122,77,.22)", color: "var(--green)", display: "grid", placeItems: "center" }}>
+            <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", gap: 14, padding: "18px 20px", background: "#f0fbf4", border: "1px solid rgba(26,157,92,.3)", borderRadius: 14, textAlign: "start", boxSizing: "border-box" }}>
+              <span aria-hidden="true" style={{ flex: "0 0 auto", width: 44, height: 44, borderRadius: "50%", background: "#e6f9ee", color: "#1a9d5c", display: "grid", placeItems: "center" }}>
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
@@ -318,8 +336,8 @@ export default function SuccessPage({
               <div style={{ display: "grid", gap: 2 }}>
                 {/* This donation was the plan's first instalment; what the
                     donor needs now is the cadence and the next date. */}
-                <b style={{ fontSize: 15.5, fontWeight: 900, color: "#fff" }}>{t("recurringActivated")}</b>
-                <span style={{ color: "rgba(255,255,255,.72)", fontSize: 13.5 }}>
+                <b style={{ fontSize: 15, fontWeight: 900, color: "var(--ink)" }}>{t("recurringActivated")}</b>
+                <span style={{ color: "var(--muted)", fontSize: 13 }}>
                   {donation.frequency && nextChargeText
                     ? tRecurring("planActiveLead", { cadence: tRecurring(cadenceKey(donation.frequency)), date: nextChargeText })
                     : t("recurringManageNote")}
@@ -327,44 +345,44 @@ export default function SuccessPage({
               </div>
             </div>
           ) : reviewing ? (
-            <div style={{ width: "100%", display: "grid", gap: 16, padding: "22px 24px", background: "#fff", border: "1px solid var(--border)", borderRadius: 12, textAlign: "start" }}>
+            <div style={{ width: "100%", display: "grid", gap: 16, padding: "20px 22px", background: "#fff", border: "1px solid #e3edf4", borderRadius: 14, textAlign: "start", boxSizing: "border-box" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span aria-hidden="true" style={stepBadge(true)}>3</span>
-                <b style={{ fontSize: 15, fontWeight: 900 }}>{t("reviewBeforeConfirm")}</b>
+                <b style={{ fontSize: 15, fontWeight: 900, color: "var(--ink)" }}>{t("reviewBeforeConfirm")}</b>
               </div>
-              <div style={{ display: "grid", gap: 8, padding: 16, background: "var(--sand)", borderRadius: 10 }}>
+              <div style={{ display: "grid", padding: "4px 16px", background: "var(--page-bg)", borderRadius: 12 }}>
                 <SummaryRow label={t("frequencyLabel")} value={freq ? freqLabel(freq) : ""} />
                 <SummaryRow label={tCommon("amount")} value={money(locale, chosenAmount ?? 0, donation.currency)} ltr />
                 <SummaryRow label={tCart("typeProject")} value={projectTitle} />
               </div>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <button type="button" onClick={startPlan} className="succ-confirm" style={{ flex: "1 1 160px", height: 50, border: 0, borderRadius: 8, background: "var(--gold)", color: "var(--deep)", fontWeight: 900, fontSize: 15, cursor: "pointer", fontFamily: "inherit" }}>
+                <button type="button" onClick={startPlan} className="succ-confirm" style={{ flex: "1 1 160px", height: 50, border: 0, borderRadius: 999, background: "var(--cta-gradient)", color: "#fff", fontWeight: 800, fontSize: 14.5, cursor: "pointer", fontFamily: "inherit", boxShadow: "0 8px 20px rgba(0,162,224,.3)" }}>
                   {t("confirmRecurring")}
                 </button>
-                <button type="button" onClick={() => setReviewing(false)} style={{ flex: "0 0 auto", height: 50, padding: "0 20px", border: "1px solid var(--border)", borderRadius: 8, background: "none", color: "var(--muted)", fontWeight: 800, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>
+                <button type="button" onClick={() => setReviewing(false)} style={{ flex: "0 0 auto", height: 50, padding: "0 22px", border: "1.5px solid #e2eaf0", borderRadius: 999, background: "none", color: "var(--muted)", fontWeight: 800, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>
                   {t("goBack")}
                 </button>
               </div>
             </div>
           ) : (
-            <div style={{ width: "100%", display: "grid", gap: 18, padding: "22px 24px", background: "#fff", border: "1px solid var(--border)", borderRadius: 12, textAlign: "start" }}>
+            <div style={{ width: "100%", display: "grid", gap: 18, padding: "20px 22px", background: "#fff", border: "1px solid #e3edf4", borderRadius: 14, textAlign: "start", boxSizing: "border-box" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <span aria-hidden="true" style={{ flex: "0 0 auto", width: 40, height: 40, borderRadius: "50%", background: "rgba(0,162,224,.14)", color: "var(--gold)", display: "grid", placeItems: "center" }}>
+                <span aria-hidden="true" style={{ flex: "0 0 auto", width: 42, height: 42, borderRadius: "50%", background: "#eaf5fc", color: "var(--brand-ink)", display: "grid", placeItems: "center" }}>
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 12a9 9 0 1 1-3-6.7" />
                     <path d="M21 3v6h-6" />
                   </svg>
                 </span>
                 <div style={{ display: "grid", gap: 1 }}>
-                  <b style={{ fontSize: 15, fontWeight: 900 }}>{t("makeImpactLast")}</b>
-                  <span style={{ fontSize: 13, color: "var(--muted)" }}>{t("makeImpactLastNote")}</span>
+                  <b style={{ fontSize: 15, fontWeight: 900, color: "var(--ink)" }}>{t("makeImpactLast")}</b>
+                  <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{t("makeImpactLastNote")}</span>
                 </div>
               </div>
 
               <div style={{ display: "grid", gap: 8 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span aria-hidden="true" style={stepBadge(true)}>1</span>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: "var(--deep)" }}>{t("chooseFrequency")}</span>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: "var(--ink)" }}>{t("chooseFrequency")}</span>
                   {freq ? (
                     <button
                       type="button"
@@ -373,7 +391,7 @@ export default function SuccessPage({
                         setAmountMode(null);
                         setPicked(null);
                       }}
-                      style={{ marginInlineStart: "auto", border: 0, background: "none", color: "var(--gold)", fontWeight: 800, fontSize: 12.5, cursor: "pointer", fontFamily: "inherit" }}
+                      style={{ marginInlineStart: "auto", minHeight: 44, border: 0, background: "none", color: "var(--brand-ink)", fontWeight: 800, fontSize: 12.5, cursor: "pointer", fontFamily: "inherit" }}
                     >
                       {t("changeChoice")}
                     </button>
@@ -381,7 +399,7 @@ export default function SuccessPage({
                 </div>
 
                 {freq ? (
-                  <span style={{ display: "inline-flex", alignItems: "center", gap: 8, width: "fit-content", padding: "8px 16px", borderRadius: 999, background: "rgba(0,162,224,.14)", border: "1px solid rgba(0,162,224,.4)", color: "var(--deep)", fontWeight: 800, fontSize: 13.5 }}>
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: 8, width: "fit-content", padding: "8px 16px", borderRadius: 999, background: "#0077b3", border: "1px solid #0077b3", color: "#fff", fontWeight: 800, fontSize: 13.5 }}>
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M20 6 9 17l-5-5" />
                     </svg>
@@ -403,7 +421,7 @@ export default function SuccessPage({
                   <div style={{ display: "grid", gap: 8 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <span aria-hidden="true" style={stepBadge(Boolean(amountMode))}>2</span>
-                      <span style={{ fontSize: 13, fontWeight: 800, color: "var(--deep)" }}>{t("chooseAmountStep")}</span>
+                      <span style={{ fontSize: 13, fontWeight: 800, color: "var(--ink)" }}>{t("chooseAmountStep")}</span>
                     </div>
                     <div style={{ display: "flex", gap: 8 }}>
                       <button type="button" onClick={() => { setAmountMode("same"); setPicked(null); setCustom(""); }} style={chip(amountMode === "same")}>
@@ -431,7 +449,7 @@ export default function SuccessPage({
                           onChange={(event) => { setCustom(event.target.value); setPicked(null); }}
                           inputMode="decimal"
                           placeholder={tCommon("freeAmount")}
-                          style={{ height: 44, padding: "0 14px", borderRadius: 8, border: "1px solid var(--border)", fontFamily: "inherit", fontSize: 14, width: 110 }}
+                          style={{ height: 44, padding: "0 14px", borderRadius: 999, border: "1.5px dashed rgba(0,162,224,.55)", background: "#fff", fontFamily: "inherit", fontSize: 14, fontWeight: 700, color: "var(--ink)", width: 120 }}
                         />
                       </div>
                     ) : null}
@@ -442,7 +460,7 @@ export default function SuccessPage({
                     onClick={() => setReviewing(true)}
                     disabled={!canProceed}
                     className="succ-confirm"
-                    style={{ height: 50, border: 0, borderRadius: 8, background: canProceed ? "var(--gold)" : "var(--sand)", color: canProceed ? "var(--deep)" : "var(--muted)", fontWeight: 900, fontSize: 15, cursor: canProceed ? "pointer" : "not-allowed", fontFamily: "inherit" }}
+                    style={{ height: 50, border: 0, borderRadius: 999, background: canProceed ? "var(--cta-gradient)" : "#e9eff3", color: canProceed ? "#fff" : "var(--muted)", fontWeight: 800, fontSize: 14.5, cursor: canProceed ? "pointer" : "not-allowed", fontFamily: "inherit", boxShadow: canProceed ? "0 8px 20px rgba(0,162,224,.3)" : "none" }}
                   >
                     {t("proceedToReview")}
                   </button>
@@ -451,11 +469,12 @@ export default function SuccessPage({
             </div>
           )}
 
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: 8 }}>
-            <Button variant="primary" href={miaPath("projects", locale)} style={{ whiteSpace: "nowrap" }}>
+          {/* The design's `.btn-row`: two equal pills. */}
+          <div className="gf-success-actions" style={{ width: "100%", display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center", marginTop: 4 }}>
+            <Button variant="primary" href={miaPath("projects", locale)} style={{ flex: "1 1 auto", minWidth: 130, minHeight: 50, whiteSpace: "nowrap", boxShadow: "0 8px 20px rgba(0,162,224,.3)" }}>
               {t("browseMoreProjects")}
             </Button>
-            <Button variant="light" href={miaPath("home", locale)} style={{ whiteSpace: "nowrap" }}>
+            <Button variant="light" href={miaPath("home", locale)} style={{ flex: "1 1 auto", minWidth: 130, minHeight: 50, whiteSpace: "nowrap", background: "transparent", color: "var(--muted)" }}>
               {t("backHomeCta")}
             </Button>
           </div>
@@ -465,14 +484,15 @@ export default function SuccessPage({
   );
 }
 
+/* The design's `.review-row`: label at the start, value at the end, hairline between. */
 function SummaryRow({ label, value, ltr = false }: { label: string; value: string; ltr?: boolean }) {
   return (
-    <span style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 14 }}>
+    <span className="gf-review-row" style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "12px 0", borderBottom: "1px solid #e6eef3", fontSize: 13.5 }}>
       <span style={{ color: "var(--muted)" }}>{label}</span>
       {ltr ? (
-        <b dir="ltr" style={{ unicodeBidi: "isolate" }}>{value}</b>
+        <b dir="ltr" style={{ unicodeBidi: "isolate", color: "var(--ink)" }}>{value}</b>
       ) : (
-        <b>{value}</b>
+        <b style={{ color: "var(--ink)" }}>{value}</b>
       )}
     </span>
   );

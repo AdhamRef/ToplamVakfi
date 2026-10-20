@@ -103,16 +103,19 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
   const progress = shares ? shareProgress(shares, project.raised, hasFinancials ? project.goal : null) : null;
   const giftReady = giftName.trim().length > 0 && (channels.whatsapp ? giftPhone.trim() : true) && (channels.email ? giftEmail.trim() : true);
 
-  const chip = (active: boolean, height: number, radius: number): CSSProperties => ({
+  /* The design's pill chips (`.ds-amounts button`): a quiet fill at rest, the
+     brand-ink fill with white text once picked. */
+  const chip = (active: boolean, height: number): CSSProperties => ({
     height,
-    padding: height > 38 ? "0 6px" : "0 10px",
-    borderRadius: radius,
-    border: `1px solid ${active ? "var(--gold-2)" : "#e2eaf0"}`,
-    background: active ? "var(--gold-2)" : "#fff",
-    color: active ? "#fff" : "var(--muted)",
+    minHeight: 40,
+    padding: "0 8px",
+    borderRadius: 999,
+    border: `1px solid ${active ? "#0077b3" : "#e2eaf0"}`,
+    background: active ? "#0077b3" : "#f7fafc",
+    color: active ? "#fff" : "var(--deep)",
     fontFamily: "inherit",
-    fontSize: height > 38 ? 14 : 13,
-    fontWeight: active ? 900 : 800,
+    fontSize: 13,
+    fontWeight: 800,
     whiteSpace: "nowrap",
     cursor: "pointer",
     transition: "all .18s ease",
@@ -122,11 +125,11 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
     height: 44,
     padding: "0 14px",
     borderRadius: 10,
-    border: "1px solid var(--border)",
+    border: "1px solid #e2eaf0",
     background: "#fff",
     fontFamily: "inherit",
-    fontSize: 14.5,
-    fontWeight: 800,
+    fontSize: 14,
+    fontWeight: 700,
     color: "var(--deep)",
     boxSizing: "border-box",
     width: "100%",
@@ -182,19 +185,20 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
   };
 
   return (
+    /* The design's `.donate-sidebar` card. It no longer sticks itself: the
+       project page sticks the column it sits in (with the concierge entry). */
     <div
       id="pd-aside"
+      className="pd-donate"
       style={{
-        position: "sticky",
-        top: 122,
+        position: "relative",
         display: "grid",
-        gap: 14,
-        padding: 24,
+        gap: 16,
+        padding: 26,
         background: "#fff",
-        border: "1px solid var(--border)",
-        borderTop: "3px solid var(--red)",
-        borderRadius: 14,
-        boxShadow: "0 12px 32px rgba(6,36,66,.07)",
+        border: "1px solid #e6eef3",
+        borderRadius: 18,
+        boxShadow: "0 16px 34px rgba(2,52,88,.1)",
       }}
     >
       {hasFinancials ? (
@@ -207,8 +211,8 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
               {t("raisedOfGoal", { raised: format(project.raised), goal: format(project.goal as number) })}
             </span>
           </span>
-          <span style={{ display: "block", height: 7, borderRadius: 999, background: "rgba(27,111,224,.13)", overflow: "hidden" }}>
-            <span style={{ display: "block", height: "100%", borderRadius: 999, width: `${pct}%`, background: "linear-gradient(-90deg, var(--red), var(--gold))" }} />
+          <span style={{ display: "block", height: 8, borderRadius: 999, background: "#eef3f7", overflow: "hidden" }}>
+            <span className="pd-fill" style={{ display: "block", height: "100%", borderRadius: 999, width: `${pct}%` }} />
           </span>
           <span style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 12, fontWeight: 800, color: "var(--muted)", flexWrap: "wrap" }}>
             <span>{tProjects("pctOfGoal", { pct: formatNumber(Math.round(pct)) })}</span>
@@ -246,13 +250,13 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
             alignItems: "center",
             justifyContent: "center",
             gap: 8,
-            padding: "10px 12px",
-            borderRadius: 10,
-            background: "var(--sand)",
-            border: "1px solid rgba(0,162,224,.42)",
+            padding: "10px 14px",
+            borderRadius: 999,
+            background: "#eaf6fd",
+            border: "1px solid rgba(0,162,224,.35)",
             fontSize: 14,
-            fontWeight: 900,
-            color: "#0077b3",
+            fontWeight: 800,
+            color: "var(--deep)",
           }}
         >
           {tShares("pricePer", {
@@ -276,7 +280,7 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
                 setPicked(index);
                 setCustom("");
               }}
-              style={chip(picked === index && !custom, 40, 10)}
+              style={chip(picked === index && !custom, 44)}
             >
               {shares ? (
                 option.label
@@ -295,7 +299,8 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
           inputMode={shares ? "numeric" : "decimal"}
           placeholder={shares ? tShares("customCountPh") : tCart("customAmountPh")}
           aria-label={shares ? tShares("customCountPh") : tCart("customAmountPh")}
-          style={field}
+          className="pd-custom"
+          style={{ ...field, borderRadius: 999, padding: "0 16px" }}
         />
       </div>
 
@@ -303,7 +308,7 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
         <span style={{ fontSize: 11.5, fontWeight: 900, letterSpacing: ".06em", color: "var(--muted)" }}>{t("frequency")}</span>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0,1fr))", gap: 6 }}>
           {FREQUENCIES.map((f) => (
-            <button key={f.id} type="button" data-pick={freq === f.id ? "1" : ""} onClick={() => setFreq(f.id)} style={chip(freq === f.id, 36, 999)}>
+            <button key={f.id} type="button" data-pick={freq === f.id ? "1" : ""} onClick={() => setFreq(f.id)} style={chip(freq === f.id, 40)}>
               {t(f.key)}
             </button>
           ))}
@@ -311,7 +316,9 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
       </div>
 
       {/* ── Dedication ─────────────────────────────────────────────────── */}
-      <div style={{ display: "grid", gap: 10, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
+      <div style={{ display: "grid", gap: 10 }}>
+        {/* The design's `.ds-gift` row: a quiet outlined pill that turns
+            light-blue once the dedication is open. */}
         <button
           type="button"
           onClick={() => setGiftOpen((v) => !v)}
@@ -320,17 +327,17 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
             display: "flex",
             alignItems: "center",
             gap: 11,
-            padding: 12,
-            borderRadius: 11,
-            border: `1px solid ${giftOpen ? "rgba(0,162,224,.6)" : "var(--border)"}`,
-            background: giftOpen ? "var(--sand)" : "#fff",
+            padding: "7px 12px",
+            borderRadius: 999,
+            border: `1px solid ${giftOpen ? "var(--gold)" : "#e2eaf0"}`,
+            background: giftOpen ? "#eaf6fd" : "#fff",
             cursor: "pointer",
             fontFamily: "inherit",
             width: "100%",
             textAlign: "start",
           }}
         >
-          <span style={{ display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 9, background: "rgba(0,162,224,.16)", border: "1px solid rgba(0,162,224,.45)", flex: "0 0 auto" }}>
+          <span style={{ display: "grid", placeItems: "center", width: 36, height: 36, borderRadius: 999, background: "#eaf6fd", border: "1px solid rgba(0,162,224,.35)", flex: "0 0 auto" }}>
             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#0077b3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M4 11h16v9H4zM3 7h18v4H3zM12 7v13" />
               <path d="M12 7S9.5 3.5 7.5 4.6C5.8 5.5 7 7 7 7M12 7s2.5-3.5 4.5-2.4C18.2 5.5 17 7 17 7" />
@@ -350,7 +357,9 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
         </button>
 
         {giftOpen ? (
-          <div style={{ display: "grid", gap: 12, padding: 16, background: "var(--sand)", border: "1px solid rgba(0,162,224,.42)", borderRadius: 11 }}>
+          /* Page-background tint, not the light-blue chip tint: the #0077b3
+             labels keep 4.5:1 on it (ToplamVakfi-design/CLAUDE.md). */
+          <div style={{ display: "grid", gap: 12, padding: 16, background: "#f4f8fb", border: "1px solid #e2eaf0", borderRadius: 14 }}>
             <span style={{ display: "grid", gap: 5 }}>
               <span style={{ fontSize: 11.5, fontWeight: 900, color: "#0077b3" }}>{tCart("giftRecipientName")}</span>
               <input value={giftName} onChange={(e) => setGiftName(e.target.value)} placeholder={tCart("certNamePh")} style={field} />
@@ -372,7 +381,7 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
                   type="button"
                   data-pick={channels.whatsapp ? "1" : ""}
                   onClick={() => setChannels((c) => ({ ...c, whatsapp: !c.whatsapp }))}
-                  style={{ ...chip(channels.whatsapp, 36, 999), display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, fontSize: 12.5 }}
+                  style={{ ...chip(channels.whatsapp, 40), display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, fontSize: 12.5 }}
                 >
                   {tCart("sendViaWhatsapp")}
                 </button>
@@ -380,7 +389,7 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
                   type="button"
                   data-pick={channels.email ? "1" : ""}
                   onClick={() => setChannels((c) => ({ ...c, email: !c.email }))}
-                  style={{ ...chip(channels.email, 36, 999), display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, fontSize: 12.5 }}
+                  style={{ ...chip(channels.email, 40), display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, fontSize: 12.5 }}
                 >
                   {tCart("giftChannelEmail")}
                 </button>
@@ -483,7 +492,7 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
         ) : null}
       </div>
 
-      <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10, paddingTop: 12, borderTop: "1px solid var(--border)" }}>
+      <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10, paddingTop: 14, borderTop: "1px solid #e6eef3" }}>
         <span style={{ display: "grid", gap: 2, fontSize: 13, fontWeight: 800, color: "var(--muted)" }}>
           {freq === "once" ? tCart("totalDonation") : tCart("perInstalment")}
           {shares && shareCount ? (
@@ -500,67 +509,73 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
         </b>
       </span>
       {minHint && belowMinimum ? (
-        <span role="alert" className="wq-error" style={{ marginTop: -6, fontSize: 13, fontWeight: 800, color: "var(--red)" }}>
+        <span role="alert" className="wq-error" style={{ marginTop: -6, fontSize: 13, fontWeight: 800, color: "var(--danger)" }}>
           {tGive("minAmount", { amount: minLabel })}
         </span>
       ) : null}
 
-      <button
-        type="button"
-        onClick={onDonate}
-        className="mia-card-cta"
-        style={{ height: 52, border: 0, borderRadius: 10, background: "var(--red)", color: "#fff", fontFamily: "inherit", fontSize: 16.5, fontWeight: 900, cursor: "pointer", transition: "filter .18s ease" }}
-      >
-        {t("donateNow")}
-      </button>
-
-      <div style={{ display: "flex", gap: 8 }}>
+      {/* The design's `.ds-btn-row`: donate (the CTA gradient) beside add to
+          basket, with share at the end. Wraps when a language's labels are long. */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
         <button
           type="button"
-          onClick={onAddToBasket}
-          style={{
-            flex: "1 1 auto",
-            height: 44,
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            border: `1px solid ${added ? "var(--green)" : "var(--border)"}`,
-            borderRadius: 10,
-            background: added ? "rgba(31,122,77,.08)" : "#fff",
-            color: added ? "var(--green)" : "var(--deep)",
-            fontFamily: "inherit",
-            fontSize: 14,
-            fontWeight: 900,
-            cursor: "pointer",
-            transition: "all .18s ease",
-          }}
+          onClick={onDonate}
+          className="mia-card-cta pd-cta"
+          style={{ flex: "1.3 1 150px", minHeight: 48, padding: "0 14px", border: 0, borderRadius: 999, color: "#fff", fontFamily: "inherit", fontSize: 15, fontWeight: 800, whiteSpace: "nowrap", cursor: "pointer", boxShadow: "0 12px 24px -12px rgba(27,111,224,.7)", transition: "filter .18s ease, transform .18s ease" }}
         >
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="m4 8 2 11h12l2-11H4Z" />
-            <path d="m9 8 3-4 3 4M9 12v3M15 12v3" />
-          </svg>
-          {added ? t("added") : t("addToCart")}
+          {t("donateNow")}
         </button>
-        <button
-          type="button"
-          onClick={onShare}
-          title={t("share")}
-          aria-label={t("share")}
-          className="mia-share-btn"
-          style={{ flex: "0 0 auto", width: 44, height: 44, display: "grid", placeItems: "center", border: "1px solid var(--border)", borderRadius: 10, background: "#fff", color: "var(--deep)", cursor: "pointer", transition: "all .18s ease" }}
-        >
-          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <circle cx="18" cy="5" r="3" />
-            <circle cx="6" cy="12" r="3" />
-            <circle cx="18" cy="19" r="3" />
-            <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" />
-          </svg>
-        </button>
+        <div style={{ flex: "1 1 160px", display: "flex", gap: 8 }}>
+          <button
+            type="button"
+            onClick={onAddToBasket}
+            className="pd-cart-btn"
+            style={{
+              flex: "1 1 auto",
+              minHeight: 48,
+              padding: "0 12px",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              border: `1px solid ${added ? "var(--green)" : "#e2eaf0"}`,
+              borderRadius: 999,
+              background: added ? "rgba(31,122,77,.08)" : "#f2f6f9",
+              color: added ? "var(--green)" : "var(--deep)",
+              fontFamily: "inherit",
+              fontSize: 13,
+              fontWeight: 800,
+              whiteSpace: "nowrap",
+              cursor: "pointer",
+              transition: "all .18s ease",
+            }}
+          >
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="m4 8 2 11h12l2-11H4Z" />
+              <path d="m9 8 3-4 3 4M9 12v3M15 12v3" />
+            </svg>
+            {added ? t("added") : t("addToCart")}
+          </button>
+          <button
+            type="button"
+            onClick={onShare}
+            title={t("share")}
+            aria-label={t("share")}
+            className="mia-share-btn"
+            style={{ flex: "0 0 auto", width: 48, height: 48, display: "grid", placeItems: "center", border: "1px solid #e2eaf0", borderRadius: 999, background: "#fff", color: "var(--deep)", cursor: "pointer", transition: "all .18s ease" }}
+          >
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="18" cy="5" r="3" />
+              <circle cx="6" cy="12" r="3" />
+              <circle cx="18" cy="19" r="3" />
+              <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" />
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <span style={{ display: "flex", alignItems: "center", gap: 9, fontSize: 12, fontWeight: 700, color: "var(--muted)", lineHeight: 1.7 }}>
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--green)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto" }}>
+      <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: -4, fontSize: 12, fontWeight: 700, color: "var(--muted)", lineHeight: 1.7, textAlign: "center" }}>
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#0077b3" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto" }}>
           <path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6l7-3Z" />
           <path d="m9 12 2 2 4-4" />
         </svg>

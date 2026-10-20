@@ -34,16 +34,16 @@ export default function TravelBanner() {
   return (
     <section id="friday" style={{ position: "relative", zIndex: 1, padding: "0 0 56px", color: "#062442" }}>
       <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-        <div className="friday-wrap" style={{ position: "relative", borderRadius: 16, overflow: "hidden", background: "#1B6FE0", boxShadow: "0 18px 44px rgba(6,36,66,.14)" }}>
+        <div className="friday-wrap" style={{ position: "relative", borderRadius: 20, overflow: "hidden", background: "#031A36", boxShadow: "0 14px 34px rgba(2,52,88,.12)" }}>
           <div
             id="friday-quote"
             style={{ position: "relative", zIndex: 3, display: "flex", alignItems: "center", justifyContent: "center", gap: 12, textAlign: "center", padding: "10px 24px", background: "#F4F8FB", borderBottom: "1px solid rgba(0,162,224,.4)" }}
           >
-            <span aria-hidden="true" style={{ flex: "0 0 auto", width: 5, height: 5, background: "#00A2E0", transform: "rotate(45deg)" }} />
-            <p style={{ margin: 0, fontFamily: "var(--font-ar)", fontSize: "clamp(15px,1.6vw,19px)", lineHeight: 1.6, fontWeight: 800, color: "#1B6FE0" }}>
+            <span aria-hidden="true" style={{ flex: "0 0 auto", width: 6, height: 6, borderRadius: "50%", background: "#00A2E0" }} />
+            <p style={{ margin: 0, fontFamily: "var(--font-ar)", fontSize: "clamp(15px,1.6vw,19px)", lineHeight: 1.6, fontWeight: 800, color: "#0077B3" }}>
               {t("fridayQuote")}
             </p>
-            <span aria-hidden="true" style={{ flex: "0 0 auto", width: 5, height: 5, background: "#00A2E0", transform: "rotate(45deg)" }} />
+            <span aria-hidden="true" style={{ flex: "0 0 auto", width: 6, height: 6, borderRadius: "50%", background: "#00A2E0" }} />
           </div>
 
           <div className="friday-body" style={{ position: "relative", minHeight: 340 }}>
@@ -62,11 +62,11 @@ export default function TravelBanner() {
             />
             <span
               aria-hidden="true"
-              style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(6,36,66,.86) 0%, rgba(6,36,66,.38) 46%, rgba(6,36,66,.06) 72%, transparent 100%)", pointerEvents: "none" }}
+              style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(3,26,54,.88) 0%, rgba(3,26,54,.38) 46%, rgba(3,26,54,.06) 72%, rgba(3,26,54,0) 100%)", pointerEvents: "none" }}
             />
 
             <div className="friday-prices" style={{ position: "absolute", insetInlineEnd: 18, top: 18, zIndex: 3, display: "flex", alignItems: "stretch", gap: 8 }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, background: "rgba(255,255,255,.95)", boxShadow: "0 14px 34px rgba(6,36,66,.3)" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 14, background: "rgba(255,255,255,.95)", boxShadow: "0 14px 34px rgba(6,36,66,.3)" }}>
                 <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: 22, fontWeight: 900, lineHeight: 1, color: "#062442" }}>
                   {format(SEAT_USD)}
                 </b>
@@ -76,7 +76,7 @@ export default function TravelBanner() {
                   {t("one")}
                 </span>
               </span>
-              <span style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, background: "#00A2E0", boxShadow: "0 14px 34px rgba(6,36,66,.3)" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 14, background: "#00A2E0", boxShadow: "0 14px 34px rgba(6,36,66,.3)" }}>
                 <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: 22, fontWeight: 900, lineHeight: 1, color: "#062442" }}>
                   {format(BUS_USD)}
                 </b>
@@ -114,7 +114,7 @@ export default function TravelBanner() {
                 <Link
                   href={href}
                   className="friday-cta mia-campaign-banner-button"
-                  style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 10, height: 46, padding: "0 24px", borderRadius: 8, background: "#1B6FE0", color: "#fff", fontWeight: 900, fontSize: 14.5, whiteSpace: "normal", textAlign: "center", overflowWrap: "anywhere", textDecoration: "none", boxShadow: "0 10px 26px rgba(27,111,224,.4)" }}
+                  style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 10, height: 46, padding: "0 24px", borderRadius: 999, background: "var(--cta-gradient)", color: "#fff", fontWeight: 800, fontSize: 14.5, whiteSpace: "normal", textAlign: "center", overflowWrap: "anywhere", textDecoration: "none", boxShadow: "0 10px 24px rgba(0,162,224,.4)" }}
                 >
                   {t("donateBus")}
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="mia-arrow-next">
@@ -124,7 +124,7 @@ export default function TravelBanner() {
                 <Link
                   href={href}
                   className="friday-cta"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 46, padding: "0 24px", borderRadius: 8, background: "rgba(255,255,255,.94)", color: "#1B6FE0", fontWeight: 900, fontSize: 14.5, whiteSpace: "nowrap", textDecoration: "none" }}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 46, padding: "0 24px", borderRadius: 999, background: "rgba(255,255,255,.94)", color: "#0077B3", fontWeight: 800, fontSize: 14.5, whiteSpace: "nowrap", textDecoration: "none" }}
                 >
                   {t("donateSeat")}
                 </Link>

@@ -26,15 +26,15 @@ export default function ZakatBanner() {
           style={{
             position: "relative",
             overflow: "hidden",
-            background: "linear-gradient(to left, #0F55B8, #1B6FE0)",
-            borderRadius: 14,
-            padding: "28px 34px",
+            background: "var(--dark-gradient, linear-gradient(120deg, #021428 0%, #082b50 60%, #04172e 100%))",
+            borderRadius: 22,
+            padding: "30px 38px",
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
             gap: 28,
             flexWrap: "wrap",
-            boxShadow: "0 16px 38px rgba(15,85,184,.24)",
+            boxShadow: "0 14px 34px rgba(2,52,88,.14)",
           }}
         >
           <span
@@ -53,6 +53,8 @@ export default function ZakatBanner() {
               pointerEvents: "none",
             }}
           />
+          {/* The design's glowing ring at the band's end edge (`.cf-ring`). */}
+          <span aria-hidden="true" className="tv-cta-ring" />
           <img
             src={imageUrl("/minbar/assets/aqsa-dome-line.png", 180)}
             alt=""
@@ -66,21 +68,21 @@ export default function ZakatBanner() {
 
           <div style={{ position: "relative", display: "grid", gap: 12, flex: "1 1 440px", minWidth: 0 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-              <span style={{ display: "grid", placeItems: "center", width: 46, height: 46, borderRadius: "50%", background: "rgba(255,255,255,.14)", border: "1px solid rgba(0,162,224,.55)", color: "var(--gold)", flex: "0 0 auto" }}>
+              <span style={{ display: "grid", placeItems: "center", width: 46, height: 46, borderRadius: "50%", background: "rgba(0,162,224,.2)", border: "1px solid rgba(90,200,255,.45)", color: "#7fd6f5", flex: "0 0 auto" }}>
                 <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <circle cx="12" cy="12" r="8" />
                   <path d="M14.5 9.5a2.6 2.6 0 0 0-2.5-1.4c-1.5 0-2.4.8-2.4 1.8 0 2.4 5 1.2 5 3.7 0 1.1-1 1.9-2.6 1.9a2.7 2.7 0 0 1-2.6-1.5M12 6.4v1.7M12 15.9v1.7" />
                 </svg>
               </span>
               <h2 style={{ margin: 0, fontSize: "clamp(23px,2.3vw,31px)", lineHeight: 1.3, fontWeight: 900, color: "#fff" }}>{t("zakatBannerTitle")}</h2>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "7px 8px 7px 15px", borderRadius: 999, background: "rgba(0,0,0,.16)", border: "1px solid rgba(0,162,224,.55)" }}>
-                <span style={{ display: "inline-flex", alignItems: "baseline", gap: 1, padding: "3px 10px", borderRadius: 999, background: "var(--gold)", color: "#062442" }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 9, padding: "7px 8px 7px 15px", borderRadius: 999, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.25)" }}>
+                <span style={{ display: "inline-flex", alignItems: "baseline", gap: 1, padding: "3px 10px", borderRadius: 999, background: "var(--gold)", color: "#031A36" }}>
                   <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: 17, fontWeight: 900, lineHeight: 1 }}>
                     2.5
                   </b>
                   <b style={{ fontSize: 11, fontWeight: 900 }}>%</b>
                 </span>
-                <span style={{ color: "#BFE6F7", fontSize: 12.5, fontWeight: 800 }}>{t("zakatChipDue")}</span>
+                <span style={{ color: "#cfe3f1", fontSize: 12.5, fontWeight: 800 }}>{t("zakatChipDue")}</span>
               </span>
             </div>
           </div>
@@ -89,7 +91,7 @@ export default function ZakatBanner() {
             <Link
               href={miaPath("zakat", locale)}
               className="mia-zakat-cta"
-              style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 52, padding: "0 26px", borderRadius: 8, background: "transparent", border: "1px solid rgba(255,255,255,.75)", color: "#fff", fontWeight: 900, fontSize: 16, whiteSpace: "nowrap", textDecoration: "none", transition: "background .18s ease, color .18s ease" }}
+              style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 50, padding: "0 26px", borderRadius: 999, background: "var(--cta-gradient)", border: "1px solid transparent", color: "#fff", fontWeight: 800, fontSize: 15.5, boxShadow: "0 10px 24px rgba(0,162,224,.4)", whiteSpace: "nowrap", textDecoration: "none", transition: "background .18s ease, color .18s ease" }}
             >
               {tCommon("zakatNow")}
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="mia-arrow-next">
@@ -99,7 +101,7 @@ export default function ZakatBanner() {
             <Link
               href={miaPath("zakatCalculator", locale)}
               className="mia-zakat-cta-ghost"
-              style={{ display: "inline-flex", alignItems: "center", height: 52, padding: "0 22px", borderRadius: 8, border: "1px solid rgba(255,255,255,.55)", color: "#fff", fontWeight: 800, fontSize: 15.5, whiteSpace: "nowrap", textDecoration: "none" }}
+              style={{ display: "inline-flex", alignItems: "center", height: 50, padding: "0 22px", borderRadius: 999, border: "1px solid rgba(255,255,255,.34)", color: "#fff", fontWeight: 800, fontSize: 15, whiteSpace: "nowrap", textDecoration: "none" }}
             >
               {tCommon("zakatCalculator")}
             </Link>

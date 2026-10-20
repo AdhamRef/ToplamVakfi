@@ -81,9 +81,9 @@ function EventVideo({ src, title, playLabel }: { src: string; title: string; pla
           type="button"
           onClick={() => setPlaying(true)}
           aria-label={`${playLabel}: ${title}`}
-          style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", width: "100%", height: "100%", padding: 0, border: 0, background: "linear-gradient(to top, rgba(6,36,66,.45), rgba(6,36,66,.05) 60%)", cursor: "pointer" }}
+          style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", width: "100%", height: "100%", padding: 0, border: 0, background: "linear-gradient(0deg, rgba(3,26,54,.55), rgba(3,26,54,0) 55%)", cursor: "pointer" }}
         >
-          <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 60, height: 60, borderRadius: "50%", background: "rgba(255,255,255,.94)", color: "var(--red)", boxShadow: "0 8px 22px rgba(0,0,0,.28)" }}>
+          <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 60, height: 60, borderRadius: "50%", background: "#fff", color: "#062442", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
             <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
               <path d="M8 5.5v13l11-6.5-11-6.5Z" />
             </svg>
@@ -108,23 +108,22 @@ export function EventsSection({ events }: { events: HomeEvent[] }) {
   const cards = events.map((event) => ({ id: event.id, ...(event.builtin ? builtin[event.builtin] : { src: event.src, title: event.title }) }));
 
   return (
-    <section id="events" style={{ position: "relative", zIndex: 1, background: "var(--ivory)", padding: "48px 0", borderTop: "1px solid var(--border)", overflow: "hidden" }}>
+    <section id="events" className="tv-sec" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
       <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gap: 22 }}>
-        <div id="events-row" style={{ display: "flex", alignItems: "center", gap: 24 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em", whiteSpace: "nowrap" }}>
-            {t("ourActivities")}
-          </h2>
+        <div id="events-row" className="tv-sec-head tv-sec-head--stack">
+          <h2 className="tv-h2">{t("ourActivities")}</h2>
+          <p className="tv-lead">{t("activitiesLead")}</p>
         </div>
         <div id="events-cards" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 20, alignItems: "stretch" }}>
           {cards.map((card) => (
             <div
               key={card.id}
               className="mia-lift"
-              style={{ display: "grid", gridTemplateRows: "auto 1fr", background: "#fff", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", boxShadow: "0 14px 40px rgba(6,36,66,.08)" }}
+              style={{ display: "grid", gridTemplateRows: "auto 1fr", background: "#fff", border: "1px solid #e6eef3", borderRadius: 16, overflow: "hidden", boxShadow: "0 12px 28px rgba(2,52,88,.07)" }}
             >
               <EventVideo src={card.src} title={card.title} playLabel={t("watch")} />
               <div style={{ display: "grid", padding: "16px 20px 18px" }}>
-                <b style={{ fontSize: "clamp(15.5px,1.5vw,18px)", fontWeight: 900, lineHeight: 1.6 }}>{card.title}</b>
+                <b style={{ fontSize: "clamp(15px,1.4vw,17px)", fontWeight: 800, lineHeight: 1.6, color: "var(--ink, #062442)" }}>{card.title}</b>
               </div>
             </div>
           ))}
@@ -167,7 +166,7 @@ function ReelRail({
       step={472}
       prevLabel={tCommon("prev")}
       nextLabel={tCommon("next")}
-      heading={<h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{title}</h2>}
+      heading={<h2 className="tv-h2">{title}</h2>}
       action={<ViewAllLink href={viewAllHref}>{viewAllLabel}</ViewAllLink>}
     >
       {videos.map((video) => {
@@ -191,10 +190,10 @@ function ReelRail({
                 style={{ position: "absolute", inset: 0, display: "block", backgroundImage: cssImage(image, 232), backgroundSize: "cover", backgroundPosition: "center" }}
               />
             ) : null}
-            <span style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(6,36,66,.94) 8%, rgba(6,36,66,.55) 44%, rgba(6,36,66,.05) 74%)" }} />
+            <span style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(3,26,54,.9) 8%, rgba(3,26,54,.45) 44%, rgba(3,26,54,0) 70%)" }} />
             {playable ? (
               <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
-                <span style={{ display: "grid", placeItems: "center", width: 52, height: 52, borderRadius: "50%", background: "rgba(255,255,255,.94)", color: "var(--red)", boxShadow: "0 8px 22px rgba(0,0,0,.28)" }}>
+                <span style={{ display: "grid", placeItems: "center", width: 52, height: 52, borderRadius: "50%", background: "#fff", color: "#062442", boxShadow: "0 8px 24px rgba(0,0,0,.3)" }}>
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
                     <path d="M8 5.5v13l11-6.5-11-6.5Z" />
                   </svg>
@@ -206,7 +205,7 @@ function ReelRail({
               <span style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,.18)", color: "rgba(255,255,255,.74)", fontSize: 11.5, fontWeight: 700 }}>
                 {showMeta && tag ? tag : null}
                 {playable ? (
-                  <span style={{ marginInlineStart: "auto", color: "var(--gold)", fontWeight: 900, display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <span style={{ marginInlineStart: "auto", color: "#7fd6f5", fontWeight: 900, display: "inline-flex", alignItems: "center", gap: 4 }}>
                     {watchLabel}
                     <ArrowGlyph size={12} />
                   </span>
@@ -221,11 +220,11 @@ function ReelRail({
           position: "relative",
           display: "block",
           aspectRatio: "9 / 16",
-          borderRadius: 18,
+          borderRadius: 14,
           overflow: "hidden",
           background: "var(--deep)",
-          border: "1px solid var(--border)",
-          boxShadow: "0 1px 2px rgba(6,36,66,.05)",
+          border: "1px solid #e6eef3",
+          boxShadow: "0 12px 28px rgba(2,52,88,.07)",
           padding: 0,
         };
 
@@ -268,7 +267,7 @@ export function ReelsSection({
   if (endorsements.length === 0 && achievements.length === 0) return null;
 
   return (
-    <section style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(234,243,249,.14), rgba(234,243,249,.42))", borderTop: "1px solid var(--border)", padding: "48px 0", overflow: "hidden" }}>
+    <section className="tv-sec tv-sec--reels" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
       <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,1fr)", gap: 46 }}>
         {endorsements.length > 0 && (
           <ReelRail
@@ -301,7 +300,36 @@ export function ReelsSection({
 
 /* ── Programmes ─────────────────────────────────────────────────────────────
  * The first episode of each programme is the poster frame, so publishing a new
- * episode at the head of a programme updates the homepage with no other edit. */
+ * episode at the head of a programme updates the homepage with no other edit.
+ *
+ * Laid out as the Toplum design's programmes row (`.program-row`): the heading
+ * and its pill at the start, then the cards  a photo cut by a soft curve, a
+ * round icon chip riding the curve, the title, the copy and an arrow. */
+const PlayGlyph = ({ size = 18 }: { size?: number }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true">
+    <path d="M8 5.5v13l11-6.5-11-6.5Z" />
+  </svg>
+);
+
+function ProgCardBody({ image, label, tag, title, text }: { image: string; label?: string; tag?: string; title: string; text?: string }) {
+  return (
+    <>
+      <span className="tv-prog-img" {...(label ? { role: "img", "aria-label": label } : { "aria-hidden": true })} style={{ backgroundImage: cssImage(image, 285) }} />
+      <span className="tv-prog-ico" aria-hidden="true">
+        <PlayGlyph size={16} />
+      </span>
+      <span className="tv-prog-body">
+        {tag ? <em className="tv-prog-tag">{tag}</em> : null}
+        <b>{title}</b>
+        {text ? <span className="tv-prog-text">{text}</span> : null}
+        <i aria-hidden="true">
+          <ArrowGlyph size={11} />
+        </i>
+      </span>
+    </>
+  );
+}
+
 export function ProgramsRail({ playlists }: { playlists: CmsPlaylist[] }) {
   const locale = useLocale();
   const t = useTranslations("homepage");
@@ -309,13 +337,13 @@ export function ProgramsRail({ playlists }: { playlists: CmsPlaylist[] }) {
   if (playlists.length === 0) return null;
 
   return (
-    <section id="programs" style={{ position: "relative", zIndex: 1, background: "var(--ivory)", padding: "0 0 48px" }}>
-      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gap: 18 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{t("programsTitle")}</h2>
-          <ViewAllLink href={miaPath("programs", locale)}>{t("programsAll")}</ViewAllLink>
+    <section id="programs" className="tv-sec" style={{ position: "relative", zIndex: 1 }}>
+      <div className="tv-wrap tv-prog">
+        <div className="tv-prog-intro">
+          <h2 className="tv-h2 tv-h2--brand">{t("programsTitle")}</h2>
+          <ViewAllLink href={miaPath("programs", locale)} variant="pill">{t("programsAll")}</ViewAllLink>
         </div>
-        <div id="programs-rail" className="mia-rail" style={railStyle}>
+        <div id="programs-rail" className="mia-rail tv-prog-rail" style={railStyle}>
           {playlists.map((program) => (
             /* Each programme opens its own YouTube playlist  in a new tab,
                since it leaves the site  and falls back to the programmes
@@ -326,31 +354,13 @@ export function ProgramsRail({ playlists }: { playlists: CmsPlaylist[] }) {
               key={program.id}
               href={program.youtubePlaylistUrl || miaPath("programs", locale)}
               {...(program.youtubePlaylistUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-              style={{ flex: "0 0 285px", scrollSnapAlign: "start", display: "grid", gap: 10, textDecoration: "none", color: "var(--deep)" }}
+              className="tv-prog-card"
             >
-              <span style={{ position: "relative", display: "block", width: "100%", aspectRatio: "16/9", borderRadius: 10, overflow: "hidden", background: "var(--sand)", boxShadow: "0 12px 30px rgba(6,36,66,.12)" }}>
-                <span
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    backgroundImage: cssImage(program.coverImage || program.episodes[0]?.thumbnail || youtubeThumb(program.episodes[0]?.youtubeId ?? ""), 285),
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                />
-                <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(6,36,66,.35), transparent 55%)" }} />
-                <span aria-hidden="true" style={{ position: "absolute", insetInlineStart: 10, bottom: 10, display: "grid", placeItems: "center", width: 34, height: 34, borderRadius: "50%", background: "rgba(255,255,255,.92)", color: "var(--red)" }}>
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true">
-                    <path d="M8 5.5v13l11-6.5-11-6.5Z" />
-                  </svg>
-                </span>
-              </span>
-              <b style={{ fontSize: 15, fontWeight: 900, lineHeight: 1.5 }}>{program.title}</b>
-              {program.description ? (
-                <span style={{ fontSize: 13, lineHeight: 1.7, color: "var(--muted)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                  {program.description}
-                </span>
-              ) : null}
+              <ProgCardBody
+                image={program.coverImage || program.episodes[0]?.thumbnail || youtubeThumb(program.episodes[0]?.youtubeId ?? "")}
+                title={program.title}
+                text={program.description || undefined}
+              />
             </Link>
           ))}
         </div>
@@ -361,7 +371,8 @@ export function ProgramsRail({ playlists }: { playlists: CmsPlaylist[] }) {
 
 /* ── Courses ────────────────────────────────────────────────────────────────
  * A course with an internal page links there; one hosted on YouTube opens its
- * intro film in the in-site player instead of leaving the site. */
+ * intro film in the in-site player instead of leaving the site. Same card as
+ * the programmes, with the course's kind as its tag. */
 export function CoursesRail({ onPlay, courses }: { onPlay: (embed: string) => void; courses: CmsCourse[] }) {
   const locale = useLocale();
   const t = useTranslations("homepage");
@@ -369,33 +380,29 @@ export function CoursesRail({ onPlay, courses }: { onPlay: (embed: string) => vo
   if (courses.length === 0) return null;
 
   return (
-    <section id="courses" style={{ position: "relative", zIndex: 1, background: "var(--ivory)", padding: "0 0 48px" }}>
-      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gap: 18 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{t("coursesTitle")}</h2>
-          <ViewAllLink href={miaPath("courses", locale)}>{t("coursesAll")}</ViewAllLink>
+    <section id="courses" className="tv-sec" style={{ position: "relative", zIndex: 1 }}>
+      <div className="tv-wrap tv-prog">
+        <div className="tv-prog-intro">
+          <h2 className="tv-h2 tv-h2--brand">{t("coursesTitle")}</h2>
+          <p className="tv-lead">{t("coursesLead")}</p>
+          <ViewAllLink href={miaPath("courses", locale)} variant="pill">{t("coursesAll")}</ViewAllLink>
         </div>
-        <div id="courses-rail" className="mia-rail" style={railStyle}>
+        <div id="courses-rail" className="mia-rail tv-prog-rail" style={railStyle}>
           {courses.map((course) => {
             const label = course.title;
             const cover = course.coverImage || (course.introVideoId ? youtubeThumb(course.introVideoId) : "");
             const inner = (
-              <span style={{ position: "relative", display: "block", width: "100%", aspectRatio: "16/9", borderRadius: 10, overflow: "hidden", background: "var(--navy)", boxShadow: "0 12px 30px rgba(6,36,66,.12)" }}>
-                <span role="img" aria-label={label} style={{ position: "absolute", inset: 0, backgroundImage: cssImage(cover, 285), backgroundSize: "cover", backgroundPosition: "center" }} />
-                <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(6,36,66,.55), transparent 60%)" }} />
-                <b style={{ position: "absolute", insetInlineStart: 12, bottom: 10, color: "#fff", fontSize: 14.5, fontWeight: 900, textShadow: "0 1px 8px rgba(6,36,66,.6)" }}>{label}</b>
-              </span>
+              <ProgCardBody
+                image={cover}
+                label={label}
+                tag={course.kind === "SEMINAR" ? t("kindSeminar") : t("kindCourse")}
+                title={label}
+                text={course.description || undefined}
+              />
             );
             const style: React.CSSProperties = {
-              flex: "0 0 340px",
-              scrollSnapAlign: "start",
-              display: "grid",
-              gap: 10,
-              textDecoration: "none",
-              color: "var(--deep)",
               padding: 0,
-              border: 0,
-              background: "none",
+              font: "inherit",
               textAlign: "start",
             };
 
@@ -405,10 +412,10 @@ export function CoursesRail({ onPlay, courses }: { onPlay: (embed: string) => vo
                plays it in place; anything else goes to the courses page. */
             if (course.hasDetailPage) {
               const href = course.slug === "zenki" ? miaPath("zenkiCourse", locale) : miaPath("courses", locale);
-              return <Link key={course.id} href={href} style={style}>{inner}</Link>;
+              return <Link key={course.id} href={href} className="tv-prog-card" style={style}>{inner}</Link>;
             }
             if (course.isExternal && course.externalUrl) {
-              return <a key={course.id} href={course.externalUrl} target="_blank" rel="noopener noreferrer" style={style}>{inner}</a>;
+              return <a key={course.id} href={course.externalUrl} target="_blank" rel="noopener noreferrer" className="tv-prog-card" style={style}>{inner}</a>;
             }
             if (course.introVideoId) {
               return (
@@ -416,13 +423,14 @@ export function CoursesRail({ onPlay, courses }: { onPlay: (embed: string) => vo
                   key={course.id}
                   type="button"
                   onClick={() => onPlay(youtubeEmbed(course.introVideoId, { autoplay: true }))}
+                  className="tv-prog-card"
                   style={{ ...style, cursor: "pointer" }}
                 >
                   {inner}
                 </button>
               );
             }
-            return <Link key={course.id} href={miaPath("courses", locale)} style={style}>{inner}</Link>;
+            return <Link key={course.id} href={miaPath("courses", locale)} className="tv-prog-card" style={style}>{inner}</Link>;
           })}
         </div>
       </div>

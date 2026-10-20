@@ -10,7 +10,9 @@ import { formatMoney } from "@/lib/minbar/money";
 import { Button } from "@/components/minbar/ds";
 
 /**
- * The donor account  ported from `Minbar/حساب المتبرع.dc.html`.
+ * The donor account  ported from `Minbar/حساب المتبرع.dc.html`, laid out as
+ * `ToplamVakfi-design/Toplum Vakfı Profile.dc.html`: a navy profile card, a
+ * side menu, and white panels (styles in `styles/minbar/pages/reports.css`).
  *
  * The handoff renders whatever props it is handed and an em dash for the rest.
  * This is the signed-in donor's own record: their totals, their donation
@@ -90,15 +92,18 @@ function Icon({ name, size = 15 }: { name: string; size?: number }) {
   );
 }
 
-const SECTION = { maxWidth: 1240, margin: "0 auto", padding: "0 24px" } as const;
+/* The design's profile field: 10px radius, 1.5px hairline, 12px/14px padding. */
 const FIELD = {
-  height: 38,
-  border: "1px solid var(--border)",
-  borderRadius: 8,
-  padding: "0 10px",
+  width: "100%",
+  minHeight: 46,
+  border: "1.5px solid #e2eaf0",
+  borderRadius: 10,
+  padding: "0 14px",
   fontFamily: "inherit",
   fontSize: 13.5,
+  color: "#062442",
   background: "#fff",
+  boxSizing: "border-box",
 } as const;
 
 export default function AccountPage({ summary }: { summary: MinbarAccountSummary }) {
@@ -177,226 +182,243 @@ export default function AccountPage({ summary }: { summary: MinbarAccountSummary
     { icon: "refresh", value: formatNumber(activeSubscriptions), label: t("activeSubs") },
   ];
 
-  const details: Array<{ icon: string; value: string; ltr?: boolean }> = [
-    { icon: "user", value: saved.name.trim() || dash },
-    { icon: "mail", value: saved.email.trim() || dash, ltr: true },
-    { icon: "phone", value: saved.phone.trim() || dash, ltr: true },
-    { icon: "calendar", value: saved.birthdate.trim() || dash, ltr: true },
-    { icon: "pin", value: saved.address.trim() || dash },
+  const details: Array<{ icon: string; label: string; value: string; ltr?: boolean }> = [
+    { icon: "user", label: t("fullName"), value: saved.name.trim() || dash },
+    { icon: "mail", label: t("email"), value: saved.email.trim() || dash, ltr: true },
+    { icon: "phone", label: t("phone"), value: saved.phone.trim() || dash, ltr: true },
+    { icon: "calendar", label: t("birthDate"), value: saved.birthdate.trim() || dash, ltr: true },
+    { icon: "pin", label: t("address"), value: saved.address.trim() || dash },
+  ];
+
+  /* The design's side menu. Every section stays on the page, so its entries are
+     in-page anchors rather than tabs that hide the rest; settings is the one
+     entry that leaves, to the full settings screen. */
+  const menu: Array<{ href: string; icon: string; label: string }> = [
+    { href: "#acx-overview", icon: "wallet", label: t("totalDonated") },
+    ...(pendingTransfers.length > 0 ? [{ href: "#acx-transfers", icon: "receipt", label: tTransfer("accountSectionTitle") }] : []),
+    { href: "#acx-history", icon: "list", label: t("donationHistory") },
+    { href: "#acx-recurring", icon: "refresh", label: t("recurringTitle") },
+    { href: "#acx-info", icon: "user", label: t("myInfo") },
   ];
 
   return (
-    <div className="acc-page">
-      <section style={{ position: "relative", padding: "46px 0 62px", background: "var(--sand)", borderBottom: "1px solid var(--border)", overflow: "hidden" }}>
-        <div aria-hidden="true" className="acc-pattern" />
-        <div className="acc-in" style={{ ...SECTION, position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 64, height: 64, borderRadius: "50%", background: "#fff", color: "var(--deep)", fontSize: 22, fontWeight: 900, border: "2px solid rgba(0,162,224,.5)", boxShadow: "0 8px 18px rgba(6,36,66,.08)" }}>
-              {donorName.trim().charAt(0)}
+    <div className="acc-page acx-page">
+      <div className="acx-wrap">
+        {/* ── Profile card ─────────────────────────────────────────────────── */}
+        <div className="acx-hero acc-in">
+          <span aria-hidden="true" className="acx-avatar">
+            {donorName.trim().charAt(0)}
+          </span>
+          <div className="acx-hero-info">
+            <h1>{donorName}</h1>
+            <span>
+              {t("memberSince", { date: monthFormat.format(new Date(profile.memberSince)) })}
+              {saved.email.trim() ? (
+                <>
+                  {" — "}
+                  <span dir="ltr" style={{ unicodeBidi: "isolate" }}>{saved.email.trim()}</span>
+                </>
+              ) : null}
             </span>
-            <div>
-              <h1 style={{ margin: 0, fontSize: "clamp(22px,2.6vw,28px)", fontWeight: 900 }}>{donorName}</h1>
-              <span style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--muted)", fontSize: 14 }}>
-                <Icon name="pin" size={13} />
-                {t("memberSince", { date: monthFormat.format(new Date(profile.memberSince)) })}
-              </span>
-            </div>
           </div>
 
           {/* The handoff points this at the contact page  plainly a placeholder.
               It leads to the real settings screen, where a donor can also change
               their password, country and notification preferences. */}
-          <Link href={`/${locale}/profile`} className="acc-settings" style={{ display: "inline-flex", alignItems: "center", gap: 7, height: 40, padding: "0 16px", borderRadius: 8, border: "1px solid rgba(0,162,224,.5)", background: "#fff", fontSize: 13.5, fontWeight: 800, color: "var(--deep)", transition: "all .18s ease" }}>
+          <Link href={`/${locale}/profile`} className="acx-badge">
             <Icon name="settings" />
             {t("settings")}
           </Link>
         </div>
-      </section>
 
-      <section style={{ padding: "34px 0 70px" }}>
-        <div className="acc-stats" style={{ ...SECTION, display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 18, marginBottom: 34, marginTop: -30 }}>
-          {stats.map((stat) => (
-            <div key={stat.label} className="acc-row acc-card acc-in acc-in-1" style={{ display: "flex", alignItems: "center", gap: 12, padding: 22, background: "#fff", border: "1px solid var(--border)", borderRadius: 12 }}>
-              <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 38, height: 38, borderRadius: 10, background: "var(--sand)", color: "var(--gold)", flex: "0 0 auto" }}>
-                <Icon name={stat.icon} size={17} />
-              </span>
-              <span style={{ display: "grid", gap: 3, minWidth: 0 }}>
-                <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: 24, fontWeight: 900 }}>{stat.value}</b>
-                <span style={{ color: "var(--muted)", fontSize: 13 }}>{stat.label}</span>
-              </span>
+        <div className="acx-layout">
+          <nav className="acx-side acc-in acc-in-1">
+            {menu.map((item, index) => (
+              <a key={item.href} href={item.href} className={`acx-side-link${index === 0 ? " is-on" : ""}`}>
+                <Icon name={item.icon} size={17} />
+                {item.label}
+              </a>
+            ))}
+            <hr />
+            <Link href={`/${locale}/profile`} className="acx-side-link">
+              <Icon name="settings" size={17} />
+              {t("settings")}
+            </Link>
+          </nav>
+
+          <div className="acx-main">
+            <div id="acx-overview" className="acx-stats">
+              {stats.map((stat) => (
+                <div key={stat.label} className="acx-stat acc-in acc-in-1">
+                  <span aria-hidden="true" className="acx-ico">
+                    <Icon name={stat.icon} size={17} />
+                  </span>
+                  <b dir="ltr">{stat.value}</b>
+                  <span>{stat.label}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        <div className="acc-body" style={{ ...SECTION, display: "grid", gridTemplateColumns: "minmax(0,1.2fr) minmax(0,.8fr)", gap: 30, alignItems: "start" }}>
-          <div style={{ display: "grid", gap: 14 }}>
             {/* Bank transfers the finance team has not confirmed yet. Shown
                 above the history, apart from it and never in the totals: the
                 donor should see where each one stands and what it needs of
                 them  a receipt, another receipt, or nothing but patience. */}
             {pendingTransfers.length > 0 ? (
-              <div style={{ display: "grid", gap: 10, marginBottom: 10 }}>
-                <div>
-                  <h2 style={{ margin: 0, fontSize: 19, fontWeight: 900 }}>{tTransfer("accountSectionTitle")}</h2>
-                  <p style={{ margin: "4px 0 0", fontSize: 13, color: "var(--muted)", lineHeight: 1.7 }}>{tTransfer("accountSectionLead")}</p>
-                </div>
-                {pendingTransfers.map((transfer) => {
-                  const tone =
-                    transfer.status === "REJECTED"
-                      ? { color: "var(--red)", background: "rgba(27,111,224,.1)" }
-                      : transfer.status === "UNDER_REVIEW"
-                        ? { color: "var(--green)", background: "rgba(31,122,77,.1)" }
-                        : { color: "var(--gold)", background: "rgba(0,162,224,.16)" };
-                  const label =
-                    transfer.status === "REJECTED"
-                      ? tTransfer("statusRejected")
-                      : transfer.status === "UNDER_REVIEW"
-                        ? tTransfer("statusReview")
-                        : tTransfer("statusAwaiting");
-                  return (
-                    <div key={transfer.donationId} className="acc-row acc-card acc-in" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 18px", background: "#fff", border: `1px solid ${transfer.status === "REJECTED" ? "rgba(27,111,224,.35)" : "rgba(0,162,224,.4)"}`, borderRadius: 10 }}>
-                      <span style={{ flex: "1 1 auto", minWidth: 0 }}>
-                        <b style={{ display: "block", fontSize: 15 }}>
-                          {transfer.titles.length ? transfer.titles.join("، ") : t("dearDonor")}
-                        </b>
-                        <span style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--muted)", fontSize: 12.5, marginTop: 2, flexWrap: "wrap" }}>
-                          <time dateTime={transfer.createdAt}>{dateFormat.format(new Date(transfer.createdAt))}</time>
-                          <span aria-hidden="true" style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--muted)" }} />
-                          <span style={{ display: "inline-flex", padding: "2px 8px", borderRadius: 999, background: tone.background, color: tone.color, fontWeight: 800 }}>{label}</span>
+              <div id="acx-transfers" className="acx-panel acc-in">
+                <h2>{tTransfer("accountSectionTitle")}</h2>
+                <p className="acx-sub">{tTransfer("accountSectionLead")}</p>
+                <div className="acx-rows">
+                  {pendingTransfers.map((transfer) => {
+                    const tone =
+                      transfer.status === "REJECTED"
+                        ? "rejected"
+                        : transfer.status === "UNDER_REVIEW"
+                          ? "review"
+                          : "pending";
+                    const label =
+                      transfer.status === "REJECTED"
+                        ? tTransfer("statusRejected")
+                        : transfer.status === "UNDER_REVIEW"
+                          ? tTransfer("statusReview")
+                          : tTransfer("statusAwaiting");
+                    return (
+                      <div key={transfer.donationId} className="acx-row" data-tone={tone}>
+                        <span className="acx-row-main">
+                          <b>{transfer.titles.length ? transfer.titles.join("، ") : t("dearDonor")}</b>
+                          <span className="acx-row-meta">
+                            <time dateTime={transfer.createdAt}>{dateFormat.format(new Date(transfer.createdAt))}</time>
+                            <span className="acx-status" data-tone={tone}>{label}</span>
+                          </span>
                         </span>
-                      </span>
-                      <b dir="ltr" style={{ unicodeBidi: "isolate", whiteSpace: "nowrap", color: "var(--muted)" }}>
-                        {chargedAmount(transfer.amount, transfer.currency)}
-                      </b>
-                      <Link
-                        href={miaPath("paymentPending", locale, transfer.donationId)}
-                        className="acc-receipt"
-                        style={{ display: "inline-flex", alignItems: "center", gap: 6, height: 32, padding: "0 12px", borderRadius: 8, border: `1px solid ${transfer.canUpload ? "var(--red)" : "var(--border)"}`, background: transfer.canUpload ? "var(--red)" : "#fff", fontSize: 12.5, fontWeight: 800, color: transfer.canUpload ? "#fff" : "var(--deep)", whiteSpace: "nowrap", transition: "all .18s ease" }}
-                      >
-                        {transfer.canUpload ? tTransfer("accountAction") : tTransfer("accountFollow")}
-                      </Link>
-                    </div>
-                  );
-                })}
+                        <b dir="ltr" className="acx-amt" style={{ color: "#5d7187" }}>
+                          {chargedAmount(transfer.amount, transfer.currency)}
+                        </b>
+                        <Link
+                          href={miaPath("paymentPending", locale, transfer.donationId)}
+                          className={`acx-action${transfer.canUpload ? " is-primary" : ""}`}
+                        >
+                          {transfer.canUpload ? tTransfer("accountAction") : tTransfer("accountFollow")}
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ) : null}
 
-            <h2 style={{ margin: 0, fontSize: 19, fontWeight: 900 }}>{t("donationHistory")}</h2>
-            <div style={{ display: "grid", gap: 10 }}>
-              {donations.map((donation) => (
-                <div key={donation.id} className="acc-row acc-card acc-in" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 18px", background: "#fff", border: "1px solid var(--border)", borderRadius: 10 }}>
-                  <span style={{ flex: "1 1 auto", minWidth: 0 }}>
-                    <b style={{ display: "block", fontSize: 15 }}>
-                      {donation.titles.length ? donation.titles.join("، ") : t("dearDonor")}
-                    </b>
-                    <span style={{ display: "flex", alignItems: "center", gap: 6, color: "var(--muted)", fontSize: 12.5, marginTop: 2 }}>
-                      <time dateTime={donation.date}>{dateFormat.format(new Date(donation.date))}</time>
-                      {donation.recurring ? (
-                        <>
-                          <span aria-hidden="true" style={{ width: 3, height: 3, borderRadius: "50%", background: "var(--muted)" }} />
-                          <span style={{ display: "inline-flex", padding: "2px 8px", borderRadius: 999, background: "var(--sand)", color: "var(--gold)", fontWeight: 800 }}>
-                            {t("recurringTitle")}
-                          </span>
-                        </>
-                      ) : null}
-                    </span>
-                  </span>
-                  <b dir="ltr" style={{ unicodeBidi: "isolate", whiteSpace: "nowrap" }}>
-                    {chargedAmount(donation.amount, donation.currency)}
-                  </b>
-                  {/* The receipt is the server-generated PDF, not a page: it is
-                      the document a donor keeps, and it is issued per donation. */}
-                  <a
-                    href={`/api/donations/${donation.id}/receipt?locale=${encodeURIComponent(locale)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="acc-receipt"
-                    style={{ display: "inline-flex", alignItems: "center", gap: 6, height: 32, padding: "0 12px", borderRadius: 8, border: "1px solid var(--border)", background: "#fff", fontSize: 12.5, fontWeight: 800, color: "var(--deep)", whiteSpace: "nowrap", transition: "all .18s ease" }}
-                  >
-                    <Icon name="receipt" size={13} />
-                    {t("receipt")}
-                  </a>
-                </div>
-              ))}
-
-              {donations.length === 0 ? (
-                <p style={{ margin: 0, padding: 24, textAlign: "center", color: "var(--muted)", background: "#fff", border: "1px solid var(--border)", borderRadius: 10, fontSize: 14 }}>
-                  {t("noDonationsYet")}{" "}
-                  <Link href={miaPath("projects", locale)} style={{ color: "var(--gold)", fontWeight: 800 }}>
-                    {t("browseProjects")}
-                  </Link>{" "}
-                  {t("toStart")}
-                </p>
-              ) : null}
-            </div>
-          </div>
-
-          <div style={{ display: "grid", gap: 12 }}>
-            <div className="acc-in acc-in-1" style={{ display: "grid", gap: 10, padding: 22, background: "var(--sand)", borderRadius: 12 }}>
-              <b style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 15 }}>
-                <Icon name="user" size={16} />
-                {t("myInfo")}
-              </b>
-
-              {editing ? (
-                <>
-                  <span style={{ display: "grid", gap: 8 }}>
-                    <EditField label={t("fullName")} value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} autoComplete="name" />
-                    <EditField label={t("email")} value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} type="email" dir="ltr" autoComplete="email" />
-                    <EditField label={t("phone")} value={form.phone} onChange={(v) => setForm((f) => ({ ...f, phone: v }))} type="tel" dir="ltr" autoComplete="tel" />
-                    <EditField label={t("birthDate")} value={form.birthdate} onChange={(v) => setForm((f) => ({ ...f, birthdate: v }))} type="date" dir="ltr" />
-                    <EditField label={t("address")} value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} autoComplete="address-level2" />
-                  </span>
-                  <span style={{ display: "flex", gap: 8, marginTop: 4 }}>
-                    <button type="button" onClick={save} disabled={saving} style={{ flex: "1 1 auto", height: 38, border: 0, borderRadius: 8, background: "var(--gold)", color: "#062442", fontFamily: "inherit", fontWeight: 900, fontSize: 13, cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
-                      {t("save")}
-                    </button>
-                    <button type="button" onClick={cancel} style={{ flex: "0 0 auto", height: 38, padding: "0 14px", borderRadius: 8, border: "1px solid var(--border)", background: "#fff", color: "var(--muted)", fontFamily: "inherit", fontWeight: 800, fontSize: 13, cursor: "pointer" }}>
-                      {t("cancel")}
-                    </button>
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span style={{ display: "grid", gap: 8 }}>
-                    {details.map((detail) => (
-                      <span key={detail.icon} style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--muted)", fontSize: 14 }}>
-                        <span style={{ flex: "0 0 auto", color: "var(--gold)", display: "inline-flex" }}>
-                          <Icon name={detail.icon} size={14} />
-                        </span>
-                        {detail.ltr ? (
-                          <span dir="ltr" style={{ unicodeBidi: "isolate" }}>{detail.value}</span>
-                        ) : (
-                          detail.value
-                        )}
+            <div id="acx-history" className="acx-panel acc-in">
+              <h2>{t("donationHistory")}</h2>
+              <div className="acx-rows">
+                {donations.map((donation) => (
+                  <div key={donation.id} className="acx-row">
+                    <span className="acx-row-main">
+                      <b>{donation.titles.length ? donation.titles.join("، ") : t("dearDonor")}</b>
+                      <span className="acx-row-meta">
+                        <time dateTime={donation.date}>{dateFormat.format(new Date(donation.date))}</time>
+                        {donation.recurring ? (
+                          <span className="acx-status" data-tone="recurring">{t("recurringTitle")}</span>
+                        ) : null}
                       </span>
-                    ))}
-                  </span>
-                  <button type="button" onClick={() => setEditing(true)} className="acc-edit" style={{ display: "inline-flex", alignItems: "center", gap: 7, width: "fit-content", height: 38, padding: "0 16px", marginTop: 4, borderRadius: 8, border: "1px solid var(--border)", background: "#fff", fontSize: 13, fontWeight: 800, color: "var(--deep)", cursor: "pointer", transition: "all .18s ease" }}>
-                    <Icon name="edit" size={14} />
-                    {t("editInfo")}
-                  </button>
-                </>
-              )}
+                    </span>
+                    <b dir="ltr" className="acx-amt">
+                      {chargedAmount(donation.amount, donation.currency)}
+                    </b>
+                    {/* The receipt is the server-generated PDF, not a page: it is
+                        the document a donor keeps, and it is issued per donation. */}
+                    <a
+                      href={`/api/donations/${donation.id}/receipt?locale=${encodeURIComponent(locale)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="acx-action"
+                    >
+                      <Icon name="receipt" size={13} />
+                      {t("receipt")}
+                    </a>
+                  </div>
+                ))}
+
+                {donations.length === 0 ? (
+                  <p className="acx-empty">
+                    {t("noDonationsYet")}{" "}
+                    <Link href={miaPath("projects", locale)} style={{ color: "#0077b3", fontWeight: 800 }}>
+                      {t("browseProjects")}
+                    </Link>{" "}
+                    {t("toStart")}
+                  </p>
+                ) : null}
+              </div>
             </div>
 
-            <div className="acc-in acc-in-2" style={{ display: "grid", gap: 10, padding: 22, background: "#fff", border: "1px solid var(--border)", borderRadius: 12 }}>
-              <b style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 15 }}>
-                <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 30, height: 30, borderRadius: 9, background: "var(--sand)", color: "var(--gold)" }}>
-                  <Icon name="refresh" />
-                </span>
-                {t("recurringTitle")}
-              </b>
-              <span style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.8 }}>
-                {activeSubscriptions > 0 ? `${formatNumber(activeSubscriptions)} ${t("activeSubs")}` : t("noActivePlan")}
-              </span>
-              <Button variant="light" href={miaPath("recurring", locale)} style={{ whiteSpace: "nowrap" }}>
-                {t("startRecurring")}
-              </Button>
+            <div className="acx-duo">
+              <div id="acx-info" className="acx-panel acc-in acc-in-1">
+                <h2 style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span aria-hidden="true" className="acx-ico acx-ico--sm">
+                    <Icon name="user" size={15} />
+                  </span>
+                  {t("myInfo")}
+                </h2>
+
+                {editing ? (
+                  <>
+                    <span className="acx-fields">
+                      <EditField label={t("fullName")} value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} autoComplete="name" />
+                      <EditField label={t("email")} value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} type="email" dir="ltr" autoComplete="email" />
+                      <EditField label={t("phone")} value={form.phone} onChange={(v) => setForm((f) => ({ ...f, phone: v }))} type="tel" dir="ltr" autoComplete="tel" />
+                      <EditField label={t("birthDate")} value={form.birthdate} onChange={(v) => setForm((f) => ({ ...f, birthdate: v }))} type="date" dir="ltr" />
+                      <EditField label={t("address")} value={form.address} onChange={(v) => setForm((f) => ({ ...f, address: v }))} autoComplete="address-level2" />
+                    </span>
+                    <span style={{ display: "flex", gap: 8, marginTop: 6, flexWrap: "wrap" }}>
+                      <button type="button" onClick={save} disabled={saving} className="acx-save" style={{ cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+                        {t("save")}
+                      </button>
+                      <button type="button" onClick={cancel} className="acx-cancel">
+                        {t("cancel")}
+                      </button>
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="acx-details">
+                      {details.map((detail) => (
+                        <span key={detail.icon} className="acx-detail">
+                          <small>{detail.label}</small>
+                          <span>
+                            <Icon name={detail.icon} size={14} />
+                            {detail.ltr ? (
+                              <span dir="ltr" style={{ unicodeBidi: "isolate" }}>{detail.value}</span>
+                            ) : (
+                              detail.value
+                            )}
+                          </span>
+                        </span>
+                      ))}
+                    </span>
+                    <button type="button" onClick={() => setEditing(true)} className="acx-cancel" style={{ display: "inline-flex", alignItems: "center", gap: 7, marginTop: 6 }}>
+                      <Icon name="edit" size={14} />
+                      {t("editInfo")}
+                    </button>
+                  </>
+                )}
+              </div>
+
+              <div id="acx-recurring" className="acx-panel acx-recurring acc-in acc-in-2">
+                <h2 style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span aria-hidden="true" className="acx-ico acx-ico--sm">
+                    <Icon name="refresh" size={15} />
+                  </span>
+                  {t("recurringTitle")}
+                </h2>
+                <p className="acx-sub" style={{ fontSize: 14, lineHeight: 1.8 }}>
+                  {activeSubscriptions > 0 ? `${formatNumber(activeSubscriptions)} ${t("activeSubs")}` : t("noActivePlan")}
+                </p>
+                <Button variant="primary" href={miaPath("recurring", locale)} style={{ whiteSpace: "nowrap", justifySelf: "start" }}>
+                  {t("startRecurring")}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
@@ -417,8 +439,8 @@ function EditField({
   autoComplete?: string;
 }) {
   return (
-    <label style={{ display: "grid", gap: 4 }}>
-      <span style={{ fontSize: 11, fontWeight: 800, color: "var(--muted)" }}>{label}</span>
+    <label style={{ display: "grid", gap: 6, minWidth: 0 }}>
+      <span style={{ fontSize: 12.5, fontWeight: 700, color: "#5d7187" }}>{label}</span>
       <input
         type={type}
         dir={dir}

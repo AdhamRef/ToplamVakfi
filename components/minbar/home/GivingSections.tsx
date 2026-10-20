@@ -7,8 +7,18 @@ import { miaPath } from "@/lib/minbar/routes";
 
 /**
  * The waqf, recurring-giving and donor-account sections of the homepage.
- * Ported from `Minbar/الصفحة الرئيسية.dc.html`.
+ * Ported from `Minbar/الصفحة الرئيسية.dc.html`, laid out in the Toplum Vakfı
+ * design's language (`ToplamVakfi-design/Toplum Vakfı Homepage.dc.html`):
+ * the waqf as the dark giving card with its white box (`.rg-card`), recurring
+ * giving as the closing call-to-action band (`.cf-card`), and the account as a
+ * white panel of numbered cards (`.wt`).
  */
+
+const Check = () => (
+  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="m5 12 5 5L20 7" />
+  </svg>
+);
 
 /* ── Waqf ───────────────────────────────────────────────────────────────────
  * The eight areas of continuing benefit are approved interface copy translated
@@ -20,61 +30,23 @@ export function WaqfSection() {
   const areas = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => t(`waqfArea${n}`));
 
   return (
-    <section id="waqf" style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(234,243,249,.34), rgba(234,243,249,.72))", borderTop: "1px solid var(--border)", padding: "48px 0", overflow: "hidden" }}>
-      {/* A minaret drawn in gold line, faded toward the start edge. */}
-      <svg
-        viewBox="0 0 200 260"
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          insetInlineEnd: -34,
-          bottom: -40,
-          width: 190,
-          height: "auto",
-          opacity: 0.1,
-          pointerEvents: "none",
-          WebkitMaskImage: "linear-gradient(to left, rgba(0,0,0,.95), transparent 78%)",
-          maskImage: "linear-gradient(to left, rgba(0,0,0,.95), transparent 78%)",
-        }}
-      >
-        <g fill="none" stroke="#00A2E0" strokeWidth="2">
-          <path d="M100 24c34 0 62 26 62 60v152H38V84c0-34 28-60 62-60Z" />
-          <path d="M100 62c20 0 36 15 36 34v140H64V96c0-19 16-34 36-34Z" />
-          <path d="M100 100c11 0 20 9 20 20v116H80V120c0-11 9-20 20-20Z" />
-        </g>
-      </svg>
-
-      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-        <div id="waqf-grid" style={{ position: "relative", display: "grid", gridTemplateColumns: "minmax(280px,.9fr) minmax(320px,1.1fr)", gap: 40, alignItems: "start" }}>
-          <div style={{ position: "relative", display: "grid", gap: 16, justifyItems: "start", alignContent: "start" }}>
-            <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{t("waqfTitle")}</h2>
-            <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.85, fontSize: 15, maxWidth: "58ch" }}>{t("waqfLead")}</p>
-            <Button variant="gold" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap" }}>
+    <section id="waqf" className="tv-sec" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
+      <div className="tv-wrap">
+        <div id="waqf-grid" className="tv-dark-card tv-waqf">
+          <span aria-hidden="true" className="tv-dark-glow" />
+          <div className="tv-dark-text">
+            <h2 className="tv-h2">{t("waqfTitle")}</h2>
+            <p className="tv-dark-lede">{t("waqfLead")}</p>
+            <Button variant="primary" size="lg" href={miaPath("waqf", locale)} className="tv-pill-cta" style={{ whiteSpace: "nowrap" }}>
               {t("waqfCtaQuds")}
             </Button>
           </div>
-          <div id="waqf-areas" style={{ position: "relative", display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 10, alignContent: "start" }}>
+          <div id="waqf-areas" className="tv-waqf-box">
             {areas.map((area) => (
-              <span
-                key={area}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  minHeight: 50,
-                  padding: "10px 14px",
-                  background: "#fff",
-                  border: "1px solid rgba(0,162,224,.32)",
-                  borderInlineStart: "3px solid var(--gold)",
-                  borderRadius: 8,
-                  boxShadow: "0 6px 16px rgba(6,36,66,.05)",
-                  fontSize: 13.5,
-                  fontWeight: 800,
-                  color: "var(--deep)",
-                  lineHeight: 1.5,
-                }}
-              >
-                <span style={{ flex: "0 0 auto", width: 5, height: 5, background: "var(--gold)", transform: "rotate(45deg)" }} />
+              <span key={area} className="tv-waqf-area">
+                <i aria-hidden="true">
+                  <Check />
+                </i>
                 {area}
               </span>
             ))}
@@ -92,36 +64,23 @@ export function RecurringSection() {
   const tCommon = useTranslations("common");
 
   return (
-    <section id="monthly" style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(19,44,56,.05), rgba(234,243,249,.66))", borderTop: "1px solid var(--border)", padding: "48px 0", overflow: "hidden" }}>
-      <div
-        aria-hidden="true"
-        data-aqsa-pattern=""
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundImage: "url('/toplum/pattern.svg')",
-          backgroundRepeat: "repeat",
-          backgroundSize: "520px 520px",
-          opacity: 0.05,
-          pointerEvents: "none",
-        }}
-      />
-      <span aria-hidden="true" style={{ position: "absolute", insetInlineStart: 0, top: 0, bottom: 0, width: 4, background: "linear-gradient(180deg, var(--navy), rgba(19,44,56,.2))", pointerEvents: "none" }} />
-      <div id="monthly-grid" style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,1fr) auto", gap: 32, alignItems: "center" }}>
-        <div style={{ display: "grid", gap: 12, minWidth: 0 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{t("recurringTitle")}</h2>
-          <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.85, fontSize: 16, maxWidth: "58ch" }}>{t("recurringLead")}</p>
+    <section id="monthly" className="tv-sec" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
+      <div className="tv-wrap">
+        <div id="monthly-grid" className="tv-cta-card">
+          <span aria-hidden="true" className="tv-cta-ring" />
+          <div className="tv-cta-body">
+            <h2 className="tv-h2">{t("recurringTitle")}</h2>
+            <p className="tv-dark-lede">{t("recurringLead")}</p>
+          </div>
+          <Link href={miaPath("recurring", locale)} className="mia-recurring-cta tv-cta-donate">
+            <i aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6" />
+              </svg>
+            </i>
+            {tCommon("startRecurring")}
+          </Link>
         </div>
-        <Link
-          href={miaPath("recurring", locale)}
-          className="mia-recurring-cta"
-          style={{ display: "inline-flex", alignItems: "center", gap: 12, flex: "0 0 auto", height: 54, padding: "0 26px", background: "var(--red)", color: "#fff", fontWeight: 800, fontSize: 16.5, whiteSpace: "nowrap", borderRadius: 8 }}
-        >
-          {tCommon("startRecurring")}
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="mia-arrow-next">
-            <path d="M14 6l-6 6 6 6" />
-          </svg>
-        </Link>
       </div>
     </section>
   );
@@ -144,45 +103,49 @@ export function AccountSection({ signedIn }: { signedIn: boolean }) {
   const signInHref = `/auth/signin?callbackUrl=${encodeURIComponent(accountHref)}`;
 
   return (
-    <section id="account" style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(234,243,249,.50), rgba(234,243,249,.76))", padding: "48px 0", borderTop: "1px solid var(--border)", overflow: "hidden" }}>
-      <div id="account-grid" style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,.82fr) minmax(0,1.18fr)", gap: 44, alignItems: "center" }}>
-        <div style={{ display: "grid", gap: 14, justifyItems: "start" }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{t("accountTitle")}</h2>
-          <p style={{ margin: 0, color: "var(--muted)", lineHeight: 1.85, fontSize: 15.5, maxWidth: "46ch" }}>{t("accountLead")}</p>
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 6 }}>
-            {/* A signed-in donor is sent straight to their account; the pair of
-                CTAs is only meaningful for a visitor without a session. */}
-            {signedIn ? (
-              <Button variant="primary" href={accountHref} style={{ whiteSpace: "nowrap" }}>
-                {t("accountTitle")}
-              </Button>
-            ) : (
-              <>
-                <Button variant="primary" href={signInHref} style={{ whiteSpace: "nowrap" }}>
-                  {t("createAccount")}
+    <section id="account" className="tv-sec" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
+      <div className="tv-wrap">
+        <div id="account-grid" className="tv-panel">
+          <div className="tv-sec-head">
+            <div style={{ display: "grid", gap: 8, minWidth: 0 }}>
+              <span className="tv-eyebrow">{t("accountEyebrow")}</span>
+              <h2 className="tv-h2">{t("accountTitle")}</h2>
+              <p className="tv-lead">{t("accountLead")}</p>
+            </div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              {/* A signed-in donor is sent straight to their account; the pair of
+                  CTAs is only meaningful for a visitor without a session. */}
+              {signedIn ? (
+                <Button variant="primary" href={accountHref} className="tv-pill-cta" style={{ whiteSpace: "nowrap" }}>
+                  {t("accountTitle")}
                 </Button>
-                <Button variant="light" href={signInHref} style={{ whiteSpace: "nowrap" }}>
-                  {t("signIn")}
-                </Button>
-              </>
-            )}
+              ) : (
+                <>
+                  <Button variant="primary" href={signInHref} className="tv-pill-cta" style={{ whiteSpace: "nowrap" }}>
+                    {t("createAccount")}
+                  </Button>
+                  <Button variant="light" href={signInHref} style={{ whiteSpace: "nowrap" }}>
+                    {t("signIn")}
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-        <div id="account-features" style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 14 }}>
-          {ACCOUNT_FEATURES.map((feature) => (
-            <Link
-              key={feature.titleKey}
-              href={signedIn ? accountHref : signInHref}
-              className="mia-lift"
-              style={{ display: "grid", gap: 9, alignContent: "start", padding: "22px 20px", background: "#fff", border: "1px solid var(--border)", borderTop: "3px solid var(--gold)", borderRadius: 12 }}
-            >
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#00A2E0" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d={feature.path} />
-              </svg>
-              <b style={{ fontSize: 15.5, lineHeight: 1.45 }}>{t(feature.titleKey)}</b>
-              <span style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.75 }}>{t(feature.textKey)}</span>
-            </Link>
-          ))}
+          <div id="account-features" className="tv-feature-grid">
+            {ACCOUNT_FEATURES.map((feature) => (
+              <Link key={feature.titleKey} href={signedIn ? accountHref : signInHref} className="mia-lift tv-feature">
+                <span className="tv-feature-head">
+                  <i aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+                      <path d={feature.path} />
+                    </svg>
+                  </i>
+                  <b>{t(feature.titleKey)}</b>
+                </span>
+                <span className="tv-feature-text">{t(feature.textKey)}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </section>

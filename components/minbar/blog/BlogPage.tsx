@@ -4,22 +4,27 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
-import { localeDirection } from "@/lib/locales";
 import type { MinbarArticle, MinbarPostCategory } from "@/lib/minbar/posts";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
 import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import { NoResults, ContentError, ContentSkeleton } from "@/components/minbar/states/ContentStates";
+import { EdArrow, EdBanner } from "./Editorial";
 
 /**
- * The blog  ported from `Minbar/المدونة.dc.html`.
+ * The blog  laid out after `ToplamVakfi-design/Toplum Vakfı Blog.dc.html`
+ * (styles in `styles/minbar/pages/blog.css`, `ed-` classes).
  *
- * A sticky category rail beside a three-up grid of article cards, with
- * incremental paging rather than one page of every article: the handoff's note
- * is that loading 178 covers at once is what makes a blog feel broken.
+ * The design's photo banner with its wave, a section head, then the article
+ * cards: a white card with the cover on top, the category as a pill badge over
+ * it, the title, the lead and a "read" link. The first two articles of the
+ * current list are the design's featured pair; the rest follow three-up. The
+ * category filter is the design's pill tab row (`.pg-tabs`), with incremental
+ * paging rather than one page of every article: loading 178 covers at once is
+ * what makes a blog feel broken.
  *
- * Two departures from the handoff, both consequences of wiring this to the real
- * CMS instead of its static `blog-articles-data.js`:
+ * Two departures from the original handoff, both consequences of wiring this
+ * to the real CMS instead of a static data file:
  *  - the chips are the categories that actually have published articles, so
  *    adding one in the dashboard adds a filter with no code change;
  *  - filtering compares category **ids**, never displayed names  a name is
@@ -33,37 +38,12 @@ export interface BlogPageProps {
   categories: MinbarPostCategory[];
 }
 
-const SECTION = { maxWidth: 1240, margin: "0 auto", padding: "0 24px" } as const;
-
-function chipStyle(active: boolean) {
-  return {
-    textAlign: "start" as const,
-    height: 40,
-    padding: "0 12px",
-    borderRadius: 8,
-    cursor: "pointer",
-    fontFamily: "inherit",
-    fontSize: 13.5,
-    fontWeight: active ? 900 : 700,
-    border: "1px solid transparent",
-    borderInlineStartWidth: 3,
-    borderInlineStartColor: active ? "var(--gold)" : "transparent",
-    background: active ? "rgba(0,162,224,.12)" : "transparent",
-    color: active ? "#062442" : "var(--muted)",
-    transition: "all .18s ease",
-  };
-}
-
 export default function BlogPage({ initialArticles, initialCursor, categories }: BlogPageProps) {
   const locale = useLocale();
   const t = useTranslations("blog");
   const tCommon = useTranslations("common");
   const tSystem = useTranslations("system");
-
-  /* The hero gradient deepens away from the reader, so it flips with the
-     writing direction rather than always pointing left. */
-  // The Toplum page banner: the dark navy gradient (ToplamVakfi-design/CLAUDE.md).
-  const heroGradient = `linear-gradient(${localeDirection(locale) === "rtl" ? 240 : 120}deg, #021428 0%, #082b50 60%, #04172e 100%)`;
+  const tHome = useTranslations("homepage");
 
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [articles, setArticles] = useState(initialArticles);
@@ -125,77 +105,66 @@ export default function BlogPage({ initialArticles, initialCursor, categories }:
     ...categories.map((category) => ({ id: category.id, label: category.name })),
   ];
 
+  /* The design's featured pair, then the rest three-up. Both come from the
+     same list, so paging and filtering keep working unchanged. */
+  const featured = articles.slice(0, 2);
+  const rest = articles.slice(2);
+
+  const card = (article: MinbarArticle) => (
+    <Link
+      key={article.id}
+      href={`${miaPath("blog", locale)}/${encodeURIComponent(article.slug)}`}
+      className="ed-card"
+    >
+      <span className="ed-media">
+        {article.cover ? (
+          // eslint-disable-next-line @next/next/no-img-element -- covers are arbitrary CMS URLs, not a known-host set
+          <img src={article.cover} alt="" loading="lazy" decoding="async" />
+        ) : null}
+        {article.category ? <span className="ed-badge">{article.category.name}</span> : null}
+      </span>
+      <span className="ed-body">
+        <h3>{article.title}</h3>
+        {article.excerpt ? <p className="ed-clamp">{article.excerpt}</p> : null}
+        <span className="ed-cta">
+          {tHome("readArticle")}
+          <EdArrow />
+        </span>
+      </span>
+    </Link>
+  );
+
   return (
-    <div className="blog-page">
-      <section id="hero" style={{ position: "relative", background: heroGradient, overflow: "hidden" }}>
-        <div aria-hidden="true" className="ab-hero-pattern" />
-        <div style={{ ...SECTION, position: "relative", padding: "34px 24px", display: "grid", justifyItems: "start" }}>
-          <h1 style={{ margin: 0, fontSize: "clamp(26px,2.6vw,36px)", lineHeight: 1.3, fontWeight: 900, color: "#fff" }}>
-            {tCommon("blogTitle")}
-          </h1>
-        </div>
-      </section>
+    <div className="blog-page ed-page">
+      <EdBanner title={tCommon("blogTitle")} />
 
-      <section style={{ background: "#fff", padding: "60px 0" }}>
-        <div style={SECTION}>
-          <div className="blog-layout" style={{ display: "grid", gridTemplateColumns: "236px minmax(0,1fr)", gap: 32, alignItems: "start" }}>
-            <aside
-              className="blog-side"
-              aria-label={t("categoriesTitle")}
-              style={{ position: "sticky", top: 92, display: "grid", gap: 4, background: "#fff", border: "1px solid var(--border)", borderRadius: 12, padding: 14 }}
-            >
-              <b style={{ padding: "4px 12px 10px", fontSize: 12, fontWeight: 900, letterSpacing: ".04em", color: "var(--gold)" }}>
-                {t("categoriesTitle")}
-              </b>
-              {chips.map((chip) => (
-                <button
-                  key={chip.id ?? "all"}
-                  type="button"
-                  onClick={() => selectCategory(chip.id)}
-                  aria-pressed={chip.id === categoryId}
-                  style={chipStyle(chip.id === categoryId)}
-                >
-                  {chip.label}
-                </button>
-              ))}
-            </aside>
+      <section className="ed-main">
+        <div className="ed-wrap">
+          <div className="ed-head">
+            <h2>{tHome("allArticles")}</h2>
+          </div>
 
-            <div style={{ display: "grid", gap: 30 }}>
-              <div className="blog-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 22, opacity: loading ? 0.6 : 1, transition: "opacity .18s ease" }}>
-                {articles.map((article) => (
-                  <Link
-                    key={article.id}
-                    href={`${miaPath("blog", locale)}/${encodeURIComponent(article.slug)}`}
-                    className="blog-card"
-                    style={{ display: "grid", alignContent: "start", background: "#fff", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden" }}
-                  >
-                    <span style={{ position: "relative", display: "block", aspectRatio: "16/10", background: "var(--sand)" }}>
-                      {article.cover ? (
-                        // eslint-disable-next-line @next/next/no-img-element -- covers are arbitrary CMS URLs, not a known-host set
-                        <img
-                          src={article.cover}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
-                        />
-                      ) : null}
-                    </span>
-                    <span style={{ display: "grid", gap: 8, padding: 20 }}>
-                      {article.category ? (
-                        <span style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12, fontWeight: 800, color: "var(--gold)" }}>
-                          {article.category.name}
-                        </span>
-                      ) : null}
-                      <b style={{ fontSize: 17, lineHeight: 1.4 }}>{article.title}</b>
-                      {article.excerpt ? (
-                        <span style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.8 }}>{article.excerpt}</span>
-                      ) : null}
-                    </span>
-                  </Link>
-                ))}
-              </div>
+          <div className="ed-tabs" role="group" aria-label={t("categoriesTitle")}>
+            {chips.map((chip) => (
+              <button
+                key={chip.id ?? "all"}
+                type="button"
+                className="ed-tab"
+                onClick={() => selectCategory(chip.id)}
+                aria-pressed={chip.id === categoryId}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
 
+          <div style={{ opacity: loading ? 0.6 : 1, transition: "opacity .18s ease" }}>
+            {featured.length ? <div className="ed-grid ed-grid--2">{featured.map(card)}</div> : null}
+            {rest.length ? <div className="ed-grid">{rest.map(card)}</div> : null}
+          </div>
+
+          {failed || (loading && articles.length === 0) || (articles.length === 0 && !loading) ? (
+            <div className="ed-status">
               {failed ? <ContentError onRetry={failed} /> : null}
 
               {loading && articles.length === 0 ? <ContentSkeleton count={6} /> : null}
@@ -203,22 +172,16 @@ export default function BlogPage({ initialArticles, initialCursor, categories }:
               {articles.length === 0 && !loading && !failed ? (
                 <NoResults onReset={categoryId ? () => selectCategory(null) : undefined} />
               ) : null}
-
-              {cursor ? (
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <button
-                    type="button"
-                    onClick={loadMore}
-                    disabled={loading}
-                    className="blog-more"
-                    style={{ height: 48, padding: "0 30px", borderRadius: 8, border: "1px solid var(--gold)", background: "#fff", color: "#062442", fontFamily: "inherit", fontSize: 14, fontWeight: 800, cursor: loading ? "not-allowed" : "pointer", transition: "background .18s ease" }}
-                  >
-                    {t("loadMore")}
-                  </button>
-                </div>
-              ) : null}
             </div>
-          </div>
+          ) : null}
+
+          {cursor ? (
+            <div className="ed-more-row">
+              <button type="button" onClick={loadMore} disabled={loading} className="ed-ghost">
+                {t("loadMore")}
+              </button>
+            </div>
+          ) : null}
         </div>
       </section>
 

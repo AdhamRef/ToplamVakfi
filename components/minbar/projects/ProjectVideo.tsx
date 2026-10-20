@@ -77,7 +77,7 @@ export default function ProjectVideo({ url, title }: { url: string; title: strin
   if (!player) return null;
 
   return (
-    <span style={{ position: "relative", display: "block", aspectRatio: "16/9", borderRadius: 14, overflow: "hidden", background: "var(--deep)", border: "1px solid var(--border)" }}>
+    <span style={{ position: "relative", display: "block", aspectRatio: "16/9", borderRadius: 16, overflow: "hidden", background: "#031a36", border: "1px solid #e6eef3", boxShadow: "0 12px 28px rgba(2,52,88,.07)" }}>
       {player.kind === "iframe" ? (
         <iframe
           src={player.src}

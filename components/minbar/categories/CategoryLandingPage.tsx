@@ -1,7 +1,6 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
-import { localeDirection } from "@/lib/locales";
+import { useTranslations } from "next-intl";
 import { ArrowGlyph } from "@/components/minbar/home/TopSections";
 import type { CategoryPageContent } from "@/lib/minbar/category-page";
 import {
@@ -31,71 +30,47 @@ import {
  * pages (the mosque, zakat) shows the same parts inside that page instead.
  */
 
-const SECTION = { maxWidth: 1240, margin: "0 auto", padding: "0 24px" } as const;
-
 export default function CategoryLandingPage({ page }: { page: CategoryPageContent }) {
-  const locale = useLocale();
-  const rtl = localeDirection(locale) === "rtl";
   const t = useTranslations("common");
   const tCampaigns = useTranslations("CampaignsPage");
 
   return (
-    <div className="cat-page">
+    /* Laid out as `ToplamVakfi-design/Toplum Vakfı Program - Aytam.dc.html`:
+       a photograph hero with the name at its foot, the values as a row of
+       white tiles, the campaigns on a white band under a centred heading, the
+       donation box on the dark "be part of it" band, then the explanatory
+       cards and the films. Layout: styles/minbar/pages/projects.css (`tvc-*`). */
+    <div className="cat-page tvc-page">
       {/* ── Hero ───────────────────────────────────────────────────────── */}
-      <section style={{ position: "relative", background: "var(--deep)", overflow: "hidden" }}>
+      <section className="tvc-hero">
         {page.heroImage ? (
           /* eslint-disable-next-line @next/next/no-img-element -- fills the section; not a fixed-size image */
           <img
             src={page.heroImage}
             alt=""
-            style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 35%" }}
+            className="tvc-hero-img"
           />
         ) : null}
+        <div aria-hidden="true" className="tvc-hero-fade" />
         <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `linear-gradient(to ${rtl ? "left" : "right"}, rgba(6,36,66,.35) 0%, rgba(6,36,66,.15) 38%, transparent 62%)`,
-            pointerEvents: "none",
-          }}
-        />
-        <div
-          className="cat-hero"
-          style={{
-            ...SECTION,
-            position: "relative",
-            padding: "140px 24px 110px",
-            display: "grid",
-            gridTemplateColumns: page.heroVideoId ? "minmax(0,1.05fr) minmax(0,.95fr)" : "minmax(0,1fr)",
-            gap: 44,
-            alignItems: "end",
-          }}
+          className="cat-hero tvc-hero-in"
+          style={{ gridTemplateColumns: page.heroVideoId ? "minmax(0,1.05fr) minmax(0,.95fr)" : "minmax(0,1fr)" }}
         >
           <div
-            className="cat-hero-box"
-            /* Without a film beside it the box would stretch the full width and the
-               lead would run to 120 characters; it is sized to its content instead. */
-            style={{ display: "grid", gap: 18, justifyItems: "start", justifySelf: "start", maxWidth: page.heroVideoId ? "none" : "min(100%, 720px)", padding: "26px 28px", background: "rgba(6,36,66,.55)", borderRadius: 14, backdropFilter: "blur(2px)" }}
+            className="cat-hero-box tvc-hero-copy"
+            /* Without a film beside it the copy would run the full width and the
+               lead would reach 120 characters; it is sized to its content instead. */
+            style={{ maxWidth: page.heroVideoId ? "none" : "min(100%, 720px)" }}
           >
-            <h1 style={{ margin: 0, fontSize: "clamp(30px,3.6vw,50px)", lineHeight: 1.3, fontWeight: 900, color: "#fff" }}>{page.name}</h1>
-            {page.heroLead ? (
-              <p style={{ margin: 0, maxWidth: "58ch", fontSize: 16.5, lineHeight: 1.95, color: "rgba(255,255,255,.9)" }}>{page.heroLead}</p>
-            ) : null}
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <a
-                href="#category-projects"
-                className="cat-ghost"
-                style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 52, padding: "0 24px", borderRadius: 10, border: "1px solid rgba(255,255,255,.5)", color: "#fff", fontWeight: 800, fontSize: 15.5 }}
-              >
-                {page.ctaLabel || page.projectsTitle || tCampaigns("allCampaigns")}
-                <ArrowGlyph size={14} />
-              </a>
-              <a
-                href="#category-donate"
-                style={{ display: "inline-flex", alignItems: "center", gap: 10, height: 52, padding: "0 24px", borderRadius: 10, background: "var(--red)", border: "1px solid var(--red)", color: "#fff", fontWeight: 900, fontSize: 15.5 }}
-              >
+            <h1>{page.name}</h1>
+            {page.heroLead ? <p>{page.heroLead}</p> : null}
+            <div className="tvc-hero-ctas">
+              <a href="#category-donate" className="tv-pill">
+                <i aria-hidden="true"><ArrowGlyph size={13} /></i>
                 {t("donateNow")}
+              </a>
+              <a href="#category-projects" className="cat-ghost tv-ghost-dark">
+                {page.ctaLabel || page.projectsTitle || tCampaigns("allCampaigns")}
               </a>
             </div>
           </div>
@@ -106,28 +81,34 @@ export default function CategoryLandingPage({ page }: { page: CategoryPageConten
 
       {/* ── The figures ────────────────────────────────────────────────── */}
       {page.stats ? (
-        <section style={{ position: "relative", zIndex: 1 }}>
-          <CategoryStatsBand stats={page.stats} />
+        <section className="tvc-stats-wrap">
+          <div className="tvc-wrap">
+            <CategoryStatsBand stats={page.stats} contained />
+          </div>
         </section>
       ) : null}
 
-      {/* ── The values, then the campaigns ─────────────────────────────── */}
-      <section id="category-projects" style={{ position: "relative", zIndex: 1, background: "var(--sand)", padding: "46px 0 52px", overflow: "hidden" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 24px", display: "grid", gap: 20 }}>
-          <CategoryValuesStrip values={page.values} />
+      {/* ── The values ─────────────────────────────────────────────────── */}
+      {page.values.length ? (
+        <section className="tvc-sec">
+          <div className="tvc-wrap">
+            <CategoryValuesStrip values={page.values} />
+          </div>
+        </section>
+      ) : null}
 
-          {page.projectsTitle ? (
-            <h2 style={{ margin: "6px 0 0", fontSize: "clamp(21px,2vw,27px)", lineHeight: 1.3, fontWeight: 900 }}>{page.projectsTitle}</h2>
-          ) : null}
-
+      {/* ── The campaigns ──────────────────────────────────────────────── */}
+      <section id="category-projects" className="tvc-sec tvc-sec--white">
+        <div className="tvc-wrap" style={{ display: "grid", gap: 22 }}>
+          {page.projectsTitle ? <h2 className="tv-h2 tvc-center">{page.projectsTitle}</h2> : null}
           <CategoryProjectsGrid page={page} />
         </div>
       </section>
 
-      {/* ── The donation box ───────────────────────────────────────────── */}
+      {/* ── The donation box, on the dark band ─────────────────────────── */}
       {page.donateTarget ? (
-        <section id="category-donate" style={{ position: "relative", zIndex: 1, background: "var(--ivory)", padding: "44px 0 56px", overflow: "hidden" }}>
-          <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 24px" }}>
+        <section id="category-donate" className="tvc-cta">
+          <div className="tvc-wrap tvc-cta-in">
             <CategoryDonateBox page={page} />
           </div>
         </section>
@@ -135,8 +116,8 @@ export default function CategoryLandingPage({ page }: { page: CategoryPageConten
 
       {/* ── Why / what / impact ────────────────────────────────────────── */}
       {page.cards.length ? (
-        <section style={{ position: "relative", zIndex: 1, padding: "60px 0 24px" }}>
-          <div style={SECTION}>
+        <section className="tvc-sec">
+          <div className="tvc-wrap">
             <CategoryInfoCards cards={page.cards} />
           </div>
         </section>
@@ -144,8 +125,8 @@ export default function CategoryLandingPage({ page }: { page: CategoryPageConten
 
       {/* ── Achievements in video ──────────────────────────────────────── */}
       {page.achievements.length ? (
-        <section style={{ position: "relative", zIndex: 1, padding: "34px 0 56px" }}>
-          <div style={SECTION}>
+        <section className="tvc-sec tvc-sec--last">
+          <div className="tvc-wrap">
             <CategoryAchievements page={page} />
           </div>
         </section>

@@ -18,30 +18,29 @@ import {
 } from "@/lib/minbar/quick-donation";
 
 /**
- * The quick-donation bar under the hero  `#quick` in
- * `Minbar/الصفحة الرئيسية.dc.html`. Everything it offers is set from the
- * dashboard (`/dashboard/quick-donation`) and arrives as `config`; see
- * `lib/minbar/quick-donation.ts` for the shape and the defaults.
+ * The quick-donation disc in the hero  the Toplum Vakfı design's «دائرة
+ * الخير» (`ToplamVakfi-design/Toplum Vakfı Homepage.dc.html`, `.th-ring`).
+ * Everything it offers is set from the dashboard (`/dashboard/quick-donation`)
+ * and arrives as `config`; see `lib/minbar/quick-donation.ts` for the shape and
+ * the defaults. It used to be a bar pinned to the bottom of the viewport; the
+ * same choices now sit in one circle beside the headline:
  *
- * Desktop: one row, fixed to the bottom of the viewport for the whole page, so
- * the choice stays one click away however far the visitor reads:
- *
- *   [ destination ▾ ] | تبرع لمرة  يوميًا  أسبوعياً  شهريًا | $100 $300 $500 $700 [مبلغ مخصص] … US$300 [ تبرّع الآن ]
+ *        التبرع السريع
+ *      [−]   US$300   [+]
+ *   مرة واحدة · يوميًا · شهريًا
+ *   [ destination ▾ ] [مبلغ آخر]
+ *     $100 $300 $500 $700
+ *      [ ♥ تبرّع الآن ]
  *
  *   · The destination is ONE select  the generic intentions first, then the
  *     projects the dashboard allows under a group heading. A real listbox
- *     (Radix), keyboard-navigable, mirrored for RTL, styled as a pill here.
- *   · Frequency and amount are chips. A chosen frequency lights gold, a chosen
- *     amount lights deep  the design's two accents, so the two settings read
- *     apart at a glance. The free field sits at the end of the amounts.
- *   · The total sits before the button; the button fills the bar's height and
- *     is flush with its end edge.
- *
- * Phone (≤960px, in CSS): the same choices as a sheet fixed to the bottom of
- * the screen, collapsed to one row  chevron · «التبرع السريع» + total · button
- *  until the chevron opens it. Pressing the button while it is collapsed
- * opens it first, so nobody gives $100 to "where needed" without having seen
- * that this is what they chose.
+ *     (Radix), keyboard-navigable, mirrored for RTL.
+ *   · − / + step through the presets (or by 10 in the free field), and each
+ *     says which amount it will pick. The arc around the disc traces how far
+ *     up the presets the choice is.
+ *   · The disc is a fixed size (ToplamVakfi-design/CLAUDE.md: no aspect-ratio
+ *     on a circle with dynamic content); every row is short enough for the
+ *     chord at its own height, and long labels ellipsize.
  *
  * Money. Presets are USD and shown converted to the visitor's currency, the
  * way every figure on the site is  UNLESS the dashboard gave that currency
@@ -73,12 +72,12 @@ const GENERIC: Record<QuickGenericDestination, { ns: "common" | "navigation" | "
   "gaza-relief": { ns: "homepage", key: "gazaReliefGroup" },
 };
 
-/** Below this the bar is the bottom sheet (must match the CSS breakpoint). */
-const PHONE_QUERY = "(max-width: 960px)";
+/** What − / + move a free amount by, in the visitor's currency. */
+const FREE_STEP = 10;
 
-const Chevron = () => (
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="m6 15 6-6 6 6" />
+const Heart = () => (
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+    <path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.4 3 5 6.4 5c2 0 3.4 1.1 4.1 2.3h3C14.2 6.1 15.6 5 17.6 5 21 5 23.1 8.4 21.6 11.7 19.5 16.4 12 21 12 21z" />
   </svg>
 );
 
@@ -126,9 +125,6 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
   const [amount, setAmount] = useState<number>(presets.amounts[suggested]);
   /** "" = a preset is selected; digits = the free field is in use. */
   const [custom, setCustom] = useState("");
-  /** The phone sheet: collapsed until the chevron (or a premature "donate") opens it. */
-  const [open, setOpen] = useState(false);
-  const [phone, setPhone] = useState(false);
 
   /* If the visitor changes currency to one with its own presets, the chosen
      preset may no longer exist; fall back to the suggested one. */
@@ -136,14 +132,6 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
     if (!custom && !presets.amounts.includes(amount)) setAmount(presets.amounts[suggested]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [presets.currency]);
-
-  useEffect(() => {
-    const mq = window.matchMedia(PHONE_QUERY);
-    const onMq = () => setPhone(mq.matches);
-    onMq();
-    mq.addEventListener("change", onMq);
-    return () => mq.removeEventListener("change", onMq);
-  }, []);
 
   const isGeneric = (config.genericDestinations as string[]).includes(destination);
   const destinationLabel = useMemo(() => {
@@ -160,8 +148,6 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
   const canGive = total > 0;
 
   const submit = () => {
-    // Collapsed sheet: show the choice before acting on it.
-    if (phone && !open) { setOpen(true); return; }
     if (!canGive) return;
     addToCart(
       isGeneric
@@ -182,16 +168,55 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
   const hasDestinations = config.genericDestinations.length + shownProjects.length > 1;
   const hasFrequencies = config.frequencies.length > 1;
 
+  /* ── The stepper ──────────────────────────────────────────────────────
+     On a preset it moves to the neighbouring preset; in the free field it
+     moves the typed amount by FREE_STEP. Each button is labelled with the
+     amount it will pick, so it needs no copy of its own. */
+  const presetIndex = custom ? -1 : presets.amounts.indexOf(amount);
+  const stepTarget = (direction: 1 | -1): { value: number; code: string } | null => {
+    if (custom) {
+      const next = Math.max(0, Number(custom) + direction * FREE_STEP);
+      return next > 0 ? { value: next, code: visitorCode } : null;
+    }
+    const at = presetIndex + direction;
+    return at >= 0 && at < presets.amounts.length ? { value: presets.amounts[at], code: presets.currency } : null;
+  };
+  const step = (direction: 1 | -1) => {
+    const target = stepTarget(direction);
+    if (!target) return;
+    if (custom) setCustom(String(target.value));
+    else setAmount(target.value);
+  };
+  const stepButton = (direction: 1 | -1) => {
+    const target = stepTarget(direction);
+    return (
+      <button
+        type="button"
+        className="tv-ring-sb"
+        onClick={() => step(direction)}
+        disabled={!target}
+        aria-label={target ? showMoney(target.value, target.code) : undefined}
+      >
+        <span aria-hidden="true">{direction === 1 ? "+" : "−"}</span>
+      </button>
+    );
+  };
+
+  /** The arc around the disc: how far up the presets the choice is. */
+  const arc = custom
+    ? 100
+    : Math.round(((Math.max(0, presetIndex) + 1) / Math.max(1, presets.amounts.length)) * 100);
+
   /* ── The destination select ───────────────────────────────────────────
-     Radix in a portal, so the list is never clipped by the bar (which clips
-     its own overflow) or the sheet. The content carries `mia-scope` so the
-     site's tokens and fonts reach it outside the page's own tree. */
+     Radix in a portal, so the list is never clipped by the disc. The content
+     carries `mia-scope` so the site's tokens and fonts reach it outside the
+     page's own tree. */
   const destinationSelect = (id: string) => (
     <SelectPrimitive.Root value={destination} onValueChange={setDestination} dir={dir}>
-      <SelectPrimitive.Trigger id={`${id}-destination`} className="mia-sel-trigger" aria-label={tHome("projectSelectLabel")}>
+      <SelectPrimitive.Trigger id={`${id}-destination`} className="mia-sel-trigger tv-ring-sel" aria-label={tHome("projectSelectLabel")}>
         <SelectPrimitive.Value>{destinationLabel}</SelectPrimitive.Value>
         <SelectPrimitive.Icon className="mia-sel-icon">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="m6 9 6 6 6-6" />
           </svg>
         </SelectPrimitive.Icon>
@@ -238,133 +263,76 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
     </SelectPrimitive.Root>
   );
 
-  /* ── The chips, rendered by the bar and again by the sheet.
-     `id` keeps the aria ids unique between the two copies. */
-  const frequencyChips = (id: string) => (
-    <div className="mia-qb-chips" role="group" aria-label={t("frequency")} id={`${id}-freq`}>
-      {config.frequencies.map((f) => (
-        <button
-          key={f}
-          type="button"
-          className="mia-qb-chip"
-          data-chip={freq === f ? "freq" : ""}
-          aria-pressed={freq === f}
-          onClick={() => setFreq(f)}
-        >
-          {t(FREQ_KEY[f])}
-        </button>
-      ))}
-    </div>
-  );
-
-  const amountChips = (id: string) => (
-    <div className="mia-qb-chips" role="group" aria-label={t("amount")} id={`${id}-amount`}>
-      {presets.amounts.map((value) => {
-        const active = !custom && amount === value;
-        return (
-          <button
-            key={value}
-            type="button"
-            className="mia-qb-chip"
-            data-chip={active ? "amt" : ""}
-            aria-pressed={active}
-            onClick={() => { setAmount(value); setCustom(""); }}
-          >
-            <span dir="ltr">{showMoney(value, presets.currency)}</span>
-          </button>
-        );
-      })}
-      {config.allowCustomAmount ? (
-        <label className="mia-qb-free" data-active={custom ? "true" : "false"}>
-          <small dir="ltr">{symbol}</small>
-          <input
-            value={custom}
-            onChange={(e) => setCustom(decimalAmount(e.target.value))}
-            inputMode="numeric"
-            placeholder={t("freeAmount")}
-            aria-label={t("freeAmount")}
-          />
-        </label>
-      ) : null}
-    </div>
-  );
-
+  /* The disc's selected state is the dark-surface pick: brand fill, navy text
+     (ToplamVakfi-design/CLAUDE.md), so it keys off `data-on`, not the light
+     `data-chip` treatment the rest of the site uses. */
   return (
-    // <section id="quick" className="mia-qb-sec" data-open={open ? "true" : "false"}>
-    //   <div className="mia-qb-wrap">
-    //     {/* ── Desktop: one row ─────────────────────────────────────────── */}
-    //     <div className="mia-qb-desk">
-    //       <div aria-hidden="true" data-aqsa-pattern="" className="mia-qb-pattern" />
-    //       <span aria-hidden="true" className="mia-qb-rail" />
-    //       <span aria-hidden="true" className="mia-qb-gems mia-qb-gems--top"><i /><i /></span>
-    //       <span aria-hidden="true" className="mia-qb-gems mia-qb-gems--bottom"><i /><i /></span>
+    <section id="quick" className="tv-ring" aria-labelledby="quick-title" data-freqs={config.frequencies.length}>
+      <span aria-hidden="true" className="tv-ring-orbit tv-ring-orbit--1"><i /><i /></span>
+      <span aria-hidden="true" className="tv-ring-orbit tv-ring-orbit--2"><i /><i /><i /></span>
+      <svg className="tv-ring-arc" viewBox="0 0 340 340" aria-hidden="true">
+        <circle cx="170" cy="170" r="166" pathLength="100" style={{ strokeDasharray: `${arc} 100` }} />
+      </svg>
 
-    //       {hasDestinations ? (
-    //         <>
-    //           {destinationSelect("qb")}
-    //           <span aria-hidden="true" className="mia-qb-div" />
-    //         </>
-    //       ) : null}
-    //       {hasFrequencies ? (
-    //         <>
-    //           {frequencyChips("qb")}
-    //           <span aria-hidden="true" className="mia-qb-div" />
-    //         </>
-    //       ) : null}
-    //       {amountChips("qb")}
+      <div className="tv-ring-disc">
+        <h2 id="quick-title" className="tv-ring-title">{t("quickDonate")}</h2>
 
-    //       <div className="mia-qb-end">
-    //         <span aria-hidden="true" className="mia-qb-div" />
-    //         <b className="mia-qb-total" dir="ltr">{totalText}</b>
-    //         <button type="button" className="mia-qb-cta" onClick={submit} disabled={!canGive}>
-    //           {t("donateNow")}
-    //         </button>
-    //       </div>
-    //     </div>
+        <div className="tv-ring-step">
+          {stepButton(-1)}
+          <output className="tv-ring-amt" dir="ltr" aria-live="polite">{totalText}</output>
+          {stepButton(1)}
+        </div>
 
-    //     {/* ── Phone: a bottom sheet, collapsed to its last row ─────────── */}
-    //     <div className="mia-qb-sheet">
-    //       <div className="mia-qb-body" id="qbm-body">
-    //         <span aria-hidden="true" className="mia-qb-handle" />
-    //         {hasDestinations ? (
-    //           <div className="mia-qb-group">
-    //             <b>{tHome("projectSelectLabel")}</b>
-    //             {destinationSelect("qbm")}
-    //           </div>
-    //         ) : null}
-    //         {hasFrequencies ? (
-    //           <div className="mia-qb-group">
-    //             <b>{t("frequency")}</b>
-    //             {frequencyChips("qbm")}
-    //           </div>
-    //         ) : null}
-    //         <div className="mia-qb-group">
-    //           <b>{t("amount")}</b>
-    //           {amountChips("qbm")}
-    //         </div>
-    //       </div>
-    //       <div className="mia-qb-bar">
-    //         <button
-    //           type="button"
-    //           className="mia-qb-toggle"
-    //           aria-label={t("quickDonate")}
-    //           aria-expanded={open}
-    //           aria-controls="qbm-body"
-    //           onClick={() => setOpen((v) => !v)}
-    //         >
-    //           <Chevron />
-    //         </button>
-    //         <span className="mia-qb-sum">
-    //           <span>{t("quickDonate")}</span>
-    //           <b dir="ltr">{totalText}</b>
-    //         </span>
-    //         <button type="button" className="mia-qb-cta" onClick={submit} disabled={open && !canGive}>
-    //           {t("donateNow")}
-    //         </button>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </section>
-    <></>
+        {hasFrequencies ? (
+          <div className="tv-ring-freq" role="group" aria-label={t("frequency")}>
+            {config.frequencies.map((f) => (
+              <button key={f} type="button" data-on={freq === f ? "true" : "false"} aria-pressed={freq === f} onClick={() => setFreq(f)}>
+                {t(FREQ_KEY[f])}
+              </button>
+            ))}
+          </div>
+        ) : null}
+
+        {hasDestinations || config.allowCustomAmount ? (
+          <div className="tv-ring-row">
+            {hasDestinations ? destinationSelect("qr") : null}
+            {config.allowCustomAmount ? (
+              <label className="tv-ring-free" data-active={custom ? "true" : "false"}>
+                <small dir="ltr">{symbol}</small>
+                <input
+                  value={custom}
+                  onChange={(e) => setCustom(decimalAmount(e.target.value))}
+                  inputMode="numeric"
+                  placeholder={t("freeAmount")}
+                  aria-label={t("freeAmount")}
+                />
+              </label>
+            ) : null}
+          </div>
+        ) : null}
+
+        <div className="tv-ring-presets" role="group" aria-label={t("amount")}>
+          {presets.amounts.map((value) => {
+            const active = !custom && amount === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                data-on={active ? "true" : "false"}
+                aria-pressed={active}
+                onClick={() => { setAmount(value); setCustom(""); }}
+              >
+                <span dir="ltr">{showMoney(value, presets.currency)}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <button type="button" className="tv-ring-go" onClick={submit} disabled={!canGive}>
+          <Heart />
+          {t("donateNow")}
+        </button>
+      </div>
+    </section>
   );
 }

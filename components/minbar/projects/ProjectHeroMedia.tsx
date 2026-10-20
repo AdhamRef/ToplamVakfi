@@ -10,6 +10,12 @@ interface ProjectHeroMediaProps {
   title: string;
   /** Overlays drawn on top of the picture (the region chip). */
   children?: ReactNode;
+  /**
+   * Full-bleed banner (the Toplum project hero): the frame fills its
+   * positioned parent edge to edge, with no radius or border, under the
+   * design's darker bottom-up scrim so white type reads over any photo.
+   */
+  banner?: boolean;
 }
 
 /**
@@ -19,7 +25,7 @@ interface ProjectHeroMediaProps {
  * It is a native scroll-snap track, so touch swipe, trackpads and RTL work
  * without any gesture code; the buttons and dots only scroll it.
  */
-export default function ProjectHeroMedia({ images, title, children }: ProjectHeroMediaProps) {
+export default function ProjectHeroMedia({ images, title, children, banner = false }: ProjectHeroMediaProps) {
   const t = useTranslations("common");
   const track = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -66,13 +72,17 @@ export default function ProjectHeroMedia({ images, title, children }: ProjectHer
 
   return (
     <div
-      className="pd-hero-media"
+      className={banner ? "pd-hero-media pd-hero-media--banner" : "pd-hero-media"}
       role={many ? "region" : undefined}
       aria-roledescription={many ? "carousel" : undefined}
       aria-label={many ? title : undefined}
       tabIndex={many ? 0 : undefined}
       onKeyDown={many ? onKeyDown : undefined}
-      style={{ position: "relative", display: "block", aspectRatio: "16/9", borderRadius: 14, overflow: "hidden", background: "var(--sand)", border: "1px solid var(--border)" }}
+      style={
+        banner
+          ? { position: "absolute", inset: 0, display: "block", overflow: "hidden", background: "linear-gradient(135deg, #082c50, #031a36)" }
+          : { position: "relative", display: "block", aspectRatio: "16/9", borderRadius: 14, overflow: "hidden", background: "var(--sand)", border: "1px solid var(--border)" }
+      }
     >
       {many ? (
         <div ref={track} className="pd-hero-track" style={{ position: "absolute", inset: 0, display: "flex", overflowX: "auto", overflowY: "hidden", scrollSnapType: "x mandatory", overscrollBehaviorX: "contain", scrollbarWidth: "none" }}>
@@ -103,7 +113,17 @@ export default function ProjectHeroMedia({ images, title, children }: ProjectHer
         <span role="img" aria-label={title} style={{ position: "absolute", inset: 0, display: "block", backgroundImage: `url('${images[0]}')`, backgroundSize: "cover", backgroundPosition: "center" }} />
       ) : null}
 
-      <span aria-hidden="true" style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "linear-gradient(0deg, rgba(6,36,66,.6), rgba(6,36,66,0) 52%)" }} />
+      <span
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+          background: banner
+            ? "linear-gradient(0deg, rgba(2,20,38,.84) 0%, rgba(2,20,38,.5) 45%, rgba(2,20,38,.18) 100%)"
+            : "linear-gradient(0deg, rgba(6,36,66,.6), rgba(6,36,66,0) 52%)",
+        }}
+      />
       {children}
 
       {many ? (

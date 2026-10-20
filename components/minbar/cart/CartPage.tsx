@@ -351,15 +351,18 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
     { n: 3, label: t("stepConfirm"), current: false, enabled: false },
   ];
 
+  /* Toplum Vakfı basket (`Cart.dc.html` / `Empty Cart.dc.html`): the title
+     straight under the header, the items in one white card beside a navy
+     summary, and the empty state as a centred cart glyph and one way out. */
   return (
-    <div style={{ position: "relative" }}>
-      <section style={{ padding: "16px 0 6px" }}>
+    <div className="gf-cart" style={{ position: "relative", paddingTop: 28 }}>
+      <section style={{ padding: "0 0 18px" }}>
         <CheckoutSteps id="cart-steps" steps={steps} />
       </section>
 
-      <section style={{ padding: "16px 0 14px" }}>
+      <section style={{ padding: "0 0 18px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <h1 style={{ margin: 0, fontSize: "clamp(24px,2.8vw,32px)", fontWeight: 900 }}>{t("pageTitle")}</h1>
+          <h1 style={{ margin: 0, fontSize: "clamp(24px,3vw,32px)", fontWeight: 900, color: "var(--ink)", letterSpacing: "-.3px" }}>{t("pageTitle")}</h1>
         </div>
       </section>
 
@@ -371,19 +374,21 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
         </section>
       ) : items.length ? (
         <section style={{ padding: "0 0 70px" }}>
-          <div id="cart-grid" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,1.2fr) minmax(0,.8fr)", gap: 40, alignItems: "start" }}>
-            <div style={{ display: "grid", gap: 26, minWidth: 0, alignContent: "start" }}>
-              <div style={{ display: "grid", gap: 0, background: "#fff", border: "1px solid var(--border)", borderRadius: 12, overflow: "hidden", boxShadow: "0 10px 30px rgba(6,36,66,.06)" }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "15px 22px", background: "var(--navy)", color: "#fff" }}>
-                  <b style={{ display: "inline-flex", alignItems: "center", gap: 9, fontSize: 14.5, fontWeight: 900 }}>
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <circle cx="9" cy="21" r="1" />
-                      <circle cx="20" cy="21" r="1" />
-                      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                    </svg>
+          <div id="cart-grid" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,360px)", gap: 20, alignItems: "start" }}>
+            <div style={{ display: "grid", gap: 20, minWidth: 0, alignContent: "start" }}>
+              <div className="gf-cart-items" style={{ display: "grid", gap: 0, padding: "4px 24px 6px", background: "#fff", border: "1px solid #e6eef3", borderRadius: 18, boxShadow: "0 12px 30px rgba(2,52,88,.07)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, padding: "16px 0", borderBottom: "1px solid #e3edf4" }}>
+                  <b style={{ display: "inline-flex", alignItems: "center", gap: 10, fontSize: 16, fontWeight: 900, color: "var(--ink)" }}>
+                    <span aria-hidden="true" style={gfChip}>
+                      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                      </svg>
+                    </span>
                     {t("itemsHeading")}
                   </b>
-                  <span style={{ flex: "0 0 auto", minWidth: 26, height: 26, padding: "0 8px", display: "grid", placeItems: "center", borderRadius: 999, background: "var(--gold)", color: "#062442", fontSize: 13, fontWeight: 900 }}>
+                  <span style={{ flex: "0 0 auto", minWidth: 28, height: 28, padding: "0 9px", display: "grid", placeItems: "center", borderRadius: 999, background: "#eaf6fd", border: "1px solid rgba(0,162,224,.35)", color: "var(--ink)", fontSize: 13, fontWeight: 900 }}>
                     {items.length}
                   </span>
                 </div>
@@ -397,21 +402,27 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                       id={`cart-row-${index}`}
                       className={`cart-row${addedIndex === index ? " is-added" : ""}`}
                     >
-                      <b className="c-title" style={{ gridColumn: 1, minWidth: 0, fontSize: 15.5, overflowWrap: "anywhere", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                        {resolveTitle(item)}
-                        {addedIndex === index ? (
-                          <span className="cart-added-badge" role="status">
-                            {tCommon("added")}
-                          </span>
-                        ) : null}
-                      </b>
-                      <span className="c-meta" style={{ gridColumn: 1, gridRow: 2, display: "flex", alignItems: "center", gap: 8, minWidth: 0, overflowWrap: "anywhere", fontSize: 12, color: "var(--muted)", fontWeight: 700 }}>
-                        {metaLine(item)}
-                      </span>
+                      {/* Title and tag share the first column, so on a phone the
+                          tag stays a pill under the title rather than a full line. */}
+                      <div className="c-head" style={{ gridColumn: 1, gridRow: "1 / span 2", minWidth: 0, display: "grid", gap: 8, justifyItems: "start" }}>
+                        <b className="c-title" style={{ minWidth: 0, fontSize: 15, fontWeight: 800, lineHeight: 1.5, color: "var(--ink)", overflowWrap: "anywhere", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                          {resolveTitle(item)}
+                          {addedIndex === index ? (
+                            <span className="cart-added-badge" role="status">
+                              {tCommon("added")}
+                            </span>
+                          ) : null}
+                        </b>
+                        {/* The design's frequency tag: one pill for the row's kind
+                            and cadence, tinted blue for a recurring gift. */}
+                        <span className="c-meta" data-rec={item.freqKey !== "once" ? "1" : undefined} style={{ display: "inline-flex", alignItems: "center", gap: 8, minWidth: 0, maxWidth: "100%", minHeight: 26, padding: "2px 12px", borderRadius: 999, background: item.freqKey !== "once" ? "#e6f4fb" : "#eef4f8", overflowWrap: "anywhere", fontSize: 12, lineHeight: 1.6, color: item.freqKey !== "once" ? "var(--ink)" : "var(--muted)", fontWeight: 800, boxSizing: "border-box" }}>
+                          {metaLine(item)}
+                        </span>
+                      </div>
                       {lineTooSmall(item) ? (
-                        <span role="alert" className="cart-min-warn" style={{ gridColumn: "1 / -1", display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8, fontSize: 12.5, fontWeight: 800, color: "var(--red)" }}>
+                        <span role="alert" className="cart-min-warn" style={{ gridColumn: "1 / -1", display: "flex", alignItems: "center", flexWrap: "wrap", gap: 8, fontSize: 12.5, fontWeight: 800, color: "#b3391f" }}>
                           {tGive("belowMinRow", { amount: minLabel })}
-                          <button type="button" onClick={() => raiseToMinimum(index)} style={{ height: 28, padding: "0 12px", borderRadius: 999, border: "1px solid var(--red)", background: "rgba(27,111,224,.06)", color: "var(--red)", fontFamily: "inherit", fontSize: 12, fontWeight: 900, cursor: "pointer" }}>
+                          <button type="button" onClick={() => raiseToMinimum(index)} style={{ height: 30, padding: "0 14px", borderRadius: 999, border: "1.5px solid #b3391f", background: "#fdf1ef", color: "#b3391f", fontFamily: "inherit", fontSize: 12, fontWeight: 900, cursor: "pointer" }}>
                             {tGive("raiseToMin", { amount: minLabel })}
                           </button>
                         </span>
@@ -431,7 +442,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                               dir="ltr"
                               autoFocus
                               aria-label={tCommon("editAmount")}
-                              style={{ width: 96, height: 36, padding: "0 10px", border: "1px solid var(--border)", borderRadius: 8, fontFamily: "inherit", fontSize: 13.5, fontWeight: 800, color: "var(--deep)", boxSizing: "border-box", unicodeBidi: "isolate" }}
+                              style={{ width: 104, height: 44, padding: "0 14px", border: "1.5px solid var(--brand)", borderRadius: 999, background: "#fff", fontFamily: "inherit", fontSize: 15, fontWeight: 900, color: "var(--ink)", boxSizing: "border-box", unicodeBidi: "isolate" }}
                             />
                             {item.shareCount && sharesOf(item) ? (
                               <span style={{ fontSize: 12.5, fontWeight: 800, color: "var(--muted)", whiteSpace: "nowrap" }}>
@@ -443,7 +454,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                                 <path d="M20 6 9 17l-5-5" />
                               </svg>
                             </button>
-                            <button type="button" onClick={() => setEditing(null)} aria-label={tCommon("close")} className="cart-cancel" style={iconBtn("var(--red)", "rgba(27,111,224,.06)")}>
+                            <button type="button" onClick={() => setEditing(null)} aria-label={tCommon("close")} className="cart-cancel" style={iconBtn("var(--muted)", "#fff")}>
                               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
                                 <path d="M18 6 6 18M6 6l12 12" />
                               </svg>
@@ -459,12 +470,12 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                             }}
                             title={tCommon("editAmount")}
                             aria-label={tCommon("editAmount")}
-                            style={{ display: "inline-flex", alignItems: "stretch", background: "#fff", border: "1px solid rgba(6,36,66,.16)", borderRadius: 10, cursor: "pointer", padding: 0, overflow: "hidden", transition: "all .18s cubic-bezier(.22,.61,.36,1)" }}
+                            style={{ display: "inline-flex", alignItems: "stretch", background: "#fbfdff", border: "1.5px solid #e3edf4", borderRadius: 999, cursor: "pointer", padding: 0, overflow: "hidden", transition: "all .18s cubic-bezier(.22,.61,.36,1)" }}
                           >
-                            <span dir="ltr" style={{ unicodeBidi: "isolate", display: "inline-flex", alignItems: "center", padding: "0 14px", height: 40, fontSize: 16.5, fontWeight: 900, whiteSpace: "nowrap", color: "var(--deep)", fontVariantNumeric: "tabular-nums" }}>
+                            <span dir="ltr" style={{ unicodeBidi: "isolate", display: "inline-flex", alignItems: "center", padding: "0 14px", height: 44, fontSize: 15, fontWeight: 900, whiteSpace: "nowrap", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>
                               {formatLine(item)}
                             </span>
-                            <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 34, background: "rgba(0,162,224,.14)", borderInlineStart: "1px solid rgba(0,162,224,.35)", color: "var(--gold)" }}>
+                            <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 36, background: "#eaf6fd", color: "var(--brand-ink)" }}>
                               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
                               </svg>
@@ -480,12 +491,13 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                             display: "inline-flex",
                             alignItems: "center",
                             gap: 6,
-                            height: 32,
-                            padding: "0 11px",
+                            height: 44,
+                            padding: "0 14px",
                             borderRadius: 999,
-                            border: `1px solid ${isMonthly ? "var(--green)" : "rgba(6,36,66,.18)"}`,
-                            background: isMonthly ? "rgba(31,122,77,.1)" : "#fff",
-                            color: isMonthly ? "var(--green)" : "var(--muted)",
+                            /* Selected on a light surface: brand-ink fill, white text. */
+                            border: `1.5px solid ${isMonthly ? "#0077b3" : "#e3edf4"}`,
+                            background: isMonthly ? "#0077b3" : "#fff",
+                            color: isMonthly ? "#fff" : "var(--muted)",
                             fontFamily: "inherit",
                             fontSize: 12,
                             fontWeight: 800,
@@ -507,7 +519,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                         onClick={() => remove(index)}
                         aria-label={tCommon("remove")}
                         title={tCommon("remove")}
-                        style={{ gridColumn: 3, gridRow: "1 / span 2", width: 36, height: 36, display: "grid", placeItems: "center", border: "1px solid var(--border)", borderRadius: 8, background: "transparent", color: "var(--muted)", cursor: "pointer", alignSelf: "center" }}
+                        style={{ gridColumn: 3, gridRow: "1 / span 2", width: 44, height: 44, display: "grid", placeItems: "center", border: 0, borderRadius: "50%", background: "#fdf1ef", color: "#b3261e", cursor: "pointer", alignSelf: "center" }}
                       >
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                           <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m2 0-1 13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1L6 7" />
@@ -519,14 +531,14 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
               </div>
 
               {/* Cross-sell */}
-              <div style={{ position: "relative", overflow: "hidden", display: "grid", gap: 14, padding: 22, background: "var(--sand)", border: "1px dashed rgba(0,162,224,.55)", borderRadius: 12 }}>
+              <div className="gf-upsell" style={{ position: "relative", overflow: "hidden", display: "grid", gap: 14, padding: "22px 24px", background: "#fff", border: "1px solid #e6eef3", borderRadius: 18, boxShadow: "0 12px 30px rgba(2,52,88,.07)" }}>
                 <span
                   aria-hidden="true"
                   data-aqsa-pattern=""
                   style={{ position: "absolute", inset: 0, backgroundImage: "url('/toplum/pattern.svg')", backgroundRepeat: "repeat", backgroundSize: "260px 260px", opacity: 0.04, pointerEvents: "none" }}
                 />
-                <b style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 10, fontSize: 16, fontWeight: 900, color: "var(--deep)" }}>
-                  <span aria-hidden="true" style={{ flex: "0 0 auto", display: "grid", placeItems: "center", width: 26, height: 26, borderRadius: 8, background: "rgba(0,162,224,.18)", color: "var(--gold)" }}>
+                <b style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 10, fontSize: 17, fontWeight: 900, color: "var(--ink)" }}>
+                  <span aria-hidden="true" style={gfChip}>
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
                       <path d="M12 5v14M5 12h14" />
                     </svg>
@@ -539,10 +551,10 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                     <div
                       key={suggestion.id}
                       className="upsell-card"
-                      style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, padding: "14px 16px", background: "#fff", border: "1px solid var(--border)", borderRadius: 10, transition: "all .18s ease" }}
+                      style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10, padding: "14px 16px", background: "#f7fbfe", border: "1px solid #e3edf4", borderRadius: 14, transition: "all .18s ease" }}
                     >
-                      <b style={{ flex: "1 1 100%", minWidth: 0, display: "inline-flex", alignItems: "flex-start", gap: 9, fontSize: 14, fontWeight: 900, lineHeight: 1.65, color: "var(--deep)", overflowWrap: "anywhere" }}>
-                        <span aria-hidden="true" style={{ flex: "0 0 auto", width: 5, height: 5, background: "var(--gold)", transform: "rotate(45deg)", marginTop: 8 }} />
+                      <b style={{ flex: "1 1 100%", minWidth: 0, display: "inline-flex", alignItems: "flex-start", gap: 9, fontSize: 14, fontWeight: 800, lineHeight: 1.65, color: "var(--ink)", overflowWrap: "anywhere" }}>
+                        <span aria-hidden="true" style={{ flex: "0 0 auto", width: 8, height: 8, borderRadius: "50%", background: "var(--brand)", boxShadow: "0 0 0 4px #e3f2fb", marginTop: 8 }} />
                         {suggestion.label}
                       </b>
                       <div style={{ display: "flex", flexWrap: "nowrap", alignItems: "center", gap: 7, minWidth: 0, flex: "0 1 auto" }}>
@@ -552,7 +564,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                             type="button"
                             onClick={() => suggestion.add(value)}
                             className="upsell-amt"
-                            style={{ display: "inline-flex", alignItems: "center", gap: 4, height: 34, padding: "0 12px", borderRadius: 999, border: "1px solid var(--border)", background: "#fff", color: "var(--deep)", fontFamily: "inherit", fontSize: 13, fontWeight: 800, cursor: "pointer", whiteSpace: "nowrap", transition: "all .18s ease" }}
+                            style={{ display: "inline-flex", alignItems: "center", gap: 4, height: 36, padding: "0 14px", borderRadius: 999, border: "1.5px solid #e3edf4", background: "#fff", color: "var(--ink)", fontFamily: "inherit", fontSize: 13, fontWeight: 800, cursor: "pointer", whiteSpace: "nowrap", transition: "all .18s ease" }}
                           >
                             <span aria-hidden="true" style={{ fontWeight: 900 }}>+</span>
                             <span dir="ltr" style={{ unicodeBidi: "isolate" }}>{suggestion.localAmounts ? formatLocal(value) : format(value)}</span>
@@ -565,7 +577,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                           placeholder={t("suggestedAmount")}
                           aria-label={t("suggestedAmount")}
                           className="upsell-custom-input"
-                          style={{ flex: "0 1 auto", width: "9ch", minWidth: "7ch", height: 34, padding: "0 10px", borderRadius: 999, border: "1px dashed rgba(0,162,224,.65)", background: "#fff", fontFamily: "inherit", fontSize: 13, fontWeight: 800, color: "var(--deep)", boxSizing: "border-box" }}
+                          style={{ flex: "0 1 auto", width: "10ch", minWidth: "7ch", height: 36, padding: "0 12px", borderRadius: 999, border: "1.5px dashed rgba(0,162,224,.55)", background: "#fff", fontFamily: "inherit", fontSize: 13, fontWeight: 800, color: "var(--ink)", boxSizing: "border-box" }}
                         />
                         <button
                           type="button"
@@ -575,7 +587,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                           }}
                           aria-label={tCommon("add")}
                           className="upsell-add"
-                          style={{ flex: "0 0 auto", width: 34, height: 34, display: "grid", placeItems: "center", borderRadius: 999, border: 0, background: "var(--red)", color: "#fff", cursor: "pointer", transition: "all .18s ease" }}
+                          style={{ flex: "0 0 auto", width: 36, height: 36, display: "grid", placeItems: "center", borderRadius: 999, border: 0, background: "var(--cta-gradient)", color: "#fff", cursor: "pointer", boxShadow: "0 6px 14px rgba(0,162,224,.3)", transition: "all .18s ease" }}
                         >
                           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true">
                             <path d="M12 5v14M5 12h14" />
@@ -583,7 +595,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                         </button>
                       </div>
                       {upsellMinHint === suggestion.id ? (
-                        <span role="alert" style={{ flex: "1 1 100%", fontSize: 12.5, fontWeight: 800, color: "var(--red)" }}>
+                        <span role="alert" style={{ flex: "1 1 100%", fontSize: 12.5, fontWeight: 800, color: "#b3391f" }}>
                           {tGive("minAmount", { amount: minLabel })}
                         </span>
                       ) : null}
@@ -594,32 +606,34 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
             </div>
 
             {/* Summary */}
-            <div id="cart-summary" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr)", gap: 18, padding: 28, background: "var(--sand)", borderRadius: 16, position: "sticky", top: 92, width: "100%", boxSizing: "border-box", minWidth: 0 }}>
-              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 900 }}>{t("summary")}</h2>
-              <div style={{ display: "grid", gap: 10, paddingBottom: 16, borderBottom: "1px solid var(--border)", minWidth: 0 }}>
+            {/* The design's navy summary card (`.ct-sum`): light copy on the
+                dark gradient, the total under a hairline, then the way on. */}
+            <div id="cart-summary" className="gf-cart-sum" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr)", gap: 16, padding: 24, color: "#fff", background: "linear-gradient(160deg, #04234a 0%, #082b50 55%, #031a36 100%)", borderRadius: 18, boxShadow: "0 16px 36px rgba(3,26,54,.28)", position: "sticky", top: 92, width: "100%", boxSizing: "border-box", minWidth: 0 }}>
+              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 900, color: "#fff" }}>{t("summary")}</h2>
+              <div style={{ display: "grid", gap: 4, paddingBottom: 14, borderBottom: "1px solid rgba(255,255,255,.14)", minWidth: 0 }}>
                 {items.map((item, index) => (
-                  <span key={index} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 13.5, color: "var(--muted)", minWidth: 0 }}>
+                  <span key={index} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "6px 0", fontSize: 13, color: "#cfe3f1", minWidth: 0 }}>
                     <span title={resolveTitle(item)} style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {resolveTitle(item)}
                     </span>
-                    <span dir="ltr" style={{ unicodeBidi: "isolate", flex: "0 0 auto", fontWeight: 800, color: "var(--deep)" }}>
+                    <span dir="ltr" style={{ unicodeBidi: "isolate", flex: "0 0 auto", fontWeight: 800, color: "#fff" }}>
                       {formatLine(item)}
                     </span>
                   </span>
                 ))}
                 {teamSupportEnabled && teamAmount > 0 ? (
-                  <span style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 13.5, color: "var(--muted)", minWidth: 0 }}>
+                  <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10, padding: "6px 0", fontSize: 13, color: "#cfe3f1", minWidth: 0 }}>
                     <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                       {teamRecurring ? tTeam("chosenRecurring", { amount: format(teamAmount) }) : tTeam("chosen", { amount: format(teamAmount) })}
                     </span>
-                    <span dir="ltr" style={{ unicodeBidi: "isolate", flex: "0 0 auto", fontWeight: 800, color: "var(--deep)" }}>
+                    <span dir="ltr" style={{ unicodeBidi: "isolate", flex: "0 0 auto", fontWeight: 800, color: "#fff" }}>
                       {format(teamAmount)}
                     </span>
                   </span>
                 ) : null}
               </div>
 
-              <span style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", fontSize: 15, fontWeight: 800, color: "var(--deep)" }}>
+              <span style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, fontSize: 17, fontWeight: 900, color: "#fff" }}>
                 {t("totalForCurrency", { currency: code })}
                 <span dir="ltr" style={{ unicodeBidi: "isolate", fontSize: 24, fontWeight: 900 }}>
                   {totalLabel}
@@ -635,9 +649,9 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                   display: "grid",
                   gap: 10,
                   padding: "16px 18px",
-                  borderRadius: 12,
-                  border: `1px solid ${recurringOn ? "var(--gold)" : "rgba(255,255,255,.14)"}`,
-                  background: "var(--deep)",
+                  borderRadius: 14,
+                  border: `1px solid ${recurringOn ? "var(--brand)" : "rgba(255,255,255,.16)"}`,
+                  background: recurringOn ? "rgba(0,162,224,.12)" : "rgba(255,255,255,.05)",
                   cursor: "pointer",
                   fontFamily: "inherit",
                   textAlign: "start",
@@ -657,7 +671,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                       height: 24,
                       padding: 3,
                       borderRadius: 999,
-                      background: recurringOn ? "var(--green)" : "rgba(255,255,255,.22)",
+                      background: recurringOn ? "var(--brand)" : "rgba(255,255,255,.22)",
                       transition: "background .2s ease",
                     }}
                   >
@@ -665,8 +679,8 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                   </span>
                 </span>
                 <span style={{ display: "block", width: "100%", height: 1, background: "rgba(255,255,255,.12)" }} />
-                <span style={{ fontSize: 12.5, fontWeight: 800, color: "var(--gold)", lineHeight: 1.7, textWrap: "balance" }}>{t("recurringNudge")}</span>
-                <span style={{ fontSize: "clamp(9.5px, 2.7vw, 11.5px)", fontWeight: 600, color: "rgba(255,255,255,.6)", lineHeight: 1.7, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}>
+                <span style={{ fontSize: 12.5, fontWeight: 800, color: "#7fd6f5", lineHeight: 1.7, textWrap: "balance" }}>{t("recurringNudge")}</span>
+                <span style={{ fontSize: "clamp(9.5px, 2.7vw, 11.5px)", fontWeight: 600, color: "#b9d3e6", lineHeight: 1.7, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0 }}>
                   {t("recurringNudgeText")}
                 </span>
               </button>
@@ -677,10 +691,10 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
               {settings && teamSupportEnabled ? (
                 <div
                   id="cart-team-support"
-                  style={{ display: "grid", gap: 10, padding: "16px 18px", borderRadius: 12, background: "#fff", border: "1px solid rgba(0,162,224,.45)" }}
+                  style={{ display: "grid", gap: 10, padding: "16px 18px", borderRadius: 14, background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.16)" }}
                 >
-                  <b style={{ fontSize: 15, fontWeight: 900, color: "var(--deep)" }}>{tTeam("title")}</b>
-                  <span style={{ fontSize: 12.5, color: "var(--muted)", lineHeight: 1.7 }}>{tTeam("lead")}</span>
+                  <b style={{ fontSize: 15, fontWeight: 900, color: "#fff" }}>{tTeam("title")}</b>
+                  <span style={{ fontSize: 12.5, color: "#b9d3e6", lineHeight: 1.7 }}>{tTeam("lead")}</span>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
                     <button
                       type="button"
@@ -720,7 +734,8 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                       dir="ltr"
                       placeholder={tTeam("customAmount")}
                       aria-label={tTeam("customAmount")}
-                      style={{ flex: "0 1 auto", width: "11ch", minWidth: "8ch", height: 34, padding: "0 10px", borderRadius: 999, border: `1px dashed ${teamAmount > 0 && !teamAmounts.includes(teamAmount) ? "var(--green)" : "rgba(0,162,224,.65)"}`, background: "#fff", fontFamily: "inherit", fontSize: 13, fontWeight: 800, color: "var(--deep)", boxSizing: "border-box" }}
+                      className="gf-dark-input"
+                      style={{ flex: "0 1 auto", width: "11ch", minWidth: "8ch", height: 36, padding: "0 12px", borderRadius: 999, border: `1.5px ${teamAmount > 0 && !teamAmounts.includes(teamAmount) ? "solid var(--brand)" : "dashed rgba(255,255,255,.35)"}`, background: "rgba(255,255,255,.08)", fontFamily: "inherit", fontSize: 13, fontWeight: 800, color: "#fff", boxSizing: "border-box" }}
                     />
                   </div>
                   {/* A recurring basket lets the donor decide whether the
@@ -735,7 +750,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
                       </button>
                     </div>
                   ) : null}
-                  <span style={{ fontSize: 12, fontWeight: 700, color: teamRecurring ? "var(--green)" : "var(--muted)", lineHeight: 1.6 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: teamRecurring ? "#7fd6f5" : "#b9d3e6", lineHeight: 1.6 }}>
                     {teamRecurring ? tTeam("recurringNote") : tTeam("oneTimeNote")}
                   </span>
                 </div>
@@ -743,36 +758,45 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
 
               {belowMinimum ? (
                 <>
-                  <Button variant="primary" full disabled style={{ whiteSpace: "nowrap", height: 52, opacity: 0.55, boxShadow: "none", cursor: "not-allowed" }}>
+                  <Button variant="primary" full disabled style={{ whiteSpace: "nowrap", height: 50, opacity: 1, background: "rgba(255,255,255,.12)", color: "rgba(255,255,255,.6)", boxShadow: "none", cursor: "not-allowed" }}>
                     {t("checkout")}
                   </Button>
-                  <span role="status" style={{ marginTop: -8, textAlign: "center", fontSize: 12.5, fontWeight: 800, color: "var(--red)", lineHeight: 1.6 }}>
+                  <span role="status" style={{ marginTop: -6, textAlign: "center", fontSize: 12.5, fontWeight: 800, color: "#ffc2b8", lineHeight: 1.6 }}>
                     {tGive("belowMinCheckout", { amount: minLabel })}
                   </span>
                 </>
               ) : (
-                <Button variant="primary" href={miaPath("checkout", locale)} full style={{ whiteSpace: "nowrap", height: 52 }}>
+                <Button variant="primary" href={miaPath("checkout", locale)} full style={{ whiteSpace: "nowrap", height: 50, boxShadow: "0 8px 20px rgba(0,162,224,.35)" }}>
                   {t("checkout")}
                 </Button>
               )}
-              <Link href={miaPath("projects", locale)} className="cart-add-another" style={{ textAlign: "center", fontSize: 13, fontWeight: 800, color: "var(--muted)", transition: "color .15s ease" }}>
+              <Link href={miaPath("projects", locale)} className="cart-add-another" style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: 44, marginTop: -8, textAlign: "center", fontSize: 13, fontWeight: 700, color: "#cfe3f1", transition: "color .15s ease" }}>
                 {t("addAnother")}
               </Link>
+              <p style={{ margin: "-6px 0 0", display: "flex", alignItems: "flex-start", gap: 7, fontSize: 12, lineHeight: 1.7, color: "#b9d3e6" }}>
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: "0 0 auto", marginTop: 3 }}>
+                  <rect x="4" y="10" width="16" height="10" rx="2" />
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                </svg>
+                {t("secureNote")}
+              </p>
             </div>
           </div>
         </section>
       ) : (
-        <section style={{ padding: "30px 0 100px" }}>
-          <div style={{ maxWidth: 600, margin: "0 auto", padding: "0 24px", display: "grid", justifyItems: "center", gap: 16, textAlign: "center" }}>
-            <span style={{ display: "grid", placeItems: "center", width: 64, height: 64, borderRadius: "50%", background: "var(--sand)", color: "var(--muted)" }}>
-              <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="m4 8 2 11h12l2-11H4Z" />
-                <path d="m9 8 3-4 3 4M9 12v3M15 12v3" />
+        <section style={{ padding: "40px 0 100px" }}>
+          <div className="gf-cart-empty" style={{ maxWidth: 520, margin: "0 auto", padding: "0 24px", display: "grid", justifyItems: "center", gap: 14, textAlign: "center" }}>
+            {/* `Empty Cart.dc.html`: the cart glyph alone, in brand blue. */}
+            <span aria-hidden="true" style={{ display: "grid", placeItems: "center", width: 72, height: 72, color: "var(--brand)", marginBottom: 6 }}>
+              <svg viewBox="0 0 24 24" width="60" height="60" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M3 4h2.2l2.1 10.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L20.4 7H6" />
+                <circle cx="9.5" cy="19.5" r="1.3" />
+                <circle cx="17" cy="19.5" r="1.3" />
               </svg>
             </span>
-            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 900 }}>{t("emptyTitle")}</h2>
-            <p style={{ margin: 0, color: "var(--muted)", fontSize: 15, lineHeight: 1.85 }}>{t("emptyText")}</p>
-            <Button variant="primary" href={miaPath("projects", locale)} style={{ whiteSpace: "nowrap" }}>
+            <h2 style={{ margin: 0, fontSize: 19, fontWeight: 900, color: "var(--ink)" }}>{t("emptyTitle")}</h2>
+            <p style={{ margin: "0 0 10px", maxWidth: "40ch", color: "var(--muted)", fontSize: 14, lineHeight: 1.85 }}>{t("emptyText")}</p>
+            <Button variant="primary" href={miaPath("projects", locale)} style={{ whiteSpace: "nowrap", minHeight: 52, padding: "0 30px", boxShadow: "0 8px 20px rgba(0,162,224,.3)" }}>
               {tProjects("allProjects")}
             </Button>
           </div>
@@ -782,15 +806,17 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
   );
 }
 
+/* On the navy summary: a picked pill is the brand fill with navy text
+   (6.7:1), the rest are hairline outlines (ToplamVakfi-design/CLAUDE.md). */
 const teamPill = (on: boolean): CSSProperties => ({
   display: "inline-flex",
   alignItems: "center",
-  height: 34,
-  padding: "0 13px",
+  height: 36,
+  padding: "0 14px",
   borderRadius: 999,
-  border: `1px solid ${on ? "var(--green)" : "var(--border)"}`,
-  background: on ? "rgba(31,122,77,.1)" : "#fff",
-  color: on ? "var(--green)" : "var(--deep)",
+  border: `1.5px solid ${on ? "var(--brand)" : "rgba(255,255,255,.28)"}`,
+  background: on ? "var(--brand)" : "transparent",
+  color: on ? "#031a36" : "#fff",
   fontFamily: "inherit",
   fontSize: 13,
   fontWeight: 800,
@@ -799,13 +825,25 @@ const teamPill = (on: boolean): CSSProperties => ({
   transition: "all .18s ease",
 });
 
-const iconBtn = (color: string, background: string): CSSProperties => ({
-  width: 32,
-  height: 32,
+/* The design's round icon chip (`.ab-ico`): brand-ink glyph on a pale blue disc. */
+const gfChip: CSSProperties = {
+  flex: "0 0 auto",
   display: "grid",
   placeItems: "center",
-  border: `1px solid ${color}`,
-  borderRadius: 8,
+  width: 36,
+  height: 36,
+  borderRadius: "50%",
+  background: "#eaf5fc",
+  color: "var(--brand-ink)",
+};
+
+const iconBtn = (color: string, background: string): CSSProperties => ({
+  width: 44,
+  height: 44,
+  display: "grid",
+  placeItems: "center",
+  border: `1.5px solid ${color}`,
+  borderRadius: "50%",
   background,
   color,
   cursor: "pointer",

@@ -7,6 +7,7 @@ import { miaPath } from "@/lib/minbar/routes";
 import type { CmsCourse } from "@/lib/minbar/cms";
 import { youtubeEmbed, youtubeThumb } from "@/lib/minbar/content/media";
 import VideoModal, { useVideoModal } from "@/components/minbar/VideoModal";
+import { EdBanner } from "@/components/minbar/blog/Editorial";
 
 /**
  * Our courses  ported from `Minbar/دوراتنا.dc.html`.
@@ -18,6 +19,9 @@ import VideoModal, { useVideoModal } from "@/components/minbar/VideoModal";
  * The handoff decides "course" vs "seminar" by testing whether the Arabic title
  * begins with "ندوة". That stops being true the moment the title is translated,
  * so the distinction is a field on the course instead.
+ *
+ * Laid out on the Toplum editorial listing template: the photo banner with its
+ * wave, then white 16px cards three-up (blog.css `ed-` classes).
  */
 export default function CoursesPage({ courses }: { courses: CmsCourse[] }) {
   const locale = useLocale();
@@ -26,22 +30,12 @@ export default function CoursesPage({ courses }: { courses: CmsCourse[] }) {
   const { embed, open, close } = useVideoModal();
 
   return (
-    <div className="crs-page">
-      <section style={{ position: "relative", background: "var(--deep)", overflow: "hidden" }}>
-        <div aria-hidden="true" className="vg-pattern" />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "38px 24px 42px", display: "grid", gap: 10, justifyItems: "start" }}>
-          <h1 style={{ margin: 0, fontSize: "clamp(24px,2.6vw,36px)", lineHeight: 1.3, fontWeight: 900, color: "#fff" }}>
-            {t("coursesTitle")}
-          </h1>
-          <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.7, color: "rgba(255,255,255,.85)", maxWidth: "100%" }}>
-            {t("coursesLead")}
-          </p>
-        </div>
-      </section>
+    <div className="crs-page ed-page">
+      <EdBanner title={t("coursesTitle")} lead={t("coursesLead")} />
 
-      <section style={{ position: "relative", padding: "52px 0 64px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <div className="crs-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 20 }}>
+      <section className="ed-main">
+        <div className="ed-wrap">
+          <div className="crs-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 22 }}>
             {courses.map((course) => {
               const title = course.title;
               const cover = course.coverImage || (course.introVideoId ? youtubeThumb(course.introVideoId) : "");
@@ -65,13 +59,13 @@ export default function CoursesPage({ courses }: { courses: CmsCourse[] }) {
                     />
                     <span aria-hidden="true" style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(3,26,54,.72), rgba(3,26,54,.1) 45%, transparent 65%)" }} />
                     <span aria-hidden="true" className="crs-play" style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
-                      <span style={{ display: "grid", placeItems: "center", width: 52, height: 52, borderRadius: "50%", background: "rgba(255,255,255,.94)", color: "var(--red)", boxShadow: "0 12px 30px rgba(3,26,54,.35)" }}>
+                      <span className="ed-play">
                         <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden="true">
                           <path d="M8 5v14l11-7z" />
                         </svg>
                       </span>
                     </span>
-                    <span style={{ position: "absolute", insetInlineStart: 14, top: 12, display: "inline-flex", alignItems: "center", gap: 7, padding: "5px 11px", borderRadius: 999, background: "rgba(3,26,54,.62)", border: "1px solid rgba(0,162,224,.6)", color: "#BFE6F7", fontSize: 11, fontWeight: 900, letterSpacing: ".04em", backdropFilter: "blur(3px)" }}>
+                    <span className="ed-badge">
                       {t(isSeminar ? "kindSeminar" : "kindCourse")}
                     </span>
                     <span style={{ position: "absolute", insetInlineStart: 14, bottom: 12, display: "inline-flex", alignItems: "center", gap: 7, color: "#fff", fontSize: 11.5, fontWeight: 800, textShadow: "0 1px 6px rgba(3,26,54,.7)" }}>
@@ -83,17 +77,17 @@ export default function CoursesPage({ courses }: { courses: CmsCourse[] }) {
                     </span>
                   </span>
 
-                  <span style={{ display: "grid", gridTemplateRows: "auto 1fr auto", gap: 8, padding: "18px 20px 20px" }}>
-                    <b style={{ fontSize: 15.5, fontWeight: 900, lineHeight: 1.65 }}>{title}</b>
+                  <span style={{ display: "grid", gridTemplateRows: "auto 1fr auto", gap: 10, padding: "22px 22px 24px" }}>
+                    <b style={{ fontSize: 17, fontWeight: 800, lineHeight: 1.5 }}>{title}</b>
                     {course.description ? (
-                      <span style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.85, alignSelf: "start", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                      <span style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.8, alignSelf: "start", display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
                         {course.description}
                       </span>
                     ) : (
                       <span />
                     )}
-                    <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginTop: 6, paddingTop: 14, borderTop: "1px solid var(--border)" }}>
-                      <span style={{ display: "inline-flex", alignItems: "center", gap: 9, color: "var(--red)", fontWeight: 900, fontSize: 13.5 }}>
+                    <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, marginTop: 6, paddingTop: 14, borderTop: "1px solid #e3edf4" }}>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#0077b3", fontWeight: 800, fontSize: 13 }}>
                         {t(internal ? "courseDetails" : "watchNow")}
                         <span aria-hidden="true" className="crs-arrow">{rtl ? "←" : "→"}</span>
                       </span>
@@ -107,10 +101,10 @@ export default function CoursesPage({ courses }: { courses: CmsCourse[] }) {
                 display: "grid",
                 gridTemplateRows: "auto 1fr",
                 background: "#fff",
-                border: "1px solid var(--border)",
-                borderRadius: 12,
+                border: "1px solid #e6eef3",
+                borderRadius: 16,
                 overflow: "hidden",
-                boxShadow: "0 14px 40px rgba(6,36,66,.08)",
+                boxShadow: "0 12px 28px rgba(2,52,88,.07)",
                 color: "var(--deep)",
               } as const;
 

@@ -52,10 +52,10 @@ function StatFigure({ value, label }: { value: number; label: string }) {
   const { ref, value: shown } = useMinbarCountUp(value, 1400);
   return (
     <div ref={ref as React.RefObject<HTMLDivElement>} style={{ display: "grid", gap: 4 }}>
-      <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: "clamp(24px,2.4vw,32px)", fontWeight: 900, color: "var(--gold)" }}>
+      <b dir="ltr" style={{ unicodeBidi: "isolate", fontSize: "clamp(24px,2.4vw,34px)", fontWeight: 900, color: "#7fd6f5" }}>
         {new Intl.NumberFormat(locale).format(shown)}
       </b>
-      <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.72)" }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: 700, color: "#b9d3e6" }}>{label}</span>
     </div>
   );
 }
@@ -66,7 +66,7 @@ function StatFigure({ value, label }: { value: number; label: string }) {
  */
 export function CategoryStatsBand({ stats, contained = false }: { stats: NonNullable<CategoryPageContent["stats"]>; contained?: boolean }) {
   return (
-    <div style={{ background: "var(--navy)", padding: contained ? "26px 24px" : "26px 0", borderRadius: contained ? 14 : 0 }}>
+    <div className="tv-dark" style={{ background: "linear-gradient(120deg, #021428 0%, #082b50 60%, #04172e 100%)", padding: contained ? "26px 24px" : "26px 0", borderRadius: contained ? 18 : 0 }}>
       <div
         className="cat-stats"
         style={{ maxWidth: 1240, margin: "0 auto", padding: contained ? 0 : "0 24px", display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 18, textAlign: "center" }}
@@ -76,7 +76,7 @@ export function CategoryStatsBand({ stats, contained = false }: { stats: NonNull
       </div>
       <div style={{ maxWidth: 1240, margin: "18px auto 0", padding: contained ? 0 : "0 24px" }}>
         <div style={{ height: 6, borderRadius: 999, background: "rgba(255,255,255,.14)", overflow: "hidden" }}>
-          <span className="cat-bar" style={{ display: "block", height: "100%", width: `${stats.percent}%`, borderRadius: 999, background: "var(--gold)" }} />
+          <span className="cat-bar tv-bar" style={{ display: "block", height: "100%", width: `${stats.percent}%`, borderRadius: 999, background: "linear-gradient(90deg, #1b6fe0, #27b8f2)" }} />
         </div>
       </div>
     </div>
@@ -88,13 +88,14 @@ export function CategoryStatsBand({ stats, contained = false }: { stats: NonNull
 export function CategoryValuesStrip({ values }: { values: CategoryPageContent["values"] }) {
   if (!values.length) return null;
   return (
-    <div id="cat-values" style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(values.length, 5)},minmax(0,1fr))`, gap: 10 }}>
+    <div id="cat-values" style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(values.length, 5)},minmax(0,1fr))`, gap: 16 }}>
       {values.map((value) => (
         <span
           key={value.id}
           className="cat-value"
-          style={{ position: "relative", display: "grid", alignContent: "center", justifyItems: "center", minHeight: 86, padding: "14px 12px", background: "#fff", border: "1px solid var(--border)", borderTop: "3px solid var(--gold)", borderRadius: 8, boxShadow: "0 1px 2px rgba(6,36,66,.05)", fontSize: 12.5, fontWeight: 800, color: "var(--deep)", textAlign: "center", lineHeight: 1.65 }}
+          style={{ position: "relative", display: "grid", alignContent: "center", justifyItems: "center", gap: 10, minHeight: 96, padding: 20, background: "#fff", border: "1px solid #e6eef3", borderRadius: 14, boxShadow: "0 12px 28px rgba(2,52,88,.07)", fontSize: 13.5, fontWeight: 800, color: "var(--deep)", textAlign: "center", lineHeight: 1.65 }}
         >
+          <span aria-hidden="true" style={{ width: 26, height: 3, borderRadius: 3, background: "linear-gradient(90deg, #1b6fe0, #27b8f2)" }} />
           {value.label}
         </span>
       ))}
@@ -107,7 +108,7 @@ export function CategoryValuesStrip({ values }: { values: CategoryPageContent["v
 export function CategoryProjectsGrid({ page, columns = 3 }: { page: CategoryPageContent; columns?: number }) {
   if (!page.projects.length) return <NoProjects />;
   return (
-    <div id="cat-projects-grid" className="qd-work" style={{ display: "grid", gridTemplateColumns: `repeat(${columns},minmax(0,1fr))`, gap: 16 }}>
+    <div id="cat-projects-grid" className="qd-work" style={{ display: "grid", gridTemplateColumns: `repeat(${columns},minmax(0,1fr))`, gap: 20 }}>
       {page.projects.map((project) => (
         <ProjectDonateCard key={project.id} project={project} tag={page.name} />
       ))}
@@ -179,10 +180,10 @@ export function CategoryDonateBox({ page, typeKey = "project" }: { page: Categor
     fontWeight: 800,
     textAlign: "center",
     whiteSpace: "nowrap",
-    border: `1px solid ${active ? "var(--gold)" : "var(--border)"}`,
-    background: active ? "var(--gold)" : "var(--ivory)",
-    color: active ? "var(--deep)" : "var(--muted)",
-    boxShadow: active ? "0 0 0 3px rgba(0,162,224,.22)" : "none",
+    border: `1.5px solid ${active ? "#0077b3" : "#e2eaf0"}`,
+    background: active ? "#0077b3" : "#f2f6f9",
+    color: active ? "#fff" : "var(--deep)",
+    boxShadow: active ? "0 6px 14px -6px rgba(0,119,179,.55)" : "none",
     transition: "all .18s cubic-bezier(.22,.61,.36,1)",
   });
 
@@ -191,18 +192,18 @@ export function CategoryDonateBox({ page, typeKey = "project" }: { page: Categor
   return (
     <div style={{ display: "grid", gap: 22 }}>
       <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-        <b style={{ fontSize: 18 }}>{page.donateTitle || `${t("donateNow")}  ${page.name}`}</b>
-        <span style={{ color: "var(--muted)", fontSize: 13 }}>{page.donateNote || page.donateTarget.title}</span>
+        <b className="cat-donate-title" style={{ fontSize: "clamp(20px,2.2vw,26px)", fontWeight: 900 }}>{page.donateTitle || `${t("donateNow")}  ${page.name}`}</b>
+        <span className="cat-donate-note" style={{ color: "var(--muted)", fontSize: 13.5 }}>{page.donateNote || page.donateTarget.title}</span>
       </div>
 
       <div
         id="cat-donate-box"
-        style={{ position: "relative", display: "grid", gap: 18, padding: "24px 26px", background: "#fff", border: "1px solid rgba(0,162,224,.5)", borderRadius: 14, boxShadow: "0 18px 50px rgba(6,36,66,.12)", overflow: "hidden" }}
+        style={{ position: "relative", display: "grid", gap: 18, padding: "24px 26px", background: "#fff", border: "1px solid #e6eef3", borderRadius: 18, boxShadow: "0 18px 44px rgba(2,52,88,.14)", overflow: "hidden" }}
       >
-        <span aria-hidden="true" style={{ position: "absolute", insetBlock: 0, insetInlineStart: 0, width: 6, background: "linear-gradient(180deg, var(--gold), rgba(0,162,224,.25))", pointerEvents: "none" }} />
+        <span aria-hidden="true" style={{ position: "absolute", insetBlock: 0, insetInlineStart: 0, width: 5, background: "linear-gradient(180deg, #1b6fe0, #27b8f2)", pointerEvents: "none" }} />
 
         <div style={{ display: "grid", gap: 12 }}>
-          <div id="cat-freqs" style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: 3, background: "var(--sand)", borderRadius: 999, width: "fit-content" }}>
+          <div id="cat-freqs" style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: 4, background: "#f2f6f9", border: "1px solid #e6eef3", borderRadius: 999, width: "fit-content", maxWidth: "100%" }}>
             {FREQUENCIES.map((f) => {
               const active = freq === f.id;
               return (
@@ -217,13 +218,13 @@ export function CategoryDonateBox({ page, typeKey = "project" }: { page: Categor
                     borderRadius: 999,
                     cursor: "pointer",
                     border: 0,
-                    background: active ? "var(--gold)" : "transparent",
-                    color: active ? "var(--deep)" : "var(--muted)",
+                    background: active ? "#0077b3" : "transparent",
+                    color: active ? "#fff" : "var(--muted)",
                     fontFamily: "inherit",
                     fontSize: 12.5,
                     fontWeight: 800,
                     whiteSpace: "nowrap",
-                    boxShadow: active ? "0 3px 8px rgba(0,162,224,.3)" : "none",
+                    boxShadow: active ? "0 6px 14px -6px rgba(0,119,179,.55)" : "none",
                     transition: "all .2s cubic-bezier(.22,.61,.36,1)",
                   }}
                 >
@@ -250,8 +251,8 @@ export function CategoryDonateBox({ page, typeKey = "project" }: { page: Categor
                 padding: "0 14px",
                 borderRadius: 999,
                 boxSizing: "border-box",
-                border: `1px solid ${custom ? "var(--gold)" : "var(--border)"}`,
-                background: "var(--ivory)",
+                border: `1.5px solid ${custom ? "var(--gold)" : "#e2eaf0"}`,
+                background: custom ? "#fff" : "#f2f6f9",
                 fontFamily: "inherit",
                 fontSize: 13,
                 fontWeight: 700,
@@ -261,7 +262,7 @@ export function CategoryDonateBox({ page, typeKey = "project" }: { page: Categor
           </div>
         </div>
 
-        <div style={{ height: 1, background: "var(--border)" }} />
+        <div style={{ height: 1, background: "#e6eef3" }} />
 
         <div id="cat-donate-actions" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, flexWrap: "wrap" }}>
           <b dir="ltr" style={{ fontSize: 22, color: "var(--deep)", unicodeBidi: "isolate", whiteSpace: "nowrap" }}>{showMoney(total || 0, totalCurrency)}</b>
@@ -274,15 +275,15 @@ export function CategoryDonateBox({ page, typeKey = "project" }: { page: Categor
                 alignItems: "center",
                 gap: 8,
                 height: 48,
-                padding: "0 18px",
-                borderRadius: 10,
+                padding: "0 20px",
+                borderRadius: 999,
                 cursor: "pointer",
                 fontFamily: "inherit",
                 fontSize: 14,
                 fontWeight: 800,
                 whiteSpace: "nowrap",
-                border: `1px solid ${added ? "var(--green)" : "var(--border)"}`,
-                background: added ? "rgba(31,122,77,.08)" : "#fff",
+                border: `1.5px solid ${added ? "var(--green)" : "#e2eaf0"}`,
+                background: added ? "rgba(31,122,77,.08)" : "#f2f6f9",
                 color: added ? "var(--green)" : "var(--deep)",
                 transition: "all .18s cubic-bezier(.22,.61,.36,1)",
               }}
@@ -296,7 +297,7 @@ export function CategoryDonateBox({ page, typeKey = "project" }: { page: Categor
             <a
               href={miaPath("cart", locale)}
               onClick={addCategoryDonation}
-              style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 48, padding: "0 26px", borderRadius: 10, background: "var(--red)", color: "#fff", fontWeight: 900, fontSize: 15, whiteSpace: "nowrap" }}
+              style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, height: 48, padding: "0 28px", borderRadius: 999, background: "var(--cta-gradient)", color: "#fff", fontWeight: 800, fontSize: 15, whiteSpace: "nowrap", boxShadow: "0 10px 24px rgba(0,162,224,.36)" }}
             >
               {t("donateNow")}
             </a>
@@ -313,7 +314,7 @@ function CardIcon({ name }: { name: string }) {
   return (
     <span
       aria-hidden="true"
-      style={{ display: "grid", placeItems: "center", width: 38, height: 38, borderRadius: 9, background: "#fff", color: "var(--gold)" }}
+      style={{ display: "grid", placeItems: "center", width: 42, height: 42, borderRadius: "50%", background: "#eaf5fc", color: "#0077b3" }}
     >
       <CategoryCardIcon name={name} className="h-[18px] w-[18px]" />
     </span>
@@ -323,11 +324,11 @@ function CardIcon({ name }: { name: string }) {
 export function CategoryInfoCards({ cards }: { cards: CategoryPageContent["cards"] }) {
   if (!cards.length) return null;
   return (
-    <div id="cat-cards" style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(cards.length, 3)},minmax(0,1fr))`, gap: 18 }}>
+    <div id="cat-cards" style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(cards.length, 3)},minmax(0,1fr))`, gap: 16 }}>
       {cards.map((card) => (
-        <div key={card.id} className="cat-card" style={{ display: "grid", gap: 10, padding: 24, background: "var(--sand)", borderRadius: 8, borderTop: "3px solid var(--gold)" }}>
+        <div key={card.id} className="cat-card" style={{ display: "grid", alignContent: "start", gap: 10, padding: 22, background: "#fff", border: "1px solid #e6eef3", borderRadius: 16, boxShadow: "0 12px 28px rgba(2,52,88,.07)" }}>
           <CardIcon name={card.icon} />
-          <b style={{ fontSize: 15.5 }}>{card.title}</b>
+          <b style={{ fontSize: 16, fontWeight: 800, color: "var(--deep)" }}>{card.title}</b>
           <span style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.9, whiteSpace: "pre-line" }}>{card.body}</span>
         </div>
       ))}
@@ -352,7 +353,7 @@ export function CategoryAchievements({ page }: { page: CategoryPageContent }) {
         prevLabel={t("prev")}
         nextLabel={t("next")}
         heading={
-          <h2 style={{ margin: 0, fontSize: "clamp(21px,2vw,27px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>
+          <h2 style={{ margin: 0, fontSize: "clamp(22px,2.4vw,28px)", lineHeight: 1.25, fontWeight: 900, letterSpacing: "-.3px", color: "var(--deep)" }}>
             {page.achievementsTitle || tHome("achTitle")}
           </h2>
         }
@@ -378,7 +379,7 @@ export function CategoryAchievements({ page }: { page: CategoryPageContent }) {
               </span>
               <span style={{ position: "absolute", insetInline: 14, bottom: 14, display: "grid", gap: 8 }}>
                 <b style={{ color: "#fff", fontWeight: 800, fontSize: 16, lineHeight: 1.45 }}>{clip.title}</b>
-                <span style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,.18)", color: "var(--gold)", fontSize: 11.5, fontWeight: 900 }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,.18)", color: "#7fd6f5", fontSize: 11.5, fontWeight: 900 }}>
                   <span style={{ marginInlineStart: "auto", display: "inline-flex", alignItems: "center", gap: 4 }}>
                     {tHome("watch")}
                     <ArrowGlyph size={12} />

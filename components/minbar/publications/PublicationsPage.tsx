@@ -1,111 +1,80 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import type { CmsDocument } from "@/lib/minbar/cms";
-import { localeDirection } from "@/lib/locales";
+import { EdBanner } from "@/components/minbar/blog/Editorial";
 
 /**
- * Our publications  ported from `Minbar/كتيبات المؤسسة.dc.html`.
+ * Our publications  originally `Minbar/كتيبات المؤسسة.dc.html`, now on the
+ * Toplum editorial listing template (photo banner with its wave, section on
+ * the page background, white 16px cards; styles in
+ * `styles/minbar/pages/blog.css`, `ed-` classes).
  *
  * One card per booklet: its cover, what it is, and two ways to have it  read
  * in the browser, or downloaded.
  *
- * The handoff lists a single booklet, which is the only one that ships as an
- * asset (`Minbar/assets/books/`). Three further PDFs sit in `Minbar/src/`, but
- * nothing in the handoff says what they are called or who wrote them, so they
- * are not listed here: inventing a title and an author for someone else's book
- * is not a gap this port gets to fill.
+ * The booklets are the documents published in the dashboard; nothing here
+ * invents a title or an author for a book that has none.
  */
 
 /**
- * The published booklets.
- *
- * `title` and `author` are proper names and stay as written in every language 
+ * `title` and `author` are proper names and stay as written in every language
  * the same rule the video catalog applies to named speakers. Everything else is
  * interface copy and resolves through the `common` namespace.
  */
 
-const SECTION = { maxWidth: 1240, margin: "0 auto", padding: "0 24px" } as const;
-
 export default function PublicationsPage({ booklets }: { booklets: CmsDocument[] }) {
-  const locale = useLocale();
-  const dir = localeDirection(locale);
   const t = useTranslations("common");
 
-  // The Toplum page banner: the dark navy gradient (ToplamVakfi-design/CLAUDE.md).
-  const heroGradient = `linear-gradient(${dir === "rtl" ? 240 : 120}deg, #021428 0%, #082b50 60%, #04172e 100%)`;
-
   return (
-    <div className="bk-page">
-      <section id="hero" style={{ position: "relative", zIndex: 1, background: heroGradient, overflow: "hidden" }}>
-        <div aria-hidden="true" className="ab-hero-pattern" />
-        <div style={{ ...SECTION, position: "relative", padding: "70px 24px", display: "grid", gap: 14, justifyItems: "start" }}>
-          <h1 style={{ margin: 0, fontSize: "clamp(28px,3.4vw,46px)", lineHeight: 1.35, fontWeight: 900, color: "#fff" }}>
-            {t("bookletsTitle")}
-          </h1>
-          <p style={{ margin: 0, maxWidth: "60ch", fontSize: 16, lineHeight: 1.9, color: "rgba(255,255,255,.92)" }}>
-            {t("bookletsLead")}
-          </p>
-        </div>
-      </section>
+    <div className="bk-page ed-page">
+      <EdBanner title={t("bookletsTitle")} lead={t("bookletsLead")} />
 
-      <section style={{ position: "relative", zIndex: 1, padding: "60px 0 70px" }}>
-        <div className="bk-grid" style={{ ...SECTION, display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 20 }}>
-          {booklets.map((booklet) => (
-            <div
-              key={booklet.id}
-              className="bk-card"
-              style={{ display: "grid", alignContent: "start", width: "100%", maxWidth: 260, marginInline: "auto", background: "#fff", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", boxShadow: "0 1px 2px rgba(6,36,66,.04)" }}
-            >
-              {/* The booklet has no cover artwork in the handoff, so the panel is
-                  the sand ground with its gold rule rather than a stand-in
-                  photograph from somewhere else. */}
-              <span aria-hidden="true" style={{ position: "relative", display: "block", aspectRatio: "3 / 4", background: "var(--sand)", overflow: "hidden", borderBottom: "3px solid var(--gold)", backgroundImage: booklet.coverImage ? `url('${booklet.coverImage}')` : undefined, backgroundSize: "cover", backgroundPosition: "center" }} />
-
-              <span style={{ display: "grid", gap: 9, padding: 15 }}>
-                <span style={{ display: "inline-flex", width: "fit-content", padding: "4px 12px", borderRadius: 999, background: "rgba(0,162,224,.14)", border: "1px solid rgba(0,162,224,.4)", color: "#0077B3", fontSize: 9, fontWeight: 900, letterSpacing: ".02em", whiteSpace: "nowrap" }}>
-                  {t("bookletTagFoundation")}
-                </span>
-                {/* A book title and an author's name keep their own script and
-                    direction whatever language the page is read in. */}
-                <b dir="rtl" style={{ fontSize: 15, lineHeight: 1.5, unicodeBidi: "isolate" }}>{booklet.title}</b>
-                {booklet.author ? <span dir="rtl" style={{ color: "var(--gold)", fontSize: 13, fontWeight: 800, unicodeBidi: "isolate" }}>{booklet.author}</span> : null}
-                {booklet.description ? <span style={{ color: "var(--muted)", fontSize: 13, lineHeight: 1.8 }}>{booklet.description}</span> : null}
-
-                <span style={{ display: "flex", alignItems: "center", gap: 14, fontSize: 12.5, color: "var(--muted)", fontWeight: 700, paddingTop: 10, borderTop: "1px solid var(--border)" }}>
-                  <span>{t("bookletFormatPdf")}</span>
-                  <span style={{ marginInlineStart: "auto" }}>{t("bookletLanguageArabic")}</span>
+      <section className="ed-main">
+        <div className="ed-wrap">
+          <div className="ed-grid ed-grid--4">
+            {booklets.map((booklet) => (
+              <div key={booklet.id} className="ed-card ed-card--lift ed-book">
+                {/* Without cover artwork the panel is the soft blue ground
+                    rather than a stand-in photograph from somewhere else. */}
+                <span aria-hidden="true" className="ed-media">
+                  {booklet.coverImage ? (
+                    <span className="ed-media-img" style={{ backgroundImage: `url('${booklet.coverImage}')` }} />
+                  ) : null}
+                  <span className="ed-badge">{t("bookletTagFoundation")}</span>
                 </span>
 
-                <span style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                  <a
-                    href={booklet.fileUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bk-read"
-                    style={{ flex: "1 1 100px", height: 40, display: "flex", alignItems: "center", justifyContent: "center", gap: 7, borderRadius: 10, background: "var(--red)", color: "#fff", fontWeight: 900, fontSize: 13.5 }}
-                  >
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M4 19.5V6a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v14" />
-                      <path d="M6.5 19.5H19a1 1 0 0 0 1-1V17H8a1.5 1.5 0 0 0 0 3H6.5a1.5 1.5 0 0 1 0-3" />
-                    </svg>
-                    {t("readBooklet")}
-                  </a>
-                  <a
-                    href={booklet.fileUrl}
-                    download
-                    className="bk-dl"
-                    style={{ flex: "0 0 auto", height: 40, padding: "0 13px", display: "inline-flex", alignItems: "center", gap: 7, borderRadius: 10, border: "1px solid var(--border)", fontWeight: 800, fontSize: 13, color: "var(--deep)" }}
-                  >
-                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" />
-                    </svg>
-                    {t("download")}
-                  </a>
+                <span className="ed-body" style={{ gap: 9 }}>
+                  {/* A book title and an author's name keep their own script and
+                      direction whatever language the page is read in. */}
+                  <b dir="rtl" style={{ fontSize: 16, lineHeight: 1.5, unicodeBidi: "isolate" }}>{booklet.title}</b>
+                  {booklet.author ? <span dir="rtl" className="ed-eyebrow" style={{ fontSize: 13, unicodeBidi: "isolate" }}>{booklet.author}</span> : null}
+                  {booklet.description ? <span className="ed-text">{booklet.description}</span> : null}
+
+                  <span className="ed-book-foot">
+                    <span>{t("bookletFormatPdf")}</span>
+                    <span style={{ marginInlineStart: "auto" }}>{t("bookletLanguageArabic")}</span>
+                  </span>
+
+                  <span className="ed-book-actions">
+                    <a href={booklet.fileUrl} target="_blank" rel="noopener noreferrer" className="ed-pill ed-pill--plain bk-read">
+                      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M4 19.5V6a2 2 0 0 1 2-2h13a1 1 0 0 1 1 1v14" />
+                        <path d="M6.5 19.5H19a1 1 0 0 0 1-1V17H8a1.5 1.5 0 0 0 0 3H6.5a1.5 1.5 0 0 1 0-3" />
+                      </svg>
+                      {t("readBooklet")}
+                    </a>
+                    <a href={booklet.fileUrl} download className="ed-outline ed-outline--light">
+                      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M12 4v11m0 0 4-4m-4 4-4-4M5 20h14" />
+                      </svg>
+                      {t("download")}
+                    </a>
+                  </span>
                 </span>
-              </span>
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
     </div>

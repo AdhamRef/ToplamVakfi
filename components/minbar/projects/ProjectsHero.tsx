@@ -5,7 +5,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { localeDirection } from "@/lib/locales";
 
 /**
- * Projects hero carousel  ported from `Minbar/المشاريع.dc.html`.
+ * Projects hero carousel  ported from `Minbar/المشاريع.dc.html`, laid out as
+ * `ToplamVakfi-design/Toplum Vakfı Projects.dc.html`.
  *
  * Slides cross-fade rather than slide, so there is nothing to mirror in RTL; the
  * arrows do mirror, because "next" has to point forward in the reading
@@ -25,6 +26,8 @@ export default function ProjectsHero({ slides }: { slides: ProjectSlide[] }) {
   const locale = useLocale();
   const rtl = localeDirection(locale) === "rtl";
   const t = useTranslations("common");
+  // "View project"  the shell bundle's Concierge namespace carries the label.
+  const tConcierge = useTranslations("Concierge");
 
   const [index, setIndex] = useState(0);
   const startX = useRef<number | null>(null);
@@ -84,63 +87,76 @@ export default function ProjectsHero({ slides }: { slides: ProjectSlide[] }) {
   );
 
   return (
-    <section className="mia-projects-hero" style={{ position: "relative", background: "var(--deep)", borderBottom: "1px solid rgba(0,162,224,.5)", overflow: "hidden" }}>
-      <div
-        className="proj-hero-stage"
-        role="group"
-        aria-roledescription="carousel"
-        tabIndex={0}
-        onKeyDown={onKeyDown}
-        onTouchStart={(e) => {
-          startX.current = e.touches[0].clientX;
-        }}
-        onTouchEnd={(e) => endSwipe(e.changedTouches[0].clientX)}
-        onPointerDown={(e) => {
-          if (e.pointerType !== "touch") startX.current = e.clientX;
-        }}
-        onPointerUp={(e) => {
-          if (e.pointerType !== "touch") endSwipe(e.clientX);
-        }}
-        style={{ position: "relative", height: 420, touchAction: "pan-y", userSelect: "none", WebkitUserSelect: "none", cursor: "grab" }}
-      >
-        {slides.map((slide, i) => (
-          <div
-            key={slide.title}
-            aria-hidden={i !== index}
-            style={{
-              position: "absolute",
-              inset: 0,
-              opacity: i === index ? 1 : 0,
-              pointerEvents: i === index ? "auto" : "none",
-              transition: "opacity .5s ease",
-            }}
-          >
-            {slide.image ? (
-              <span
-                role="img"
-                aria-label={slide.title}
-                style={{ position: "absolute", inset: 0, display: "block", backgroundImage: `url('${slide.image}')`, backgroundSize: "cover", backgroundPosition: "center", }}
-              />
-            ) : null}
-            <span style={{ position: "absolute", inset: 0, background: "linear-gradient(-90deg, rgba(6,36,66,.94) 8%, rgba(6,36,66,.6) 56%, rgba(6,36,66,.25))", pointerEvents: "none" }} />
-            <div style={{ position: "absolute", inset: 0, display: "grid", alignContent: "center" }}>
-              <div style={{ maxWidth: 1240, width: "100%", margin: "0 auto", padding: "0 84px" }}>
-                <div className="proj-hero-copy" style={{ display: "grid", gap: 14, justifyItems: "start", maxWidth: "60%" }}>
-                  <h2 style={{ margin: 0, fontSize: "clamp(26px,3.2vw,44px)", lineHeight: 1.32, fontWeight: 900, color: "#fff" }}>{slide.title}</h2>
-                </div>
+    /* Toplum Vakfı Projects.dc.html: the carousel is a rounded card inside the
+       page container, the arrows sit on its edges and the dots below it. The
+       `tvp-*` classes (styles/minbar/pages/projects.css) replace the old
+       full-bleed `proj-hero-*` ones, whose phone rules in minbar.css assume
+       the edge-to-edge band. */
+    <section className="mia-projects-hero">
+      <div className="tvp-hero-in">
+        <div
+          className="tvp-stage"
+          role="group"
+          aria-roledescription="carousel"
+          tabIndex={0}
+          onKeyDown={onKeyDown}
+          onTouchStart={(e) => {
+            startX.current = e.touches[0].clientX;
+          }}
+          onTouchEnd={(e) => endSwipe(e.changedTouches[0].clientX)}
+          onPointerDown={(e) => {
+            if (e.pointerType !== "touch") startX.current = e.clientX;
+          }}
+          onPointerUp={(e) => {
+            if (e.pointerType !== "touch") endSwipe(e.clientX);
+          }}
+        >
+          {slides.map((slide, i) => (
+            <div
+              key={slide.title}
+              aria-hidden={i !== index}
+              className="tvp-slide"
+              style={{
+                opacity: i === index ? 1 : 0,
+                pointerEvents: i === index ? "auto" : "none",
+              }}
+            >
+              {slide.image ? (
+                <span
+                  role="img"
+                  aria-label={slide.title}
+                  className="tvp-slide-img"
+                  style={{ backgroundImage: `url('${slide.image}')` }}
+                />
+              ) : null}
+              <span className="tvp-slide-shade" aria-hidden="true" />
+              <div className="tvp-slide-info">
+                <h2>{slide.title}</h2>
+                {slide.href ? (
+                  <a href={slide.href} tabIndex={i === index ? undefined : -1} className="tvp-slide-cta">
+                    {tConcierge("a_view")}
+                    <span aria-hidden="true">{rtl ? "←" : "→"}</span>
+                  </a>
+                ) : null}
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
 
-        <button type="button" onClick={() => go(1)} aria-label={t("next")} className="proj-arrow" style={{ ...arrowStyle, insetInlineEnd: 22 }}>
-          {arrow("next")}
-        </button>
-        <button type="button" onClick={() => go(-1)} aria-label={t("prev")} className="proj-arrow" style={{ ...arrowStyle, insetInlineStart: 22 }}>
-          {arrow("prev")}
-        </button>
+        {count > 1 ? (
+          <>
+            <button type="button" onClick={() => go(-1)} aria-label={t("prev")} className="tvp-arrow tvp-arrow--prev">
+              {arrow("prev")}
+            </button>
+            <button type="button" onClick={() => go(1)} aria-label={t("next")} className="tvp-arrow tvp-arrow--next">
+              {arrow("next")}
+            </button>
+          </>
+        ) : null}
+      </div>
 
-        <div style={{ position: "absolute", insetInline: 0, bottom: 18, zIndex: 5, display: "flex", justifyContent: "center", gap: 8 }}>
+      {count > 1 ? (
+        <div className="tvp-dots">
           {slides.map((slide, i) => (
             <button
               key={slide.title}
@@ -149,28 +165,10 @@ export default function ProjectsHero({ slides }: { slides: ProjectSlide[] }) {
               data-dot={i === index ? "1" : ""}
               aria-label={t("goToSlide", { n: i + 1 })}
               aria-current={i === index}
-              style={{ width: 10, height: 10, border: 0, cursor: "pointer", padding: 0, borderRadius: 999, background: "rgba(255,255,255,.45)", transition: "all .25s ease" }}
             />
           ))}
         </div>
-      </div>
+      ) : null}
     </section>
   );
 }
-
-const arrowStyle: React.CSSProperties = {
-  position: "absolute",
-  top: "50%",
-  transform: "translateY(-50%)",
-  zIndex: 5,
-  width: 46,
-  height: 46,
-  display: "grid",
-  placeItems: "center",
-  borderRadius: "50%",
-  border: "1px solid rgba(255,255,255,.28)",
-  background: "rgba(255,255,255,.12)",
-  backdropFilter: "blur(6px)",
-  color: "#fff",
-  cursor: "pointer",
-};

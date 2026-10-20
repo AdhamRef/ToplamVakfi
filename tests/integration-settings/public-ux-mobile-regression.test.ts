@@ -230,7 +230,8 @@ test("responsive public catalogue and donor account preserve readable narrow gri
 test("mobile project hero keeps photography visible under a light overlay", () => {
   const css = read("styles/minbar/minbar.css");
   assert.match(css, /proj-hero-stage > div\[aria-hidden\] > span\[role="img"\] \+ span/);
-  assert.match(css, /rgba\(16,33,43,\.11\)/);
+  // The overlay moved from the Minbar navy (16,33,43) to the Toplum ink (6,36,66).
+  assert.match(css, /rgba\(6,36,66,\.11\)/);
 });
 
 test("Jerusalem impact cards keep long totals in a full-width featured panel", () => {

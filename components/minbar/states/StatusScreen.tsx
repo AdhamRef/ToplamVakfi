@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactElement, ReactNode } from "react";
 import { Button } from "@/components/minbar/ds";
+import { NotFoundIcon } from "@/components/minbar/states/StatusIcons";
 
 /**
  * The shared shape of every status screen  payment failed, cancelled,
@@ -13,15 +14,22 @@ import { Button } from "@/components/minbar/ds";
  *
  * Two ways out is the ceiling on purpose  the handoff's note on the 404 page
  * is that more exits scatter the decision rather than help it.
+ *
+ * Toplum Vakfı layout: two variants of the same content.
+ *  - `panel` (`Payment Error.dc.html`)  one white card centred on the page
+ *    background, the glyph in a tinted disc, the two exits side by side.
+ *  - `dark` (`404.dc.html`)  the navy gradient band with the status code in
+ *    large brand-blue figures in place of the glyph.
+ * The 404 screen is recognised by its glyph, so the callers need no change.
  */
 
 export type StatusTone = "error" | "neutral" | "pending" | "success";
 
 const TONES: Record<StatusTone, { color: string; background: string }> = {
-  error: { color: "var(--red)", background: "rgba(27,111,224,.1)" },
-  neutral: { color: "var(--muted)", background: "var(--sand)" },
-  pending: { color: "var(--gold)", background: "rgba(0,162,224,.14)" },
-  success: { color: "var(--green)", background: "rgba(31,122,77,.1)" },
+  error: { color: "#d64545", background: "#fdeaea" },
+  neutral: { color: "var(--muted)", background: "#eef4f8" },
+  pending: { color: "var(--brand-ink)", background: "#eaf6fd" },
+  success: { color: "#1a9d5c", background: "#e6f9ee" },
 };
 
 export interface StatusScreenProps {
@@ -37,6 +45,10 @@ export interface StatusScreenProps {
   children?: ReactNode;
   /** Adds a gentle attention animation. Off for calm states. */
   animate?: boolean;
+  /** `dark` is the 404 band; defaults to it for the not-found glyph, else `panel`. */
+  variant?: "panel" | "dark";
+  /** Large figures shown in the dark variant (e.g. "404"). */
+  code?: string;
 }
 
 export default function StatusScreen({
@@ -49,53 +61,99 @@ export default function StatusScreen({
   secondary,
   children,
   animate = false,
+  variant,
+  code,
 }: StatusScreenProps) {
   const palette = TONES[tone];
+  const isNotFound = icon === NotFoundIcon;
+  const look = variant ?? (isNotFound ? "dark" : "panel");
+  const figures = code ?? (isNotFound ? "404" : undefined);
+
+  const actions =
+    primary || secondary ? (
+      <div className="gf-status-actions" style={{ width: "100%", display: "flex", gap: 10, flexWrap: "wrap", justifyContent: "center", marginTop: 6 }}>
+        {primary ? (
+          <Button variant="primary" href={primary.href} style={{ ...actionStyle, boxShadow: "0 8px 20px rgba(0,162,224,.3)" }}>
+            {primary.label}
+          </Button>
+        ) : null}
+        {secondary ? (
+          <Button
+            variant={look === "dark" ? "outline" : "light"}
+            href={secondary.href}
+            style={look === "dark" ? actionStyle : { ...actionStyle, background: "transparent", color: "var(--muted)", border: "1.5px solid #e2eaf0" }}
+          >
+            {secondary.label}
+          </Button>
+        ) : null}
+      </div>
+    ) : null;
+
+  const detailRows = details?.length ? (
+    <div style={{ width: "100%", display: "grid", padding: "6px 18px", background: look === "dark" ? "rgba(255,255,255,.06)" : "var(--page-bg)", border: look === "dark" ? "1px solid rgba(255,255,255,.14)" : 0, borderRadius: 12, textAlign: "start", boxSizing: "border-box" }}>
+      {details.map((row, i) => (
+        <span key={row.label} style={{ display: "flex", justifyContent: "space-between", gap: 12, padding: "12px 0", borderTop: i ? `1px solid ${look === "dark" ? "rgba(255,255,255,.12)" : "#eef3f7"}` : 0, fontSize: 13.5 }}>
+          <span style={{ color: look === "dark" ? "#b9d3e6" : "var(--muted)" }}>{row.label}</span>
+          {/* Reference numbers and amounts are Latin-script data. */}
+          <b dir={row.latin ? "ltr" : undefined} style={{ ...(row.latin ? latinValue : {}), color: look === "dark" ? "#fff" : "var(--ink)" }}>
+            {row.value}
+          </b>
+        </span>
+      ))}
+    </div>
+  ) : null;
+
+  if (look === "dark") {
+    return (
+      <section className="gf-status gf-status--dark" style={{ position: "relative", overflow: "hidden", minHeight: "72vh", display: "grid", alignItems: "center", padding: "70px 16px 80px", background: "var(--dark-gradient)", color: "#fff", textAlign: "center" }}>
+        <span aria-hidden="true" className="gf-status-glow" />
+        <div style={{ position: "relative", width: "min(560px, 100%)", margin: "0 auto", display: "grid", justifyItems: "center", gap: 14 }}>
+          {figures ? (
+            <span className={animate ? "mia-status-glyph mia-status-glyph--animate gf-status-code" : "mia-status-glyph gf-status-code"} aria-hidden="true" dir="ltr" style={{ fontSize: "clamp(72px, 12vw, 96px)", lineHeight: 1.1, fontWeight: 900, color: "var(--brand)", letterSpacing: "-1px" }}>
+              {figures}
+            </span>
+          ) : (
+            <span className={animate ? "mia-status-glyph mia-status-glyph--animate" : "mia-status-glyph"} style={{ display: "grid", placeItems: "center", width: 74, height: 74, borderRadius: "50%", background: "rgba(255,255,255,.08)", color: "#7fd6f5" }}>
+              {icon}
+            </span>
+          )}
+          <h1 style={{ margin: "6px 0 0", fontSize: "clamp(20px, 2.4vw, 24px)", fontWeight: 800, color: "#fff", lineHeight: 1.5 }}>{title}</h1>
+          <p style={{ margin: "0 0 10px", maxWidth: "48ch", color: "#b9d3e6", fontSize: 14.5, lineHeight: 1.9 }}>{lead}</p>
+          {detailRows}
+          {children}
+          {actions}
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section style={{ padding: "64px 24px 60px", display: "grid", justifyItems: "center", gap: 18, textAlign: "center" }}>
-      <span
-        className={animate ? "mia-status-glyph mia-status-glyph--animate" : "mia-status-glyph"}
-        style={{ display: "grid", placeItems: "center", width: 74, height: 74, borderRadius: "50%", background: palette.background, color: palette.color }}
+    <section className="gf-status" style={{ padding: "40px 16px 64px" }}>
+      <div
+        className="gf-status-panel"
+        style={{ width: "min(720px, 100%)", margin: "0 auto", display: "grid", justifyItems: "center", gap: 12, padding: 34, background: "#fff", border: "1px solid #e6eef3", borderRadius: 18, boxShadow: "0 16px 34px rgba(2,52,88,.08)", textAlign: "center", boxSizing: "border-box" }}
       >
-        {icon}
-      </span>
+        <span
+          className={animate ? "mia-status-glyph mia-status-glyph--animate" : "mia-status-glyph"}
+          style={{ display: "grid", placeItems: "center", width: 68, height: 68, marginBottom: 6, borderRadius: "50%", background: palette.background, color: palette.color }}
+        >
+          {icon}
+        </span>
 
-      <h1 style={{ margin: 0, fontSize: "clamp(24px,2.8vw,32px)", fontWeight: 900 }}>{title}</h1>
-      <p style={{ margin: 0, maxWidth: "48ch", color: "var(--muted)", fontSize: 16, lineHeight: 1.9 }}>{lead}</p>
+        <h1 style={{ margin: 0, fontSize: "clamp(19px, 2.2vw, 23px)", fontWeight: 800, color: "var(--ink)", lineHeight: 1.5 }}>{title}</h1>
+        <p style={{ margin: "0 0 12px", maxWidth: "56ch", color: "var(--muted)", fontSize: 14, lineHeight: 1.85 }}>{lead}</p>
 
-      {details?.length ? (
-        <div style={{ width: "100%", maxWidth: 520, display: "grid", gap: 8, padding: 20, background: "#fff", border: "1px solid var(--border)", borderRadius: 12, textAlign: "start", marginTop: 8 }}>
-          {details.map((row) => (
-            <span key={row.label} style={{ display: "flex", justifyContent: "space-between", gap: 12, fontSize: 14 }}>
-              <span style={{ color: "var(--muted)" }}>{row.label}</span>
-              {/* Reference numbers and amounts are Latin-script data. */}
-              <b dir={row.latin ? "ltr" : undefined} style={row.latin ? latinValue : undefined}>
-                {row.value}
-              </b>
-            </span>
-          ))}
-        </div>
-      ) : null}
+        {detailRows}
 
-      {children}
+        {children}
 
-      {primary || secondary ? (
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: 8 }}>
-          {primary ? (
-            <Button variant="primary" href={primary.href} style={{ whiteSpace: "nowrap" }}>
-              {primary.label}
-            </Button>
-          ) : null}
-          {secondary ? (
-            <Button variant="light" href={secondary.href} style={{ whiteSpace: "nowrap" }}>
-              {secondary.label}
-            </Button>
-          ) : null}
-        </div>
-      ) : null}
+        {actions}
+      </div>
     </section>
   );
 }
 
 const latinValue: CSSProperties = { unicodeBidi: "isolate" };
+
+/* The design's `.btn-row a`: equal halves, never narrower than 130px. */
+const actionStyle: CSSProperties = { flex: "1 1 auto", minWidth: 130, maxWidth: "100%", minHeight: 50, whiteSpace: "nowrap" };

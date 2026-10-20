@@ -1,7 +1,9 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
+import { miaPath } from "@/lib/minbar/routes";
 
 /**
  * The shared layout of the five legal pages  terms, privacy, donation policy,
@@ -109,34 +111,46 @@ export interface LegalSection {
 
 export default function LegalPage({ titleKey, sections }: { titleKey: string; sections: readonly LegalSection[] }) {
   const t = useTranslations("legal");
+  const tNav = useTranslations("navigation");
+  const locale = useLocale();
 
+  /* Laid out as `ToplamVakfi-design/Toplum Vakfı Terms.dc.html` and its
+     siblings: one reading column on the page background, a plain title, small
+     section headings, and a way back to the reports page. The table of
+     contents stays beside it as the design's white side menu (styles in
+     `styles/minbar/pages/reports.css`). */
   return (
-    <section id="legal-grid" style={{ maxWidth: 1080, margin: "0 auto", padding: "56px 24px 80px", display: "grid", gridTemplateColumns: "minmax(0,220px) minmax(0,1fr)", gap: 48, alignItems: "start" }}>
-      <nav aria-label={t("tocLabel")} className="legal-toc" style={{ position: "sticky", top: 122, flexDirection: "column", gap: 2 }}>
+    <section id="legal-grid" className="lgx-page">
+      <nav aria-label={t("tocLabel")} className="legal-toc lgx-toc">
+        <b className="lgx-toc-label">{t("tocLabel")}</b>
         {sections.map((section) => (
-          <a key={section.id} href={`#${section.id}`} className="legal-toc-link" style={{ display: "block", padding: "8px 0", fontSize: 13.5, fontWeight: 800, color: "var(--muted)", borderInlineStart: "2px solid transparent", paddingInlineStart: 10 }}>
+          <a key={section.id} href={`#${section.id}`} className="legal-toc-link lgx-toc-link">
             {t(section.headingKey)}
           </a>
         ))}
       </nav>
 
-      <div style={{ minWidth: 0 }}>
-        <h1 style={{ margin: "0 0 30px", fontSize: "clamp(26px,3vw,36px)", fontWeight: 900 }}>{t(titleKey)}</h1>
-        <div style={{ display: "grid", gap: 22, fontSize: 16, lineHeight: 1.95, color: "var(--deep)" }}>
+      <div className="lgx-body">
+        <h1 className="lgx-h1">{t(titleKey)}</h1>
+        <div className="lgx-sections">
           {sections.map((section) => (
-            <div key={section.id} id={section.id} className="legal-sec" style={{ display: "flex", gap: 16, alignItems: "flex-start", scrollMarginTop: 130 }}>
-              <span aria-hidden="true" style={{ flex: "0 0 auto", display: "grid", placeItems: "center", width: 40, height: 40, borderRadius: 10, background: "var(--ivory)", color: "var(--gold)" }}>
-                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  {LEGAL_ICONS[section.icon]}
-                </svg>
-              </span>
-              <div style={{ minWidth: 0 }}>
-                <h2 style={{ fontSize: 19, fontWeight: 900, margin: "0 0 8px" }}>{t(section.headingKey)}</h2>
-                <p style={{ margin: 0, color: "var(--muted)" }}>{t(section.bodyKey)}</p>
-              </div>
+            <div key={section.id} id={section.id} className="legal-sec lgx-sec">
+              <h2 className="lgx-h2">
+                <span aria-hidden="true" className="lgx-ico">
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    {LEGAL_ICONS[section.icon]}
+                  </svg>
+                </span>
+                {t(section.headingKey)}
+              </h2>
+              <p className="lgx-p">{t(section.bodyKey)}</p>
             </div>
           ))}
         </div>
+        <Link href={miaPath("reports", locale)} className="lgx-back">
+          <span aria-hidden="true" className="lgx-back-arrow">←</span>
+          {tNav("reports")}
+        </Link>
       </div>
     </section>
   );

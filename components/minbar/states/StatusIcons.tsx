@@ -6,7 +6,7 @@ import type { ReactElement } from "react";
  * generic placeholder standing in for a specific state.
  */
 const icon = (children: ReactElement, strokeWidth = 2) => (
-  <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     {children}
   </svg>
 );

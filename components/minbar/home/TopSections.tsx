@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useQuietFloatingButtonsWhileVisible } from "@/hooks/useQuietFloatingButtons";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { LOCALES } from "@/lib/locales";
 import StoryViewer, { type PublicStory } from "./StoryViewer";
 import { useLocale, useMessages, useTranslations } from "next-intl";
@@ -251,7 +251,7 @@ export function heroPoster(locale: string): string {
   return "/minbar/assets/hero/intro-intl-3VVMdV5c_RU.webp";
 }
 
-export function Hero({ onPlayIntro }: { onPlayIntro: (embed: string) => void }) {
+export function Hero({ onPlayIntro, donate }: { onPlayIntro: (embed: string) => void; donate?: ReactNode }) {
   useQuietFloatingButtonsWhileVisible(".mia-hero-actions--mobile");
   const locale = useLocale();
   const t = useTranslations("homepage");
@@ -260,19 +260,46 @@ export function Hero({ onPlayIntro }: { onPlayIntro: (embed: string) => void }) 
   // Each still has a 768px copy beside it for phones, where the card is ~380px
   // wide and the poster is the Largest Contentful Paint.
   const posterSmall = poster.replace(/\.webp$/, "-768.webp");
+  const playIntro = () => onPlayIntro(youtubeEmbed(introVideoId(locale), { autoplay: true }));
+  /* With the quick-donation disc in the hero (the Toplum design's «دائرة
+     الخير») the disc takes the film's column and the film becomes a play link
+     beside the two actions  the same film, one click away. With the disc
+     switched off in the dashboard the poster card stays where it was. */
+  const ring = Boolean(donate);
+  const actions = (
+    <>
+      <Button variant="primary" size="lg" href={miaPath("projects", locale)} className="mia-hero-btn">
+        {t("heroCtaPrimary")}
+        <ArrowGlyph size={14} />
+      </Button>
+      <Button variant="gold" size="lg" href={miaPath("zakatCalculator", locale)} className="mia-hero-btn">
+        {tCommon("zakatCalculator")}
+      </Button>
+      {ring ? (
+        <button type="button" className="mia-hero-watch" onClick={playIntro}>
+          <span aria-hidden="true" className="mia-hero-watch-ico">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M8 5.5v13l11-6.5-11-6.5Z" /></svg>
+          </span>
+          {t("videoTitle")}
+        </button>
+      ) : null}
+    </>
+  );
 
   return (
     <section id="hero" className="mia-hero">
       {/* Background layers  all non-interactive, all beneath the content. */}
       <div aria-hidden="true" className="mia-hero-glow" />
       <div aria-hidden="true" data-aqsa-pattern="" className="mia-hero-pattern" />
+      {/* The design's glowing orb at the page edge behind the donation disc. */}
+      <div aria-hidden="true" className="mia-hero-orb" />
       {/* eslint-disable-next-line @next/next/no-img-element -- decorative asset in /public */}
       <img aria-hidden="true" src={imageUrl("/minbar/assets/aqsa-dome-line.png", 300)} alt="" className="mia-hero-dome" width={940} height={376} decoding="async" fetchPriority="low" />
 
       <div className="mia-hero-wrap">
         <StoriesRail />
 
-        <div id="hero-main" className="mia-hero-main">
+        <div id="hero-main" className="mia-hero-main" data-ring={ring ? "true" : "false"}>
           {/* ── Copy ───────────────────────────────────────────────────── */}
           <div className="mia-hero-copy">
 
@@ -293,25 +320,20 @@ export function Hero({ onPlayIntro }: { onPlayIntro: (embed: string) => void }) 
 
             <p className="mia-hero-lead">{t("heroLead")}</p>
 
-            <div className="mia-hero-actions mia-hero-actions--desktop">
-              <Button variant="primary" size="lg" href={miaPath("projects", locale)} className="mia-hero-btn">
-                {t("heroCtaPrimary")}
-                <ArrowGlyph size={14} />
-              </Button>
-              <Button variant="gold" size="lg" href={miaPath("zakatCalculator", locale)} className="mia-hero-btn">
-                {tCommon("zakatCalculator")}
-              </Button>
-            </div>
+            <div className="mia-hero-actions mia-hero-actions--desktop">{actions}</div>
           </div>
 
-          {/* ── Film ───────────────────────────────────────────────────── */}
+          {/* ── Quick-donation disc, or the film ────────────────────────── */}
+          {ring ? (
+            <div className="mia-hero-ring">{donate}</div>
+          ) : (
           <div className="mia-hero-media">
             <span aria-hidden="true" className="mia-hero-media-back" />
             <div className="mia-hero-frame">
               <button
                 type="button"
                 className="mia-hero-card"
-                onClick={() => onPlayIntro(youtubeEmbed(introVideoId(locale), { autoplay: true }))}
+                onClick={playIntro}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element -- the poster is a local, per-edition frame */}
                 <img src={poster} srcSet={`${posterSmall} 768w, ${poster} 1280w`} sizes="(max-width: 900px) calc(100vw - 32px), 600px" alt="" className="mia-hero-poster" width={1280} height={720} decoding="async" fetchPriority="high" />
@@ -337,16 +359,9 @@ export function Hero({ onPlayIntro }: { onPlayIntro: (embed: string) => void }) 
               </button>
             </div>
           </div>
+          )}
 
-          <div className="mia-hero-actions mia-hero-actions--mobile">
-            <Button variant="primary" size="lg" href={miaPath("projects", locale)} className="mia-hero-btn">
-              {t("heroCtaPrimary")}
-              <ArrowGlyph size={14} />
-            </Button>
-            <Button variant="gold" size="lg" href={miaPath("zakatCalculator", locale)} className="mia-hero-btn">
-              {tCommon("zakatCalculator")}
-            </Button>
-          </div>
+          <div className="mia-hero-actions mia-hero-actions--mobile">{actions}</div>
         </div>
 
       </div>

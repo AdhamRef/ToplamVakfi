@@ -21,8 +21,9 @@ import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 /**
  * The homepage, from `Minbar/الصفحة الرئيسية.dc.html`.
  *
- * The hero and the quick-donation bar always open the page  the bar is sticky
- * "right under the hero" by design. Every section after them renders in the
+ * The hero always opens the page, with the quick donation as its disc (the
+ * Toplum Vakfı design's «دائرة الخير», `ToplamVakfi-design/Toplum Vakfı
+ * Homepage.dc.html`). Every section after it renders in the
  * order the dashboard's homepage layout sets (`/dashboard/homepage-layout`),
  * hidden ones left out; that layout's defaults are the approved design's order.
  * The lists arrive already picked and ranked by the same layout.
@@ -92,9 +93,12 @@ export default function HomePage({
         }}
       />
 
-      <Hero onPlayIntro={video.open} />
-      {/* Sticky under the header from here on  the design places it right under the hero. */}
-      <QuickDonateBar config={quick.config} projects={quick.projects} />
+      {/* The quick donation is the hero's disc (the Toplum design's «دائرة
+          الخير»); switched off in the dashboard, the hero shows its film there. */}
+      <Hero
+        onPlayIntro={video.open}
+        donate={quick.config.enabled ? <QuickDonateBar config={quick.config} projects={quick.projects} /> : undefined}
+      />
       {sections.map((id) => (
         /* Each section is its own Suspense boundary, so React hydrates it in
            its own task and yields to the browser in between. One boundary made

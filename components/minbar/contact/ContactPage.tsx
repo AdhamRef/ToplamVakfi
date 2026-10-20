@@ -3,15 +3,19 @@
 import { type FormEvent, type ReactElement, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { track } from "@vercel/analytics";
-import { localeDirection } from "@/lib/locales";
-import { ORG, ORG_WHATSAPP } from "@/lib/minbar/org";
+import { miaPath } from "@/lib/minbar/routes";
+import { ORG, ORG_TEL, ORG_WHATSAPP } from "@/lib/minbar/org";
 import type { MessageSubject } from "@/lib/messages/subjects";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
 import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
+import InnerBanner from "@/components/minbar/about/InnerBanner";
 
 /**
- * Contact us  ported from `Minbar/تواصل معنا.dc.html`.
+ * Contact us  ported from `Minbar/تواصل معنا.dc.html`, laid out as
+ * `ToplamVakfi-design/Toplum Vakfı Contact.dc.html`: the photo banner, then the
+ * message form card beside a column of contact cards. Styles (`.fd-*`) live in
+ * `styles/minbar/pages/about.css`.
  *
  * The handoff's `submitTicket()` is a 900ms `setTimeout` placeholder. This
  * version posts to the site's real inbox, `POST /api/messages`, which is what
@@ -49,30 +53,34 @@ const ICONS: Record<string, ReactElement> = {
   phone: (
     <path d="M6.6 10.5a13.5 13.5 0 0 0 6.9 6.9l2.3-2.3a1.5 1.5 0 0 1 1.5-.37 11 11 0 0 0 3.4.55 1.5 1.5 0 0 1 1.5 1.5V20a1.5 1.5 0 0 1-1.5 1.5A17.5 17.5 0 0 1 3 4.5 1.5 1.5 0 0 1 4.5 3h2.4a1.5 1.5 0 0 1 1.5 1.5 11 11 0 0 0 .55 3.4 1.5 1.5 0 0 1-.37 1.5Z" />
   ),
+  whatsapp: <path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.5-4.3A8.5 8.5 0 1 1 20.5 11.6z" />,
 };
 
 /**
- * Address, email and phone, in that order. Each carries its own direction: an
- * email and a phone number stay LTR inside an Arabic page, and the isolation
- * keeps a leading `+` from being pushed to the wrong end of the number.
+ * Email, phone, WhatsApp and address, in the design's order. Each value
+ * carries its own direction: an email and a phone number stay LTR inside an
+ * Arabic page, and the isolation keeps a leading `+` from being pushed to the
+ * wrong end of the number. The first three are links; the address is not.
  */
-const CARDS: ReadonlyArray<{ icon: keyof typeof ICONS; labelKey: string; value: string; dir: "rtl" | "ltr" }> = [
-  { icon: "pin", labelKey: "addressLabel", value: ORG.address, dir: "ltr" },
-  { icon: "mail", labelKey: "emailLabel", value: ORG.email, dir: "ltr" },
-  { icon: "phone", labelKey: "phoneLabel", value: ORG.phone, dir: "ltr" },
+const CARDS: ReadonlyArray<{ icon: keyof typeof ICONS; labelKey: string; value: string; href?: string; external?: boolean }> = [
+  { icon: "mail", labelKey: "emailLabel", value: ORG.email, href: `mailto:${ORG.email}` },
+  { icon: "phone", labelKey: "phoneLabel", value: ORG.phone, href: ORG_TEL },
+  { icon: "whatsapp", labelKey: "whatsappLabel", value: ORG.phone, href: ORG_WHATSAPP, external: true },
+  { icon: "pin", labelKey: "addressLabel", value: ORG.address },
 ];
 
 const EMAIL_RE = /\S+@\S+\.\S+/;
 
-const SECTION = { maxWidth: 1240, margin: "0 auto", padding: "0 24px" } as const;
-
 function fieldStyle(invalid: boolean) {
   return {
-    height: 46,
-    border: `1px solid ${invalid ? "var(--red)" : "var(--border)"}`,
+    width: "100%",
+    minHeight: 46,
+    border: `1.5px solid ${invalid ? "#b3261e" : "#e3edf4"}`,
     borderRadius: 10,
     padding: "0 14px",
     fontSize: 14,
+    background: "#fbfdff",
+    color: "#062442",
     boxSizing: "border-box" as const,
     /* The field can hold Arabic or Latin text; `plaintext` lets each entry
        align by its own first strong character rather than by the page. */
@@ -80,10 +88,18 @@ function fieldStyle(invalid: boolean) {
   };
 }
 
+function Glyph({ name }: { name: keyof typeof ICONS }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      {ICONS[name]}
+    </svg>
+  );
+}
+
 export default function ContactPage() {
   const locale = useLocale();
-  const dir = localeDirection(locale);
   const t = useTranslations("contact");
+  const tNav = useTranslations("navigation");
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -99,8 +115,6 @@ export default function ContactPage() {
 
   const emailValid = EMAIL_RE.test(email);
   const chosen = SUBJECTS[subjectIndex] ?? SUBJECTS[0];
-  // The Toplum page banner: the dark navy gradient (ToplamVakfi-design/CLAUDE.md).
-  const heroGradient = `linear-gradient(${dir === "rtl" ? 240 : 120}deg, #021428 0%, #082b50 60%, #04172e 100%)`;
 
   const fail = (text: string) => {
     setError(text);
@@ -159,53 +173,36 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="cf-page">
-      <section id="hero" style={{ position: "relative", background: heroGradient, overflow: "hidden" }}>
-        <div aria-hidden="true" className="ab-hero-pattern" />
-        <div style={{ ...SECTION, position: "relative", padding: "56px 24px 52px", display: "grid", gap: 14, justifyItems: "start" }}>
-          <h1 className="cf-in" style={{ margin: 0, fontSize: "clamp(28px,3.4vw,46px)", lineHeight: 1.35, fontWeight: 900, color: "#fff" }}>
-            {t("heroTitle")}
-          </h1>
-          <p className="cf-in cf-in-1" style={{ margin: 0, maxWidth: "60ch", fontSize: 16, lineHeight: 1.9, color: "rgba(255,255,255,.92)" }}>
-            {t("heroSubtitle")}
-          </p>
-        </div>
-      </section>
+    <div className="cf-page fd-page">
+      <InnerBanner
+        id="hero"
+        crumbs={[{ label: tNav("home"), href: miaPath("home", locale) }, { label: t("heroTitle") }]}
+        title={t("heroTitle")}
+        lead={t("heroSubtitle")}
+      />
 
-      <section style={{ background: "#fff", padding: "60px 0" }}>
-        <div className="cf-two" style={{ ...SECTION, display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,.8fr)", gap: 46, alignItems: "start" }}>
+      <div className="fd-main">
+        <div className="fd-wrap fd-ct-grid">
           {submitted ? (
-            <div style={{ display: "grid", justifyItems: "center", gap: 14, padding: "44px 30px", textAlign: "center", background: "#fff", border: "1px solid var(--border)", borderRadius: 12, boxShadow: "0 12px 32px rgba(6,36,66,.08)" }}>
-              <span className="cf-pop" style={{ display: "grid", placeItems: "center", width: 56, height: 56, borderRadius: "50%", background: "rgba(31,122,77,.12)", color: "var(--green)" }}>
+            <div className="fd-card fd-done" role="status">
+              <span className="cf-pop fd-done-ico">
                 <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
               </span>
-              <h2 style={{ margin: 0, fontSize: 20, fontWeight: 900 }}>{t("received")}</h2>
-              <p style={{ margin: 0, maxWidth: "40ch", color: "var(--muted)", fontSize: 14.5, lineHeight: 1.9 }}>
-                {t("receivedNote", { subject: t(chosen.key) })}
-              </p>
-              <button
-                type="button"
-                onClick={reset}
-                className="cf-again"
-                style={{ height: 42, padding: "0 20px", border: "1px solid var(--border)", borderRadius: 10, background: "#fff", color: "var(--deep)", fontFamily: "inherit", fontWeight: 800, fontSize: 13.5, cursor: "pointer" }}
-              >
+              <h2>{t("received")}</h2>
+              <p>{t("receivedNote", { subject: t(chosen.key) })}</p>
+              <button type="button" onClick={reset} className="cf-again fd-ghost">
                 {t("sendAnother")}
               </button>
             </div>
           ) : (
-            <form
-              onSubmit={onSubmit}
-              noValidate
-              className={`cf-in cf-in-2${shake ? " cf-shake" : ""}`}
-              style={{ display: "grid", gap: 16, padding: 30, background: "#fff", border: "1px solid var(--border)", borderTop: "3px solid var(--gold)", borderRadius: 12, boxShadow: "0 12px 32px rgba(6,36,66,.08)" }}
-            >
-              <h2 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 900 }}>{t("formTitle")}</h2>
+            <form onSubmit={onSubmit} noValidate className={`fd-card fd-form cf-in cf-in-2${shake ? " cf-shake" : ""}`}>
+              <h2>{t("formTitle")}</h2>
 
-              <div className="cf-pair" style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 14 }}>
-                <label style={{ display: "grid", gap: 6 }}>
-                  <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{t("nameLabel")}</span>
+              <div className="fd-pair cf-pair">
+                <label>
+                  <span className="fd-label">{t("nameLabel")}</span>
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -215,8 +212,8 @@ export default function ContactPage() {
                     style={fieldStyle(Boolean(error) && !name.trim())}
                   />
                 </label>
-                <label style={{ display: "grid", gap: 6 }}>
-                  <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{t("emailLabel")}</span>
+                <label>
+                  <span className="fd-label">{t("emailLabel")}</span>
                   <input
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -230,15 +227,11 @@ export default function ContactPage() {
                 </label>
               </div>
 
-              <label style={{ display: "grid", gap: 6 }}>
-                <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{t("subjectLabel")}</span>
+              <label>
+                <span className="fd-label">{t("subjectLabel")}</span>
                 {/* The selected value is the option's index, not its label: a
                     label is translated and would stop matching once it changes. */}
-                <select
-                  value={subjectIndex}
-                  onChange={(e) => setSubjectIndex(Number(e.target.value))}
-                  style={{ height: 46, border: "1px solid var(--border)", borderRadius: 10, padding: "0 14px", fontSize: 14, background: "#fff", cursor: "pointer" }}
-                >
+                <select value={subjectIndex} onChange={(e) => setSubjectIndex(Number(e.target.value))} style={{ ...fieldStyle(false), cursor: "pointer" }}>
                   {SUBJECTS.map((option, index) => (
                     <option key={option.key} value={index}>
                       {t(option.key)}
@@ -247,71 +240,66 @@ export default function ContactPage() {
                 </select>
               </label>
 
-              <label style={{ display: "grid", gap: 6 }}>
-                <span style={{ fontSize: 12, fontWeight: 800, color: "var(--muted)" }}>{t("messageLabel")}</span>
+              <label>
+                <span className="fd-label">{t("messageLabel")}</span>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={5}
                   placeholder={t("messagePlaceholder")}
                   aria-invalid={Boolean(error) && !message.trim()}
-                  style={{ ...fieldStyle(Boolean(error) && !message.trim()), height: "auto", padding: "12px 14px", resize: "vertical" }}
+                  style={{ ...fieldStyle(Boolean(error) && !message.trim()), minHeight: 130, padding: "12px 14px", resize: "vertical" }}
                 />
               </label>
 
               {error ? (
-                <span role="alert" style={{ fontSize: 13, fontWeight: 700, color: "var(--red)" }}>
+                <span role="alert" className="fd-error">
                   {error}
                 </span>
               ) : null}
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="cf-submit"
-                style={{ height: 48, border: 0, borderRadius: 999, cursor: submitting ? "not-allowed" : "pointer", background: "var(--red)", color: "#fff", fontFamily: "inherit", fontSize: 15, fontWeight: 900, transition: "filter .18s ease" }}
-              >
+              <button type="submit" disabled={submitting} className="cf-submit fd-pill">
+                <span aria-hidden="true" className="fd-pill-ico">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" />
+                  </svg>
+                </span>
                 {submitting ? t("sending") : t("sendMessage")}
               </button>
             </form>
           )}
 
-          <div style={{ display: "grid", gap: 14 }}>
-            {CARDS.map((card) => (
-              <div
-                key={card.labelKey}
-                className="cf-card cf-in"
-                style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "20px 22px", background: "var(--sand)", borderInlineStart: "3px solid var(--gold)" }}
-              >
-                <span aria-hidden="true" style={{ flex: "0 0 auto", display: "grid", placeItems: "center", width: 34, height: 34, borderRadius: 9, background: "rgba(0,162,224,.14)", color: "var(--gold)" }}>
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-                    {ICONS[card.icon]}
-                  </svg>
-                </span>
-                <span style={{ display: "grid", gap: 4, minWidth: 0 }}>
-                  <b style={{ fontSize: 12.5, fontWeight: 900, color: "var(--gold)", letterSpacing: ".04em" }}>{t(card.labelKey)}</b>
-                  <span dir={card.dir} style={{ fontSize: 15, lineHeight: 1.8, color: "var(--deep)", unicodeBidi: "isolate" }}>
-                    {card.value}
+          <aside className="fd-aside">
+            {CARDS.map((card) => {
+              const body = (
+                <>
+                  <span aria-hidden="true" className={`fd-ico${card.icon === "whatsapp" ? " fd-ico-green" : ""}`}>
+                    <Glyph name={card.icon} />
                   </span>
-                </span>
-              </div>
-            ))}
-
-            <a
-              href={ORG_WHATSAPP}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cf-in cf-in-2 cf-whatsapp"
-              style={{ display: "flex", alignItems: "center", gap: 10, padding: "16px 20px", background: "var(--green)", color: "#fff", borderRadius: 10, fontWeight: 800, fontSize: 15 }}
-            >
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
-                <path d="M12.04 2.5c-5.23 0-9.48 4.24-9.48 9.47 0 1.67.44 3.3 1.28 4.74L2.5 21.5l4.92-1.29a9.45 9.45 0 0 0 4.62 1.18h.01c5.22 0 9.47-4.24 9.47-9.47 0-2.53-.99-4.91-2.78-6.7a9.4 9.4 0 0 0-6.7-2.72Z" />
-              </svg>
-              {t("whatsappLabel")}
-            </a>
-          </div>
+                  <span className="fd-item-text">
+                    <small>{t(card.labelKey)}</small>
+                    <b dir="ltr">{card.value}</b>
+                  </span>
+                </>
+              );
+              return card.href ? (
+                <a
+                  key={card.labelKey}
+                  href={card.href}
+                  className="fd-card fd-item cf-in"
+                  {...(card.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                >
+                  {body}
+                </a>
+              ) : (
+                <div key={card.labelKey} className="fd-card fd-item cf-in">
+                  {body}
+                </div>
+              );
+            })}
+          </aside>
         </div>
-      </section>
+      </div>
 
       <ZakatBanner />
       <TravelBanner />

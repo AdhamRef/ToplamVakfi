@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties, type ReactElement } from "react";
+import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/minbar/ds";
@@ -71,6 +71,23 @@ const AID_ICONS: Record<string, ReactElement> = {
     </>
   ),
   heart: <path d="M20.8 8.6c0 4.3-8.8 10.4-8.8 10.4S3.2 12.9 3.2 8.6a4.6 4.6 0 0 1 8.8-1.8 4.6 4.6 0 0 1 8.8 1.8Z" />,
+};
+
+/** The option cards: a stack of coins for a share, a grid of squares for a metre. */
+const UNIT_ICONS: Record<"share" | "meter", ReactElement> = {
+  share: (
+    <>
+      <ellipse cx="12" cy="6" rx="7" ry="3" />
+      <path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6" />
+      <path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6" />
+    </>
+  ),
+  meter: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
+    </>
+  ),
 };
 
 const FACTS = ["ongoing", "irrevocable", "dedicated", "certificate"] as const;
@@ -155,90 +172,81 @@ export default function WaqfPage({ donorName }: WaqfPageProps) {
     else if (navigator.clipboard) await navigator.clipboard.writeText(url).catch(() => {});
   };
 
-  const inputStyle = (invalid: boolean): CSSProperties => ({
-    height: 44,
-    padding: "0 14px",
-    borderRadius: 8,
-    border: `1px solid ${invalid ? "var(--red)" : "var(--border)"}`,
-    background: "#fff",
-    fontFamily: "inherit",
-    fontSize: 14.5,
-    fontWeight: 800,
-    color: "var(--deep)",
-    boxSizing: "border-box",
-    width: "100%",
-  });
-
   return (
     <div className="mia-waqf-page" style={{ position: "relative" }}>
-      {/* ── Hero + unit picker ───────────────────────────────────────────── */}
-      <section id="about" style={{ position: "relative", background: "var(--ivory)", borderBottom: "1px solid var(--border)", overflow: "hidden" }}>
-        <div aria-hidden="true" data-aqsa-pattern="" style={pattern(520)} />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "54px 24px 0" }}>
-          <div id="wq-hero" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,.85fr)", gap: 46, alignItems: "center" }}>
-            <div style={{ display: "grid", gap: 18, justifyItems: "start" }}>
-              <h1 style={{ margin: 0, fontSize: "clamp(32px,3.8vw,50px)", lineHeight: 1.28, fontWeight: 900 }}>{t("qudsWaqfProjects")}</h1>
-              <p style={{ margin: 0, maxWidth: "62ch", fontSize: 16.5, lineHeight: 2.05, color: "var(--muted)" }}>{t("meterIntro")}</p>
-            </div>
-            <span style={{ display: "block", maxWidth: 380, justifySelf: "end" }}>
-              <img src="/minbar/assets/waqf-meter-intro.png" alt={t("qudsWaqfProjects")} style={{ display: "block", width: "100%", height: "auto" }} />
-            </span>
+      <div className="gv-page">
+        {/* ── Banner (in-banner) ───────────────────────────────────────────── */}
+        <section id="about" className="gv-banner">
+          <div className="gv-wrap">
+            <h1>{t("qudsWaqfProjects")}</h1>
+            <p>{t("meterIntro")}</p>
+          </div>
+        </section>
+
+        {/* ── Unit picker: two option cards, then the details card with the
+            live certificate beside it (Sadaqah Jariyah). ─────────────────── */}
+        <div id="meter-picker" className="gv-wrap">
+          <div className="wq2-intro">
+            <b>{t("legacyEyebrow")}</b>
+            <p>{t("chooseUnit")}</p>
           </div>
 
-          <div id="meter-picker" className="mia-waqf-picker" style={{ marginTop: 46, paddingBottom: 56, display: "grid", gridTemplateColumns: "minmax(0,1.15fr) minmax(0,.85fr)", gap: 40, alignItems: "start", paddingInline: 34, paddingTop: 34, background: "#fff", border: "1px solid var(--border)", borderInlineStart: "3px solid var(--gold)" }}>
-            <div style={{ display: "grid", gap: 16, paddingBottom: 34 }}>
-              <b style={{ fontSize: 18 }}>{t("chooseUnit")}</b>
+          <div className="wq2-options" role="group" aria-label={t("chooseUnit")}>
+            {(["share", "meter"] as WaqfUnit[]).map((u) => (
+              <button key={u} type="button" data-pick={unit === u ? "1" : ""} aria-pressed={unit === u} onClick={() => setUnit(u)} className="wq2-option">
+                <span className="wq2-media">
+                  <span>
+                    <small>{u === "meter" ? t("meterPrice") : t("sharePrice")}</small>
+                    <b dir="ltr">{format(u === "meter" ? METER_PRICE : SHARE_PRICE)}</b>
+                  </span>
+                  <span className="gv-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      {UNIT_ICONS[u]}
+                    </svg>
+                  </span>
+                </span>
+                <span className="wq2-body">
+                  <b>{u === "share" ? t("unitShare") : t("unitMeter")}</b>
+                  <span>{u === "meter" ? t("meterCount") : t("shareCount")}</span>
+                </span>
+              </button>
+            ))}
+          </div>
 
-              <div style={{ display: "flex", gap: 8 }}>
-                {(["share", "meter"] as WaqfUnit[]).map((u) => (
-                  <button
-                    key={u}
-                    type="button"
-                    data-pick={unit === u ? "1" : ""}
-                    onClick={() => setUnit(u)}
-                    style={{ flex: "1 1 0", height: 44, padding: "0 10px", borderRadius: 8, cursor: "pointer", fontFamily: "inherit", fontSize: 14, fontWeight: 800, border: "1px solid var(--border)", background: "#fff", color: "var(--muted)", transition: "all .18s ease" }}
-                  >
-                    {u === "share" ? t("unitShare") : t("unitMeter")}
-                  </button>
-                ))}
-              </div>
-
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "12px 14px", background: "var(--sand)", borderInlineStart: "3px solid var(--gold)" }}>
-                <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, fontWeight: 800, color: "var(--deep)" }}>
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <div className="gv-card wq2-form">
+            <div className="wq2-fields">
+              <div className="wq2-row wq2-price">
+                <span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#0077b3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="9" />
                     <path d="M12 7v10M9.5 9.5c0-1.2 1-2 2.5-2s2.5.9 2.5 2c0 2.5-5 1.8-5 4.2 0 1.1 1 2.1 2.5 2.1s2.5-.8 2.5-2" />
                   </svg>
                   {unit === "meter" ? t("meterPrice") : t("sharePrice")}
                 </span>
-                <b dir="ltr" style={{ fontSize: 19, fontWeight: 900, unicodeBidi: "isolate", color: "var(--deep)" }}>
-                  {format(unitPrice)}
-                </b>
+                <b dir="ltr">{format(unitPrice)}</b>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-                <span style={{ fontSize: 13.5, fontWeight: 800, color: "var(--muted)" }}>
+              <div className="wq2-row">
+                <span className="gv-label" style={{ margin: 0 }}>
                   {unit === "meter" ? t("meterCount") : t("shareCount")}
                 </span>
                 {/* A counter, not a free amount  the unit price is fixed. */}
-                <span dir="ltr" style={{ display: "inline-flex", alignItems: "stretch", border: "1px solid var(--border)", borderRadius: 10, background: "#fff", overflow: "hidden" }}>
-                  <button type="button" onClick={() => setCount((c) => Math.max(1, c - 1))} aria-label="−" className="wq-step" style={stepBtn}>
+                <span dir="ltr" className="wq2-stepper">
+                  <button type="button" onClick={() => setCount((c) => Math.max(1, c - 1))} aria-label="−" className="wq-step">
                     −
                   </button>
-                  <b style={{ minWidth: 34, display: "grid", placeItems: "center", textAlign: "center", fontSize: 15.5, fontWeight: 900, borderInline: "1px solid var(--border)", fontVariantNumeric: "tabular-nums", padding: "0 4px" }}>
-                    {formatNumber(count)}
-                  </b>
-                  <button type="button" onClick={() => setCount((c) => Math.min(WAQF_MAX_COUNT, c + 1))} aria-label="+" className="wq-step" style={stepBtn}>
+                  <b>{formatNumber(count)}</b>
+                  <button type="button" onClick={() => setCount((c) => Math.min(WAQF_MAX_COUNT, c + 1))} aria-label="+" className="wq-step">
                     +
                   </button>
                 </span>
               </div>
 
-              <label style={{ display: "grid", gap: 6 }}>
-                <span style={{ fontSize: 13.5, fontWeight: 800, color: "var(--muted)" }}>{t("certName")}</span>
-                <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("namePlaceholder")} className="wq-input" style={inputStyle(error && !name.trim())} />
+              <label style={{ display: "grid" }}>
+                <span className="gv-label">{t("certName")}</span>
+                <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t("namePlaceholder")} className="wq-input gv-input" aria-invalid={error && !name.trim() ? true : undefined} />
                 {donorName && !name ? (
-                  <button type="button" onClick={() => setName(donorName)} className="wq-link" style={linkBtn}>
+                  <button type="button" onClick={() => setName(donorName)} className="wq-link gv-link" style={{ justifySelf: "start" }}>
                     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
@@ -248,16 +256,16 @@ export default function WaqfPage({ donorName }: WaqfPageProps) {
                 ) : null}
               </label>
 
-              <label style={{ display: "grid", gap: 6 }}>
-                <span style={{ fontSize: 13.5, fontWeight: 800, color: "var(--muted)" }}>{t("endowedOnBehalfOf")}</span>
-                <input value={onBehalf} onChange={(e) => setOnBehalf(e.target.value)} placeholder={t("onBehalfPlaceholder")} className="wq-input" style={inputStyle(error && !onBehalf.trim())} />
-                <button type="button" onClick={() => setOnBehalf(name || donorName || "")} className="wq-link" style={linkBtn}>
+              <label style={{ display: "grid" }}>
+                <span className="gv-label">{t("endowedOnBehalfOf")}</span>
+                <input value={onBehalf} onChange={(e) => setOnBehalf(e.target.value)} placeholder={t("onBehalfPlaceholder")} className="wq-input gv-input" aria-invalid={error && !onBehalf.trim() ? true : undefined} />
+                <button type="button" onClick={() => setOnBehalf(name || donorName || "")} className="wq-link gv-link" style={{ justifySelf: "start" }}>
                   {t("suggestSelf")}
                 </button>
               </label>
 
               {error ? (
-                <div className="wq-error" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 8, background: "rgba(27,111,224,.08)", border: "1px solid rgba(27,111,224,.3)", color: "var(--red)", fontSize: 13, fontWeight: 800 }}>
+                <div className="wq-error wq2-error" role="alert">
                   <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="10" />
                     <path d="M12 8v5M12 16h.01" />
@@ -266,68 +274,25 @@ export default function WaqfPage({ donorName }: WaqfPageProps) {
                 </div>
               ) : null}
 
-              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10, paddingTop: 4, borderTop: "1px solid var(--border)" }}>
-                <span style={{ fontSize: 12.5, fontWeight: 900, color: "var(--muted)", letterSpacing: ".06em" }}>{tCommon("total")}</span>
-                <b dir="ltr" style={{ fontSize: 26, unicodeBidi: "isolate" }}>
-                  {format(total)}
-                </b>
+              <div className="wq2-row wq2-total">
+                <span>{tCommon("total")}</span>
+                <b dir="ltr">{format(total)}</b>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setMonthly((v) => !v)}
-                aria-pressed={monthly}
-                className="wq-monthly"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 12,
-                  padding: "12px 14px",
-                  borderRadius: 10,
-                  border: `1px solid ${monthly ? "var(--green)" : "var(--border)"}`,
-                  background: monthly ? "rgba(31,122,77,.06)" : "#fff",
-                  color: monthly ? "var(--green)" : "var(--muted)",
-                  fontFamily: "inherit",
-                  fontWeight: 800,
-                  fontSize: 13.5,
-                  cursor: "pointer",
-                  transition: "all .18s ease",
-                }}
-              >
+              <button type="button" onClick={() => setMonthly((v) => !v)} aria-pressed={monthly} className="wq-monthly wq2-toggle">
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 8, minWidth: 0 }}>
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="M17 2v4H7a4 4 0 0 0-4 4M7 22v-4h10a4 4 0 0 0 4-4" />
                   </svg>
                   {tCommon("monthly")}
                 </span>
-                <span aria-hidden="true" style={{ flex: "0 0 auto", display: "inline-flex", alignItems: "center", justifyContent: monthly ? "flex-end" : "flex-start", width: 40, height: 22, padding: 3, borderRadius: 999, background: monthly ? "var(--green)" : "rgba(6,36,66,.18)", transition: "background .2s ease" }}>
-                  <span style={{ width: 16, height: 16, borderRadius: "50%", background: "#fff", boxShadow: "0 1px 3px rgba(0,0,0,.25)" }} />
+                <span aria-hidden="true" className="wq2-switch">
+                  <span />
                 </span>
               </button>
 
-              <div style={{ display: "flex", gap: 8 }}>
-                <button
-                  type="button"
-                  onClick={onAdd}
-                  style={{
-                    flex: "1 1 0",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 8,
-                    height: 50,
-                    borderRadius: 8,
-                    border: `1px solid ${added ? "var(--green)" : "var(--border)"}`,
-                    background: added ? "rgba(31,122,77,.08)" : "#fff",
-                    color: added ? "var(--green)" : "var(--deep)",
-                    fontFamily: "inherit",
-                    fontWeight: 900,
-                    fontSize: 14.5,
-                    cursor: "pointer",
-                    transition: "all .18s ease",
-                  }}
-                >
+              <div className="wq2-actions">
+                <button type="button" onClick={onAdd} className="gv-ghost" data-done={added ? "1" : undefined}>
                   {added ? (
                     <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <path d="M20 6 9 17l-5-5" />
@@ -342,204 +307,228 @@ export default function WaqfPage({ donorName }: WaqfPageProps) {
                   )}
                   {added ? tCommon("addedToCart") : tCommon("addToCart")}
                 </button>
-                <button type="button" onClick={onDonate} className="mia-card-cta" style={{ flex: "1 1 0", height: 50, border: 0, borderRadius: 8, background: "var(--red)", color: "#fff", fontFamily: "inherit", fontWeight: 900, fontSize: 15, cursor: "pointer", boxShadow: "var(--shadow-cta)", transition: "filter .18s ease" }}>
+                <button type="button" onClick={onDonate} className="gv-cta mia-card-cta">
                   {tCommon("donateNow")}
                 </button>
               </div>
 
-              <button type="button" onClick={onShare} className="wq-link" style={{ ...linkBtn, justifySelf: "start" }}>
+              <button type="button" onClick={onShare} className="wq-link gv-link" style={{ justifySelf: "center" }}>
                 {tCommon("sharePage")}
               </button>
             </div>
 
-            <button
-              id="waqf-cert-toggle"
-              type="button"
-              onClick={() => setCertPreviewOpen((open) => !open)}
-              aria-expanded={certPreviewOpen}
-              aria-controls="waqf-cert-preview"
-              style={{ display: "none", alignItems: "center", justifyContent: "center", gap: 9, width: "100%", height: 48, border: "1px solid var(--gold)", borderRadius: 10, background: "#fff", color: "var(--deep)", fontFamily: "inherit", fontSize: 14, fontWeight: 900, cursor: "pointer" }}
-            >
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--gold)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <rect x="4" y="3" width="16" height="18" rx="2" />
-                <path d="M8 8h8M8 12h8M8 16h5" />
-              </svg>
-              {certPreviewOpen ? t("hideCertPreview") : t("showCertPreview")}
-            </button>
-            <WaqfCertificatePreview unit={unit} count={count} total={format(total)} name={name} onBehalf={onBehalf} open={certPreviewOpen} />
-          </div>
-        </div>
-      </section>
-
-      {/* ── Introductory film ────────────────────────────────────────────── */}
-      <section id="video" style={{ background: "transparent", padding: "46px 0" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <div id="waqf-video-card" className="mia-waqf-video" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 0, background: "var(--deep)", border: "1px solid rgba(0,162,224,.5)", borderRadius: 12, overflow: "hidden" }}>
-            <div className="wv-head" style={{ position: "relative", display: "grid", gap: 14, alignContent: "center", padding: 40, justifyItems: "start" }}>
-              <div aria-hidden="true" data-aqsa-pattern="" style={{ ...pattern(520), opacity: 0.09 }} />
-              <h2 style={{ position: "relative", margin: 0, fontSize: "clamp(22px,2.4vw,32px)", lineHeight: 1.35, fontWeight: 900, color: "#fff" }}>{t("videoTitle")}</h2>
-            </div>
-            <div style={{ position: "relative", aspectRatio: "16 / 9", background: "#000", overflow: "hidden" }}>
-              <iframe
-                src={waqfVideoSrc(locale)}
-                title={t("videoTitle")}
-                loading="lazy"
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              />
+            <div className="wq2-cert">
+              <button
+                id="waqf-cert-toggle"
+                type="button"
+                onClick={() => setCertPreviewOpen((open) => !open)}
+                aria-expanded={certPreviewOpen}
+                aria-controls="waqf-cert-preview"
+                style={{ display: "none", alignItems: "center", justifyContent: "center", gap: 9, width: "100%", height: 48, border: "1.5px solid #00a2e0", borderRadius: 999, background: "#fff", color: "#0077b3", fontFamily: "inherit", fontSize: 14, fontWeight: 800, cursor: "pointer" }}
+              >
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <rect x="4" y="3" width="16" height="18" rx="2" />
+                  <path d="M8 8h8M8 12h8M8 16h5" />
+                </svg>
+                {certPreviewOpen ? t("hideCertPreview") : t("showCertPreview")}
+              </button>
+              <WaqfCertificatePreview unit={unit} count={count} total={format(total)} name={name} onBehalf={onBehalf} open={certPreviewOpen} />
             </div>
           </div>
         </div>
-      </section>
 
-      {/* ── What waqf is ─────────────────────────────────────────────────── */}
-      <section id="what-is-waqf" style={{ background: "var(--sand)", padding: "62px 0", borderBottom: "1px solid var(--border)" }}>
-        <div id="whatiswaqf-grid" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1.1fr)", gap: 40, alignItems: "start" }}>
-          <div style={{ display: "grid", gap: 16, alignContent: "start" }}>
-            <h2 style={{ margin: 0, fontSize: "clamp(24px,2.6vw,34px)", lineHeight: 1.3, fontWeight: 900, color: "var(--red)" }}>{t("whatIsWaqf")}</h2>
-            <p style={{ margin: 0, fontSize: 16, lineHeight: 2.05, color: "var(--muted)" }}>{t("whatIsWaqfText")}</p>
-            <span style={{ marginTop: 6 }}>
-              <Button variant="gold" href="#about-detail" style={{ whiteSpace: "nowrap" }}>
-                {t("learnMore")}
-              </Button>
-            </span>
-          </div>
-          <div id="wq-facts" style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 20 }}>
-            {FACTS.map((id) => (
-              <div key={id} className="mia-lift" style={{ background: "#fff", borderRadius: 14, padding: 24, display: "grid", gap: 10, alignContent: "start", borderTop: "3px solid var(--gold)" }}>
-                <h3 style={{ margin: 0, fontSize: 17, fontWeight: 900, color: "var(--red)" }}>{t(`fact_${id}`)}</h3>
-                <p style={{ margin: 0, fontSize: 14, lineHeight: 1.85, color: "var(--muted)" }}>{t(`factDesc_${id}`)}</p>
+        {/* ── Introductory film ────────────────────────────────────────────── */}
+        <section id="video" className="gv-sec">
+          <div className="gv-wrap">
+            <div id="waqf-video-card" className="wq2-film">
+              <div className="wq2-film-copy">
+                <h2>{t("videoTitle")}</h2>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── The project in detail ────────────────────────────────────────── */}
-      <section id="about-detail" style={{ background: "#fff", padding: "62px 0", borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gap: 24 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(24px,2.6vw,34px)", lineHeight: 1.25, fontWeight: 900 }}>{t("aboutMeter")}</h2>
-          <div id="wq-detail" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 20, alignItems: "stretch" }}>
-            <article style={detailCard("var(--ivory)", "var(--deep)")}>
-              <h3 style={{ margin: 0, fontSize: 17, fontWeight: 900, color: "var(--deep)" }}>{t("aboutIdea")}</h3>
-              <p style={{ margin: 0, fontSize: 15, lineHeight: 2, color: "var(--muted)" }}>{t("meterText1")}</p>
-            </article>
-            <article style={detailCard("var(--ivory)", "var(--deep)")}>
-              <h3 style={{ margin: 0, fontSize: 17, fontWeight: 900, color: "var(--deep)" }}>{t("aboutCost")}</h3>
-              <p style={{ margin: 0, fontSize: 15, lineHeight: 2, color: "var(--muted)" }}>{t("meterText2")}</p>
-            </article>
-            <article style={{ ...detailCard("var(--sand)", "var(--gold)"), border: "1px solid rgba(0,162,224,.4)" }}>
-              <span style={{ fontSize: 12, fontWeight: 900, color: "var(--gold)", letterSpacing: ".06em" }}>{t("unitShare")}</span>
-              <p style={{ margin: 0, fontSize: 15, lineHeight: 2, color: "var(--deep)" }}>{t("meterText3")}</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Areas of benefit ─────────────────────────────────────────────── */}
-      <section id="aid-types" style={{ position: "relative", background: "var(--red)", padding: "62px 0" }}>
-        <div aria-hidden="true" data-aqsa-pattern="" style={{ ...pattern(420), opacity: 0.08 }} />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <h2 style={{ margin: "0 0 8px", fontSize: "clamp(24px,2.6vw,34px)", lineHeight: 1.25, fontWeight: 900, color: "#fff" }}>{t("aidTypes")}</h2>
-          <p style={{ margin: "0 0 30px", maxWidth: "76ch", color: "rgba(255,255,255,.82)", fontSize: 15.5, lineHeight: 1.9 }}>{t("aidTypesText")}</p>
-          <div id="wq-aid" style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 16 }}>
-            {AID_TYPES.map((aid) => (
-              <div key={aid.key} className="wq-aid-card" style={{ border: "1px solid rgba(255,255,255,.22)", borderRadius: 12, padding: "26px 18px", display: "grid", justifyItems: "center", gap: 12, textAlign: "center", background: "rgba(255,255,255,.05)", transition: "all .2s cubic-bezier(.22,.61,.36,1)" }}>
-                <span style={{ width: 46, height: 46, borderRadius: "50%", background: "rgba(0,162,224,.18)", display: "grid", placeItems: "center", color: "var(--gold)" }}>
-                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    {AID_ICONS[aid.icon]}
-                  </svg>
-                </span>
-                <b style={{ color: "#fff", fontSize: 15, fontWeight: 800, lineHeight: 1.5 }}>{tHome(aid.key)}</b>
+              <div className="gv-video">
+                <iframe
+                  src={waqfVideoSrc(locale)}
+                  title={t("videoTitle")}
+                  loading="lazy"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Aims ─────────────────────────────────────────────────────────── */}
-      <section id="goals" style={{ background: "var(--sand)", padding: "62px 0", borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <h2 style={{ margin: "0 0 26px", fontSize: "clamp(24px,2.6vw,34px)", lineHeight: 1.25, fontWeight: 900 }}>{t("projectGoals")}</h2>
-          <div id="wq-goals" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 20 }}>
-            {GOALS.map((id, i) => (
-              <div key={id} className="mia-lift" style={{ background: "#fff", borderRadius: 12, padding: 24, display: "grid", gap: 12, alignContent: "start", boxShadow: "0 8px 20px rgba(6,36,66,.06)" }}>
-                <span style={{ width: 34, height: 34, borderRadius: "50%", background: "var(--gold)", color: "#062442", display: "grid", placeItems: "center", fontWeight: 900, fontSize: 14 }}>
-                  {formatNumber(i + 1)}
-                </span>
-                <p style={{ margin: 0, color: "var(--deep)", fontSize: 14.5, lineHeight: 1.95 }}>{t(id)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Where the yield goes ─────────────────────────────────────────── */}
-      <section id="parts" style={{ background: "#fff", padding: "62px 0", borderBlock: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <h2 style={{ margin: "0 0 8px", fontSize: "clamp(26px,2.8vw,38px)", lineHeight: 1.2, fontWeight: 900 }}>{t("projectParts")}</h2>
-          <p style={{ margin: "0 0 26px", maxWidth: "76ch", color: "var(--muted)", fontSize: 16, lineHeight: 1.9 }}>{t("partsText")}</p>
-          <div id="wq-parts" style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 18 }}>
-            {PARTS.map((id) => (
-              <div key={id} className="wq-part" style={{ position: "relative", borderRadius: 12, overflow: "hidden", background: "var(--sand)", border: "1px solid var(--border)", padding: 22, display: "grid", gap: 8, alignContent: "start", transition: "transform .2s cubic-bezier(.22,.61,.36,1)" }}>
-                <b style={{ display: "block", fontSize: 15.5, lineHeight: 1.35, color: "var(--deep)" }}>{t(`part_${id}`)}</b>
-                <span style={{ display: "block", color: "var(--muted)", fontSize: 12.5, lineHeight: 1.7 }}>{t(`partDesc_${id}`)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ──────────────────────────────────────────────────────────── */}
-      <section id="faq" style={{ background: "#fff", padding: "62px 0", borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 24px" }}>
-          <h2 style={{ margin: "0 0 18px", fontSize: "clamp(24px,2.6vw,34px)", lineHeight: 1.2, fontWeight: 900 }}>{t("waqfFaq")}</h2>
-          <div style={{ display: "grid", borderTop: "1px solid var(--border)" }}>
-            {FAQS.map((id, i) => {
-              const open = openFaq === i;
-              return (
-                <div key={id} style={{ borderBottom: "1px solid var(--border)" }}>
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaq(open ? -1 : i)}
-                    aria-expanded={open}
-                    style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, padding: "18px 0", background: "transparent", border: 0, cursor: "pointer", fontFamily: "inherit", fontSize: 16, fontWeight: 800, color: "var(--deep)", textAlign: "start" }}
-                  >
-                    {t(`faq_${id}`)}
-                    <span aria-hidden="true" style={{ marginInlineStart: "auto", color: "var(--gold)", fontSize: 18 }}>
-                      {open ? "−" : "+"}
-                    </span>
-                  </button>
-                  <div style={{ maxHeight: open ? 500 : 0, opacity: open ? 1 : 0, padding: open ? "0 0 18px" : 0, overflow: "hidden", color: "var(--muted)", fontSize: 15, lineHeight: 1.9, transition: "all .3s cubic-bezier(.22,.61,.36,1)" }}>
-                    {t(`faqA_${id}`)}
-                  </div>
+        {/* ── What waqf is ─────────────────────────────────────────────────── */}
+        <section id="what-is-waqf" className="gv-sec">
+          <div className="gv-wrap wq2-what">
+            <div style={{ display: "grid", gap: 14, alignContent: "start" }}>
+              <h2 className="gv-h2" style={{ margin: 0 }}>
+                {t("whatIsWaqf")}
+              </h2>
+              <p className="gv-text" style={{ fontSize: 14.5, lineHeight: 2.05 }}>
+                {t("whatIsWaqfText")}
+              </p>
+              <span style={{ marginTop: 4 }}>
+                <Button variant="gold" href="#about-detail" style={{ whiteSpace: "nowrap", borderRadius: 999, fontWeight: 800 }}>
+                  {t("learnMore")}
+                </Button>
+              </span>
+            </div>
+            <div className="wq2-facts">
+              {FACTS.map((id) => (
+                <div key={id} className="gv-card gv-lift wq2-fact">
+                  <h3 className="gv-h3" style={{ color: "#0077b3", fontSize: 17 }}>
+                    {t(`fact_${id}`)}
+                  </h3>
+                  <p className="gv-text">{t(`factDesc_${id}`)}</p>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Closing CTA ──────────────────────────────────────────────────── */}
-      <section id="waqf-cta" style={{ position: "relative", background: "var(--deep)", padding: "56px 0", overflow: "hidden" }}>
-        <div aria-hidden="true" data-aqsa-pattern="" style={{ ...pattern(520), opacity: 0.09 }} />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", gap: 28, flexWrap: "wrap" }}>
-          <div style={{ display: "grid", gap: 10, flex: "1 1 460px", minWidth: 0 }}>
-            <h2 style={{ margin: 0, fontSize: "clamp(24px,2.7vw,36px)", lineHeight: 1.3, fontWeight: 900, color: "#fff" }}>{t("legacyEyebrow")}</h2>
-            <p style={{ margin: 0, color: "rgba(255,255,255,.8)", fontSize: 16, lineHeight: 1.9 }}>{t("meterIntro")}</p>
+        {/* ── The project in detail ────────────────────────────────────────── */}
+        <section id="about-detail" className="gv-sec">
+          <div className="gv-wrap">
+            <h2 className="gv-h2" style={{ marginBottom: 22 }}>
+              {t("aboutMeter")}
+            </h2>
+            <div className="wq2-trio">
+              <article className="gv-card">
+                <h3 className="gv-h3" style={{ fontSize: 17 }}>
+                  {t("aboutIdea")}
+                </h3>
+                <p className="gv-text" style={{ fontSize: 14 }}>
+                  {t("meterText1")}
+                </p>
+              </article>
+              <article className="gv-card">
+                <h3 className="gv-h3" style={{ fontSize: 17 }}>
+                  {t("aboutCost")}
+                </h3>
+                <p className="gv-text" style={{ fontSize: 14 }}>
+                  {t("meterText2")}
+                </p>
+              </article>
+              <article className="gv-card" data-tone="brand">
+                <span className="gv-eyebrow" style={{ margin: 0, color: "#062442" }}>
+                  {t("unitShare")}
+                </span>
+                <p className="gv-text" style={{ fontSize: 14, color: "#062442" }}>
+                  {t("meterText3")}
+                </p>
+              </article>
+            </div>
           </div>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <Button variant="primary" size="lg" href="#meter-picker" style={{ whiteSpace: "nowrap" }}>
-              {t("donateWaqf")}
-            </Button>
-            <Button variant="outline" size="lg" href={miaPath("zakat", locale)} style={{ whiteSpace: "nowrap" }}>
-              {tZakat("zakatPage")}
-            </Button>
+        </section>
+
+        {/* ── Areas of benefit ─────────────────────────────────────────────── */}
+        <section id="aid-types" className="gv-sec">
+          <div className="gv-wrap">
+            <h2 className="gv-h2">{t("aidTypes")}</h2>
+            <p className="gv-intro">{t("aidTypesText")}</p>
+            <div className="wq2-aid">
+              {AID_TYPES.map((aid) => (
+                <div key={aid.key} className="gv-card gv-lift">
+                  <span className="gv-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      {AID_ICONS[aid.icon]}
+                    </svg>
+                  </span>
+                  <b>{tHome(aid.key)}</b>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* ── Aims ─────────────────────────────────────────────────────────── */}
+        <section id="goals" className="gv-sec">
+          <div className="gv-wrap">
+            <h2 className="gv-h2" style={{ marginBottom: 22 }}>
+              {t("projectGoals")}
+            </h2>
+            <div className="wq2-goals">
+              {GOALS.map((id, i) => (
+                <div key={id} className="gv-card gv-lift">
+                  <span className="gv-num">{formatNumber(i + 1)}</span>
+                  <p>{t(id)}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Where the yield goes ─────────────────────────────────────────── */}
+        <section id="parts" className="gv-sec">
+          <div className="gv-wrap">
+            <h2 className="gv-h2">{t("projectParts")}</h2>
+            <p className="gv-intro">{t("partsText")}</p>
+            <div className="wq2-parts">
+              {PARTS.map((id) => (
+                <div key={id} className="gv-card gv-lift">
+                  <span className="gv-ico" aria-hidden="true" style={{ width: 38, height: 38 }}>
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                  </span>
+                  <span style={{ minWidth: 0 }}>
+                    <b>{t(`part_${id}`)}</b>
+                    <span>{t(`partDesc_${id}`)}</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── FAQ ──────────────────────────────────────────────────────────── */}
+        <section id="faq" className="gv-sec">
+          <div className="gv-wrap wq2-faq">
+            <h2 className="gv-h2" style={{ marginBottom: 18 }}>
+              {t("waqfFaq")}
+            </h2>
+            <div className="gv-faq">
+              {FAQS.map((id, i) => {
+                const open = openFaq === i;
+                return (
+                  <div key={id} className="gv-faq-item">
+                    <button type="button" onClick={() => setOpenFaq(open ? -1 : i)} aria-expanded={open} className="gv-faq-q">
+                      {t(`faq_${id}`)}
+                      <span aria-hidden="true" className="gv-faq-sign">
+                        {open ? "−" : "+"}
+                      </span>
+                    </button>
+                    <div style={{ maxHeight: open ? 500 : 0, opacity: open ? 1 : 0, padding: open ? "0 18px 16px" : "0 18px", overflow: "hidden", color: "var(--muted)", fontSize: 13.5, lineHeight: 1.9, transition: "all .3s cubic-bezier(.22,.61,.36,1)" }}>
+                      {t(`faqA_${id}`)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Closing CTA ──────────────────────────────────────────────────── */}
+        <section id="waqf-cta" className="gv-sec">
+          <div className="gv-wrap">
+            <div className="gv-band">
+              <div className="gv-band-copy">
+                <h2>{t("legacyEyebrow")}</h2>
+                <p>{t("meterIntro")}</p>
+              </div>
+              <div className="gv-band-actions">
+                <Button variant="primary" size="lg" href="#meter-picker" style={{ whiteSpace: "nowrap", borderRadius: 999 }}>
+                  {t("donateWaqf")}
+                </Button>
+                <Button variant="outline" size="lg" href={miaPath("zakat", locale)} style={{ whiteSpace: "nowrap", borderRadius: 999 }}>
+                  {tZakat("zakatPage")}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
 
       <ZakatBanner />
       <TravelBanner />
@@ -547,55 +536,3 @@ export default function WaqfPage({ donorName }: WaqfPageProps) {
     </div>
   );
 }
-
-const stepBtn: CSSProperties = {
-  width: 36,
-  height: 38,
-  border: 0,
-  background: "transparent",
-  color: "var(--deep)",
-  fontSize: 18,
-  fontWeight: 800,
-  cursor: "pointer",
-  display: "grid",
-  placeItems: "center",
-  transition: "background .15s ease",
-  fontFamily: "inherit",
-};
-
-const linkBtn: CSSProperties = {
-  justifySelf: "start",
-  display: "inline-flex",
-  alignItems: "center",
-  gap: 6,
-  background: "transparent",
-  border: 0,
-  padding: "2px 0",
-  color: "var(--gold)",
-  fontFamily: "inherit",
-  fontWeight: 800,
-  fontSize: 12.5,
-  cursor: "pointer",
-};
-
-const detailCard = (background: string, accent: string): CSSProperties => ({
-  background,
-  border: "1px solid var(--border)",
-  borderTop: `3px solid ${accent}`,
-  borderRadius: 12,
-  padding: 26,
-  display: "grid",
-  gap: 10,
-  alignContent: "start",
-  margin: 0,
-});
-
-const pattern = (size: number): CSSProperties => ({
-  position: "absolute",
-  inset: 0,
-  backgroundImage: "url('/toplum/pattern.svg')",
-  backgroundRepeat: "repeat",
-  backgroundSize: `${size}px ${size}px`,
-  opacity: 0.05,
-  pointerEvents: "none",
-});

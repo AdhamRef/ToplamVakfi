@@ -1,0 +1,168 @@
+/* Toplum Vakfi page layer: giving-flow. Loaded after toplum.css (app/[locale]/layout.tsx); scoped under .mia-scope. */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * The giving flow  basket, payment, result states, thank-you  laid out after
+ * `ToplamVakfi-design/` (`Cart`, `Empty Cart`, `Payment Info`, `Payment Error`,
+ * `404`, `Thank You`). The components carry the design's sizes inline; this
+ * file holds what inline styles cannot: states (hover, focus, picked), the
+ * phone breakpoints, and the overrides of the older Minbar rules in
+ * minbar.css that would otherwise win (several use !important, so these do too).
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Checkout bar: steps + security cue (`.ck-bar` / `.steps`) ───────────── */
+.mia-scope .gf-steps-bar .cart-step {
+  display: inline-flex; align-items: center; gap: 8px;
+  min-height: 36px; padding: 0 2px; border: 0; border-radius: 999px; background: none;
+  font-family: inherit; font-size: 13px; font-weight: 700; color: var(--muted);
+  white-space: nowrap; text-decoration: none; cursor: default;
+  transition: color .18s ease;
+}
+.mia-scope .gf-steps-bar a.cart-step,
+.mia-scope .gf-steps-bar button.cart-step { min-height: 44px; cursor: pointer; }
+.mia-scope .gf-steps-bar a.cart-step:hover,
+.mia-scope .gf-steps-bar button.cart-step:hover { color: var(--brand-ink); }
+.mia-scope .gf-steps-bar .cart-step[data-state="current"] { color: var(--ink); font-weight: 800; }
+.mia-scope .gf-steps-bar .cart-step[data-locked="1"] { opacity: .55; cursor: not-allowed; }
+.mia-scope .gf-steps-bar .cart-step-n {
+  flex: 0 0 26px; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: #e9eff3; color: var(--muted); font-size: 12px; font-weight: 800; line-height: 1;
+}
+.mia-scope .gf-steps-bar .cart-step[data-lit="1"] .cart-step-n { background: var(--cta-gradient); color: #fff; }
+.mia-scope .gf-steps-bar .cart-step-line { flex: 0 1 26px; min-width: 10px; height: 1px; background: #dbe6ee; }
+.mia-scope .gf-steps-bar .gf-secure {
+  display: inline-flex; align-items: center; gap: 6px; min-width: 0;
+  font-size: 12px; font-weight: 700; color: var(--muted); line-height: 1.6;
+}
+.mia-scope .gf-steps-bar .gf-secure svg { flex: 0 0 auto; color: var(--brand); }
+.mia-scope .gf-steps-bar .cart-step:focus-visible { outline: 2px solid #1ca3ec; outline-offset: 2px; }
+
+/* minbar.css sized the old pill rail for phones; the dot rail keeps its own
+   rhythm and only drops the labels of the steps that aren't current. */
+@media (max-width: 480px) {
+  .mia-scope .gf-steps-bar { padding-inline: 16px !important; }
+  .mia-scope .gf-steps-bar #cart-steps,
+  .mia-scope .gf-steps-bar #pay-steps,
+  .mia-scope .gf-steps-bar #succ-steps { padding-inline: 0 !important; gap: 6px !important; justify-content: flex-start; }
+  .mia-scope .gf-steps-bar #cart-steps .cart-step,
+  .mia-scope .gf-steps-bar #pay-steps .cart-step,
+  .mia-scope .gf-steps-bar #succ-steps .cart-step { padding: 0 2px !important; gap: 6px !important; font-size: 12.5px !important; }
+  .mia-scope .gf-steps-bar .cart-step:not([data-state="current"]) .cart-step-label { display: none; }
+  .mia-scope .gf-steps-bar #cart-steps .cart-step-line,
+  .mia-scope .gf-steps-bar #pay-steps .cart-step-line,
+  .mia-scope .gf-steps-bar #succ-steps .cart-step-line { flex: 0 1 18px !important; min-width: 8px; }
+  .mia-scope .gf-steps-bar #cart-steps .cart-step-n,
+  .mia-scope .gf-steps-bar #pay-steps .cart-step-n { width: 26px !important; height: 26px !important; font-size: 12px !important; }
+}
+
+/* ── Basket (`Cart.dc.html`) ──────────────────────────────────────────────── */
+.mia-scope .gf-cart .cart-row {
+  padding: 18px 0; gap: 8px 14px; border-top: 1px solid #e3edf4; background: transparent;
+}
+/* The card's heading row already draws the line above the first item. */
+.mia-scope .gf-cart .gf-cart-items > .cart-row:nth-child(2) { border-top: 0; }
+.mia-scope .gf-cart .cart-row:hover { background: transparent; }
+.mia-scope .gf-cart .cart-row .c-meta:empty { display: none !important; }
+.mia-scope .gf-cart .cart-amt-btn:hover { border-color: var(--brand); box-shadow: 0 6px 16px rgba(0,162,224,.18); transform: translateY(-1px); }
+.mia-scope .gf-cart .cart-amt-btn:focus-visible,
+.mia-scope .gf-cart .cart-monthly:focus-visible,
+.mia-scope .gf-cart .c-del:focus-visible { outline: 2px solid #1ca3ec; outline-offset: 2px; }
+.mia-scope .gf-cart .cart-monthly:hover { border-color: #0077b3; }
+.mia-scope .gf-cart .c-del:hover { border-color: transparent; background: #fbe3df; color: #b3261e; }
+.mia-scope .gf-cart .upsell-card:hover { border-color: rgba(0,162,224,.45); box-shadow: 0 8px 22px rgba(2,52,88,.07); }
+.mia-scope .gf-cart .upsell-amt:hover { border-color: #0077b3; background: #0077b3; color: #fff; }
+.mia-scope .gf-cart .upsell-custom-input:focus { outline: 0; border-style: solid; border-color: var(--brand) !important; }
+.mia-scope .gf-cart .upsell-add:hover { filter: brightness(1.06); transform: translateY(-1px); }
+
+/* The navy summary: light hover and focus cues on the dark ground. */
+.mia-scope .gf-cart-sum .cart-recurring:hover { border-color: var(--brand); }
+.mia-scope .gf-cart-sum .cart-add-another:hover { color: #fff; }
+.mia-scope .gf-cart-sum :is(button, a, input):focus-visible { outline: 2px solid #7fd6f5; outline-offset: 2px; }
+.mia-scope .gf-cart-sum .gf-dark-input::placeholder { color: rgba(255,255,255,.55); }
+.mia-scope .gf-cart-sum .gf-dark-input:focus { outline: 0; border-color: var(--brand) !important; border-style: solid !important; background: rgba(255,255,255,.12) !important; }
+.mia-scope .gf-cart-sum #cart-team-support button:hover { border-color: var(--brand); }
+
+@media (max-width: 960px) {
+  .mia-scope .gf-cart .cart-row { padding: 16px 0 !important; }
+  /* Title and tag take the first line in full; the tag stays a pill. */
+  .mia-scope .gf-cart .cart-row .c-head { flex: 1 1 100%; width: 100%; }
+  .mia-scope .gf-cart .cart-row .c-head .c-meta { width: auto !important; max-width: 100%; font-size: 12px !important; }
+}
+@media (max-width: 560px) {
+  .mia-scope .gf-cart .gf-cart-items { padding-inline: 16px !important; }
+  .mia-scope .gf-cart .gf-upsell { padding: 18px 16px !important; }
+  .mia-scope .gf-cart #cart-summary { padding: 20px 18px !important; }
+}
+
+/* ── Payment (`Payment Info.dc.html`) ─────────────────────────────────────── */
+.mia-scope .gf-checkout .pay-field:focus { border-color: var(--brand); background: #fff; }
+.mia-scope .gf-checkout .pay-phone .pay-phone-field { height: 46px; border: 1.5px solid #e2eaf0; background: #fff; }
+.mia-scope .gf-checkout .pay-phone .pay-phone-field:focus-within { border-color: var(--brand); }
+.mia-scope .gf-checkout .pay-phone .pay-phone-country { border-inline-end-color: #e2eaf0; }
+.mia-scope .gf-checkout .pay-phone .pay-phone-input { font-size: 14px; font-weight: 600; color: var(--ink); }
+.mia-scope .gf-checkout .pay-social-btn:hover { border-color: rgba(28,163,236,.55); box-shadow: 0 6px 16px rgba(2,52,88,.08); }
+
+/* Method tiles: the picked tile is outlined in blue on a pale wash, its icon
+   box filled with the CTA gradient and a check in its corner (`.pay-option`).
+   toplum.css paints every `button[data-pick="1"]` as a solid chip; a tile is
+   not a chip, hence the id-level override. */
+.mia-scope .gf-checkout #pay-methods .pay-method:hover { border-color: rgba(28,163,236,.55); transform: translateY(-2px); }
+.mia-scope .gf-checkout #pay-methods .pay-method[data-pick="1"] {
+  border-color: #1ca3ec !important;
+  background: linear-gradient(180deg, #f2f9ff, #fff) !important;
+  color: var(--ink) !important;
+  box-shadow: 0 10px 24px rgba(27,111,224,.16) !important;
+}
+.mia-scope .gf-checkout #pay-methods .pay-method[data-pick="1"] span { color: var(--ink) !important; }
+.mia-scope .gf-checkout #pay-methods .pay-method[data-pick="1"] .pay-method-icon { background: var(--cta-gradient) !important; color: #fff !important; }
+.mia-scope .gf-checkout #pay-methods .pay-method::after {
+  content: "✓"; position: absolute; top: 8px; inset-inline-end: 8px;
+  display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--cta-gradient); color: #fff; font-size: 11px; font-weight: 900; line-height: 1;
+  opacity: 0; transform: scale(.6); transition: opacity .2s ease, transform .2s ease;
+}
+.mia-scope .gf-checkout #pay-methods .pay-method[data-pick="1"]::after { opacity: 1; transform: scale(1); }
+.mia-scope .gf-checkout #pay-methods .pay-method:focus-visible { outline: 2px solid #1ca3ec; outline-offset: 2px; }
+.mia-scope .gf-checkout .mia-card-cta:not(:disabled):hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(0,162,224,.42) !important; }
+.mia-scope .gf-checkout .mia-card-cta:disabled { opacity: .6 !important; cursor: not-allowed !important; box-shadow: none !important; }
+.mia-scope .gf-checkout .pay-paypal:disabled { opacity: .6; cursor: not-allowed; }
+.mia-scope .gf-checkout .pay-copy-btn:hover { border-color: var(--brand); background: #eaf6fd; }
+.mia-scope .gf-checkout .cart-add-another:hover { color: var(--brand); }
+
+@media (max-width: 560px) {
+  .mia-scope .gf-checkout .pay-card { padding: 20px 16px !important; }
+  .mia-scope .gf-checkout #pay-methods > * { min-height: 84px !important; padding: 10px 6px !important; }
+  .mia-scope .gf-checkout #pay-methods .pay-method-icon { width: 34px !important; height: 34px !important; border-radius: 10px !important; }
+}
+
+/* ── Result screens (`Payment Error.dc.html`, `404.dc.html`) ──────────────── */
+.mia-scope .gf-status--dark .gf-status-glow {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(circle at 82% 18%, rgba(39,184,242,.18), transparent 34%),
+    radial-gradient(circle at 12% 88%, rgba(27,111,224,.2), transparent 32%);
+}
+[dir="rtl"] .mia-scope .gf-status--dark .gf-status-glow {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(39,184,242,.18), transparent 34%),
+    radial-gradient(circle at 88% 88%, rgba(27,111,224,.2), transparent 32%);
+}
+.mia-scope .gf-status-actions a:hover { transform: translateY(-2px); }
+@media (max-width: 480px) {
+  .mia-scope .gf-status-panel { padding: 24px 18px !important; }
+  .mia-scope .gf-status-actions > * { flex: 1 1 100% !important; }
+}
+
+/* ── Thank you (`Thank You.dc.html`) ──────────────────────────────────────── */
+.mia-scope .gf-success .succ-link:hover { border-color: var(--brand); color: var(--brand-ink); }
+.mia-scope .gf-success .succ-link2:hover { background: var(--brand); border-color: var(--brand); color: #fff; }
+.mia-scope .gf-success .succ-confirm:not(:disabled):hover { filter: brightness(1.05); transform: translateY(-1px); }
+.mia-scope .gf-success .gf-cert-box #succ-downloads > * { flex: 1 1 auto; }
+@media (max-width: 480px) {
+  .mia-scope .gf-success-panel { padding: 24px 16px !important; }
+  .mia-scope .gf-success .gf-cert-box { padding: 18px 14px !important; }
+  .mia-scope .gf-success-actions > * { flex: 1 1 100% !important; }
+}
+@media (max-width: 760px) {
+  /* The content ends clear of the phone's bottom bar and its raised donate circle. */
+  .mia-scope .gf-success-actions { margin-bottom: 36px; }
+}

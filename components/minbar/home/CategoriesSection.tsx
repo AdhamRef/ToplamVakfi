@@ -16,7 +16,9 @@ import { cssImage } from "@/lib/minbar/image-url";
  *
  * Each card is the category's photograph under the navy shade the region cards
  * use, its dashboard icon on a gold badge, the name, a live project count and
- * a link to the category's own landing page. A category without a picture
+ * a link to the category's own landing page. On the homepage the card is laid
+ * out as the Toplum design's giving card (`.wg-unit`): photo on top, the icon
+ * chip riding its edge, the copy on white (`styles/minbar/pages/home.css`). A category without a picture
  * falls back to the navy ground with the Aqsa pattern, so a new category still
  * reads as part of the set. Styles live in `minbar.css` (`.mia-cat-*`).
  *
@@ -53,13 +55,13 @@ export default function CategoriesSection({ categories }: { categories: MinbarCa
         <div className="mia-cat-head">
           <div style={{ display: "grid", gap: 8, minWidth: 0 }}>
             <span className="mia-cat-eyebrow">
-              <span aria-hidden="true" style={{ width: 7, height: 7, background: "var(--gold)", transform: "rotate(45deg)" }} />
+              <span aria-hidden="true" style={{ width: 7, height: 7, borderRadius: "50%", background: "var(--gold)" }} />
               {t("sectionEyebrow")}
             </span>
-            <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>
+            <h2 className="tv-h2">
               {t("sectionTitle")}
             </h2>
-            <p style={{ margin: 0, color: "var(--muted, #5D7187)", fontSize: 15, lineHeight: 1.8, maxWidth: "60ch" }}>{t("sectionLead")}</p>
+            <p className="tv-lead">{t("sectionLead")}</p>
           </div>
           <ViewAllLink href={miaPath("projects", locale)}>{tProjects("allProjects")}</ViewAllLink>
         </div>

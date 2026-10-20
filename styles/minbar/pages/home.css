@@ -1,0 +1,517 @@
+/* Toplum Vakfi page layer: home. Loaded after toplum.css (app/[locale]/layout.tsx); scoped under .mia-scope.
+ *
+ * The homepage laid out as `ToplamVakfi-design/Toplum Vakfı Homepage.dc.html`
+ * (and the FAQ block of `Toplum Vakfı FAQ.dc.html`). The sections and their
+ * order are still the dashboard's (lib/minbar/home-layout); each is dressed as
+ * the design's nearest equivalent:
+ *
+ *   hero + quick donation  → `.th` with the «دائرة الخير» disc (`.th-ring`)
+ *   verse                  → the figures strip's quote (`.hs-quote`)
+ *   impact                 → the figures strip (`.hs-stats`)
+ *   programmes / courses   → the programmes row (`.program-row`)
+ *   how it works, account  → the «لماذا تثق بنا» panel (`.wt`)
+ *   waqf                   → the dark giving card (`.rg-card`)
+ *   recurring, zakat       → the closing CTA band (`.cf-card`)
+ *   categories             → the giving cards (`.wg-unit`)
+ *   FAQ                    → `.fq` / the FAQ page's items
+ *
+ * The old Minbar rules in minbar.css key many of these blocks by id with
+ * `!important` (phone rails, stacked rows); where the design wants something
+ * else the overrides below carry `.mia-home` + the id so they win on
+ * specificity, and `!important` only where the rule they undo has it.
+ * Banner rules (`.mia-bn-*`) are not under `.mia-home`: the banners are shared
+ * by every page that mounts a slot.
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Page ground ──────────────────────────────────────────────────────────── */
+.mia-scope .mia-home { background: var(--page-bg, #f4f8fb); }
+/* One page ground under every section: the Minbar sections each painted their
+   own faint gradient and hairline, which the design does not have. */
+.mia-scope .mia-home > section:not(.mia-hero) { background: transparent !important; border-top: 0 !important; border-bottom: 0 !important; }
+.mia-scope .mia-home .tv-sec { padding-block: 34px; }
+.mia-scope .tv-wrap { position: relative; max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 560px) { .mia-scope .tv-wrap { padding: 0 16px; } }
+
+/* Section headings: one size, ink, start-aligned, the lead in muted beneath. */
+.mia-scope .tv-h2 { margin: 0; font-size: clamp(24px, 2.6vw, 32px); line-height: 1.25; font-weight: 900; color: var(--ink, #062442); letter-spacing: -.4px; }
+.mia-scope .tv-h2--brand { color: var(--brand-ink, #0077b3); }
+.mia-scope .tv-lead { margin: 0; max-width: 62ch; color: var(--muted); font-size: 14px; line-height: 1.85; }
+.mia-scope .tv-eyebrow { color: var(--brand-ink, #0077b3); font-size: 12.5px; font-weight: 800; letter-spacing: .3px; }
+.mia-scope .tv-sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 22px; }
+.mia-scope .tv-sec-head--stack { flex-direction: column; align-items: flex-start; gap: 8px; }
+
+/* "See all": the design's quiet light pill (`.wg-bar a`)  brand-ink on white
+   (4.9:1). The gold hover of minbar.css put white on #00a2e0 (2.9:1). */
+.mia-scope .mia-home .mia-viewall {
+  height: 40px; padding: 0 18px; border: 1px solid #e6eef3; background: #fff; color: var(--brand-ink, #0077b3);
+  box-shadow: 0 6px 18px rgba(2,52,88,.06);
+}
+.mia-scope .mia-home .mia-viewall:hover { background: #0077b3; border-color: #0077b3; color: #fff; transform: translateY(-2px); }
+/* The panel pill (`.wt-pill` / `.fd-pill`): CTA gradient, the white arrow chip at the start edge. */
+.mia-scope .mia-home .mia-viewall--pill {
+  height: 44px; padding-inline: 6px 20px; border: 0; background: var(--cta-gradient); color: #fff;
+  box-shadow: 0 8px 20px rgba(0,162,224,.3);
+}
+.mia-scope[dir="rtl"] .mia-home .mia-viewall--pill { background: linear-gradient(270deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); }
+.mia-scope .mia-home .mia-viewall--pill:hover { background: var(--cta-gradient); color: #fff; border: 0; }
+.mia-scope[dir="rtl"] .mia-home .mia-viewall--pill:hover { background: linear-gradient(270deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); }
+.mia-scope .mia-viewall-chip { order: -1; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--brand-ink, #0077b3); font-style: normal; }
+
+/* Rail arrows: the design's round outline buttons (`.pt-arrow`). */
+.mia-scope .mia-home .mia-rail-btn {
+  width: 44px !important; height: 44px !important; border-radius: 50% !important;
+  border: 1px solid #d7e5ee !important; color: var(--brand-ink, #0077b3) !important; background: #fff !important;
+}
+.mia-scope .mia-home .mia-rail-btn:hover { background: var(--brand, #00a2e0) !important; border-color: var(--brand, #00a2e0) !important; color: #fff !important; }
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.mia-scope .mia-home .mia-hero { padding-bottom: 72px; }
+.mia-scope .mia-hero-orb {
+  position: absolute; z-index: 0; top: 12%; inset-inline-start: -300px; width: 460px; height: 460px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, #0b3a78, #031a36 70%);
+  box-shadow: 0 0 80px rgba(0,162,224,.35), inset 0 0 0 1px rgba(90,200,255,.3);
+}
+@media (max-width: 1100px) { .mia-scope .mia-hero-orb { display: none; } }
+
+/* Copy: on the photo, over a soft veil that feathers out on every side so
+   there is no box (the design's `.th-copy::before`). */
+.mia-scope .mia-hero-copy { position: relative; isolation: isolate; text-shadow: 0 2px 14px rgba(0,0,0,.4); }
+.mia-scope .mia-hero-copy::before {
+  content: ""; position: absolute; z-index: -1; inset: -50px -70px; pointer-events: none; background: rgba(3,26,54,.55);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 70px, #000 calc(100% - 70px), transparent 100%), linear-gradient(to bottom, transparent 0, #000 50px, #000 calc(100% - 50px), transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent 0, #000 70px, #000 calc(100% - 70px), transparent 100%), linear-gradient(to bottom, transparent 0, #000 50px, #000 calc(100% - 50px), transparent 100%);
+  mask-composite: intersect;
+}
+.mia-scope .mia-hero .mia-hero-h1 { font-size: clamp(34px, 4.4vw, 58px); line-height: 1.12; letter-spacing: -1px; text-shadow: 0 4px 24px rgba(0,0,0,.3); }
+.mia-scope .mia-hero .mia-hero-accent-word { background: linear-gradient(90deg, #7fdcff, #e2f7ff 50%, #7fdcff); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 4px 18px rgba(0,0,0,.4)); text-shadow: none; }
+.mia-scope .mia-hero .mia-hero-accent-stroke { display: none; }
+.mia-scope .mia-hero p.mia-hero-sub { color: #fff; font-size: clamp(17px, 1.6vw, 22px); font-weight: 800; }
+.mia-scope .mia-hero .mia-hero-sub-mark { display: none; }
+.mia-scope .mia-hero .mia-hero-lead { color: #cfe3f1; font-size: 15px; line-height: 1.9; max-width: 54ch; }
+
+/* Actions: the CTA pill with its white arrow chip (`.th-cta`), the zakat
+   calculator as the underlined text link (`.th-link`), and the film. */
+.mia-scope .mia-hero .mia-hero-actions { gap: 14px 22px; margin-top: 8px; }
+.mia-scope .mia-hero .mia-hero-actions a.mia-hero-btn:first-child {
+  min-height: 52px !important; padding-block: 0 !important; padding-inline: 24px 8px !important; gap: 12px !important;
+  font-size: 15px !important; box-shadow: 0 10px 26px rgba(0,162,224,.35) !important;
+}
+.mia-scope .mia-hero .mia-hero-actions a.mia-hero-btn:first-child .mia-arrow-next {
+  width: 36px; height: 36px; padding: 10px; box-sizing: border-box; border-radius: 50%; background: #fff; color: #1b6fe0; box-shadow: 0 2px 6px rgba(3,26,54,.18);
+}
+.mia-scope .mia-hero .mia-hero-actions a.mia-hero-btn:nth-child(2) {
+  min-height: 44px !important; padding: 0 !important; border: 0 !important; border-bottom: 1.5px solid rgba(255,255,255,.35) !important;
+  border-radius: 0 !important; background: transparent !important; box-shadow: none !important; color: #fff !important; font-size: 14.5px !important;
+}
+.mia-scope .mia-hero .mia-hero-actions a.mia-hero-btn:nth-child(2):hover { border-bottom-color: #38c2ff !important; transform: none; }
+.mia-scope .mia-hero-watch {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer;
+  color: #fff; font-family: inherit; font-size: 14.5px; font-weight: 800; text-align: start;
+}
+.mia-scope .mia-hero-watch-ico {
+  display: grid; place-items: center; flex: 0 0 34px; width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.45); background: rgba(255,255,255,.08); transition: background .2s, border-color .2s;
+}
+.mia-scope .mia-hero-watch-ico svg { margin-inline-start: 2px; }
+.mia-scope .mia-hero-watch:hover .mia-hero-watch-ico { background: var(--brand, #00a2e0); border-color: var(--brand, #00a2e0); color: #031a36; }
+.mia-scope .mia-hero-watch:focus-visible { outline: 2px solid #38c2ff; outline-offset: 4px; border-radius: 999px; }
+
+/* Disc beside the copy, at the inline-start edge, as in the design. */
+.mia-scope .mia-hero-main[data-ring="true"] {
+  grid-template-columns: 360px minmax(0, 580px); justify-content: start; gap: 56px; padding: 40px 0 28px;
+}
+.mia-scope .mia-hero-main[data-ring="true"] .mia-hero-ring { order: -1; display: grid; place-items: center; min-width: 0; }
+@media (max-width: 1279px) {
+  .mia-scope .mia-hero-main[data-ring="true"] { grid-template-columns: 300px minmax(0, 1fr); gap: 32px; }
+}
+@media (max-width: 980px) {
+  .mia-scope .mia-hero-main[data-ring="true"] { justify-items: center; text-align: center; gap: 30px; padding: 26px 0 10px; }
+  .mia-scope .mia-hero-main[data-ring="true"] .mia-hero-copy { justify-items: center; max-width: 600px; }
+  .mia-scope .mia-hero-main[data-ring="true"] .mia-hero-sub { justify-content: center; }
+  .mia-scope .mia-hero-main[data-ring="true"] .mia-hero-actions { justify-content: center; }
+  .mia-scope .mia-hero-main[data-ring="true"] .mia-hero-ring { order: 2; }
+  .mia-scope .mia-hero-main[data-ring="true"] .mia-hero-actions--mobile { order: 1; }
+}
+@media (max-width: 560px) {
+  .mia-scope .mia-hero .mia-hero-h1 { font-size: 32px !important; line-height: 1.2 !important; }
+  .mia-scope .mia-hero p.mia-hero-sub { font-size: 18px !important; }
+  .mia-scope .mia-hero .mia-hero-lead { font-size: 14.5px !important; }
+  .mia-scope .mia-hero-main[data-ring="true"] .mia-hero-actions--mobile {
+    display: flex !important; flex-wrap: wrap; justify-content: center; gap: 12px 20px; margin-top: -8px;
+  }
+  .mia-scope .mia-hero .mia-hero-actions a.mia-hero-btn:first-child { min-height: 50px !important; }
+  .mia-scope .mia-hero-main[data-ring="true"] .mia-hero-watch { flex-basis: 100%; justify-content: center; }
+}
+
+/* ── The «دائرة الخير» quick-donation disc (QuickDonateBar) ─────────────────
+ * Fixed sizes on purpose (ToplamVakfi-design/CLAUDE.md): every row is checked
+ * against the circle's chord at its own height, and long labels ellipsize. */
+.mia-scope .tv-ring { position: relative; width: 360px; height: 360px; flex: 0 0 360px; display: grid; place-items: center; margin: 0; padding: 0; color: #fff; text-shadow: none; }
+.mia-scope .tv-ring-orbit { position: absolute; border-radius: 50%; pointer-events: none; }
+.mia-scope .tv-ring-orbit--1 { inset: 0; border: 1px solid rgba(90,200,255,.55); animation: tv-ring-spin 38s linear infinite; }
+.mia-scope .tv-ring-orbit--2 { inset: -26px; border: 1px solid rgba(90,200,255,.22); animation: tv-ring-spin 60s linear infinite reverse; }
+.mia-scope .tv-ring-orbit i { position: absolute; top: 50%; left: 50%; width: 9px; height: 9px; margin: -4.5px; border-radius: 50%; background: #38c2ff; box-shadow: 0 0 10px 2px rgba(56,194,255,.8); }
+.mia-scope .tv-ring-orbit--1 i:nth-child(1) { transform: rotate(-60deg) translateX(180px); }
+.mia-scope .tv-ring-orbit--1 i:nth-child(2) { transform: rotate(120deg) translateX(180px); }
+.mia-scope .tv-ring-orbit--2 i { width: 7px; height: 7px; margin: -3.5px; }
+.mia-scope .tv-ring-orbit--2 i:nth-child(1) { transform: rotate(20deg) translateX(206px); }
+.mia-scope .tv-ring-orbit--2 i:nth-child(2) { transform: rotate(150deg) translateX(206px); }
+.mia-scope .tv-ring-orbit--2 i:nth-child(3) { transform: rotate(260deg) translateX(206px); }
+@keyframes tv-ring-spin { to { transform: rotate(360deg); } }
+/* The live arc: how far up the presets the choice is. */
+.mia-scope .tv-ring-arc { position: absolute; inset: 10px; width: calc(100% - 20px); height: calc(100% - 20px); transform: rotate(-90deg); pointer-events: none; }
+.mia-scope[dir="rtl"] .tv-ring-arc { transform: rotate(-90deg) scaleY(-1); }
+.mia-scope .tv-ring-arc circle { fill: none; stroke: #38c2ff; stroke-width: 2.5; stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(56,194,255,.7)); transition: stroke-dasharray .45s cubic-bezier(.2,.8,.2,1); }
+
+.mia-scope .tv-ring-disc {
+  position: relative; width: 324px; height: 324px; border-radius: 50%; padding: 0 20px; box-sizing: border-box;
+  display: grid; justify-items: center; align-content: center; gap: 7px; text-align: center;
+  background: radial-gradient(circle, rgba(8,48,92,.94) 0 64%, rgba(4,30,62,.72) 100%);
+  box-shadow: inset 0 0 0 1px rgba(90,200,255,.45), 0 0 50px rgba(0,162,224,.28);
+}
+.mia-scope .tv-ring .tv-ring-title { margin: 0; color: #fff; font-size: 20px !important; font-weight: 900; line-height: 1.15 !important; }
+.mia-scope .tv-ring-step { display: flex; align-items: center; justify-content: center; gap: 14px; line-height: 1; }
+.mia-scope .tv-ring-sb {
+  display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; padding: 0; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08); color: #fff; font: 700 17px/1 inherit; cursor: pointer;
+  transition: background .18s, border-color .18s, color .18s;
+}
+.mia-scope .tv-ring-sb:hover:not(:disabled) { background: var(--brand, #00a2e0); border-color: var(--brand, #00a2e0); color: #031a36; }
+.mia-scope .tv-ring-sb:disabled { opacity: .35; cursor: default; }
+.mia-scope .tv-ring-amt { min-width: 88px; max-width: 170px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 28px; font-weight: 900; line-height: 1.15; unicode-bidi: isolate; }
+.mia-scope .tv-ring-freq { display: flex; flex-wrap: wrap; justify-content: center; max-width: 256px; padding: 2px; border: 1px solid rgba(255,255,255,.25); border-radius: 18px; }
+.mia-scope .tv-ring-freq button {
+  min-height: 28px; padding: 0 11px; border: 0; border-radius: 999px; background: transparent; color: #cfe3f1;
+  font-family: inherit; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap;
+}
+.mia-scope .tv-ring[data-freqs="3"] .tv-ring-freq button,
+.mia-scope .tv-ring[data-freqs="4"] .tv-ring-freq button { padding: 0 8px; font-size: 11.5px; }
+.mia-scope .tv-ring-freq button[data-on="true"] { background: var(--brand, #00a2e0); color: #031a36; }
+.mia-scope .tv-ring-row { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; max-width: 252px; }
+.mia-scope .tv-ring .mia-sel-trigger.tv-ring-sel {
+  flex: 1 1 0; min-width: 0; width: auto; min-height: 32px; height: 32px; padding-inline: 12px 8px; gap: 6px;
+  border: 1px solid rgba(255,255,255,.25); border-radius: 999px; background: rgba(255,255,255,.06); color: #fff; font-size: 12px;
+}
+.mia-scope .tv-ring .mia-sel-trigger.tv-ring-sel .mia-sel-icon { color: #b9d3e6; }
+.mia-scope .tv-ring .mia-sel-trigger.tv-ring-sel:hover,
+.mia-scope .tv-ring .mia-sel-trigger.tv-ring-sel[data-state="open"] { border-color: var(--brand, #00a2e0); box-shadow: none; }
+.mia-scope .tv-ring-free {
+  display: inline-flex; align-items: center; gap: 4px; flex: 0 0 98px; width: 98px; height: 32px; padding: 0 10px; box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,.25); border-radius: 999px; background: rgba(255,255,255,.06); cursor: text;
+}
+.mia-scope .tv-ring-row > .tv-ring-free:only-child { flex-basis: 140px; width: 140px; }
+.mia-scope .tv-ring-free:focus-within,
+.mia-scope .tv-ring-free[data-active="true"] { border-color: var(--brand, #00a2e0); background: rgba(0,162,224,.14); }
+.mia-scope .tv-ring-free small { color: #b9d3e6; font-size: 11px; font-weight: 800; }
+.mia-scope .tv-ring-free input { flex: 1 1 auto; width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; color: #fff; font-family: inherit; font-size: 12px; font-weight: 800; }
+.mia-scope .tv-ring-free input::placeholder { color: #b9d3e6; opacity: 1; }
+.mia-scope .tv-ring-presets { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 280px; }
+.mia-scope .tv-ring-presets button {
+  min-width: 42px; min-height: 30px; padding: 0 9px; border: 1px solid rgba(255,255,255,.25); border-radius: 999px;
+  background: rgba(255,255,255,.06); color: #fff; font-family: inherit; font-size: 12px; font-weight: 800; cursor: pointer; white-space: nowrap;
+}
+.mia-scope .tv-ring-presets button:hover,
+.mia-scope .tv-ring-presets button[data-on="true"] { background: var(--brand, #00a2e0); border-color: var(--brand, #00a2e0); color: #031a36; }
+.mia-scope .tv-ring-go {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; margin-top: 2px; padding: 0 28px; border: 0; border-radius: 999px;
+  background: var(--cta-gradient); color: #fff; font-family: inherit; font-size: 14.5px; font-weight: 900; cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,162,224,.45); transition: transform .2s;
+}
+.mia-scope[dir="rtl"] .tv-ring-go { background: linear-gradient(270deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%); }
+.mia-scope .tv-ring-go:hover:not(:disabled) { transform: translateY(-2px); }
+.mia-scope .tv-ring-go:disabled { opacity: .5; cursor: not-allowed; }
+.mia-scope .tv-ring button:focus-visible,
+.mia-scope .tv-ring .mia-sel-trigger:focus-visible { outline: 2px solid #7fd6f5; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .mia-scope .tv-ring-orbit { animation: none; }
+  .mia-scope .tv-ring-arc circle { transition: none; }
+}
+@media (max-width: 1279px) {
+  .mia-scope .tv-ring { width: 300px; height: 300px; flex-basis: 300px; }
+  .mia-scope .tv-ring-disc { width: 280px; height: 280px; gap: 4px; padding: 0 12px; }
+  .mia-scope .tv-ring-presets { gap: 5px; max-width: 262px; }
+  .mia-scope .tv-ring-presets button { min-width: 0; padding: 0 7px; font-size: 11.5px; }
+  .mia-scope .tv-ring .tv-ring-title { font-size: 18px !important; }
+  .mia-scope .tv-ring-amt { font-size: 24px; min-width: 76px; }
+  .mia-scope .tv-ring-step { gap: 12px; }
+  .mia-scope .tv-ring-go { min-height: 38px; padding: 0 24px; font-size: 14px; }
+  .mia-scope .tv-ring-orbit--1 i:nth-child(1) { transform: rotate(-60deg) translateX(150px); }
+  .mia-scope .tv-ring-orbit--1 i:nth-child(2) { transform: rotate(120deg) translateX(150px); }
+  .mia-scope .tv-ring-orbit--2 { inset: -18px; }
+  .mia-scope .tv-ring-orbit--2 i:nth-child(1) { transform: rotate(20deg) translateX(168px); }
+  .mia-scope .tv-ring-orbit--2 i:nth-child(2) { transform: rotate(150deg) translateX(168px); }
+  .mia-scope .tv-ring-orbit--2 i:nth-child(3) { transform: rotate(260deg) translateX(168px); }
+}
+@media (max-width: 760px) {
+  .mia-scope .tv-ring-sb { flex-basis: 34px; width: 34px; height: 34px; }
+}
+/* Narrowest phones: scale the whole disc rather than shrink any control. */
+@media (max-width: 340px) { .mia-scope .tv-ring { transform: scale(.9); margin-block: -15px; } }
+
+/* ── Verse → the figures strip's quote (`.hs-quote`) ──────────────────────── */
+.mia-scope .mia-home .mia-verse { background: transparent; border: 0; }
+.mia-scope .mia-home .mia-verse::before,
+.mia-scope .mia-home .mia-verse::after,
+.mia-scope .mia-home .mia-verse-pattern { display: none; }
+.mia-scope .mia-home .mia-verse-inner { max-width: 900px; padding: 30px 24px 6px; gap: 10px; }
+.mia-scope .mia-home .mia-verse-inner::before { content: "\201D"; display: block; height: 30px; color: var(--brand, #00a2e0); font: 900 58px/1 Georgia, serif; }
+.mia-scope .mia-home .mia-verse-ar { color: var(--ink, #062442); font-weight: 700; }
+.mia-scope .mia-home .mia-verse-tr { color: var(--muted); }
+.mia-scope .mia-home .mia-verse-cite { background: #eaf6fd; border-color: #eaf6fd; color: var(--ink, #062442); }
+.mia-scope .mia-home .mia-verse-link { border-color: #e6eef3; color: var(--brand-ink, #0077b3); }
+.mia-scope .mia-home .mia-verse-link:hover { background: #0077b3; border-color: #0077b3; color: #fff; }
+
+/* ── Impact → the figures strip (`.hs-stats`) and sector cards ──────────── */
+.mia-scope .tv-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mia-scope .tv-stat { display: grid; justify-items: center; align-content: start; gap: 6px; padding: 8px 18px; text-align: center; border-inline-start: 1px solid #e3ebf1; }
+.mia-scope .tv-stat:first-child { border-inline-start: 0; }
+.mia-scope .tv-stat-ico { display: inline-flex; align-items: center; justify-content: center; height: 34px; color: var(--brand, #00a2e0); font-style: normal; }
+.mia-scope .tv-stat-value { font-size: clamp(26px, 2.6vw, 34px); line-height: 1.15; font-weight: 900; color: var(--ink, #062442); letter-spacing: -.02em; unicode-bidi: isolate; }
+.mia-scope .tv-stat-label { color: var(--ink, #062442); font-size: 14px; font-weight: 800; line-height: 1.5; }
+.mia-scope .tv-stat-note { max-width: 38ch; color: var(--muted); font-size: 12.5px; line-height: 1.65; }
+.mia-scope .tv-sectors { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px; margin-top: 30px; }
+.mia-scope .tv-sector { display: grid; gap: 5px; align-content: start; padding: 16px 18px; background: #fff; border: 1px solid #e6eef3; border-radius: 14px; box-shadow: 0 12px 28px rgba(2,52,88,.07); }
+.mia-scope .tv-sector-name { color: var(--brand-ink, #0077b3); font-size: 13px; font-weight: 800; }
+.mia-scope .tv-sector-value { font-size: clamp(20px, 1.8vw, 26px); line-height: 1.15; font-weight: 900; letter-spacing: -.02em; color: var(--ink, #062442); unicode-bidi: isolate; }
+@media (max-width: 1100px) { .mia-scope .tv-sectors { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 960px) {
+  .mia-scope .mia-home #impact-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; border-top: 0 !important; }
+  .mia-scope .mia-home #impact-metrics > div { border-top: 0 !important; border-inline-end: 0 !important; padding: 8px 12px !important; }
+}
+/* Phones: two columns between hairlines, as the design's phone strip, in
+   place of minbar.css's swipe rail of cards. */
+@media (max-width: 768px) {
+  .mia-scope .mia-home #impact-metrics {
+    display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 18px 0 !important;
+    overflow: visible !important; padding: 0 !important; margin: 0 !important;
+  }
+  .mia-scope .mia-home #impact-metrics > * {
+    width: auto !important; max-width: none; min-height: 0; padding: 6px 10px !important; gap: 4px !important;
+    border: 0 !important; border-inline-start: 1px solid #e3ebf1 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important;
+  }
+  .mia-scope .mia-home #impact-metrics > :nth-child(odd) { border-inline-start: 0 !important; }
+  .mia-scope .mia-home #impact-metrics > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .mia-scope .mia-home #sector-metrics {
+    display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px !important;
+    overflow: visible !important; padding: 0 !important; margin: 22px 0 0 !important;
+  }
+  .mia-scope .mia-home #sector-metrics > * { width: auto !important; max-width: none; padding: 14px !important; }
+}
+
+/* ── How it works / account → the «لماذا تثق بنا» panel (`.wt`) ────────── */
+.mia-scope .tv-panel { position: relative; background: #fff; border: 1px solid #e6eef3; border-radius: 20px; padding: 30px 32px 28px; box-shadow: 0 14px 34px rgba(2,52,88,.07); }
+.mia-scope .tv-steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+.mia-scope .tv-step,
+.mia-scope .tv-feature { display: grid; align-content: start; gap: 10px; padding: 18px; background: #f7fbfe; border: 1px solid #e1edf5; border-radius: 14px; color: var(--ink, #062442); text-decoration: none; }
+.mia-scope .tv-step-head,
+.mia-scope .tv-feature-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.mia-scope .tv-step-num,
+.mia-scope .tv-feature-head i {
+  display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, #00a2e0, #0077b3); color: #fff; font-style: normal; font-size: 14px; font-weight: 900;
+}
+.mia-scope .tv-step-head b,
+.mia-scope .tv-feature-head b { color: var(--ink, #062442); font-size: 15px; font-weight: 800; line-height: 1.4; }
+.mia-scope .tv-step-text,
+.mia-scope .tv-feature-text { color: var(--muted); font-size: 12.5px; line-height: 1.8; }
+.mia-scope .tv-feature-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.mia-scope .tv-feature:hover { color: var(--ink, #062442); background: #fff; }
+@media (max-width: 1100px) { .mia-scope .tv-steps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 960px) {
+  .mia-scope .mia-home #path-steps > div {
+    grid-template-columns: minmax(0, 1fr) !important; row-gap: 10px !important; padding: 18px !important;
+    border: 1px solid #e1edf5 !important; border-radius: 14px !important;
+  }
+  .mia-scope .mia-home #path-steps > div > span:first-child,
+  .mia-scope .mia-home #path-steps > div > span:last-child { grid-row: auto !important; grid-column: auto !important; }
+}
+@media (max-width: 900px) { .mia-scope .tv-panel { padding: 22px 18px; } }
+/* minbar.css turns these into swipe rails on phones; the design keeps grids. */
+@media (max-width: 768px) {
+  .mia-scope .mia-home #path-steps,
+  .mia-scope .mia-home #account-features {
+    display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important;
+    overflow: visible !important; padding: 0 !important; margin: 0 !important;
+  }
+  .mia-scope .mia-home #path-steps > *,
+  .mia-scope .mia-home #account-features > * {
+    width: auto !important; max-width: none; padding: 16px !important;
+    background: #f7fbfe !important; border: 1px solid #e1edf5 !important; border-radius: 14px !important;
+  }
+}
+@media (max-width: 560px) {
+  .mia-scope .mia-home #path-steps,
+  .mia-scope .mia-home #account-features { grid-template-columns: minmax(0, 1fr) !important; }
+}
+
+/* ── Programmes / courses → the programmes row (`.program-row`) ──────────── */
+.mia-scope .tv-prog { display: grid; grid-template-columns: minmax(200px, 260px) minmax(0, 1fr); gap: 20px; align-items: center; }
+.mia-scope .tv-prog-intro { display: grid; gap: 12px; justify-items: start; align-content: center; min-width: 0; }
+.mia-scope .tv-prog-rail { gap: 12px !important; padding: 8px 4px 14px !important; margin: -8px -4px 0; }
+.mia-scope .tv-prog-card {
+  position: relative; flex: 0 0 200px; scroll-snap-align: start; display: flex; flex-direction: column; overflow: hidden;
+  background: #fff; border: 1px solid #dbe9f0; border-radius: 14px; box-shadow: 0 8px 17px rgba(2,52,88,.08);
+  color: var(--ink, #062442); text-decoration: none; text-align: center; cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+.mia-scope .tv-prog-card:hover { transform: translateY(-4px); box-shadow: 0 14px 26px rgba(2,52,88,.14); color: var(--ink, #062442); }
+.mia-scope .tv-prog-card:focus-visible { outline: 2px solid var(--brand, #00a2e0); outline-offset: 2px; }
+.mia-scope .tv-prog-img { display: block; flex: 0 0 auto; height: 118px; background-color: #0b2440; background-size: cover; background-position: center; clip-path: ellipse(92% 100% at 50% 0%); }
+.mia-scope .tv-prog-ico {
+  position: relative; z-index: 1; display: grid; place-items: center; width: 46px; height: 46px; margin: -26px auto 0; border-radius: 50%;
+  background: #fff; color: var(--brand, #00a2e0); box-shadow: 0 6px 16px rgba(2,52,88,.16);
+}
+.mia-scope .tv-prog-ico svg { margin-inline-start: 2px; }
+.mia-scope .tv-prog-body { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 12px 14px; }
+.mia-scope .tv-prog-tag { color: var(--brand-ink, #0077b3); font-style: normal; font-size: 12px; font-weight: 800; }
+.mia-scope .tv-prog-body b { font-size: 14px; font-weight: 800; line-height: 1.45; letter-spacing: -.2px; }
+.mia-scope .tv-prog-text {
+  flex: 1 1 auto; color: var(--muted); font-size: 12px; line-height: 1.6; text-wrap: balance;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.mia-scope .tv-prog-body i {
+  display: inline-grid; place-items: center; width: 24px; height: 24px; margin-top: 8px; border: 1px solid rgba(0,162,224,.4); border-radius: 50%;
+  color: var(--brand-ink, #0077b3); font-style: normal; transition: background .2s, color .2s, border-color .2s;
+}
+.mia-scope .tv-prog-card:hover .tv-prog-body i { background: var(--brand, #00a2e0); border-color: var(--brand, #00a2e0); color: #fff; }
+@media (max-width: 860px) {
+  .mia-scope .tv-prog { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .mia-scope .tv-prog-intro { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+  .mia-scope .tv-prog-intro .tv-lead { grid-column: 1 / -1; grid-row: 2; }
+}
+@media (max-width: 768px) {
+  .mia-scope .mia-home #programs-rail > *,
+  .mia-scope .mia-home #courses-rail > * { flex: 0 0 56vw !important; max-width: 240px; }
+}
+
+/* ── Events and reels ─────────────────────────────────────────────────────── */
+.mia-scope .mia-home .mia-reel:hover { border-color: rgba(0,162,224,.5); }
+
+/* ── Urgent projects ──────────────────────────────────────────────────────── */
+.mia-scope .mia-home #urgent-rail { gap: 18px; }
+
+/* ── Categories → the giving cards (`.wg-unit`) ───────────────────────────── */
+.mia-scope .mia-home .mia-cat-section { background: transparent; border-bottom: 0; }
+.mia-scope .mia-home .mia-cat-card {
+  flex-direction: column; min-height: 0; background: #fff; color: var(--ink, #062442);
+  border: 1px solid #eef2f6; box-shadow: 0 10px 26px rgba(2,52,88,.07);
+}
+.mia-scope .mia-home .mia-cat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(2,52,88,.13); color: var(--ink, #062442); }
+.mia-scope .mia-home .mia-cat-card__media { position: relative; inset: auto; z-index: 0; flex: 0 0 auto; height: 0; padding-bottom: 56.25%; }
+.mia-scope .mia-home .mia-cat-card:hover .mia-cat-card__media { transform: none; }
+.mia-scope .mia-home .mia-cat-card__shade { display: none; }
+.mia-scope .mia-home .mia-cat-card__body { position: relative; z-index: 1; justify-content: flex-start; gap: 10px; padding: 0 20px 20px; }
+.mia-scope .mia-home .mia-cat-card__top { align-items: flex-end; }
+.mia-scope .mia-home .mia-cat-card__icon {
+  width: 46px; height: 46px; flex-basis: 46px; margin-top: -23px; border-radius: 50%;
+  background: #fff; color: var(--brand, #00a2e0); box-shadow: 0 6px 16px rgba(2,52,88,.16);
+}
+.mia-scope .mia-home .mia-cat-card:hover .mia-cat-card__icon { transform: none; }
+.mia-scope .mia-home .mia-cat-card__count { margin-top: 10px; background: #eaf6fd; border: 0; color: var(--ink, #062442); backdrop-filter: none; -webkit-backdrop-filter: none; }
+.mia-scope .mia-home .mia-cat-card__name { color: var(--ink, #062442); font-size: 16px; font-weight: 800; }
+.mia-scope .mia-home .mia-cat-card__desc { color: var(--muted); }
+.mia-scope .mia-home .mia-cat-card__go { color: var(--brand-ink, #0077b3); }
+.mia-scope .mia-home .mia-cat-more__btn { border-color: #e6eef3; color: var(--brand-ink, #0077b3); }
+.mia-scope .mia-home .mia-cat-more__btn:hover { background: #0077b3; border-color: #0077b3; color: #fff; }
+@media (max-width: 760px) {
+  .mia-scope .mia-home .mia-cat-card { min-height: 0; }
+  .mia-scope .mia-home .mia-cat-card__body { padding: 0 12px 14px; gap: 8px; }
+  .mia-scope .mia-home .mia-cat-card__icon { width: 38px; height: 38px; flex-basis: 38px; margin-top: -19px; }
+  .mia-scope .mia-home .mia-cat-card__name { font-size: 14.5px; }
+}
+
+/* ── Waqf → the dark giving card (`.rg-card`) ─────────────────────────────── */
+.mia-scope .tv-dark-card {
+  position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 480px); gap: 40px; align-items: center;
+  padding: 34px 38px; border-radius: 22px; background: var(--dark-gradient); color: #fff;
+}
+.mia-scope .tv-dark-glow { position: absolute; inset-inline-start: -140px; top: -140px; width: 380px; height: 380px; border-radius: 50%; pointer-events: none; background: radial-gradient(circle, rgba(0,162,224,.22), transparent 65%); }
+.mia-scope .tv-dark-text { position: relative; display: grid; gap: 14px; justify-items: start; min-width: 0; }
+.mia-scope .tv-dark-card .tv-h2,
+.mia-scope .tv-cta-card .tv-h2 { color: #fff; }
+.mia-scope .tv-dark-lede { margin: 0; max-width: 52ch; color: #cfe3f1; font-size: 14px; line-height: 1.9; }
+.mia-scope .tv-waqf-box { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 20px; background: #fff; color: var(--ink, #062442); border-radius: 18px; box-shadow: 0 24px 50px rgba(0,0,0,.28); }
+.mia-scope .tv-waqf-area { display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 8px 12px; border: 1.5px solid #e2eaf0; border-radius: 10px; background: #f2f6f9; font-size: 13px; font-weight: 800; line-height: 1.5; }
+.mia-scope .tv-waqf-area i { display: grid; place-items: center; flex: 0 0 22px; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,162,224,.14); color: var(--brand-ink, #0077b3); }
+@media (max-width: 980px) { .mia-scope .tv-dark-card { grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 26px 20px; } }
+@media (max-width: 768px) {
+  .mia-scope .mia-home #waqf-areas {
+    display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important;
+    overflow: visible !important; padding: 16px !important; margin: 0 !important;
+  }
+  .mia-scope .mia-home #waqf-areas > * {
+    width: auto !important; max-width: none; min-height: 46px !important; padding: 8px 12px !important;
+    align-items: center !important; border-radius: 10px !important; font-size: 13px !important; box-shadow: none !important;
+  }
+}
+@media (max-width: 560px) { .mia-scope .mia-home #waqf-areas { grid-template-columns: minmax(0, 1fr) !important; } }
+
+/* ── Recurring (and the zakat band) → the closing CTA band (`.cf-card`) ──── */
+.mia-scope .tv-cta-card {
+  position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 30px;
+  padding: 38px 44px; border-radius: 24px; background: var(--dark-gradient); color: #fff;
+}
+.mia-scope .tv-cta-ring {
+  position: absolute; top: 50%; inset-inline-end: -120px; width: 400px; height: 400px; margin-top: -200px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(0,162,224,.28), transparent 62%); box-shadow: inset 0 0 0 1px rgba(90,200,255,.35);
+}
+.mia-scope .tv-cta-ring::after { content: ""; position: absolute; top: 30px; inset-inline-start: 140px; width: 10px; height: 10px; border-radius: 50%; background: #7fd6f5; box-shadow: 0 0 14px 4px rgba(0,162,224,.7); }
+.mia-scope .tv-cta-body { position: relative; z-index: 1; display: grid; gap: 10px; min-width: 0; }
+.mia-scope .tv-cta-donate {
+  position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding-inline: 8px 24px; border-radius: 999px;
+  background: var(--cta-gradient); color: #fff; font-size: 15px; font-weight: 800; white-space: nowrap; text-decoration: none;
+  box-shadow: 0 10px 24px rgba(0,162,224,.4); transition: transform .2s;
+}
+.mia-scope .tv-cta-donate:hover { transform: translateY(-2px); color: #fff; }
+.mia-scope .tv-cta-donate i { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #fff; color: var(--brand-ink, #0077b3); font-style: normal; }
+@media (max-width: 900px) {
+  .mia-scope .tv-cta-card { grid-template-columns: minmax(0, 1fr); padding: 30px 22px; }
+  .mia-scope .tv-cta-donate { justify-self: start; }
+}
+/* The zakat band carries the same ring; its content sits above it. */
+.mia-scope .mia-zakat-band > div { z-index: 1; }
+.mia-scope .mia-zakat-cta:hover { background: var(--cta-gradient); color: #fff; filter: brightness(1.06); }
+.mia-scope .mia-zakat-cta-ghost:hover { background: rgba(255,255,255,.1); color: #fff; }
+
+/* ── FAQ → `.fq` (one centred column, a card per question) ──────────────── */
+.mia-scope .tv-faq { display: grid; gap: 16px; max-width: 780px; margin: 0 auto; padding: 0 24px; }
+.mia-scope .tv-faq-head { display: grid; gap: 10px; justify-items: start; }
+.mia-scope .tv-faq-head > .tv-lead { order: 1; }
+.mia-scope .tv-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+.mia-scope .tv-chip {
+  height: 36px; padding: 0 14px; border: 1px solid #e6eef3; border-radius: 999px; background: #fff; color: var(--muted);
+  font-family: inherit; font-size: 13px; font-weight: 800; white-space: nowrap; cursor: pointer; transition: all .18s ease;
+}
+.mia-scope .tv-chip:hover { color: var(--ink, #062442); border-color: #cfe0ea; }
+.mia-scope .tv-faq-list { display: grid; gap: 10px; }
+.mia-scope .tv-faq-item { overflow: hidden; background: #fff; border: 1px solid #e6eef3; border-radius: 14px; box-shadow: 0 6px 18px rgba(2,52,88,.06); }
+.mia-scope .tv-faq-item .faq-q {
+  width: 100%; display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 14px 20px; border: 0; background: transparent; cursor: pointer;
+  font-family: inherit; font-size: 14.5px; font-weight: 800; line-height: 1.6; color: var(--ink, #062442); text-align: start;
+}
+.mia-scope .tv-faq-item .faq-tag { flex: 0 0 auto; padding: 3px 9px; border-radius: 999px; background: #eaf6fd; color: var(--ink, #062442); font-size: 11px; font-weight: 900; }
+.mia-scope .tv-faq-item .faq-qtext { flex: 1 1 auto; min-width: 0; }
+.mia-scope .tv-faq-item .faq-plus {
+  display: grid; place-items: center; flex: 0 0 24px; width: 24px; height: 24px; margin-inline-start: auto; border-radius: 50%;
+  background: #eaf5fc; color: var(--brand-ink, #0077b3); font-size: 16px; font-weight: 800; line-height: 1;
+}
+.mia-scope .tv-faq-item[data-open="true"] .faq-plus { background: var(--cta-gradient); color: #fff; }
+.mia-scope .tv-faq-item .faq-a { padding: 0 20px 18px; color: var(--muted); font-size: 13.5px; line-height: 1.85; white-space: pre-line; }
+.mia-scope .tv-faq-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; margin-top: 4px; }
+.mia-scope .tv-faq-foot-text { display: grid; gap: 2px; min-width: 0; }
+.mia-scope .tv-faq-foot-text b { color: var(--ink, #062442); font-size: 14px; font-weight: 800; }
+.mia-scope .tv-faq-foot-text span { color: var(--muted); font-size: 13px; line-height: 1.7; }
+.mia-scope .tv-faq-ask {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 999px;
+  background: #e3f2fb; color: var(--ink, #062442); font-size: 13px; font-weight: 800; text-decoration: none; white-space: nowrap;
+}
+.mia-scope .tv-faq-ask:hover { background: #0077b3; color: #fff; }
+@media (max-width: 560px) { .mia-scope .tv-faq { padding: 0 16px; } }
+
+/* ── Shared banners (every page with a banner slot) ───────────────────────── */
+.mia-scope .mia-bn-wrap { border-radius: 20px; box-shadow: 0 14px 34px rgba(2,52,88,.12); }
+.mia-scope .mia-bn-cta { border-radius: 999px; font-weight: 800; }
+.mia-scope .mia-bn-chip { border-radius: 14px; }
+.mia-scope .mia-bn-diamond { width: 6px; height: 6px; border-radius: 50%; transform: none; }
+.mia-scope .mia-bn-shade { background: linear-gradient(to top, rgba(3,26,54,.88) 0%, rgba(3,26,54,.38) 46%, rgba(3,26,54,.06) 72%, rgba(3,26,54,0) 100%); }

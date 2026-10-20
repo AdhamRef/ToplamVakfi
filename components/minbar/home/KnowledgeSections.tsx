@@ -29,10 +29,10 @@ export function ArticlesSection({ articles }: { articles: MinbarArticle[] }) {
   if (articles.length === 0) return null;
 
   return (
-    <section id="blog" style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(234,243,249,.52), rgba(234,243,249,.78))", padding: "48px 0" }}>
+    <section id="blog" className="tv-sec" style={{ position: "relative", zIndex: 1 }}>
       <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-        <div style={{ display: "flex", alignItems: "end", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 22 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{t("blogTitle")}</h2>
+        <div className="tv-sec-head">
+          <h2 className="tv-h2">{t("blogTitle")}</h2>
           <ViewAllLink href={miaPath("blog", locale)}>{t("allArticles")}</ViewAllLink>
         </div>
         <div id="articles-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 18 }}>
@@ -41,7 +41,7 @@ export function ArticlesSection({ articles }: { articles: MinbarArticle[] }) {
               key={article.id}
               href={`${miaPath("blog", locale)}/${encodeURIComponent(article.slug)}`}
               className="mia-lift"
-              style={{ display: "flex", flexDirection: "column", color: "var(--deep)", textDecoration: "none", background: "#fff", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", boxShadow: "0 1px 2px rgba(6,36,66,.04)" }}
+              style={{ display: "flex", flexDirection: "column", color: "var(--deep)", textDecoration: "none", background: "#fff", border: "1px solid #e6eef3", borderRadius: 16, overflow: "hidden", boxShadow: "0 12px 28px rgba(2,52,88,.07)" }}
             >
               <span style={{ position: "relative", display: "block", aspectRatio: "3 / 2", background: "var(--deep)", overflow: "hidden" }}>
                 {article.cover ? (
@@ -50,16 +50,17 @@ export function ArticlesSection({ articles }: { articles: MinbarArticle[] }) {
                 <span style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(6,36,66,.42), transparent 55%)" }} />
                 {article.category ? (
                   <span style={{ position: "absolute", insetInlineStart: 14, top: 14, display: "inline-flex", alignItems: "center", gap: 7, padding: "6px 12px", borderRadius: 999, background: "rgba(255,255,255,.95)", color: "var(--deep)", fontSize: 11, fontWeight: 900 }}>
-                    <span style={{ width: 5, height: 5, background: "var(--gold)", transform: "rotate(45deg)" }} />
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--gold)" }} />
                     {article.category.name}
                   </span>
                 ) : null}
               </span>
-              <span style={{ display: "grid", gridTemplateRows: "auto 1fr", gap: 10, padding: 22, flex: "1 1 auto" }}>
+              <span style={{ display: "grid", gridTemplateRows: "auto 1fr", gap: 10, padding: "18px 20px 20px", flex: "1 1 auto" }}>
                 <b
                   style={{
-                    fontSize: 19,
-                    lineHeight: 1.5,
+                    fontSize: 16.5,
+                    fontWeight: 800,
+                    lineHeight: 1.55,
                     minHeight: "2.9em",
                     display: "-webkit-box",
                     WebkitLineClamp: 2,
@@ -69,8 +70,8 @@ export function ArticlesSection({ articles }: { articles: MinbarArticle[] }) {
                 >
                   {article.title}
                 </b>
-                <span style={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-end", gap: 10, paddingTop: 12, borderTop: "1px solid var(--border)", fontSize: 12, fontWeight: 800, alignSelf: "end" }}>
-                  <span style={{ color: "var(--red)", display: "inline-flex", alignItems: "center", gap: 5 }}>
+                <span style={{ display: "flex", alignItems: "flex-end", justifyContent: "flex-end", gap: 10, paddingTop: 12, borderTop: "1px solid #e6eef3", fontSize: 12.5, fontWeight: 800, alignSelf: "end" }}>
+                  <span style={{ color: "var(--gold-2)", display: "inline-flex", alignItems: "center", gap: 5 }}>
                     {t("readArticle")}
                     <ArrowGlyph size={12} />
                   </span>
@@ -98,26 +99,26 @@ export function NewsSection({ news }: { news: MinbarArticle[] }) {
   const articleHref = (a: MinbarArticle) => `${miaPath("blog", locale)}/${encodeURIComponent(a.slug)}`;
 
   return (
-    <section id="news" style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(234,243,249,.56), rgba(234,243,249,.80))", padding: "0 0 48px" }}>
+    <section id="news" className="tv-sec" style={{ position: "relative", zIndex: 1 }}>
       <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-        <div style={{ display: "flex", alignItems: "end", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 22 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{tNav("news")}</h2>
+        <div className="tv-sec-head">
+          <h2 className="tv-h2">{tNav("news")}</h2>
           <ViewAllLink href={miaPath("news", locale)}>{t("allNews")}</ViewAllLink>
         </div>
         <div id="news-grid" style={{ display: "grid", gridTemplateColumns: rest.length ? "minmax(0,1.4fr) minmax(0,1fr)" : "minmax(0,1fr)", gap: 22, alignItems: "start" }}>
-          <Link href={articleHref(lead)} style={{ position: "relative", display: "block", minHeight: 340, borderRadius: 14, overflow: "hidden", background: "var(--deep)" }}>
+          <Link href={articleHref(lead)} style={{ position: "relative", display: "block", minHeight: 340, borderRadius: 16, overflow: "hidden", background: "var(--navy)" }}>
             {lead.cover ? (
               <span role="img" aria-label={lead.title} style={{ position: "absolute", inset: 0, display: "block", backgroundImage: cssImage(lead.cover, 620), backgroundSize: "cover", backgroundPosition: "center" }} />
             ) : null}
-            <span style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(6,36,66,.92) 6%, rgba(6,36,66,.35) 52%, transparent 82%)" }} />
+            <span style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(3,26,54,.9) 6%, rgba(3,26,54,.35) 52%, rgba(3,26,54,0) 82%)" }} />
             <span style={{ position: "absolute", insetInline: 24, bottom: 24, display: "grid", gap: 10 }}>
               {lead.category ? (
-                <span style={{ justifySelf: "start", padding: "5px 11px", borderRadius: 999, background: "var(--red)", color: "#fff", fontSize: 11, fontWeight: 900 }}>
+                <span style={{ justifySelf: "start", padding: "5px 11px", borderRadius: 999, background: "var(--gold)", color: "#031a36", fontSize: 11, fontWeight: 900 }}>
                   {lead.category.name}
                 </span>
               ) : null}
               <b style={{ color: "#fff", fontSize: "clamp(20px,2.2vw,28px)", lineHeight: 1.45, maxWidth: "24ch" }}>{lead.title}</b>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "var(--gold)", fontSize: 13, fontWeight: 800 }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "#7fd6f5", fontSize: 13, fontWeight: 800 }}>
                 {t("readNews")}
                 <ArrowGlyph />
               </span>
@@ -130,7 +131,7 @@ export function NewsSection({ news }: { news: MinbarArticle[] }) {
                   key={item.id}
                   href={articleHref(item)}
                   className="mia-lift"
-                  style={{ display: "grid", gridTemplateColumns: "116px minmax(0,1fr) 20px", gap: 16, alignItems: "center", padding: 14, background: "#fff", border: "1px solid var(--border)", borderRadius: 14, boxShadow: "0 1px 2px rgba(6,36,66,.04)" }}
+                  style={{ display: "grid", gridTemplateColumns: "116px minmax(0,1fr) 20px", gap: 16, alignItems: "center", padding: 14, background: "#fff", border: "1px solid #e6eef3", borderRadius: 16, boxShadow: "0 12px 28px rgba(2,52,88,.07)" }}
                 >
                   <span style={{ position: "relative", display: "block", aspectRatio: "4 / 3", borderRadius: 10, overflow: "hidden", background: "var(--deep)" }}>
                     {item.cover ? (
@@ -139,14 +140,14 @@ export function NewsSection({ news }: { news: MinbarArticle[] }) {
                   </span>
                   <span style={{ display: "grid", gap: 8, minWidth: 0 }}>
                     {item.category ? (
-                      <span style={{ justifySelf: "start", display: "inline-flex", alignItems: "center", gap: 7, padding: "4px 10px", borderRadius: 999, background: "var(--sand)", fontSize: 11, fontWeight: 900, color: "var(--deep)" }}>
-                        <span style={{ width: 5, height: 5, background: "var(--gold)", transform: "rotate(45deg)" }} />
+                      <span style={{ justifySelf: "start", display: "inline-flex", alignItems: "center", gap: 7, padding: "4px 10px", borderRadius: 999, background: "#eaf6fd", fontSize: 11, fontWeight: 900, color: "var(--deep)" }}>
+                        <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--gold)" }} />
                         {item.category.name}
                       </span>
                     ) : null}
                     <b style={{ fontSize: 16, lineHeight: 1.6 }}>{item.title}</b>
                   </span>
-                  <span style={{ color: "var(--gold)" }} aria-hidden="true">
+                  <span style={{ color: "var(--gold-2)" }} aria-hidden="true">
                     <ArrowGlyph size={17} />
                   </span>
                 </Link>
@@ -198,90 +199,67 @@ export function FaqSection({ faqs, whatsappNumber = "905398436050" }: { faqs: Cm
 
   if (faqs.length === 0) return null;
 
+  /* The Toplum design's FAQ block (`.fq` on the homepage, the FAQ page's
+     `.faq-item`): one centred column  the heading and the filter chips, each
+     question its own white card with a round +/− mark that fills with the CTA
+     gradient when open, and the "didn't find your answer" line closing it. */
   return (
-    <section id="faq" style={{ position: "relative", zIndex: 1, background: "linear-gradient(to left, rgba(234,243,249,.60), rgba(234,243,249,.84))", padding: "48px 0", borderTop: "1px solid var(--border)", overflow: "hidden" }}>
-      <div id="faq-grid" style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "minmax(0,.34fr) minmax(0,1fr)", gap: 44, alignItems: "start" }}>
-        <div id="faq-aside" style={{ display: "grid", gap: 18, justifyItems: "start", position: "sticky", top: 90 }}>
-          <h2 style={{ margin: 0, fontSize: "clamp(25px,2.5vw,34px)", lineHeight: 1.2, fontWeight: 900, letterSpacing: "-.01em" }}>{t("faqTitle")}</h2>
-          <div id="faq-chips" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+    <section id="faq" className="tv-sec" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
+      <div id="faq-grid" className="tv-faq">
+        <div id="faq-aside" className="tv-faq-head">
+          <h2 className="tv-h2">{t("faqTitle")}</h2>
+          <p className="tv-lead">{t("faqLead")}</p>
+          <div id="faq-chips" className="tv-chips">
             {["all", ...categories].map((id) => (
               <button
                 key={id}
                 type="button"
+                className="tv-chip"
                 data-chip={category === id ? "faq" : ""}
+                aria-pressed={category === id}
                 onClick={() => {
                   setCategory(id);
                   setOpen(0);
-                }}
-                style={{
-                  height: 36,
-                  padding: "0 14px",
-                  borderRadius: 999,
-                  cursor: "pointer",
-                  fontFamily: "inherit",
-                  fontSize: 13.5,
-                  fontWeight: 800,
-                  whiteSpace: "nowrap",
-                  transition: "all .18s ease",
-                  border: "1px solid var(--border)",
-                  background: "#fff",
-                  color: "var(--muted)",
                 }}
               >
                 {id === "all" ? tSystem("allFilter") : label(id)}
               </button>
             ))}
           </div>
-          <div id="faq-help" style={{ display: "grid", gap: 10, width: "100%", padding: 20, background: "#fff", border: "1px solid rgba(0,162,224,.45)", borderRadius: 14, boxShadow: "0 1px 2px rgba(6,36,66,.04)" }}>
-            <b style={{ fontSize: 16 }}>{t("faqNotFound")}</b>
-            <span style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.8 }}>{t("faqWhatsapp")}</span>
-            <a
-              href={`https://wa.me/${whatsappNumber}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "var(--green)", fontWeight: 800, fontSize: 14 }}
-            >
-              {tNav("contact")}
-              <ArrowGlyph />
-            </a>
-          </div>
         </div>
 
-        <div id="faq-list" style={{ display: "grid", background: "#fff", border: "1px solid var(--border)", borderRadius: 14, overflow: "hidden", boxShadow: "0 1px 2px rgba(6,36,66,.04)" }}>
+        <div id="faq-list" className="tv-faq-list">
           {visible.map((faq, i) => {
             const isOpen = open === i;
             return (
-              <div
-                key={faq.id}
-                style={{
-                  borderBottom: i === visible.length - 1 ? "0" : "1px solid var(--border)",
-                  background: isOpen ? "rgba(234,243,249,.7)" : "transparent",
-                  transition: "background .18s ease",
-                }}
-              >
+              <div key={faq.id} className="tv-faq-item" data-open={isOpen ? "true" : "false"}>
                 <button
                   type="button"
                   onClick={() => setOpen(isOpen ? -1 : i)}
                   aria-expanded={isOpen}
                   className="faq-q"
-                  style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, padding: 20, background: "transparent", border: 0, cursor: "pointer", fontFamily: "inherit", fontSize: 17, fontWeight: 800, color: "var(--deep)", textAlign: "start" }}
                 >
-                  {faq.page ? (
-                    <span className="faq-tag" style={{ flex: "0 0 auto", padding: "3px 9px", borderRadius: 999, background: "rgba(0,162,224,.12)", color: "#0077b3", fontSize: 11, fontWeight: 900 }}>
-                      {label(faq.page)}
-                    </span>
-                  ) : null}
+                  {faq.page ? <span className="faq-tag">{label(faq.page)}</span> : null}
                   <span className="faq-qtext">{faq.question}</span>
-                  <span className="faq-plus" style={{ marginInlineStart: "auto", flex: "0 0 auto", display: "grid", placeItems: "center", width: 28, height: 28, borderRadius: "50%", border: "1px solid var(--border)", color: "var(--gold)", fontSize: 16 }} aria-hidden="true">
+                  <span className="faq-plus" aria-hidden="true">
                     {isOpen ? "−" : "+"}
                   </span>
                 </button>
-                {isOpen ? (
-                  <div style={{ padding: "0 20px 22px", color: "var(--muted)", fontSize: 15, lineHeight: 1.9, whiteSpace: "pre-line" }}>{faq.answer}</div>
-                ) : null}
+                {isOpen ? <div className="faq-a">{faq.answer}</div> : null}
               </div>
             );
           })}
+        </div>
+
+        <div id="faq-help" className="tv-faq-foot">
+          <span className="tv-faq-foot-text">
+            <b>{t("faqNotFound")}</b>
+            <span>{t("faqWhatsapp")}</span>
+          </span>
+          <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="tv-faq-ask">
+            {tNav("contact")}
+            <ArrowGlyph />
+          </a>
         </div>
       </div>
     </section>

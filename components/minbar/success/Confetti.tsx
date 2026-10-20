@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
  * One burst of confetti in the site's own palette, drawn on a canvas that
  * covers the viewport and is removed when the last piece has fallen.
  *
- * Restrained on purpose: a hundred-odd pieces, gold and red and ivory with a
+ * Restrained on purpose: a hundred-odd pieces, in the brand blues with a
  * little navy, falling for about three seconds and never repeating. A page
  * that says "may Allah accept it" should feel like a quiet celebration, not a
  * casino. Nothing runs at all for a visitor who prefers reduced motion.
@@ -15,7 +15,9 @@ import { useEffect, useRef } from "react";
  * package in for the one page that uses it is not worth the kilobytes.
  */
 
-const COLOURS = ["#00A2E0", "#7FD6F5", "#1B6FE0", "#F4F8FB", "#062442", "#BFE6F7"];
+/* The Toplum Vakfı blues plus navy; no near-white, since the thank-you page
+   now sits on the light page background rather than a navy hero. */
+const COLOURS = ["#00A2E0", "#7FD6F5", "#1B6FE0", "#27B8F2", "#0077B3", "#031A36"];
 
 interface Piece {
   x: number;

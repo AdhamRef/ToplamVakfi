@@ -1,24 +1,28 @@
 "use client";
 
+import { type ReactElement, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { localeDirection } from "@/lib/locales";
 import { miaPath } from "@/lib/minbar/routes";
 import { ORG } from "@/lib/minbar/org";
-import { Button } from "@/components/minbar/ds";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
 import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
+import InnerBanner from "./InnerBanner";
 
 /**
- * About us  ported from `Minbar/من نحن.dc.html`.
+ * About us  ported from `Minbar/من نحن.dc.html`, laid out on the Toplum
+ * inner-page template (`ToplamVakfi-design/Toplum Vakfı About.dc.html`): photo
+ * banner, a sticky section menu beside the content, an intro card with a
+ * photograph, three icon cards, list cards, and a dark closing band.
  *
  * The one page on the site that states who the foundation legally is, so the
  * licence number, address and phone come from `lib/minbar/org.ts` rather than
  * being retyped: the Footer prints the same three facts, and two copies drift.
  *
- * Content order matches the handoff exactly  mission and method side by side,
- * then vision beside the five objectives, then the four departments, the four
- * areas of work, the legal status, and a closing call.
+ * Every block of the handoff is kept, in its order  legal status (the
+ * design's registration intro), mission, vision and method, the five
+ * objectives, the four departments, the four areas of work, the address and
+ * contact, and the closing call. Styles: `styles/minbar/pages/about.css`.
  */
 
 /** Objective keys, in the order the handoff lists them. */
@@ -44,168 +48,215 @@ const PILLARS: ReadonlyArray<{ title: string; text: string }> = [
   { title: "pillar4Title", text: "pillar4Text" },
 ];
 
-/** A small gold diamond  the handoff's list marker throughout this page. */
-function Diamond({ size = 6, top = 8 }: { size?: number; top?: number }) {
+/** The in-page sections the side menu points at, in page order. */
+const SECTIONS: ReadonlyArray<{ id: string; label: string }> = [
+  { id: "legal", label: "heroTitle" },
+  { id: "mission", label: "sectionMission" },
+  { id: "vision", label: "sectionVision" },
+  { id: "how-we-work", label: "sectionHowWeWork" },
+  { id: "objectives", label: "sectionObjectives" },
+  { id: "departments", label: "sectionDepartments" },
+  { id: "pillars", label: "sectionPillars" },
+];
+
+const ICONS: Record<string, ReactElement> = {
+  mission: <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" />,
+  vision: (
+    <>
+      <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+      <circle cx="12" cy="12" r="3" />
+    </>
+  ),
+  method: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1.5" />
+    </>
+  ),
+  pin: (
+    <>
+      <path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11z" />
+      <circle cx="12" cy="10" r="2.5" />
+    </>
+  ),
+  mail: (
+    <>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="m3.5 6.5 8.5 6.5 8.5-6.5" />
+    </>
+  ),
+};
+
+function Icon({ name }: { name: keyof typeof ICONS }) {
   return (
-    <span
-      aria-hidden="true"
-      style={{ flex: "0 0 auto", marginTop: top, width: size, height: size, background: "var(--gold)", transform: "rotate(45deg)" }}
-    />
+    <span aria-hidden="true" className="fd-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        {ICONS[name]}
+      </svg>
+    </span>
   );
 }
 
-const SECTION = { maxWidth: 1240, margin: "0 auto", padding: "0 24px" } as const;
-const H2 = { margin: 0, fontSize: "clamp(24px,2.6vw,34px)", lineHeight: 1.3, fontWeight: 900 } as const;
-
 export default function AboutPage() {
   const locale = useLocale();
-  const dir = localeDirection(locale);
   const t = useTranslations("about");
   const tCommon = useTranslations("common");
   const tNav = useTranslations("navigation");
 
-  /* The hero gradient deepens away from the reader, so it flips with the
-     writing direction rather than always pointing left. */
-  // The Toplum page banner: the dark navy gradient (ToplamVakfi-design/CLAUDE.md).
-  const heroGradient = `linear-gradient(${dir === "rtl" ? 240 : 120}deg, #021428 0%, #082b50 60%, #04172e 100%)`;
+  /* The side menu marks the section being read. Purely visual: the links are
+     ordinary anchors and work without it. */
+  const [active, setActive] = useState<string>(SECTIONS[0].id);
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined") return;
+    const nodes = SECTIONS.map((s) => document.getElementById(s.id)).filter((n): n is HTMLElement => Boolean(n));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const hit = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (hit) setActive(hit.target.id);
+      },
+      { rootMargin: "-110px 0px -60% 0px" },
+    );
+    nodes.forEach((n) => observer.observe(n));
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <div className="ab-page">
-      <section id="hero" style={{ position: "relative", background: heroGradient, overflow: "hidden" }}>
-        <div aria-hidden="true" className="ab-hero-pattern" />
-        <div style={{ ...SECTION, position: "relative", padding: "70px 24px", display: "grid", gap: 16, justifyItems: "start" }}>
-          <h1 className="ab-in" style={{ margin: 0, fontSize: "clamp(30px,3.6vw,50px)", lineHeight: 1.35, fontWeight: 900, color: "#fff" }}>
-            {t("heroTitle")}
-          </h1>
-          <div className="ab-in ab-in-1" style={{ width: 90, height: 2, background: "#fff", opacity: 0.75 }} />
-          <p className="ab-in ab-in-2" style={{ margin: 0, maxWidth: "62ch", fontSize: 17, lineHeight: 1.9, color: "rgba(255,255,255,.92)" }}>
-            {t("heroSubtitle")}
-          </p>
-        </div>
-      </section>
+    <div className="ab-page fd-page">
+      <InnerBanner
+        id="hero"
+        crumbs={[{ label: tNav("home"), href: miaPath("home", locale) }, { label: t("heroTitle") }]}
+        title={t("heroTitle")}
+        lead={t("heroSubtitle")}
+      />
 
-      <section style={{ background: "#fff", borderBottom: "1px solid var(--border)", padding: "64px 0" }}>
-        <div className="ab-two" style={{ ...SECTION, display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 46, alignItems: "start" }}>
-          <div className="ab-in" style={{ display: "grid", gap: 16 }}>
-            <h2 style={H2}>{t("sectionMission")}</h2>
-            <p style={{ margin: 0, fontSize: 16, lineHeight: 1.95, color: "var(--muted)" }}>{t("mission")}</p>
-          </div>
-          <div className="ab-in ab-in-1" style={{ display: "grid", gap: 16 }}>
-            <h2 style={H2}>{t("sectionHowWeWork")}</h2>
-            <p style={{ margin: 0, fontSize: 16, lineHeight: 1.95, color: "var(--muted)" }}>{t("howWeWork")}</p>
-          </div>
-        </div>
-      </section>
-
-      <section style={{ background: "var(--sand)", borderBottom: "1px solid var(--border)", padding: "64px 0" }}>
-        <div className="ab-two" style={{ ...SECTION, display: "grid", gridTemplateColumns: "minmax(0,.85fr) minmax(0,1.15fr)", gap: 46, alignItems: "start" }}>
-          <div style={{ display: "grid", gap: 14, alignContent: "start" }}>
-            <h2 style={H2}>{t("sectionVision")}</h2>
-            <p style={{ margin: 0, fontSize: 16.5, lineHeight: 1.9, color: "var(--deep)", fontWeight: 700 }}>{t("vision")}</p>
-            <p style={{ margin: 0, fontSize: 15.5, lineHeight: 1.9, color: "var(--muted)" }}>{t("visionDetail")}</p>
-          </div>
-          <div style={{ display: "grid", gap: 12 }}>
-            <h2 style={{ ...H2, margin: "0 0 4px", fontSize: "clamp(22px,2.3vw,30px)" }}>{t("sectionObjectives")}</h2>
-            {OBJECTIVES.map((key) => (
-              <div
-                key={key}
-                style={{ display: "flex", alignItems: "flex-start", gap: 12, padding: "14px 18px", background: "#fff", border: "1px solid var(--border)", borderInlineStart: "3px solid var(--gold)" }}
-              >
-                <Diamond />
-                <span style={{ fontSize: 14.5, lineHeight: 1.85, color: "var(--deep)" }}>{t(key)}</span>
-              </div>
+      <div className="fd-main">
+        <div className="fd-wrap fd-side">
+          <nav className="fd-nav" aria-label={t("heroTitle")}>
+            {SECTIONS.map((s) => (
+              <a key={s.id} href={`#${s.id}`} data-on={active === s.id ? "1" : undefined} aria-current={active === s.id ? "location" : undefined} onClick={() => setActive(s.id)}>
+                {t(s.label)}
+              </a>
             ))}
-          </div>
-        </div>
-      </section>
+            <span aria-hidden="true" className="fd-nav-sep" />
+            <a href={miaPath("partner", locale)}>{tNav("partner")}</a>
+            <a href={miaPath("volunteer", locale)}>{tNav("volunteer")}</a>
+          </nav>
 
-      <section style={{ background: "#fff", borderBottom: "1px solid var(--border)", padding: "64px 0" }}>
-        <div style={SECTION}>
-          <h2 style={{ ...H2, margin: "0 0 26px" }}>{t("sectionDepartments")}</h2>
-          <div className="ab-grid4">
-            {DEPARTMENTS.map((dept) => (
-              <div
-                key={dept.title}
-                className="ab-card"
-                style={{ display: "grid", gap: 10, alignContent: "start", padding: 22, background: "var(--sand)", border: "1px solid var(--border)", borderTop: "3px solid var(--gold)" }}
-              >
-                <b style={{ fontSize: 17, lineHeight: 1.4 }}>{t(dept.title)}</b>
-                <div style={{ display: "grid", gap: 6 }}>
-                  {dept.points.map((point) => (
-                    <div key={point} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                      <Diamond size={5} top={7} />
-                      <span style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.85 }}>{t(point)}</span>
-                    </div>
-                  ))}
+          <div className="fd-stack">
+            {/* Legal status  the design's registration intro beside a photograph. */}
+            <article id="legal" className="fd-card fd-intro fd-anchor fd-in" aria-labelledby="ab-legal-title">
+              <div className="fd-intro-text">
+                <span className="fd-eyebrow">{t("sectionLegal")}</span>
+                <h2 id="ab-legal-title">{t("legalText")}</h2>
+                <div className="fd-seal">
+                  <span>
+                    <small>{t("licenseNumberLabel")}</small>
+                    {/* A licence number is Latin digits and a slash: isolated so an
+                        RTL paragraph cannot reorder it into a different number. */}
+                    <span dir="ltr" style={{ unicodeBidi: "isolate", display: "inline-block" }}>
+                      {ORG.licenseNumber}
+                    </span>
+                  </span>
+                  <span>{t("licenseDate")}</span>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <div aria-hidden="true" className="fd-intro-img" />
+            </article>
 
-      <section style={{ background: "var(--sand)", borderBottom: "1px solid var(--border)", padding: "64px 0" }}>
-        <div style={SECTION}>
-          <h2 style={{ ...H2, margin: "0 0 26px" }}>{t("sectionPillars")}</h2>
-          <div className="ab-grid4">
-            {PILLARS.map((pillar) => (
-              <div
-                key={pillar.title}
-                className="ab-card"
-                style={{ display: "grid", gap: 8, alignContent: "start", padding: 22, background: "#fff", border: "1px solid var(--border)", borderTop: "3px solid var(--gold)" }}
-              >
-                <b style={{ fontSize: 17, lineHeight: 1.4 }}>{t(pillar.title)}</b>
-                <span style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.85 }}>{t(pillar.text)}</span>
+            <div className="fd-trio">
+              <article id="mission" className="fd-card fd-anchor fd-in fd-in-1">
+                <Icon name="mission" />
+                <h2>{t("sectionMission")}</h2>
+                <p>{t("mission")}</p>
+              </article>
+              <article id="vision" className="fd-card fd-anchor fd-in fd-in-1">
+                <Icon name="vision" />
+                <h2>{t("sectionVision")}</h2>
+                <p className="fd-strong">{t("vision")}</p>
+                <p>{t("visionDetail")}</p>
+              </article>
+              <article id="how-we-work" className="fd-card fd-anchor fd-in fd-in-2">
+                <Icon name="method" />
+                <h2>{t("sectionHowWeWork")}</h2>
+                <p>{t("howWeWork")}</p>
+              </article>
+            </div>
+
+            <article id="objectives" className="fd-card fd-pad fd-anchor">
+              <h2 className="fd-h2">{t("sectionObjectives")}</h2>
+              <ol className="fd-list">
+                {OBJECTIVES.map((key) => (
+                  <li key={key}>{t(key)}</li>
+                ))}
+              </ol>
+            </article>
+
+            <article id="departments" className="fd-card fd-pad fd-anchor">
+              <h2 className="fd-h2">{t("sectionDepartments")}</h2>
+              <div className="fd-tiles">
+                {DEPARTMENTS.map((dept) => (
+                  <div key={dept.title}>
+                    <b>{t(dept.title)}</b>
+                    <ul>
+                      {dept.points.map((point) => (
+                        <li key={point}>{t(point)}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </article>
 
-      <section style={{ background: "#fff", borderBottom: "1px solid var(--border)", padding: "64px 0" }}>
-        <div className="ab-two" style={{ ...SECTION, display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)", gap: 46, alignItems: "center" }}>
-          <div style={{ display: "grid", gap: 14 }}>
-            <h2 style={H2}>{t("sectionLegal")}</h2>
-            <p style={{ margin: 0, fontSize: 16, lineHeight: 1.95, color: "var(--muted)" }}>{t("legalText")}</p>
-            <div style={{ display: "grid", gap: 6, padding: "18px 20px", background: "var(--sand)", border: "1px solid rgba(0,162,224,.5)", borderInlineStart: "3px solid var(--gold)" }}>
-              <span style={{ fontSize: 12.5, fontWeight: 900, color: "var(--gold)", letterSpacing: ".05em" }}>{t("licenseNumberLabel")}</span>
-              {/* A licence number is Latin digits and a slash: isolated so an
-                  RTL paragraph cannot reorder it into a different number. */}
-              <span dir="ltr" style={{ unicodeBidi: "isolate", display: "inline-block", fontSize: 16, fontWeight: 900 }}>
-                {ORG.licenseNumber}
-              </span>
-              <span style={{ fontSize: 14, color: "var(--muted)" }}>{t("licenseDate")}</span>
+            <article id="pillars" className="fd-card fd-pad fd-anchor">
+              <h2 className="fd-h2">{t("sectionPillars")}</h2>
+              <div className="fd-tiles">
+                {PILLARS.map((pillar) => (
+                  <div key={pillar.title}>
+                    <b>{t(pillar.title)}</b>
+                    <span>{t(pillar.text)}</span>
+                  </div>
+                ))}
+              </div>
+            </article>
+
+            <div className="fd-pair">
+              <div className="fd-card fd-item">
+                <Icon name="pin" />
+                <span className="fd-item-text">
+                  <small>{t("addressLabel")}</small>
+                  <b>{ORG.address}</b>
+                </span>
+              </div>
+              <div className="fd-card fd-item">
+                <Icon name="mail" />
+                <span className="fd-item-text">
+                  <small>{t("contactLabel")}</small>
+                  <b dir="ltr">{ORG.email}</b>
+                  <b dir="ltr">{ORG.phone}</b>
+                </span>
+              </div>
+            </div>
+
+            <div className="fd-join">
+              <h2>{t("ctaTagline")}</h2>
+              <div className="fd-join-actions">
+                <a href={miaPath("projects", locale)} className="fd-pill">
+                  <span aria-hidden="true" className="fd-pill-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" />
+                    </svg>
+                  </span>
+                  {tCommon("donate")}
+                </a>
+                <a href={miaPath("contact", locale)} className="fd-ghost fd-ghost-dark">
+                  {tNav("contact")}
+                </a>
+              </div>
             </div>
           </div>
-          <div style={{ display: "grid", gap: 12, padding: "22px 24px", background: "var(--sand)", borderInlineStart: "3px solid var(--gold)" }}>
-            <span style={{ fontSize: 13, fontWeight: 900, color: "var(--gold)", letterSpacing: ".04em" }}>{t("addressLabel")}</span>
-            <span style={{ fontSize: 15, lineHeight: 1.8 }}>{ORG.address}</span>
-            <span style={{ fontSize: 13, fontWeight: 900, color: "var(--gold)", letterSpacing: ".04em", marginTop: 8 }}>{t("contactLabel")}</span>
-            <span style={{ fontSize: 15, lineHeight: 1.8 }}>
-              {ORG.email}
-              <br />
-              <span dir="ltr" style={{ unicodeBidi: "isolate", display: "inline-block" }}>{ORG.phone}</span>
-            </span>
-          </div>
         </div>
-      </section>
-
-      <section style={{ position: "relative", background: "var(--deep)", padding: "56px 0", overflow: "hidden" }}>
-        <div aria-hidden="true" className="ab-cta-pattern" />
-        <div style={{ ...SECTION, position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
-          <h2 className="ab-in" style={{ margin: 0, fontSize: "clamp(24px,2.6vw,32px)", fontWeight: 900, color: "#fff" }}>
-            {t("ctaTagline")}
-          </h2>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <Button variant="primary" href={miaPath("projects", locale)} style={{ whiteSpace: "nowrap" }}>
-              {tCommon("donate")}
-            </Button>
-            <Button variant="outline" href={miaPath("contact", locale)} style={{ whiteSpace: "nowrap" }}>
-              {tNav("contact")}
-            </Button>
-          </div>
-        </div>
-      </section>
+      </div>
 
       <ZakatBanner />
       <TravelBanner />

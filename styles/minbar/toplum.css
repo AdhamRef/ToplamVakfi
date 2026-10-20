@@ -184,3 +184,8 @@
 .mia-scope .shape-card-alt,
 [dir="rtl"] .mia-scope .shape-card,
 [dir="rtl"] .mia-scope .shape-card-alt { border-radius: 16px; box-shadow: 0 12px 28px rgba(2,52,88,.07); }
+
+/* ── Error colour ─────────────────────────────────────────────────────────────
+ * `--red` became the CTA blue in the Toplum palette, so error states (invalid
+ * fields, failed steps, alerts) read from their own token. */
+.mia-scope { --danger: #c62828; --danger-tint: rgba(198, 40, 40, .1); }

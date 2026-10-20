@@ -62,7 +62,7 @@ export default function ProjectComments({ projectId, initial }: { projectId: str
   return (
     <div style={{ display: "grid", gap: 16 }}>
       {status === "authenticated" && session?.user ? (
-        <form onSubmit={onSubmit} style={{ display: "grid", gap: 8 }}>
+        <form onSubmit={onSubmit} style={{ display: "grid", gap: 10, padding: "16px 18px", background: "#fff", border: "1px solid #e6eef3", borderRadius: 12 }}>
           <textarea
             value={text}
             onChange={(e) => setText(e.target.value.slice(0, MAX))}
@@ -70,7 +70,7 @@ export default function ProjectComments({ projectId, initial }: { projectId: str
             rows={3}
             placeholder={t("commentPh")}
             aria-label={t("commentPh")}
-            style={{ width: "100%", boxSizing: "border-box", padding: "12px 14px", borderRadius: 10, border: "1px solid var(--border)", background: "#fff", fontFamily: "inherit", fontSize: 14.5, lineHeight: 1.8, color: "var(--deep)", resize: "vertical" }}
+            style={{ width: "100%", boxSizing: "border-box", padding: "12px 14px", borderRadius: 10, border: "1px solid #e2eaf0", background: "#fff", fontFamily: "inherit", fontSize: 14.5, lineHeight: 1.8, color: "var(--deep)", resize: "vertical" }}
           />
           <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
             <span role="status" style={{ fontSize: 12.5, fontWeight: 800, color: "var(--red)" }}>
@@ -79,7 +79,8 @@ export default function ProjectComments({ projectId, initial }: { projectId: str
             <button
               type="submit"
               disabled={sending || !text.trim()}
-              style={{ height: 40, padding: "0 20px", border: 0, borderRadius: 999, background: "var(--deep)", color: "#fff", fontFamily: "inherit", fontSize: 14, fontWeight: 900, cursor: "pointer", opacity: sending || !text.trim() ? 0.6 : 1 }}
+              className="pd-cta"
+              style={{ minHeight: 44, padding: "0 22px", border: 0, borderRadius: 999, color: "#fff", fontFamily: "inherit", fontSize: 14, fontWeight: 800, cursor: "pointer", opacity: sending || !text.trim() ? 0.6 : 1 }}
             >
               {t("commentSend")}
             </button>
@@ -89,7 +90,8 @@ export default function ProjectComments({ projectId, initial }: { projectId: str
         <button
           type="button"
           onClick={() => signIn()}
-          style={{ justifySelf: "start", height: 40, padding: "0 18px", borderRadius: 999, border: "1px solid var(--border)", background: "#fff", color: "var(--deep)", fontFamily: "inherit", fontSize: 13.5, fontWeight: 900, cursor: "pointer" }}
+          className="pd-outline-btn"
+          style={{ justifySelf: "start", minHeight: 44, padding: "0 20px", borderRadius: 999, border: "1.5px solid #e2eaf0", background: "#fff", color: "var(--deep)", fontFamily: "inherit", fontSize: 13.5, fontWeight: 800, cursor: "pointer" }}
         >
           {t("commentSignIn")}
         </button>
@@ -98,7 +100,7 @@ export default function ProjectComments({ projectId, initial }: { projectId: str
       {comments.length ? (
         <div style={{ display: "grid", gap: 12 }}>
           {comments.map((comment) => (
-            <div key={comment.id} style={{ display: "grid", gridTemplateColumns: "auto minmax(0,1fr)", gap: 12, padding: 16, background: "#fff", border: "1px solid var(--border)", borderRadius: 12 }}>
+            <div key={comment.id} style={{ display: "grid", gridTemplateColumns: "auto minmax(0,1fr)", gap: 12, padding: "16px 18px", background: "#fff", border: "1px solid #e6eef3", borderRadius: 12, boxShadow: "0 12px 28px rgba(2,52,88,.05)" }}>
               <span
                 aria-hidden="true"
                 style={{
@@ -108,8 +110,8 @@ export default function ProjectComments({ projectId, initial }: { projectId: str
                   display: "grid",
                   placeItems: "center",
                   /* Quotes and brackets stripped: the URL is user data inside CSS. */
-                  background: comment.image ? `center/cover no-repeat url('${comment.image.replace(/['"()\\]/g, "")}')` : "var(--sand)",
-                  color: "#0077b3",
+                  background: comment.image ? `center/cover no-repeat url('${comment.image.replace(/['"()\\]/g, "")}')` : "#eaf6fd",
+                  color: "var(--deep)",
                   fontWeight: 900,
                 }}
               >
@@ -117,16 +119,17 @@ export default function ProjectComments({ projectId, initial }: { projectId: str
               </span>
               <span style={{ display: "grid", gap: 5, minWidth: 0 }}>
                 <span style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
-                  <b style={{ fontSize: 14.5 }}>{comment.name}</b>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: "var(--muted)" }}>{dateFormatter.format(new Date(comment.createdAt))}</span>
+                  <b style={{ fontSize: 14, fontWeight: 800, color: "var(--deep)" }}>{comment.name}</b>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: "#0077b3" }}>{dateFormatter.format(new Date(comment.createdAt))}</span>
                 </span>
-                <span style={{ fontSize: 14.5, lineHeight: 1.9, color: "var(--muted)", overflowWrap: "anywhere", whiteSpace: "pre-line" }}>{comment.text}</span>
+                <span style={{ fontSize: 14, lineHeight: 1.9, color: "#33495e", overflowWrap: "anywhere", whiteSpace: "pre-line" }}>{comment.text}</span>
               </span>
             </div>
           ))}
         </div>
       ) : (
-        <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.9, color: "var(--muted)" }}>{t("commentsEmpty")}</p>
+        /* Empty state: a quiet dashed card rather than a bare line. */
+        <p style={{ margin: 0, padding: "22px 18px", border: "1px dashed #cfdde8", borderRadius: 12, background: "#fff", textAlign: "center", fontSize: 14, lineHeight: 1.9, color: "var(--muted)" }}>{t("commentsEmpty")}</p>
       )}
     </div>
   );

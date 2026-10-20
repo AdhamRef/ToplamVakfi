@@ -2,7 +2,7 @@
 
 import { decimalAmount } from "@/lib/minbar/numeric-input";
 import { useQuietFloatingButtons } from "@/hooks/useQuietFloatingButtons";
-import { useState, type CSSProperties, type ReactElement, type ReactNode } from "react";
+import { useState, type ReactElement, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useMessages, useTranslations } from "next-intl";
 import * as SelectPrimitive from "@radix-ui/react-select";
@@ -161,97 +161,46 @@ export default function RecurringPage({ projects }: RecurringPageProps) {
   };
 
   const stepBadge = (n: number) => (
-    <span aria-hidden="true" style={{ width: 20, height: 20, borderRadius: "50%", background: "var(--sand)", color: "var(--gold)", display: "grid", placeItems: "center", fontSize: 11 }}>
+    <span aria-hidden="true" className="rc-step-n">
       {formatNumber(n)}
     </span>
   );
 
-  const pill = (active: boolean): CSSProperties => ({
-    height: 44,
-    padding: "0 18px",
-    borderRadius: 999,
-    cursor: "pointer",
-    fontFamily: "inherit",
-    fontSize: 14,
-    fontWeight: 800,
-    border: `1px solid ${active ? "var(--gold)" : "var(--border)"}`,
-    background: active ? "var(--sand)" : "#fff",
-    color: active ? "var(--deep)" : "var(--muted)",
-    transition: "all .18s ease",
-  });
-
-  const segment = (active: boolean): CSSProperties => ({
-    height: 42,
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 7,
-    borderRadius: 999,
-    border: 0,
-    background: active ? "#fff" : "transparent",
-    color: active ? "var(--deep)" : "var(--muted)",
-    fontFamily: "inherit",
-    fontSize: 13.5,
-    fontWeight: 900,
-    cursor: "pointer",
-    boxShadow: active ? "0 2px 8px rgba(6,36,66,.1)" : "none",
-    transition: "all .18s ease",
-  });
-
   return (
     <div className="mia-recurring-page" style={{ position: "relative" }}>
-      {/* ── Plan builder ─────────────────────────────────────────────────── */}
-      <section id="plan" style={{ position: "relative", background: "var(--ivory)", borderBottom: "1px solid var(--border)", overflow: "hidden" }}>
-        <div aria-hidden="true" data-aqsa-pattern="" style={pattern(520)} />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "54px 24px 56px", display: "grid", gap: 30 }}>
-          <div style={{ display: "grid", gap: 16, justifyItems: "center", textAlign: "center" }}>
-            {/* Al-Baqarah 261  the verse on multiplied reward. Arabic always. */}
-            <p style={{ margin: 0, display: "flex", alignItems: "center", gap: 14, maxWidth: "74ch", fontFamily: "var(--font-quran)", color: "var(--deep)", fontSize: "clamp(15px,1.5vw,17px)", lineHeight: 1.9 }}>
-              <span aria-hidden="true" style={{ flex: "1 1 auto", height: 1, background: "rgba(0,162,224,.4)", maxWidth: 60 }} />
-              <span dir="rtl">{verse.arabic}</span>
-              <span aria-hidden="true" style={{ flex: "1 1 auto", height: 1, background: "rgba(0,162,224,.4)", maxWidth: 60 }} />
-            </p>
-            {verse.translation ? (
-              <>
-                <p style={{ margin: "8px 0 0", maxWidth: "72ch", fontSize: 14, lineHeight: 1.85, color: "var(--muted)", textWrap: "pretty" }}>{verse.translation}</p>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 10.5, color: "var(--muted)", opacity: 0.8 }}>
-                  <span aria-hidden="true" style={{ width: 20, height: 1, background: "rgba(0,162,224,.5)" }} />
-                  {verse.attribution}
-                  <span aria-hidden="true" style={{ width: 20, height: 1, background: "rgba(0,162,224,.5)" }} />
+      <div className="gv-page">
+        {/* ── Hero: the sentence beside the plan builder (Monthly Giving) ───── */}
+        <section id="plan" className="rc-hero">
+          <div className="rc-hero-img" aria-hidden="true" />
+          <div className="gv-wrap rc-hero-in">
+            <div className="rc-hero-text">
+              <span className="rc-kicker">{tNav("recurring")}</span>
+              <h1>
+                {t("title1")} <em>{t("title2")}</em>
+              </h1>
+              <p className="rc-lede">{t("lead")}</p>
+              <p className="rc-lede">{t("investmentLead")}</p>
+              {/* Al-Baqarah 261  the verse on multiplied reward, set as the
+                  design's sourced quotation. Arabic always. */}
+              <blockquote className="rc-source">
+                <span className="rc-source-ar" dir="rtl">
+                  {verse.arabic}
                 </span>
-              </>
-            ) : null}
-
-            <h1 style={{ margin: "4px 0 0", fontSize: "clamp(30px,3.6vw,48px)", lineHeight: 1.55, fontWeight: 900 }}>
-              {t("title1")} <span style={{ color: "var(--gold)" }}>{t("title2")}</span>
-            </h1>
-            <div style={{ maxWidth: "62ch", marginTop: 6, display: "grid", gap: 10 }}>
-              <b style={{ fontSize: 17, fontWeight: 900, color: "var(--deep)", lineHeight: 1.6 }}>{t("lead")}</b>
-              <p style={{ margin: 0, fontSize: 15, lineHeight: 2.05, color: "var(--muted)" }}>{t("investmentLead")}</p>
+                {verse.translation ? (
+                  <>
+                    <span className="rc-source-tr">{verse.translation}</span>
+                    <span className="rc-source-ref">{verse.attribution}</span>
+                  </>
+                ) : null}
+              </blockquote>
             </div>
-          </div>
-
-          <div id="rc-grid" style={{ display: "grid", gridTemplateColumns: "minmax(0,.8fr) minmax(0,1.2fr)", gap: 26, alignItems: "stretch" }}>
-            {/* The video's own thumbnail sits behind the lazy iframe, so the box
-                is never a bare black rectangle while YouTube loads. */}
-            <span className="rc-video mia-responsive-video" style={{ position: "relative", display: "block", background: "#062442 url(https://i.ytimg.com/vi/K65JuQ8Nz9g/hqdefault.jpg) center / cover no-repeat", borderRadius: 16, overflow: "hidden", minHeight: 420, boxShadow: "0 18px 44px rgba(6,36,66,.14)", transition: "box-shadow .25s ease, transform .25s ease" }}>
-              <iframe
-                src="https://www.youtube.com/embed/K65JuQ8Nz9g?si=TCfoRDQ9caOL53Wi"
-                title={t("whatIsIt")}
-                loading="lazy"
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: 0 }}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              />
-            </span>
 
             {/* minmax(0,1fr): without it the track grows to the longest fund name
                 in the select, and on a phone the whole form ran off both edges. */}
-            <div className="rc-builder mia-donation-builder" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr)", minWidth: 0, gap: 22, alignContent: "start", padding: 32, background: "#fff", border: "1px solid var(--border)", borderRadius: 16, boxShadow: "0 18px 44px rgba(6,36,66,.1)" }}>
+            <div className="rc-builder mia-donation-builder">
               {/* Step 1  fund */}
-              <div style={{ display: "grid", gap: 9 }}>
-                <span style={stepLabel}>
+              <div>
+                <span className="gv-label">
                   {stepBadge(1)}
                   {t("chooseFund")}
                 </span>
@@ -272,12 +221,12 @@ export default function RecurringPage({ projects }: RecurringPageProps) {
               </div>
 
               {/* Step 2  amount */}
-              <div style={{ display: "grid", gap: 9 }}>
-                <span style={stepLabel}>
+              <div>
+                <span className="gv-label">
                   {stepBadge(2)}
                   {t("setAmount")}
                 </span>
-                <div className="mia-recurring-amounts" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                <div className="rc-amounts">
                   {AMOUNTS.map((v) => (
                     <button
                       key={v}
@@ -286,8 +235,9 @@ export default function RecurringPage({ projects }: RecurringPageProps) {
                         setAmount(v);
                         setCustom("");
                       }}
-                      className="rc-amt"
-                      style={pill(amount === v && !custom)}
+                      data-pick={amount === v && !custom ? "1" : ""}
+                      aria-pressed={amount === v && !custom}
+                      className="rc-amt gv-chip"
                     >
                       <span dir="ltr" style={{ unicodeBidi: "isolate" }}>
                         {format(v)}
@@ -300,21 +250,20 @@ export default function RecurringPage({ projects }: RecurringPageProps) {
                     inputMode="decimal"
                     placeholder={t("amountPlaceholder")}
                     aria-label={t("amountPlaceholder")}
-                    className="rc-input"
-                    style={{ width: 110, minWidth: 0, height: 44, padding: "0 14px", boxSizing: "border-box", border: `1px solid ${custom ? "var(--gold)" : "var(--border)"}`, borderRadius: 999, background: "#fff", color: "var(--deep)", fontFamily: "inherit", fontSize: 15, fontWeight: 800 }}
+                    className="rc-input gv-input"
                   />
                 </div>
               </div>
 
               {/* Step 3  frequency */}
-              <div style={{ display: "grid", gap: 9 }}>
-                <span style={stepLabel}>
+              <div>
+                <span className="gv-label">
                   {stepBadge(3)}
                   {tCommon("frequency")}
                 </span>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))", gap: 8, padding: 4, background: "var(--sand)", borderRadius: 12 }}>
+                <div className="gv-seg">
                   {FREQUENCIES.map((f) => (
-                    <button key={f.id} type="button" onClick={() => setFreq(f.id)} className="rc-seg" style={{ ...segment(freq === f.id), borderRadius: 9 }}>
+                    <button key={f.id} type="button" onClick={() => setFreq(f.id)} aria-pressed={freq === f.id} className="rc-seg">
                       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                         {f.icon}
                       </svg>
@@ -326,20 +275,20 @@ export default function RecurringPage({ projects }: RecurringPageProps) {
 
               {/* Schedule. Stored as structure  a day number and a wall-clock
                   time  never as a sentence. */}
-              <div style={{ display: "grid", gap: 12, padding: 16, background: "var(--ivory)", border: "1px solid var(--border)", borderRadius: 12 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span aria-hidden="true" style={{ width: 24, height: 24, borderRadius: 7, background: "var(--sand)", display: "grid", placeItems: "center", color: "var(--gold)" }}>
-                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                      <circle cx="12" cy="12" r="9" />
-                      <path d="M12 7v5l3 3" />
-                    </svg>
-                  </span>
-                  <b style={{ fontSize: 12.5, fontWeight: 900, color: "var(--deep)" }}>{t("schedule")}</b>
-                </div>
+              <div className="rc-schedule">
+                <span className="gv-label" style={{ margin: 0 }}>
+                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#0077b3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 7v5l3 3" />
+                  </svg>
+                  {t("schedule")}
+                </span>
 
                 {freq === "monthly" ? (
-                  <div style={{ display: "grid", gap: 6 }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: "var(--muted)" }}>{t("dayOfMonth")}</span>
+                  <div>
+                    <span className="gv-label" style={{ color: "#5d7187", fontSize: 11.5 }}>
+                      {t("dayOfMonth")}
+                    </span>
                     <PlanSelect
                       value={String(monthDay)}
                       onChange={(v) => setMonthDay(Number(v))}
@@ -352,147 +301,142 @@ export default function RecurringPage({ projects }: RecurringPageProps) {
                   </div>
                 ) : null}
 
-                <div style={{ display: "grid", gap: 7 }}>
-                  <span style={{ fontSize: 11, fontWeight: 800, color: "var(--muted)" }}>{t("timeOfDay")}</span>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10, height: 46, padding: "0 14px", background: "#fff", border: "1px solid var(--border)", borderRadius: 8 }}>
-                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--gold)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <div>
+                  <span className="gv-label" style={{ color: "#5d7187", fontSize: 11.5 }}>
+                    {t("timeOfDay")}
+                  </span>
+                  <div className="gv-affix rc-time" style={{ background: "#fff" }}>
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#0077b3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                       <circle cx="12" cy="12" r="9" />
                       <path d="M12 7v5l3 3" />
                     </svg>
-                    <input
-                      type="time"
-                      value={localTime}
-                      onChange={(e) => setLocalTime(e.target.value)}
-                      dir="ltr"
-                      aria-label={t("localTime")}
-                      style={{ flex: "1 1 auto", background: "transparent", border: 0, fontFamily: "inherit", fontSize: 15, fontWeight: 900, color: "var(--deep)", unicodeBidi: "plaintext", outline: "none" }}
-                    />
+                    <input type="time" value={localTime} onChange={(e) => setLocalTime(e.target.value)} dir="ltr" aria-label={t("localTime")} />
                   </div>
                 </div>
               </div>
 
-              <label style={{ display: "grid", gap: 7 }}>
-                <span style={{ fontSize: 12, fontWeight: 900, color: "var(--muted)", letterSpacing: ".04em" }}>{t("notes")}</span>
+              <label style={{ display: "block" }}>
+                <span className="gv-label">{t("notes")}</span>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={2}
                   placeholder={tCommon("notesPlaceholder")}
-                  className="rc-input"
-                  style={{ width: "100%", minWidth: 0, boxSizing: "border-box", border: "1px solid var(--border)", borderRadius: 10, background: "var(--ivory)", padding: "10px 14px", fontFamily: "inherit", fontWeight: 700, fontSize: 13.5, color: "var(--deep)", resize: "vertical", transition: "border-color .18s ease, box-shadow .18s ease" }}
+                  className="rc-input gv-input"
                 />
               </label>
 
-              <div className="rc-plan-summary mia-donation-summary" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 14, padding: "16px 20px", background: "var(--sand)", borderRadius: 12 }}>
-                <span aria-hidden="true" style={{ flex: "0 0 auto", width: 36, height: 36, borderRadius: "50%", background: "#fff", display: "grid", placeItems: "center", color: "var(--gold)" }}>
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-                    <path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" />
-                  </svg>
-                </span>
-                <span style={{ flex: "1 1 auto", display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10, minWidth: 0 }}>
-                  <span style={{ fontSize: 12.5, fontWeight: 900, color: "var(--muted)", whiteSpace: "nowrap" }}>
-                    {t("amountPerX", { freq: tCommon(FREQUENCIES.find((f) => f.id === freq)?.labelKey ?? "freqMonthly") })}
-                  </span>
-                  <b dir="ltr" style={{ fontSize: 24, unicodeBidi: "isolate", color: "var(--deep)", whiteSpace: "nowrap" }}>
-                    {labelOf(given)}
-                  </b>
-                </span>
+              <div className="gv-summary" aria-live="polite">
+                <b dir="ltr">{labelOf(given)}</b>
+                <span>{t("amountPerX", { freq: tCommon(FREQUENCIES.find((f) => f.id === freq)?.labelKey ?? "freqMonthly") })}</span>
               </div>
 
-              <Button variant="primary" size="lg" full onClick={onDonate} disabled={!selectedProject} style={{ height: 54 }}>
+              <button type="button" className="gv-cta" onClick={onDonate} disabled={!selectedProject}>
                 {t("createPlan")}
-              </Button>
+              </button>
 
-              <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, color: "var(--muted)", fontSize: 12.5, textAlign: "center" }}>
-                {t("privacyNote")}
-              </span>
+              <p className="gv-fine">{t("privacyNote")}</p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── What recurring giving is ─────────────────────────────────────── */}
-      <section id="what" style={{ background: "#fff", padding: "52px 0", borderBottom: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "grid", gap: 26 }}>
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 24, flexWrap: "wrap" }}>
-            <span style={{ flex: "0 0 auto", display: "grid", placeItems: "center", width: 60, height: 60, borderRadius: 16, background: "var(--sand)", color: "var(--gold)", boxShadow: "0 1px 2px rgba(6,36,66,.05)" }}>
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" />
-              </svg>
-            </span>
-            <div style={{ flex: "1 1 460px", minWidth: 0, display: "grid", gap: 12 }}>
-              <b style={{ fontSize: 20, color: "var(--deep)" }}>{t("whatIsIt")}</b>
-              <span style={{ color: "var(--muted)", fontSize: 15, lineHeight: 2 }}>{t("whatIsText")}</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Why give regularly ───────────────────────────────────────────── */}
-      <section id="benefits" style={{ position: "relative", background: "var(--sand)", padding: "62px 0", overflow: "hidden" }}>
-        <div aria-hidden="true" data-aqsa-pattern="" style={pattern(520)} />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <h2 style={{ margin: "0 0 26px", fontSize: "clamp(26px,2.8vw,38px)", lineHeight: 1.55, fontWeight: 900, color: "var(--deep)" }}>{t("whyIt")}</h2>
-          <div id="rc-benefits" style={{ display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 18 }}>
-            {BENEFITS.map((benefit) => (
-              <div key={benefit.id} className="mia-lift" style={{ display: "flex", alignItems: "flex-start", gap: 18, padding: 28, background: "#fff", border: "1px solid var(--border)", borderRadius: 14, boxShadow: "0 1px 3px rgba(6,36,66,.05)" }}>
-                <span style={{ flex: "0 0 auto", width: 60, height: 60, display: "grid", placeItems: "center", borderRadius: 16, background: "var(--sand)" }}>
-                  <span
-                    aria-hidden="true"
-                    style={{ width: 36, height: 36, display: "block", backgroundImage: `url(${benefit.image})`, backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}
-                  />
-                </span>
-                <div style={{ display: "grid", gap: 7, minWidth: 0 }}>
-                  <b style={{ fontSize: 17, lineHeight: 1.45, color: "var(--deep)" }}>{t(`benefit_${benefit.id}`)}</b>
-                  <span style={{ color: "var(--muted)", fontSize: 13.5, lineHeight: 1.85 }}>{t(`benefitDesc_${benefit.id}`)}</span>
+        {/* ── Why give regularly (the design's step cards) ─────────────────── */}
+        <section id="benefits" className="gv-sec">
+          <div className="gv-wrap">
+            <h2 className="gv-h2" style={{ marginBottom: 22 }}>
+              {t("whyIt")}
+            </h2>
+            <div className="rc-steps">
+              {BENEFITS.map((benefit) => (
+                <div key={benefit.id} className="gv-card gv-lift rc-step">
+                  <span className="gv-ico">
+                    <span aria-hidden="true" style={{ backgroundImage: `url(${benefit.image})` }} />
+                  </span>
+                  <div style={{ minWidth: 0 }}>
+                    <h3 className="gv-h3">{t(`benefit_${benefit.id}`)}</h3>
+                    <p className="gv-text">{t(`benefitDesc_${benefit.id}`)}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Funds a plan serves ──────────────────────────────────────────── */}
-      <section id="projects" style={{ background: "#fff", padding: "62px 0", borderBlock: "1px solid var(--border)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "0 24px" }}>
-          <h2 style={{ margin: "0 0 8px", fontSize: "clamp(26px,2.8vw,38px)", lineHeight: 1.55, fontWeight: 900, color: "var(--deep)" }}>{t("fundsServed")}</h2>
-          <p style={{ margin: "0 0 26px", maxWidth: "72ch", color: "var(--muted)", fontSize: 16, lineHeight: 1.9 }}>{t("fundsLead")}</p>
-          <div id="rc-funds" style={{ display: "grid", gridTemplateColumns: "repeat(4,minmax(0,1fr))", gap: 16 }}>
-            {SERVED.map((fund) => (
-              <div key={fund.id} className="mia-lift" style={{ display: "grid", gap: 10, alignContent: "start", padding: 24, background: "var(--sand)", border: "1px solid var(--border)", borderRadius: 14, textAlign: "center", justifyItems: "center" }}>
-                <span style={{ display: "grid", placeItems: "center", width: 68, height: 68, borderRadius: "50%", background: "#fff", color: "var(--gold)" }}>
-                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" />
-                  </svg>
-                </span>
-                <b style={{ fontSize: 16, lineHeight: 1.4, color: "var(--deep)" }}>
-                  {fund.titleNs === "navigation" ? tNav(fund.titleKey) : t(fund.titleKey)}
-                </b>
-                <span style={{ color: "var(--muted)", fontSize: 13.5, lineHeight: 1.8 }}>{t(`fundDesc_${fund.id}`)}</span>
-              </div>
-            ))}
+        {/* ── Funds a plan serves (the design's "where your giving goes") ──── */}
+        <section id="projects" className="gv-sec">
+          <div className="gv-wrap">
+            <h2 className="gv-h2">{t("fundsServed")}</h2>
+            <p className="gv-intro">{t("fundsLead")}</p>
+            <div className="rc-causes">
+              {SERVED.map((fund) => (
+                <div key={fund.id} className="rc-cause">
+                  <span className="gv-ico" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" />
+                    </svg>
+                  </span>
+                  <h3>{fund.titleNs === "navigation" ? tNav(fund.titleKey) : t(fund.titleKey)}</h3>
+                  <p>{t(`fundDesc_${fund.id}`)}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Closing CTA ──────────────────────────────────────────────────── */}
-      <section style={{ position: "relative", background: "linear-gradient(155deg, #031A36, #0c1e27)", padding: "56px 0", overflow: "hidden" }}>
-        <div aria-hidden="true" data-aqsa-pattern="" style={{ ...pattern(520), opacity: 0.09 }} />
-        <div style={{ position: "relative", maxWidth: 1240, margin: "0 auto", padding: "0 24px", display: "flex", alignItems: "center", gap: 28, flexWrap: "wrap" }}>
-          <div style={{ display: "grid", gap: 10, flex: "1 1 460px", minWidth: 0 }}>
-            <h2 style={{ margin: 0, fontSize: "clamp(24px,2.7vw,36px)", lineHeight: 1.3, fontWeight: 900, color: "#fff" }}>{t("ctaHeading")}</h2>
-            <p style={{ margin: 0, color: "rgba(255,255,255,.8)", fontSize: 16, lineHeight: 1.9 }}>{t("ctaText")}</p>
+        {/* ── What recurring giving is, beside its film ────────────────────── */}
+        <section id="what" className="gv-sec">
+          <div className="gv-wrap rc-control">
+            <div className="gv-card rc-what">
+              <span className="gv-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 21s-7.5-4.7-7.5-10A4.5 4.5 0 0 1 12 8a4.5 4.5 0 0 1 7.5 3c0 5.3-7.5 10-7.5 10Z" />
+                </svg>
+              </span>
+              <div style={{ minWidth: 0 }}>
+                <h2 className="gv-h2" style={{ fontSize: "clamp(20px,2vw,24px)", marginBottom: 10 }}>
+                  {t("whatIsIt")}
+                </h2>
+                <p className="gv-text" style={{ fontSize: 14.5, lineHeight: 2 }}>
+                  {t("whatIsText")}
+                </p>
+              </div>
+            </div>
+
+            {/* The video's own thumbnail sits behind the lazy iframe, so the box
+                is never a bare black rectangle while YouTube loads. */}
+            <span className="rc-video mia-responsive-video gv-video" style={{ background: "#062442 url(https://i.ytimg.com/vi/K65JuQ8Nz9g/hqdefault.jpg) center / cover no-repeat" }}>
+              <iframe
+                src="https://www.youtube.com/embed/K65JuQ8Nz9g?si=TCfoRDQ9caOL53Wi"
+                title={t("whatIsIt")}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              />
+            </span>
           </div>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-            <Button variant="primary" size="lg" href="#plan" style={{ whiteSpace: "nowrap" }}>
-              {t("createPlan")}
-            </Button>
-            <Button variant="outline" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap" }}>
-              {t("waqfProjects")}
-            </Button>
+        </section>
+
+        {/* ── Closing CTA ──────────────────────────────────────────────────── */}
+        <section className="gv-sec">
+          <div className="gv-wrap">
+            <div className="gv-band">
+              <div className="gv-band-copy">
+                <h2>{t("ctaHeading")}</h2>
+                <p>{t("ctaText")}</p>
+              </div>
+              <div className="gv-band-actions">
+                <Button variant="primary" size="lg" href="#plan" style={{ whiteSpace: "nowrap", borderRadius: 999 }}>
+                  {t("createPlan")}
+                </Button>
+                <Button variant="outline" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap", borderRadius: 999 }}>
+                  {t("waqfProjects")}
+                </Button>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }
@@ -575,23 +519,3 @@ function ProjectOption({ title, image, meta }: { title: string; image: string | 
     </span>
   );
 }
-
-const stepLabel: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 7,
-  fontSize: 12.5,
-  fontWeight: 900,
-  color: "var(--muted)",
-  letterSpacing: ".04em",
-};
-
-const pattern = (size: number): CSSProperties => ({
-  position: "absolute",
-  inset: 0,
-  backgroundImage: "url('/toplum/pattern.svg')",
-  backgroundRepeat: "repeat",
-  backgroundSize: `${size}px ${size}px`,
-  opacity: 0.05,
-  pointerEvents: "none",
-});
