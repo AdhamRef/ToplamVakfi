@@ -7,18 +7,31 @@
  * page all read from here; if the foundation moves office, this file changes
  * and every page follows.
  *
- * Values carried verbatim from `Minbar/من نحن.dc.html` and `Minbar/Footer.dc.html`.
+ * Values carried verbatim from the Toplum Vakfı design (ToplamVakfi-design/).
  */
 export const ORG = {
-  /** Registered Turkish association name, as it appears on the licence. */
-  legalName: "Minber-i Aksâ Derneği",
-  /** Turkish association licence number. Rendered LTR-isolated in RTL pages. */
-  licenseNumber: "245/062-23",
-  address: "Haseki Sultan Mah. Turgut Özal Millet Cad. No:55 Daire:4 Fatih/İstanbul",
-  email: "info@ToplamVakfi.org",
+  /** Registered foundation name (ToplamVakfi-design, header and footer). */
+  legalName: "Toplum Vakfı",
+  /** Waqf registry number with the General Directorate of Foundations (Türkiye). */
+  licenseNumber: "3673",
+  /** Date of registration, as printed in the design's About and Transparency pages. */
+  registeredOn: "03/11/1995",
+  /** Year the foundation was established. */
+  foundedYear: 1995,
+  address: "Mimar Sinan Cd. No:38, Bağlar, 34209 Bağcılar / İstanbul",
+  /** Google Maps search for {@link ORG.address}, as linked from the contact page. */
+  mapUrl: "https://maps.google.com/?q=Mimar+Sinan+Cd.+No:38+Ba%C4%9Flar+Ba%C4%9Fc%C4%B1lar+Istanbul",
+  email: "info@toplumsalvakfi.org",
   /** Display form. `whatsapp` below is the same line in dial format. */
-  phone: "+90 539 843 60 50",
-  whatsapp: "905398436050",
+  phone: "+90 212 582 79 70",
+  whatsapp: "902125827970",
+  /** The foundation's accounts, in the design footer's order. */
+  social: {
+    facebook: "https://www.facebook.com/ToplumvakfiAR",
+    instagram: "https://www.instagram.com/toplumvakfi_ar/",
+    x: "https://x.com/ToplumVakfi_ar",
+    youtube: "https://www.youtube.com/@toplumvakfi",
+  },
 } as const;
 
 /** `tel:` href for {@link ORG.phone}  spaces are not valid in a tel URI. */

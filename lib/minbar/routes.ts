@@ -56,7 +56,21 @@ export type MinbarRoute =
   | "donationPolicy"
   | "cookies"
   | "accessibility"
-  | "maintenance";
+  | "maintenance"
+  /* Toplum Vakfı design pages (ToplamVakfi-design/). */
+  | "ourStory"
+  | "presidentLetter"
+  | "board"
+  | "faq"
+  | "stories"
+  | "giftCatalogue"
+  | "religiousOccasions"
+  | "transparency"
+  | "programs"
+  | "programDetail"
+  | "sadaqahJariyah"
+  | "paymentDetails"
+  | "refundPolicy";
 
 /** Canonical slug per page, relative to `/{locale}`. */
 export const SLUGS: Record<MinbarRoute, string> = {
@@ -99,6 +113,19 @@ export const SLUGS: Record<MinbarRoute, string> = {
   cookies: "cookie-policy",
   accessibility: "accessibility",
   maintenance: "maintenance",
+  ourStory: "our-story",
+  presidentLetter: "president-letter",
+  board: "board-of-trustees",
+  faq: "faq",
+  stories: "stories",
+  giftCatalogue: "gift-catalogue",
+  religiousOccasions: "religious-occasions",
+  transparency: "transparency",
+  programs: "programmes",
+  programDetail: "programmes",
+  sadaqahJariyah: "sadaqah-jariyah",
+  paymentDetails: "payment-details",
+  refundPolicy: "refund-policy",
 };
 
 /**
@@ -198,7 +225,7 @@ export function routeForPathname(pathname: string): MinbarRoute | null {
   if (rest === "") return "home";
 
   /* A list page and its detail page share a slug; the child segment decides. */
-  const DETAIL_OF: Partial<Record<MinbarRoute, MinbarRoute>> = { projects: "projectDetail", blog: "article" };
+  const DETAIL_OF: Partial<Record<MinbarRoute, MinbarRoute>> = { projects: "projectDetail", blog: "article", programs: "programDetail" };
   const DETAIL_ROUTES = new Set<MinbarRoute>(Object.values(DETAIL_OF) as MinbarRoute[]);
 
   let best: { route: MinbarRoute; length: number } | null = null;
