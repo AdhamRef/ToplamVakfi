@@ -1,0 +1,24 @@
+import type { CommunicationChannel, CommunicationPurpose, ContactPreference } from "./communication-types";
+
+export type ConsentEligibility = {
+  eligible: boolean;
+  reason: string;
+};
+
+export function contactChannelEligibility(preference: ContactPreference | null | undefined, channel: CommunicationChannel, purpose: CommunicationPurpose): ConsentEligibility {
+  if (!preference) return { eligible: false, reason: "لا توجد تفضيلات تواصل مسجلة لهذا الشخص." };
+  if (preference.doNotContact) return { eligible: false, reason: "هذا الشخص مفعّل عليه عدم التواصل." };
+
+  if (purpose === "TRANSACTIONAL") {
+    if (channel === "EMAIL") return { eligible: true, reason: "تواصل تشغيلي عبر الإيميل." };
+    if (channel === "WHATSAPP") return { eligible: true, reason: "تواصل تشغيلي عبر واتساب للمتبرعين." };
+    if (channel === "SMS" && preference.smsOptIn) return { eligible: true, reason: "تواصل تشغيلي عبر SMS مع موافقة." };
+    return { eligible: false, reason: "القناة التشغيلية غير متاحة لهذا الشخص." };
+  }
+
+  if (channel === "EMAIL" && preference.emailOptIn) return { eligible: true, reason: "تواصل تسويقي عبر الإيميل مع موافقة." };
+  if (channel === "SMS" && preference.smsOptIn) return { eligible: true, reason: "تواصل تسويقي عبر SMS مع موافقة." };
+  if (channel === "WHATSAPP") return { eligible: true, reason: "متبرع مسجل برقم واتساب صالح." };
+
+  return { eligible: false, reason: "التواصل التسويقي يحتاج موافقة واضحة على نفس القناة." };
+}

@@ -1,0 +1,120 @@
+import type { Metadata } from "next";
+import { unstable_cache } from "next/cache";
+import { getServerSession } from "next-auth";
+import { LOCALE_SEO, buildPageMetadata, SITE_URL } from "@/lib/seo";
+import type { Locale } from "@/lib/seo";
+import { authOptions } from "@/app/api/auth/[...nextauth]/options";
+import { listProjects } from "@/lib/minbar/projects";
+import { readQuickDonation } from "@/lib/minbar/quick-donation-read";
+import { readHomeLayout, resolveHomeLists, visibleSections } from "@/lib/minbar/home-layout-read";
+import MinbarMessages from "@/components/minbar/MinbarMessages";
+import HomePage from "@/components/minbar/home/HomePage";
+import PageBanners from "@/components/minbar/banners/PageBanners";
+
+/**
+ * Namespaces this page renders, on top of the shell bundle: its own copy, the
+ * official impact figures' labels, and the verse strips (the hero's Al-Isra 1
+ * and the 'Ibādan Lanā banner's Al-Isra 5).
+ */
+const NAMESPACES = ["homepage", "achievements", "quran"] as const;
+
+/**
+ * Everything the homepage shows except the visitor's session, read together
+ * and cached per locale for a minute. Uncached, these ~15 MongoDB queries ran
+ * on every visit and kept the server ~1.7 s from sending the first byte
+ * (PageSpeed: LCP breakdown, "time to first byte"). Dashboard edits, raised
+ * amounts and new posts show within 60 s. All of it is plain JSON (strings,
+ * numbers), which `unstable_cache` requires.
+ */
+const cachedHomeData = unstable_cache(
+  async (locale: string) => {
+    const projectsRead = listProjects(locale);
+    const layoutRead = readHomeLayout();
+    const [, quick, layout, lists] = await Promise.all([
+      projectsRead,
+      readQuickDonation(),
+      layoutRead,
+      layoutRead.then((l) => resolveHomeLists(locale, l, projectsRead)),
+    ]);
+    return { quick, layout, lists };
+  },
+  ["minbar-home-data"],
+  { revalidate: 60, tags: ["minbar-home"] }
+);
+
+interface Props {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const seo = LOCALE_SEO[locale as Locale] ?? LOCALE_SEO.en;
+  return buildPageMetadata(locale, {
+    title: seo.title,
+    description: seo.description,
+    path: "/",
+    keywords: seo.keywords,
+  });
+}
+
+/**
+ * Homepage  the Minbar Al-Aqsa design, ported from
+ * `Minbar/الصفحة الرئيسية.dc.html`.
+ *
+ * Projects are read here rather than fetched from the client so the urgent rail
+ * and the quick-donation bar's destination list are in the first HTML response.
+ * `PRODUCTION_SEO_CONTRACT.md` requires server-rendered metadata and content 
+ * a client-only fetch would leave the homepage's project copy out of the index.
+ */
+export default async function Home({ params }: Props) {
+  const { locale } = await params;
+
+  // Every section's content is read here, in parallel, so the whole homepage is
+  // in the first HTML response rather than filled in by client fetches. Which
+  // sections show, in what order, and which items each list picks are the
+  // dashboard's homepage layout (`lib/minbar/home-layout.ts`); its defaults are
+  // the approved design. The quick-donation select lists whatever its own
+  // settings allow, which may be every project.
+  const [{ quick, layout, lists }, session] = await Promise.all([
+    cachedHomeData(locale),
+    getServerSession(authOptions),
+  ]);
+
+  const organisationSchema = {
+    "@context": "https://schema.org",
+    "@type": ["Organization", "NGO"],
+    "@id": `${SITE_URL}/#organization`,
+    url: `${SITE_URL}/${locale}`,
+    name: LOCALE_SEO[locale as Locale]?.siteName ?? LOCALE_SEO.en.siteName,
+    description: LOCALE_SEO[locale as Locale]?.description ?? LOCALE_SEO.en.description,
+  };
+
+  return (
+    <>
+      {/* `PRODUCTION_SEO_CONTRACT.md` § Structured Data: Organization + WebSite
+          on the homepage only, and nothing describing data the page does not
+          actually show. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organisationSchema) }}
+      />
+      <MinbarMessages locale={locale} namespaces={NAMESPACES}>
+        <HomePage
+          sections={visibleSections(layout)}
+          lists={lists}
+          /* QuickDonateBar's markup is commented out, so it renders nothing, yet
+             every project was serialized into the page for it (~90 KB, a third
+             of the inline payload, parsed during hydration). Pass `allProjects`
+             again when the bar is restored. */
+          quick={{ config: quick, projects: [] }}
+          banners={{
+            top: <PageBanners locale={locale} page="home" slot="top" />,
+            middle: <PageBanners locale={locale} page="home" slot="middle" />,
+            bottom: <PageBanners locale={locale} page="home" slot="bottom" />,
+          }}
+          signedIn={!!session?.user}
+        />
+      </MinbarMessages>
+    </>
+  );
+}

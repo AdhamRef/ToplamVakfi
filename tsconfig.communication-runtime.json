@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "incremental": false,
+    "skipLibCheck": true
+  },
+  "include": [
+    "next-env.d.ts",
+    "types/next-auth.d.ts",
+    "lib/integration-settings/**/*.ts",
+    "lib/audit-log.ts",
+    "lib/communication/**/*.ts",
+    "app/api/communication/**/*.ts",
+    "app/api/dashboard/communication/**/*.ts",
+    "app/api/cron/communication-*/**/*.ts",
+    "app/api/webhooks/meta/whatsapp/**/*.ts",
+    "app/api/webhooks/elastic-email/**/*.ts",
+    "app/api/webhooks/brevo/**/*.ts",
+    "app/(dashboard)/dashboard/communication/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next",
+    ".integration-test-build",
+    "lib/events/**",
+    "lib/tracking/**"
+  ]
+}

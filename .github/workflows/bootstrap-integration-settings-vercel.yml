@@ -1,0 +1,18 @@
+name: Legacy integration bootstrap (quarantined)
+
+# This inherited workflow targeted a different repository and Vercel project.
+# It must not run on pushes or pull requests, receive secrets, or change any
+# project settings. Its previous implementation remains available in Git history.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: No bootstrap or deployment is performed
+        run: echo "The inherited cross-project bootstrap is quarantined. No settings, secrets, databases, or deployments were changed."

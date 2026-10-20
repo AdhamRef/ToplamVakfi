@@ -1,0 +1,188 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { AlertTriangle, Loader2 } from "lucide-react";
+
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { dashDir, dt } from "@/lib/dashboard/i18n";
+
+export interface DeleteDonationRow {
+  id: string;
+  amount: number;
+  totalAmount: number;
+  currency: string;
+  status: string;
+  /** When known and set, the donation was paid and the server will refuse deletion. */
+  paidAt?: string | Date | null;
+  donor?: { name?: string | null; email?: string | null } | null;
+}
+
+interface Props {
+  row: DeleteDonationRow;
+  onClose: () => void;
+  onDeleted: () => void;
+}
+
+/**
+ * Hard-confirm delete: the admin must type the donation's exact `amount` to
+ * unlock the delete button. We compare against `totalAmount` because deleting
+ * removes the entire collected charge, including support/covered fees.
+ */
+export function DeleteDonationDialog({ row, onClose, onDeleted }: Props) {
+  const [typed, setTyped] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [immutable, setImmutable] = useState(Boolean(row.paidAt));
+
+  useEffect(() => {
+    setTyped("");
+    setImmutable(Boolean(row.paidAt));
+  }, [row.id, row.paidAt]);
+
+  // Stringify the amount the same way the row renders it  strip trailing zeros
+  // so 100 matches "100" not "100.00". User can also type the full numeric.
+  const expected = formatExpected(row.totalAmount ?? row.amount);
+  const matches = normalizeNumericInput(typed) === expected;
+
+  const handleDelete = async () => {
+    if (!matches || submitting) return;
+    setSubmitting(true);
+    try {
+      await axios.delete(`/api/donations/${row.id}`);
+      toast.success(dt("تم حذف التبرع وتحديث الإجماليات"));
+      onDeleted();
+      onClose();
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        setImmutable(true);
+        toast.error(dt("لا يمكن حذف تبرع مدفوع. استخدم التعديل لتصحيحه."));
+      } else {
+        console.error("[Donation Delete] failed:", err);
+        toast.error(dt("فشل في حذف التبرع"));
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const donor = row.donor?.name?.trim() || row.donor?.email || "—";
+
+  if (immutable) {
+    return (
+      <AlertDialog open onOpenChange={(open) => (!open ? onClose() : null)}>
+        <AlertDialogContent className="max-w-md" dir={dashDir()}>
+          <AlertDialogHeader className="text-start sm:text-start">
+            <div className="mx-auto mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+              <AlertTriangle className="h-6 w-6" />
+            </div>
+            <AlertDialogTitle className="text-slate-900">{dt("لا يمكن حذف هذا التبرع")}</AlertDialogTitle>
+            <AlertDialogDescription className="text-slate-600 leading-relaxed">
+              {dt("هذا تبرع مدفوع ومسجّل ماليًا، وقد يكون صدر له إيصال أو شهادة. السجلات المالية لا تُحذف. لتصحيح المبلغ أو الحالة أو المشروع استخدم «تعديل».")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button type="button" variant="outline" onClick={onClose}>
+              {dt("إغلاق")}</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
+
+  return (
+    <AlertDialog open onOpenChange={(open) => (!open && !submitting ? onClose() : null)}>
+      <AlertDialogContent className="max-w-md" dir={dashDir()}>
+        <AlertDialogHeader className="text-start sm:text-start">
+          <div className="mx-auto mb-1 flex h-12 w-12 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+            <AlertTriangle className="h-6 w-6" />
+          </div>
+          <AlertDialogTitle className="text-rose-900">
+            {dt("تأكيد حذف التبرع")}</AlertDialogTitle>
+          <AlertDialogDescription className="text-slate-600 leading-relaxed">
+            {dt("هذا الإجراء لا يمكن التراجع عنه. يُسمح بحذف التبرعات غير المدفوعة فقط (محاولات دفع متروكة أو فاشلة). التبرعات المدفوعة لا تُحذف.")}</AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <div className="space-y-3 text-start">
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs space-y-1">
+            <div className="flex justify-between">
+              <span className="text-slate-500">{dt("المتبرع")}</span>
+              <span className="font-medium text-slate-800">{donor}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">{dt("إجمالي التحصيل")}</span>
+              <span className="font-bold text-slate-900" dir="ltr">
+                {expected} {row.currency}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-500">{dt("الحالة")}</span>
+              <span className="font-medium text-slate-800">{row.status}</span>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="block text-xs font-medium text-slate-700">
+              {dt("للتأكيد، اكتب قيمة التبرع تمامًا (")}<span dir="ltr">{expected}</span>):
+            </label>
+            <input
+              type="text"
+              value={typed}
+              onChange={(e) => setTyped(e.target.value)}
+              autoFocus
+              dir="ltr"
+              placeholder={expected}
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-right focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-100"
+              disabled={submitting}
+            />
+            {typed && !matches && (
+              <p className="text-[11px] text-rose-600">{dt("القيمة المُدخلة لا تطابق قيمة التبرع.")}</p>
+            )}
+          </div>
+        </div>
+
+        <AlertDialogFooter className="!justify-between flex-row-reverse">
+          <Button
+            type="button"
+            variant="destructive"
+            disabled={!matches || submitting}
+            onClick={handleDelete}
+            className="bg-rose-600 hover:bg-rose-700 disabled:opacity-50"
+          >
+            {submitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin ms-2" />
+                {dt("جاري الحذف...")}</>
+            ) : (
+              dt("حذف نهائيًا")
+            )}
+          </Button>
+          <Button type="button" variant="outline" onClick={onClose} disabled={submitting}>
+            {dt("إلغاء")}</Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+/** Render a number the same way the input is parsed back (no trailing zeros). */
+function formatExpected(n: number): string {
+  if (!Number.isFinite(n)) return "0";
+  // Show up to 2 decimals; trim trailing zeros and dangling dot.
+  return n
+    .toFixed(2)
+    .replace(/\.?0+$/, "");
+}
+
+function normalizeNumericInput(s: string): string {
+  const normalized = s.trim().replace(/,/g, "");
+  const n = Number(normalized);
+  return Number.isFinite(n) ? formatExpected(n) : normalized;
+}

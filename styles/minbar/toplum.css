@@ -1,0 +1,186 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Toplum Vakfı layer  the redesign from `ToplamVakfi-design/`, applied on top
+ * of `minbar.css`. Loaded after it (app/[locale]/layout.tsx), so these rules
+ * win where both set a property; everything stays under `.mia-scope` so the
+ * dashboard is untouched.
+ *
+ * Design rules carried over from ToplamVakfi-design/CLAUDE.md:
+ *  - Brand blue #00a2e0 / text shade #0077b3; one CTA gradient
+ *    linear-gradient(90deg, #1b6fe0, #1ca3ec 72%, #27b8f2); navy #031a36.
+ *  - Dark surfaces: linear-gradient(120deg, #021428, #082b50 60%, #04172e);
+ *    secondary text on them #b9d3e6 (copy) and #cfe3f1 (small headings).
+ *  - Page background #f4f8fb. Cairo everywhere.
+ *  - Buttons pill (999px) weight 800; cards white, 1px #e6eef3, 14–16px radius,
+ *    0 12px 28px rgba(2,52,88,.07), lift 4px on hover; inputs 10px; large
+ *    bands 18–24px.
+ * ───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Homepage hero ────────────────────────────────────────────────────────── */
+.mia-scope .mia-hero { background: #031a36; color: #fff; padding-bottom: 54px; }
+.mia-scope .mia-hero-glow,
+[dir="ltr"] .mia-scope .mia-hero-glow {
+  background:
+    radial-gradient(ellipse 40% 55% at 78% 50%, rgba(0,162,224,.28), transparent 70%),
+    linear-gradient(270deg, rgba(3,26,54,.96) 0%, rgba(3,26,54,.86) 48%, rgba(3,26,54,.6) 100%),
+    url("/toplum/hero-bg.webp") center / cover no-repeat;
+}
+[dir="ltr"] .mia-scope .mia-hero-glow {
+  background:
+    radial-gradient(ellipse 40% 55% at 22% 50%, rgba(0,162,224,.28), transparent 70%),
+    linear-gradient(90deg, rgba(3,26,54,.96) 0%, rgba(3,26,54,.86) 48%, rgba(3,26,54,.6) 100%),
+    url("/toplum/hero-bg.webp") center / cover no-repeat;
+}
+@media (max-width: 760px) {
+  .mia-scope .mia-hero-glow,
+  [dir="ltr"] .mia-scope .mia-hero-glow {
+    background:
+      linear-gradient(180deg, rgba(3,26,54,.9) 0%, rgba(3,26,54,.96) 100%),
+      url("/toplum/hero-bg-800.webp") center / cover no-repeat;
+  }
+}
+.mia-scope .mia-hero-pattern { opacity: .06 !important; }
+.mia-scope .mia-hero-dome { display: none; }
+/* The design's wave: the page background rising into the bottom of the hero. */
+.mia-scope .mia-hero::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: -1px; height: 56px; z-index: 0; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 56' preserveAspectRatio='none'%3E%3Cpath fill='%23f4f8fb' d='M0 56V30C240 6 520 0 760 18s460 34 680 8v30Z'/%3E%3C/svg%3E") bottom / 100% 100% no-repeat;
+}
+.mia-scope .mia-hero-wrap { z-index: 1; }
+
+.mia-scope .mia-stories { border-bottom-color: rgba(255,255,255,.14); }
+.mia-scope .mia-story-ring { background: rgba(255,255,255,.22); }
+.mia-scope .mia-story-disc { background: #031a36; }
+.mia-scope .mia-story-badge { border-color: #031a36; }
+.mia-scope .mia-hero .mia-story-label { color: #b9d3e6; }
+.mia-scope .mia-hero .mia-story-label[data-new="true"] { color: #fff; }
+.mia-scope .mia-hero .mia-stories-arrow { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.28); color: #fff; }
+.mia-scope .mia-hero .mia-stories-arrow:hover { border-color: #27b8f2; color: #7fd6f5; }
+
+.mia-scope .mia-hero-h1 { color: #fff; font-weight: 900; }
+.mia-scope .mia-hero-accent-word {
+  background: linear-gradient(90deg, #27b8f2, #7fd6f5); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.mia-scope .mia-hero-accent-stroke path { stroke: #27b8f2; opacity: .8; }
+.mia-scope .mia-hero-sub { color: #cfe3f1; }
+.mia-scope .mia-hero-sub-mark,
+[dir="rtl"] .mia-scope .mia-hero-sub-mark { background: linear-gradient(90deg, #27b8f2, rgba(39,184,242,.2)); }
+.mia-scope .mia-hero-sub-mark::before { background: #27b8f2; border-radius: 50%; transform: translateY(-50%); }
+.mia-scope .mia-hero-lead { color: #b9d3e6; }
+
+.mia-scope .mia-hero-btn { border-radius: 999px !important; font-weight: 800 !important; }
+.mia-scope a.mia-hero-btn:first-child {
+  background: var(--cta-gradient) !important; border-color: transparent !important;
+  box-shadow: 0 14px 30px -10px rgba(27,111,224,.7) !important;
+}
+[dir="rtl"] .mia-scope a.mia-hero-btn:first-child { background: linear-gradient(270deg, #1b6fe0 0%, #1ca3ec 72%, #27b8f2 100%) !important; }
+.mia-scope a.mia-hero-btn:first-child .mia-arrow-next { background: #fff; color: #1b6fe0; width: 26px; height: 26px; }
+.mia-scope a.mia-hero-btn:nth-child(2) {
+  background: transparent !important; border: 1.5px solid rgba(255,255,255,.45) !important; color: #fff !important; box-shadow: none !important;
+}
+.mia-scope a.mia-hero-btn:nth-child(2):hover { background: rgba(255,255,255,.08) !important; border-color: #fff !important; }
+
+.mia-scope .mia-hero-media-back { border-color: rgba(127,214,245,.3); border-radius: 26px; }
+.mia-scope .mia-hero-frame { background: linear-gradient(135deg, rgba(39,184,242,.9), rgba(39,184,242,.12) 45%, rgba(255,255,255,.25) 60%, rgba(39,184,242,.7)); }
+.mia-scope .mia-hero-chip,
+.mia-scope .mia-hero-play-btn { color: #1b6fe0; }
+
+/* ── Project card (ProjectDonateCard) ─────────────────────────────────────── */
+.mia-scope .pdc-card,
+.mia-scope .mia-projects-page .pdc-card { min-height: 0 !important; }
+.mia-scope .pdc-card:hover { transform: translateY(-4px); box-shadow: 0 22px 44px rgba(2,52,88,.14) !important; }
+.mia-scope .pdc-media {
+  position: relative; display: block; flex: 0 0 auto; height: 200px; overflow: hidden;
+  background: linear-gradient(135deg, #082c50, #031a36);
+}
+.mia-scope .pdc-img {
+  position: absolute; inset: 0; display: block; background-size: cover; background-position: center;
+  transition: transform .6s cubic-bezier(.22,.61,.36,1);
+}
+.mia-scope .pdc-card:hover .pdc-img { transform: scale(1.05); }
+.mia-scope .pdc-media::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(0deg, rgba(3,26,54,.28), rgba(3,26,54,0) 45%);
+}
+.mia-scope .pdc-tag {
+  position: absolute; z-index: 1; top: 14px; inset-inline-start: 14px;
+  padding: 5px 12px; border-radius: 999px;
+  background: rgba(255,255,255,.92); color: var(--gold-2);
+  font-size: 11.5px; font-weight: 800; box-shadow: 0 4px 12px rgba(3,26,54,.15);
+}
+.mia-scope .pdc-title { display: block; font-size: 18px; line-height: 1.45; font-weight: 800; color: var(--deep); }
+.mia-scope .pdc-text {
+  margin: -4px 0 0; color: var(--muted); font-size: 13.5px; line-height: 1.7;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.mia-scope .pdc-share-price {
+  flex: 0 0 auto; padding: 5px 11px; border-radius: 999px;
+  background: #eaf6fd; border: 1px solid rgba(0,162,224,.35); color: var(--gold-2);
+  font-size: 12px; font-weight: 800; white-space: nowrap;
+}
+.mia-scope .pdc-track { display: block; height: 6px; border-radius: 999px; background: #eaf1f6; overflow: hidden; }
+.mia-scope .pdc-fill { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #1b6fe0, #27b8f2); }
+[dir="rtl"] .mia-scope .pdc-fill { background: linear-gradient(270deg, #1b6fe0, #27b8f2); margin-inline-start: 0; }
+.mia-scope .pdc-custom::placeholder { color: #8aa0b4; }
+.mia-scope .pdc-hint { background: #eaf6fd; border-color: rgba(0,162,224,.45); color: #0077b3; }
+.mia-scope .pdc-card button[data-icon-action]:hover { border-color: var(--gold); color: var(--gold-2); }
+.mia-scope .pdc-card .mia-card-cta:hover { filter: brightness(1.05); transform: translateY(-1px); }
+@media (max-width: 760px) { .mia-scope .pdc-media { height: 180px; } }
+
+/* ── Header fit ───────────────────────────────────────────────────────────────
+ * Seven links, the CTA and five controls only fit on one row from ~1360px
+ * (wider words in LTR). Below that the links live in the "all pages" menu,
+ * which already lists every one of them. */
+.mia-head .mia-rail { gap: 20px !important; }
+@media (max-width: 1360px) { .mia-head nav { display: none !important; } }
+@media (max-width: 1360px) and (min-width: 701px) { .mia-head .mia-main-row > a:first-child { margin-inline-end: auto; } }
+@media (max-width: 1520px) {
+  .mia-head .mia-locale-label { display: none; }
+  .mia-head .mia-locale-btn { padding-inline: 10px 6px !important; gap: 6px !important; }
+}
+
+/* ── Inner page banners ───────────────────────────────────────────────────────
+ * The dark navy banner of every inner page closes on the design's wave
+ * (`wave-divider`): the page background rising into it. */
+.mia-scope section[style*="#082b50"] { padding-bottom: 28px; }
+.mia-scope section[style*="#082b50"]::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: -1px; height: 48px; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 48' preserveAspectRatio='none'%3E%3Cpath fill='%23f4f8fb' d='M0 48V26C240 4 520 0 760 16s460 30 680 6v26Z'/%3E%3C/svg%3E") bottom / 100% 100% no-repeat;
+}
+
+/* ── Selected states ──────────────────────────────────────────────────────────
+ * On a light surface a picked chip / tab is the brand-ink fill with white text
+ * (4.9:1), never the CTA gradient and never dark ink (ToplamVakfi-design/CLAUDE.md). */
+.mia-scope button[data-pick="1"],
+.mia-scope button[data-chip="amt"],
+.mia-scope button[data-chip="freq"],
+.mia-scope button[data-chip="faq"],
+.mia-scope .mia-qb-chip[data-chip="amt"],
+.mia-scope .mia-qb-chip[data-chip="freq"] {
+  background: #0077b3 !important; border-color: #0077b3 !important; color: #fff !important;
+  box-shadow: 0 6px 14px -6px rgba(0,119,179,.55) !important;
+}
+/* The language / currency rows keep their own light pick. */
+.mia-scope .mia-head button.mia-row[data-pick="1"] {
+  background: #eaf6fd !important; border-color: #00a2e0 !important; color: #062442 !important; box-shadow: none !important;
+}
+
+/* ── Legacy Tailwind pages (sign-in, complete profile, legacy campaign pages) ─
+ * Their helper classes live in app/[locale]/globals.css, which the dashboard
+ * shares; restyled here inside `.mia-scope` only. */
+.mia-scope .gold-mark,
+.mia-scope .gold-mark-sm { background: linear-gradient(90deg, #1b6fe0, #27b8f2); }
+.mia-scope .hero-pattern {
+  background:
+    radial-gradient(circle at 80% 20%, rgba(39,184,242,.22), transparent 32%),
+    radial-gradient(circle at 10% 90%, rgba(27,111,224,.22), transparent 30%),
+    linear-gradient(120deg, #021428 0%, #082b50 60%, #04172e 100%);
+}
+.mia-scope .image-overlay { background: linear-gradient(180deg, rgba(3,26,54,0) 0%, rgba(3,26,54,.8) 100%); }
+.mia-scope .shape-button,
+[dir="rtl"] .mia-scope .shape-button { border-radius: 999px; }
+.mia-scope .shape-chip,
+[dir="rtl"] .mia-scope .shape-chip { border-radius: 999px; }
+.mia-scope .shape-card,
+.mia-scope .shape-card-alt,
+[dir="rtl"] .mia-scope .shape-card,
+[dir="rtl"] .mia-scope .shape-card-alt { border-radius: 16px; box-shadow: 0 12px 28px rgba(2,52,88,.07); }
