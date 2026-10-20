@@ -297,7 +297,6 @@
 .mia-scope .tvc-sec--white { background: #fff; }
 .mia-scope .tvc-stats-wrap + .tvc-sec { padding-top: 30px; }
 .mia-scope .tvc-sec:not(.tvc-sec--white) + .tvc-sec:not(.tvc-sec--white) { padding-top: 0; }
-.mia-scope .tvc-sec--last { padding-bottom: 64px; }
 .mia-scope .tvc-center { text-align: center; }
 
 /* "Be part of this programme": the donation box on the dark band. */

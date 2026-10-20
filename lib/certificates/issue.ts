@@ -1,17 +1,19 @@
 import "server-only";
 
-import { Prisma, type Certificate, type DonationReceipt, type DonationWaqfItem } from "@prisma/client";
+import { Prisma, type Certificate, type DonationReceipt } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { isValidLocale, DEFAULT_LOCALE } from "@/lib/locales";
 import { nextSequenceNumber, padSerial } from "./sequences";
 
 /**
- * Issuing the three documents a confirmed donation carries
+ * Issuing the two documents a confirmed donation carries
  * (`CERTIFICATES_DOWNLOADS_HANDOFF.md §1`):
  *
  *   - the thank-you certificate  every confirmed donation;
- *   - the donation receipt  every confirmed donation;
- *   - a waqf certificate  one per waqf line (share or metre) in the order.
+ *   - the donation receipt  every confirmed donation.
+ *
+ * Older rows may also hold SHARE/METER certificates from the retired waqf
+ * product; they stay in the table and are no longer read.
  *
  * `DONATION_LOGIC_SPEC §2` and its idempotency contract govern everything here:
  * nothing is issued before the payment is confirmed, a serial is minted once,
@@ -20,15 +22,12 @@ import { nextSequenceNumber, padSerial } from "./sequences";
  * unique constraints on the tables catch the one race the lookups cannot.
  */
 
-export type IssuedWaqfCertificate = Certificate & { waqfItem: DonationWaqfItem };
-
 export interface IssuedDocuments {
   donationId: string;
   /** The locale the donation was made in  every document renders in it. */
   locale: string;
   receipt: DonationReceipt;
   thanks: Certificate;
-  waqf: IssuedWaqfCertificate[];
 }
 
 export class DonationNotConfirmedError extends Error {
@@ -134,46 +133,6 @@ async function ensureThanksCertificate(
   }
 }
 
-async function ensureWaqfCertificate(
-  donation: { id: string; donorId: string; paidAt: Date | null; currency: string },
-  item: DonationWaqfItem,
-  locale: string
-): Promise<IssuedWaqfCertificate> {
-  const existing = await prisma.certificate.findUnique({ where: { waqfItemId: item.id } });
-  if (existing) return { ...existing, waqfItem: item };
-
-  /* Metres and shares run on separate books, each continuing the printed
-     series; the number on the face is the bare sequence value. */
-  const unitKey = item.unit === "METER" ? "waqf-meter" : "waqf-share";
-  const number = await nextSequenceNumber(unitKey);
-  const type = item.unit === "METER" ? "METER" : "SHARE";
-  try {
-    const created = await prisma.certificate.create({
-      data: {
-        serial: `MIA-WQF-${type === "METER" ? "M" : "S"}-${padSerial(number)}`,
-        number,
-        type,
-        donationId: donation.id,
-        donorId: donation.donorId,
-        waqfItemId: item.id,
-        count: item.count,
-        amount: item.amount,
-        currency: donation.currency,
-        donorName: item.donorName,
-        dedicatedTo: item.onBehalf,
-        issuedAt: donation.paidAt ?? new Date(),
-        locale,
-      },
-    });
-    return { ...created, waqfItem: item };
-  } catch (error) {
-    if (!isUniqueViolation(error)) throw error;
-    const winner = await prisma.certificate.findUnique({ where: { waqfItemId: item.id } });
-    if (winner) return { ...winner, waqfItem: item };
-    throw error;
-  }
-}
-
 /**
  * Issue  or, on every call after the first, simply return  the documents
  * for a confirmed donation.
@@ -197,7 +156,6 @@ export async function issueDonationDocuments(donationId: string): Promise<Issued
       totalAmount: true,
       donorId: true,
       donor: { select: { name: true, preferredLang: true } },
-      waqfItems: { orderBy: { createdAt: "asc" } },
     },
   });
   if (!donation) throw new DonationNotFoundError(donationId);
@@ -207,13 +165,8 @@ export async function issueDonationDocuments(donationId: string): Promise<Issued
   const base = { ...donation, donorName: (donation.donor?.name ?? "").trim() };
 
   const [receipt, thanks] = await Promise.all([ensureReceipt(base, locale), ensureThanksCertificate(base, locale)]);
-  /* Sequential on purpose: two lines drawing from the same counter at once
-     would still get distinct numbers, but issuing them in order keeps the
-     numbers in the order the lines were bought. */
-  const waqf: IssuedWaqfCertificate[] = [];
-  for (const item of donation.waqfItems) waqf.push(await ensureWaqfCertificate(base, item, locale));
 
-  return { donationId, locale, receipt, thanks, waqf };
+  return { donationId, locale, receipt, thanks };
 }
 
 /**
@@ -222,14 +175,12 @@ export async function issueDonationDocuments(donationId: string): Promise<Issued
  */
 export async function findDonationDocuments(donationId: string): Promise<IssuedDocuments | null> {
   if (!OBJECT_ID.test(donationId)) return null;
-  const [receipt, certificates] = await Promise.all([
+  const [receipt, thanks] = await Promise.all([
     prisma.donationReceipt.findUnique({ where: { donationId } }),
-    prisma.certificate.findMany({ where: { donationId }, include: { waqfItem: true }, orderBy: { issuedAt: "asc" } }),
+    prisma.certificate.findFirst({ where: { donationId, type: "THANKS" } }),
   ]);
-  const thanks = certificates.find((c) => c.type === "THANKS");
   if (!receipt || !thanks) return null;
-  const waqf = certificates.filter((c): c is typeof c & { waqfItem: DonationWaqfItem } => c.type !== "THANKS" && c.waqfItem != null);
-  return { donationId, locale: thanks.locale, receipt, thanks, waqf };
+  return { donationId, locale: thanks.locale, receipt, thanks };
 }
 
 /**

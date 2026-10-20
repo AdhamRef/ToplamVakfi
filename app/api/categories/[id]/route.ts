@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import {
   CATEGORY_PAGE_SELECT,
   buildCategoryPagePatch,
-  categoryChildrenWrite,
   categoryPageTranslation,
   pageTemplate,
   releasePageTemplateFromOthers,
@@ -49,7 +48,7 @@ export async function GET(
         order: true,
         isActive: true,
         translations: allTranslations
-          ? { select: { locale: true, name: true, description: true, slug: true, heroLead: true, ctaLabel: true, statDoneLabel: true, statGoalLabel: true, projectsTitle: true, donateTitle: true, donateNote: true, achievementsTitle: true } }
+          ? { select: { locale: true, name: true, description: true, slug: true, heroLead: true, ctaLabel: true, statDoneLabel: true, statGoalLabel: true, projectsTitle: true, donateTitle: true, donateNote: true } }
           : {
               where: translationLocaleWhere(locale),
               take: 2,
@@ -153,7 +152,6 @@ export async function PUT(
            carried are touched, so a caller that knows nothing about the page 
            the archive toggle, a bulk tool  leaves it exactly as it was. */
         ...buildCategoryPagePatch(body),
-        ...categoryChildrenWrite(body),
       }
     });
 

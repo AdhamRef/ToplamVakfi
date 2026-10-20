@@ -7,7 +7,6 @@ import { miaPath } from "@/lib/minbar/routes";
 import type { MinbarArticle, MinbarPostCategory } from "@/lib/minbar/posts";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import { NoResults, ContentError, ContentSkeleton } from "@/components/minbar/states/ContentStates";
 import { EdArrow, EdBanner } from "./Editorial";
 
@@ -187,7 +186,6 @@ export default function BlogPage({ initialArticles, initialCursor, categories }:
 
       <ZakatBanner />
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

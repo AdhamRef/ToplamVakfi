@@ -6,7 +6,6 @@ import { miaPath } from "@/lib/minbar/routes";
 import type { MinbarArticle } from "@/lib/minbar/posts";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import { NoResults } from "@/components/minbar/states/ContentStates";
 import { EdArrow, EdBanner } from "@/components/minbar/blog/Editorial";
 
@@ -101,7 +100,6 @@ export default function NewsPage({ items }: NewsPageProps) {
 
       <ZakatBanner />
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

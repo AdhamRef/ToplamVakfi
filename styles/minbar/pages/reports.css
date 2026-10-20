@@ -155,29 +155,13 @@
   box-shadow: 0 0 0 4px #e3f2fb;
 }
 
-/* Documents (Transparency rows) */
-.mia-scope .rpx-reports { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 30px; align-items: start; }
-.mia-scope .rpx-reports-side { display: grid; justify-items: start; gap: 4px; position: sticky; top: 120px; }
+/* Reports (request note) */
+.mia-scope .rpx-reports-side { display: grid; justify-items: start; gap: 4px; }
 .mia-scope .rpx-ghost {
   display: inline-flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 14px; padding: 0 20px;
   border-radius: 999px; border: 1.5px solid #00a2e0; background: #fff; color: #0077b3; font-size: 13px; font-weight: 800; white-space: nowrap;
 }
 .mia-scope .rpx-ghost:hover { background: #eaf6fd; color: #0077b3; }
-.mia-scope .rpx-report {
-  display: flex; align-items: center; gap: 14px; padding: 14px 18px; min-height: 56px;
-  background: #fff; border: 1px solid #e6eef3; border-radius: 14px; color: #062442;
-  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
-}
-.mia-scope .rpx-report:hover { background: #fff; color: #062442; border-color: rgba(0,162,224,.45); box-shadow: 0 12px 28px rgba(2,52,88,.08); transform: translateY(-2px); }
-.mia-scope .rpx-report-ico { display: grid; place-items: center; flex: 0 0 38px; width: 38px; height: 38px; border-radius: 10px; background: #eaf5fc; color: #0077b3; }
-.mia-scope .rpx-report-title { color: #0077b3; font-size: 14.5px; font-weight: 800; line-height: 1.5; }
-.mia-scope .rpx-report-status {
-  margin-inline-start: auto; flex: 0 0 auto; padding: 4px 11px; border-radius: 999px;
-  background: #e6f9ee; color: #12844c; font-size: 12px; font-weight: 800; white-space: nowrap;
-}
-.mia-scope .rpx-report-arrow { flex: 0 0 auto; display: inline-flex; color: #0077b3; }
-[dir="rtl"] .mia-scope .rpx-report-arrow svg { transform: scaleX(-1); }
-.mia-scope .rpx-empty { border: 1.5px dashed #d5e3ec; border-radius: 16px; background: #fff; overflow: hidden; }
 
 /* Closing band */
 .mia-scope .rpx-closing { position: relative; isolation: isolate; overflow: hidden; border-radius: 22px; background: #031a36; }
@@ -202,8 +186,6 @@
   [dir="ltr"] .mia-scope .rpx-scene--feature[data-side="end"] .rpx-scene-fade {
     background: linear-gradient(0deg, rgba(3,26,54,.95) 8%, rgba(3,26,54,.66) 50%, rgba(3,26,54,.12) 100%);
   }
-  .mia-scope .rpx-reports { grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  .mia-scope .rpx-reports-side { position: static; }
 }
 @media (max-width: 760px) {
   .mia-scope .rpx-qudsmetrics { grid-template-columns: minmax(0, 1fr); }
@@ -223,10 +205,6 @@
   .mia-scope .rpx-scene { min-height: 380px; border-radius: 18px; }
   .mia-scope .rpx-scene-copy,
   .mia-scope .rpx-scene--feature .rpx-scene-copy { padding: 22px 18px; }
-  .mia-scope .rpx-report { flex-wrap: wrap; padding: 14px; }
-  .mia-scope .rpx-report > span:nth-child(2) { flex: 1 1 calc(100% - 52px); }
-  .mia-scope .rpx-report-status { margin-inline-start: 52px; }
-  .mia-scope .rpx-report-arrow { margin-inline-start: auto; }
   .mia-scope .rpx-closing { border-radius: 18px; }
   /* The old dark page's section ids carried their own block padding here. */
   .mia-scope .rpx-page :is(#totals, #voices, #programs, #timeline, #reports) { padding-block: 0 !important; }

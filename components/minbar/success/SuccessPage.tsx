@@ -24,8 +24,8 @@ import type { VerseBlock } from "@/lib/minbar/quran";
  * card was charged; then the documents to keep; then an invitation to make
  * the gift recurring.
  *
- * The documents  receipt, thank-you certificate, a waqf certificate per waqf
- * line  are the download surface of `CERTIFICATES_DOWNLOADS_HANDOFF §5`,
+ * The documents  receipt and thank-you certificate  are the download
+ * surface of `CERTIFICATES_DOWNLOADS_HANDOFF §5`,
  * in `DocumentsPanel`: live previews of the real sheets, downloads of the
  * server's PDFs of the records issued at confirmation.
  *

@@ -8,7 +8,6 @@ import { ORG, ORG_TEL, ORG_WHATSAPP } from "@/lib/minbar/org";
 import type { MessageSubject } from "@/lib/messages/subjects";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import InnerBanner from "@/components/minbar/about/InnerBanner";
 
 /**
@@ -303,7 +302,6 @@ export default function ContactPage() {
 
       <ZakatBanner />
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

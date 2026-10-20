@@ -9,13 +9,11 @@ import type { HomeSectionId } from "@/lib/minbar/home-layout";
 import type { HomeLists } from "@/lib/minbar/home-layout-read";
 import { Hero, VerseStrip } from "./TopSections";
 import QuickDonateBar from "./QuickDonateBar";
-import { CoursesRail, EventsSection, ProgramsRail, ReelsSection } from "./MediaSections";
 import { ImpactSection, PathSection, RegionCards, UrgentProjectsSection } from "./ImpactSections";
-import { AccountSection, RecurringSection, WaqfSection } from "./GivingSections";
-import { ArticlesSection, FaqSection, NewsSection } from "./KnowledgeSections";
+import { AccountSection, RecurringSection } from "./GivingSections";
+import { ArticlesSection, NewsSection } from "./KnowledgeSections";
 import CategoriesSection from "./CategoriesSection";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 
 /**
@@ -28,15 +26,14 @@ import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
  * hidden ones left out; that layout's defaults are the approved design's order.
  * The lists arrive already picked and ranked by the same layout.
  *
- * This is a client component because the video overlay is shared state: the
- * hero, the two reel rails and the courses rail all open into the same player,
- * so one owner has to hold it. The data is fetched on the server and passed down.
+ * This is a client component because the hero's intro film opens into the
+ * video overlay, whose state lives here. The data is fetched on the server and
+ * passed down.
  */
 export default function HomePage({
   sections,
   lists,
   quick,
-  banners,
   signedIn,
 }: {
   /** The visible sections after the quick-donation bar, in display order. */
@@ -44,35 +41,23 @@ export default function HomePage({
   lists: HomeLists;
   /** The quick-donation bar as the dashboard configured it, with every project it may list. */
   quick: { config: QuickDonationConfig; projects: MinbarProject[] };
-  /** Dashboard banners, already rendered on the server, one node per slot. */
-  banners: { top: ReactNode; middle: ReactNode; bottom: ReactNode };
   signedIn: boolean;
 }) {
   const video = useVideoModal();
 
   const render: Record<HomeSectionId, () => ReactNode> = {
     verse: () => <VerseStrip />,
-    bannersTop: () => banners.top,
-    events: () => <EventsSection events={lists.events} />,
-    reels: () => <ReelsSection onPlay={video.open} endorsements={lists.endorsements} achievements={lists.achievements} />,
     path: () => <PathSection />,
-    programs: () => <ProgramsRail playlists={lists.programs} />,
-    courses: () => <CoursesRail onPlay={video.open} courses={lists.courses} />,
     impact: () => <ImpactSection />,
-    bannersMiddle: () => banners.middle,
     travel: () => <TravelBanner />,
-    ibadan: () => <IbadanBanner />,
     urgent: () => <UrgentProjectsSection projects={lists.projects} />,
     categories: () => <CategoriesSection categories={lists.categories} />,
     zakat: () => <ZakatBanner />,
-    waqf: () => <WaqfSection />,
     recurring: () => <RecurringSection />,
     regions: () => <RegionCards images={{ quds: IMG.quds, aqsa: IMG.aqsa, relief: IMG.parcels }} />,
     account: () => <AccountSection signedIn={signedIn} />,
-    bannersBottom: () => banners.bottom,
     articles: () => <ArticlesSection articles={lists.articles} />,
     news: () => <NewsSection news={lists.news} />,
-    faqs: () => <FaqSection faqs={lists.faqs} />,
   };
 
   return (

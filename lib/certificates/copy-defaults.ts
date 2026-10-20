@@ -1,5 +1,5 @@
 /**
- * The wording on the three documents, and where each line comes from.
+ * The wording on the two documents, and where each line comes from.
  *
  * `CERTIFICATES_DOWNLOADS_HANDOFF.md §4`: "All body copy is dashboard-editable
  * per template and per locale  store it, don't hardcode." So every line a
@@ -17,7 +17,7 @@
  * This module is pure so the dashboard form can import the field lists.
  */
 
-export type CertificateTemplateId = "thanks" | "waqf" | "receipt";
+export type CertificateTemplateId = "thanks" | "receipt";
 
 export interface ThanksCopy {
   title: string;
@@ -26,28 +26,6 @@ export interface ThanksCopy {
   duaText: string;
   motto: string;
   orgName: string;
-}
-
-export interface WaqfCopy {
-  certNoLabel: string;
-  countShares: string;
-  countMeters: string;
-  certifiesThat: string;
-  endowedShares: string;
-  endowedMeters: string;
-  valueLabel: string;
-  onBehalfLabel: string;
-  dateLabel: string;
-  directorLabel: string;
-  legalText: string;
-  aboutText: string;
-  /** Non-Arabic editions set the title as text: eyebrow + unit title. */
-  certWord: string;
-  shareUnitTitle: string;
-  meterUnitTitle: string;
-  /** Alt text for the Arabic title artwork. */
-  certTitleShare: string;
-  certTitleMeter: string;
 }
 
 export interface ReceiptCopy {
@@ -96,7 +74,6 @@ export const RECEIPT_ORG_DEFAULTS: ReceiptOrgData = {
 /** The shape stored in `GlobalSettings.certificateCopy`. */
 export interface CertificateCopyOverrides {
   thanks?: Record<string, Partial<ThanksCopy>>;
-  waqf?: Record<string, Partial<WaqfCopy>>;
   receipt?: Record<string, Partial<ReceiptCopy>>;
   receiptOrg?: Partial<ReceiptOrgData>;
 }
@@ -112,26 +89,6 @@ export const THANKS_FIELDS: ReadonlyArray<{ name: keyof ThanksCopy; i18nKey: str
   { name: "duaText", i18nKey: "duaText", label: "الدعاء الختامي", multiline: true },
   { name: "motto", i18nKey: "motto", label: "الشعار" },
   { name: "orgName", i18nKey: "orgName", label: "اسم المؤسسة" },
-];
-
-export const WAQF_FIELDS: ReadonlyArray<{ name: keyof WaqfCopy; i18nKey: string; label: string; multiline?: boolean }> = [
-  { name: "certifiesThat", i18nKey: "certifiesThat", label: "عبارة الإشهاد" },
-  { name: "endowedShares", i18nKey: "endowedShares", label: "سطر الأسهم" },
-  { name: "endowedMeters", i18nKey: "endowedMeters", label: "سطر الأمتار" },
-  { name: "legalText", i18nKey: "waqfLegalText", label: "نص الإقرار الشرعي", multiline: true },
-  { name: "aboutText", i18nKey: "aboutFoundation", label: "التعريف بالمؤسسة (الوجه الخلفي)", multiline: true },
-  { name: "certNoLabel", i18nKey: "certNoLabel", label: "تسمية رقم الشهادة" },
-  { name: "countShares", i18nKey: "countShares", label: "تسمية عدد الأسهم" },
-  { name: "countMeters", i18nKey: "countMeters", label: "تسمية عدد الأمتار" },
-  { name: "valueLabel", i18nKey: "valueLabel", label: "تسمية القيمة" },
-  { name: "onBehalfLabel", i18nKey: "onBehalfLabel", label: "تسمية «أوقفها عن»" },
-  { name: "dateLabel", i18nKey: "dateLabel", label: "تسمية التاريخ" },
-  { name: "directorLabel", i18nKey: "directorLabel", label: "تسمية التوقيع" },
-  { name: "certWord", i18nKey: "certWord", label: "كلمة «شهادة» (النسخ غير العربية)" },
-  { name: "shareUnitTitle", i18nKey: "shareUnitTitle", label: "عنوان السهم (النسخ غير العربية)" },
-  { name: "meterUnitTitle", i18nKey: "meterUnitTitle", label: "عنوان المتر (النسخ غير العربية)" },
-  { name: "certTitleShare", i18nKey: "certTitleShare", label: "الوصف البديل لعنوان السهم" },
-  { name: "certTitleMeter", i18nKey: "certTitleMeter", label: "الوصف البديل لعنوان المتر" },
 ];
 
 export const RECEIPT_FIELDS: ReadonlyArray<{ name: keyof ReceiptCopy; i18nKey: string | null; label: string; multiline?: boolean }> = [
@@ -174,15 +131,6 @@ export const RECEIPT_LITERAL_DEFAULTS: Pick<ReceiptCopy, "docTitleLatin" | "pair
 export function resolveThanksCopy(messages: Record<string, unknown>, overrides?: Partial<ThanksCopy>): ThanksCopy {
   const out = {} as ThanksCopy;
   for (const field of THANKS_FIELDS) {
-    const override = overrides?.[field.name];
-    out[field.name] = typeof override === "string" && override.trim() ? override : String(messages[field.i18nKey] ?? "");
-  }
-  return out;
-}
-
-export function resolveWaqfCopy(messages: Record<string, unknown>, overrides?: Partial<WaqfCopy>): WaqfCopy {
-  const out = {} as WaqfCopy;
-  for (const field of WAQF_FIELDS) {
     const override = overrides?.[field.name];
     out[field.name] = typeof override === "string" && override.trim() ? override : String(messages[field.i18nKey] ?? "");
   }
@@ -234,10 +182,8 @@ export function sanitizeCopyOverrides(input: unknown): CertificateCopyOverrides 
   };
 
   const thanks = pickLocales(raw.thanks, THANKS_FIELDS.map((f) => f.name));
-  const waqf = pickLocales(raw.waqf, WAQF_FIELDS.map((f) => f.name));
   const receipt = pickLocales(raw.receipt, RECEIPT_FIELDS.map((f) => f.name));
   if (thanks) out.thanks = thanks;
-  if (waqf) out.waqf = waqf;
   if (receipt) out.receipt = receipt;
 
   if (raw.receiptOrg && typeof raw.receiptOrg === "object") {

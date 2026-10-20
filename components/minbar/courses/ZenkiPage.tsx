@@ -1,9 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useLocale, useTranslations } from "next-intl";
-import { localeDirection } from "@/lib/locales";
-import { miaPath } from "@/lib/minbar/routes";
+import { useTranslations } from "next-intl";
 import { youtubeEmbed } from "@/lib/minbar/content/media";
 import {
   ZENKI_ANNEX,
@@ -44,8 +41,6 @@ const H2 = { margin: 0, fontSize: "clamp(21px,2.2vw,29px)", fontWeight: 900 } as
 const ARABIC = { lang: "ar", dir: "rtl" as const, style: { unicodeBidi: "isolate" as const } };
 
 export default function ZenkiPage() {
-  const locale = useLocale();
-  const rtl = localeDirection(locale) === "rtl";
   const t = useTranslations("zenki");
 
   const badges = ["badgeUnits", "badgeAnnex", "badgeMode"];
@@ -56,12 +51,6 @@ export default function ZenkiPage() {
       <section id="hero" className="ed-banner">
         <div id="zk-hero" className="ed-wrap ed-zk-hero">
           <div>
-            <div className="ed-crumb">
-              <Link href={miaPath("courses", locale)} className="zk-back" style={{ display: "inline-flex", alignItems: "center", gap: 8, minHeight: 32 }}>
-                <span aria-hidden="true">{rtl ? "→" : "←"}</span>
-                {t("backCourses")}
-              </Link>
-            </div>
             <h1>{t("heroTitle")}</h1>
             <p>{t("heroLead")}</p>
             <div className="zk-badges ed-zk-badges">

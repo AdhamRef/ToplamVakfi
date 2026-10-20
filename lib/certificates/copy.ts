@@ -6,13 +6,11 @@ import {
   resolveReceiptCopy,
   resolveReceiptOrg,
   resolveThanksCopy,
-  resolveWaqfCopy,
   sanitizeCopyOverrides,
   type CertificateCopyOverrides,
   type ReceiptCopy,
   type ReceiptOrgData,
   type ThanksCopy,
-  type WaqfCopy,
 } from "./copy-defaults";
 
 /**
@@ -41,11 +39,6 @@ function certificatesNamespace(locale: string): Record<string, unknown> {
 export async function getThanksCopy(locale: string, overrides?: CertificateCopyOverrides): Promise<ThanksCopy> {
   const o = overrides ?? (await loadCopyOverrides());
   return resolveThanksCopy(certificatesNamespace(locale), o.thanks?.[locale]);
-}
-
-export async function getWaqfCopy(locale: string, overrides?: CertificateCopyOverrides): Promise<WaqfCopy> {
-  const o = overrides ?? (await loadCopyOverrides());
-  return resolveWaqfCopy(certificatesNamespace(locale), o.waqf?.[locale]);
 }
 
 export async function getReceiptCopy(

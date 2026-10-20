@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  *
  * The form borrows its field labels from `contact` and its send button from
  * `partner` rather than duplicating strings that are already reviewed in 19
- * languages; `homepage` rides along for the three closing banners.
+ * languages; `homepage` rides along for the two closing banners.
  */
 export default async function Volunteer({ params }: Props) {
   const { locale } = await params;

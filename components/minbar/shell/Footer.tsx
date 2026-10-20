@@ -28,7 +28,7 @@ import { imageSrcSet, imageUrl } from "@/lib/minbar/image-url";
 
 interface FooterColumn {
   titleKey: string;
-  links: ReadonlyArray<{ route: MinbarRoute; key: string; hash?: string }>;
+  links: ReadonlyArray<{ route: MinbarRoute; key: string }>;
 }
 
 const COLUMNS: readonly FooterColumn[] = [
@@ -38,7 +38,6 @@ const COLUMNS: readonly FooterColumn[] = [
       { route: "projects", key: "allProjects" },
       { route: "zakat", key: "zakat" },
       { route: "zakatCalculator", key: "zakatCalculator" },
-      { route: "waqf", key: "waqf" },
       { route: "recurring", key: "recurring" },
       { route: "cart", key: "cart" },
     ],
@@ -48,13 +47,9 @@ const COLUMNS: readonly FooterColumn[] = [
     links: [
       { route: "aqsa", key: "aqsa" },
       { route: "jerusalem", key: "jerusalem" },
-      { route: "ibadanProject", key: "ibadanProject" },
       { route: "reports", key: "reports" },
       { route: "blog", key: "blog" },
       { route: "news", key: "news" },
-      { route: "courses", key: "courses" },
-      { route: "programs", key: "programs" },
-      { route: "publications", key: "publications" },
     ],
   },
   {
@@ -65,7 +60,6 @@ const COLUMNS: readonly FooterColumn[] = [
       { route: "volunteer", key: "volunteer" },
       { route: "partner", key: "partner" },
       { route: "account", key: "account" },
-      { route: "home", key: "faq", hash: "faq" },
     ],
   },
 ];
@@ -228,7 +222,7 @@ export default function Footer({
                   {col.links.map((link) => (
                     <Link
                       key={link.key}
-                      href={`${miaPath(link.route, locale)}${link.hash ? `#${link.hash}` : ""}`}
+                      href={miaPath(link.route, locale)}
                     >
                       {label(link.key)}
                     </Link>

@@ -17,7 +17,6 @@ import { pageTemplate, type CategoryPageTemplate } from "@/lib/content/category-
 import { miaPath, type MinbarRoute } from "@/lib/minbar/routes";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import CategoryLandingPage from "@/components/minbar/categories/CategoryLandingPage";
-import PageBanners from "@/components/minbar/banners/PageBanners";
 import { withIncomingQuery, type IncomingSearchParams } from "@/lib/minbar/redirect-query";
 
 interface Props {
@@ -178,9 +177,7 @@ export default async function CategoryPage({ params, searchParams }: Props) {
 
   return (
     <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-      <PageBanners locale={locale} page="projects" slot="top" />
       <CategoryLandingPage page={page} />
-      <PageBanners locale={locale} page="projects" slot="bottom" />
     </MinbarMessages>
   );
 }

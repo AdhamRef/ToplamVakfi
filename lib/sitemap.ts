@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { SITE_URL, LOCALES } from "@/lib/seo";
-import { NOINDEX_ROUTES, SLUGS, slugFor, type MinbarRoute } from "@/lib/minbar/routes";
+import { NOINDEX_ROUTES, SLUGS, type MinbarRoute } from "@/lib/minbar/routes";
 
 /**
  * Sharded sitemap.
@@ -40,7 +40,6 @@ const ROUTE_WEIGHTS: Partial<Record<MinbarRoute, { changeFrequency: string; prio
   home: { changeFrequency: "daily", priority: 1.0 },
   projects: { changeFrequency: "daily", priority: 0.9 },
   zakat: { changeFrequency: "weekly", priority: 0.9 },
-  waqf: { changeFrequency: "weekly", priority: 0.85 },
   aqsa: { changeFrequency: "weekly", priority: 0.85 },
   jerusalem: { changeFrequency: "weekly", priority: 0.8 },
   recurring: { changeFrequency: "weekly", priority: 0.8 },
@@ -60,7 +59,7 @@ const ROUTE_WEIGHTS: Partial<Record<MinbarRoute, { changeFrequency: string; prio
 const DEFAULT_WEIGHT = { changeFrequency: "monthly", priority: 0.6 };
 
 /** Routes whose slug is only the head of a dynamic path, listed by their own shard. */
-const DETAIL_HEADS: ReadonlySet<MinbarRoute> = new Set<MinbarRoute>(["projectDetail", "reportDetail", "article"]);
+const DETAIL_HEADS: ReadonlySet<MinbarRoute> = new Set<MinbarRoute>(["projectDetail", "article"]);
 
 const STATIC_PATHS: Array<{ path: string; changeFrequency: string; priority: number }> = [
   ...(Object.keys(SLUGS) as MinbarRoute[])
@@ -121,16 +120,6 @@ function expand(
   }));
 }
 
-/** A super category lives at `/{locale}/{projects slug}/{slug}`. */
-function superCategoryAlternates(slug: string): Record<string, string> {
-  const url = (locale: string) =>
-    `${SITE_URL}/${locale}/${encodeURIComponent(slugFor("projectDetail", locale))}/${encodeURIComponent(slug)}`;
-  const languages: Record<string, string> = {};
-  for (const locale of LOCALES) languages[locale] = url(locale);
-  languages["x-default"] = url("ar");
-  return languages;
-}
-
 /** Shard ids in index order. Groups with no rows contribute no shard. */
 export async function listShardIds(): Promise<string[]> {
   const ids = ["static"];
@@ -157,26 +146,7 @@ export async function listShardIds(): Promise<string[]> {
 export async function buildShard(id: string): Promise<SitemapEntry[] | null> {
   if (id === "static") {
     const now = new Date();
-    const statics = STATIC_PATHS.flatMap((s) => expand(staticAlternates(s.path), now, s.changeFrequency, s.priority));
-
-    /* Super categories are whole programme pages and there are only a handful,
-       so they ride in the static shard rather than earning one of their own. */
-    let supers: SitemapEntry[] = [];
-    try {
-      const rows = await prisma.superCategory.findMany({
-        where: { isActive: true },
-        select: { slug: true, updatedAt: true },
-        orderBy: { order: "asc" },
-      });
-      supers = rows.flatMap((row) => expand(superCategoryAlternates(row.slug), row.updatedAt, "weekly", 0.85));
-    } catch {
-      // Same reasoning as listShardIds: a database blip must not empty the shard.
-    }
-
-    /* A programme the route map names (`ibadanProject`) is also a super
-       category row; one listing per URL. */
-    const seen = new Set<string>();
-    return [...supers, ...statics].filter((entry) => !seen.has(entry.loc) && seen.add(entry.loc));
+    return STATIC_PATHS.flatMap((s) => expand(staticAlternates(s.path), now, s.changeFrequency, s.priority));
   }
 
   const match = /^(campaigns|categories|posts)-(\d+)$/.exec(id);

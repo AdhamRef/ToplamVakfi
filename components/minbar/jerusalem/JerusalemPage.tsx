@@ -9,7 +9,6 @@ import { Button } from "@/components/minbar/ds";
 import ProjectDonateCard from "@/components/minbar/ProjectDonateCard";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import OldCityMap from "./OldCityMap";
 
 /**
@@ -381,7 +380,6 @@ export default function JerusalemPage({ verse, projects }: JerusalemPageProps) {
 
       <ZakatBanner />
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

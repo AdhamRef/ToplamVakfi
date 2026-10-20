@@ -81,7 +81,7 @@ export default function HomepageLayoutPage() {
   const [config, setConfig] = useState<HomeLayoutConfig>(DEFAULT_HOME_LAYOUT);
   const [customised, setCustomised] = useState(false);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
-  const [selected, setSelected] = useState<HomeSectionId>("events");
+  const [selected, setSelected] = useState<HomeSectionId>("urgent");
   const { options, loading: loadingOptions, reload: reloadOptions } = useListOptions();
 
   const dirty = !same(config, saved);
@@ -256,7 +256,7 @@ export default function HomepageLayoutPage() {
                     <Button variant="outline" size="sm" asChild>
                       <Link href={meta.editHref}>
                         <PencilLine className="ms-2 h-4 w-4" />
-                        {meta.kind === "banners" ? dt("إدارة البانرات") : dt("تحرير المحتوى")}
+                        {dt("تحرير المحتوى")}
                       </Link>
                     </Button>
                   )}
@@ -279,12 +279,7 @@ export default function HomepageLayoutPage() {
               <CardContent>
                 <div className="flex gap-3 rounded-xl border bg-muted/30 p-4 text-sm leading-relaxed text-muted-foreground">
                   <Info className="mt-0.5 h-4 w-4 shrink-0" />
-                  {meta.kind === "banners" ? (
-                    <p>
-                      {dt("هذا موضع للبانرات وليس قسمًا ثابتًا: يعرض البانرات المنشورة على الصفحة الرئيسية في هذا الموضع، ويختفي إن لم يوجد بانر. اختر موضعه هنا، وأدر البانرات نفسها من صفحة البانرات.")}</p>
-                  ) : (
-                    <p>{dt("قسم ثابت التصميم لا يعرض قائمة عناصر. يمكنك تغيير موضعه في التسلسل أو إخفاؤه، ونصوصه من ترجمات الموقع.")}</p>
-                  )}
+                  <p>{dt("قسم ثابت التصميم لا يعرض قائمة عناصر. يمكنك تغيير موضعه في التسلسل أو إخفاؤه، ونصوصه من ترجمات الموقع.")}</p>
                 </div>
               </CardContent>
             )}
@@ -309,12 +304,6 @@ export default function HomepageLayoutPage() {
               <CardContent className="py-10 text-center text-sm text-muted-foreground">
                 {dt("القسم مخفي من الصفحة الرئيسية. أظهره لضبط ما يعرضه.")}</CardContent>
             </Card>
-          )}
-
-          {selected === "events" && (current?.enabled ?? true) && (
-            <p className="flex items-start gap-2 px-1 text-xs leading-relaxed text-muted-foreground">
-              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              {dt("لإضافة فعالية جديدة: من صفحة الفيديوهات أضف فيديو يوتيوب واختر نوعه «فعالياتنا»، ثم اختره هنا. التسجيلات الثلاثة المدمجة تبقى متاحة دائمًا.")}</p>
           )}
         </div>
       </div>

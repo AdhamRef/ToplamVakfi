@@ -26,7 +26,7 @@
 import { parseLocalAmount, type LocalAmount } from "@/lib/minbar/donation-amount";
 
 /** Donation kind. Drives which proof path (receipt / certificate) applies. */
-export type CartTypeKey = "project" | "zakat" | "waqf" | "recurring" | "extra";
+export type CartTypeKey = "project" | "zakat" | "recurring" | "extra";
 
 /**
  * Frequency. These are the historical frontend values and are deliberately kept
@@ -35,21 +35,6 @@ export type CartTypeKey = "project" | "zakat" | "waqf" | "recurring" | "extra";
  * any external API.
  */
 export type CartFreqKey = "once" | "daily" | "friday" | "monthly";
-
-/**
- * What a waqf row carries besides its amount: the unit, how many, and the
- * two names the certificate prints. The certificate NUMBER is deliberately not
- * here  `DONATION_LOGIC_SPEC §2` has the server mint it after payment, and a
- * number kept in the basket would be one a donor could quote before paying.
- */
-export interface CartWaqfDetails {
-  unit: "share" | "meter";
-  count: number;
-  /** The endower's name, as it should appear on the certificate. */
-  donorName: string;
-  /** Whom the waqf is endowed on behalf of. */
-  onBehalf: string;
-}
 
 /**
  * A gift: the row is given in someone else's name. The thank-you certificate
@@ -118,8 +103,6 @@ export interface MinbarCartItem {
   title?: string;
   /** Set when the "make it monthly" toggle converted this item, so it can be undone. */
   _autoMonthly?: boolean;
-  /** Present on a waqf row (`typeKey: "waqf"`): the certificate's details. */
-  waqf?: CartWaqfDetails;
   /** Present when the row is given in someone else's name. */
   gift?: CartGiftDetails;
   /**
@@ -144,7 +127,6 @@ export const CART_SCHEMA_VERSION = 2;
 const LEGACY_TYPES: Record<string, CartTypeKey> = {
   مشروع: "project",
   زكاة: "zakat",
-  وقف: "waqf",
   دوري: "recurring",
   إضافة: "extra",
 };
@@ -172,21 +154,6 @@ function parseAmount(value: unknown): number {
     if (Number.isFinite(n)) return n;
   }
   return 0;
-}
-
-/** The waqf details of a stored row, or nothing if they are not all there. */
-function parseWaqf(value: unknown): CartWaqfDetails | undefined {
-  if (!value || typeof value !== "object") return undefined;
-  const raw = value as Record<string, unknown>;
-  const unit = raw.unit === "meter" ? "meter" : raw.unit === "share" ? "share" : null;
-  const count = typeof raw.count === "number" && Number.isInteger(raw.count) && raw.count > 0 ? raw.count : null;
-  if (!unit || !count) return undefined;
-  return {
-    unit,
-    count,
-    donorName: typeof raw.donorName === "string" ? raw.donorName : "",
-    onBehalf: typeof raw.onBehalf === "string" ? raw.onBehalf : "",
-  };
 }
 
 /** The schedule of a stored row, or nothing if it is not a whole one. */
@@ -248,7 +215,6 @@ export function migrateItem(
     upsellId: typeof raw.upsellId === "string" ? raw.upsellId : undefined,
     title: typeof raw.title === "string" ? raw.title : undefined,
     _autoMonthly: raw._autoMonthly === true || undefined,
-    waqf: parseWaqf(raw.waqf),
     gift: parseGift(raw.gift),
     local: parseLocalAmount(raw.local),
     shareCount:
@@ -266,6 +232,15 @@ export function migrateItem(
   return item;
 }
 
+/**
+ * A row for the retired waqf product (`typeKey: "waqf"`, or the v1 `وقف`).
+ * Waqf can no longer be ordered, so such a row could only fail at checkout;
+ * it is dropped on read instead.
+ */
+function isRetiredWaqfRow(row: Record<string, unknown>): boolean {
+  return row.typeKey === "waqf" || row.type === "وقف" || (row.waqf != null && typeof row.waqf === "object");
+}
+
 /** Read the cart, migrating legacy rows. Returns `[]` outside the browser. */
 export function readCart(resolveTitle?: (title: string) => string | undefined): MinbarCartItem[] {
   if (!isBrowser()) return [];
@@ -273,7 +248,7 @@ export function readCart(resolveTitle?: (title: string) => string | undefined): 
     const stored = JSON.parse(window.localStorage.getItem(CART_ITEMS_KEY) || "null");
     if (!Array.isArray(stored)) return [];
     return stored
-      .filter((row): row is Record<string, unknown> => !!row && typeof row === "object")
+      .filter((row): row is Record<string, unknown> => !!row && typeof row === "object" && !isRetiredWaqfRow(row))
       .map((row) => migrateItem(row, resolveTitle));
   } catch {
     // A corrupt value must not take the whole page down; an empty cart is

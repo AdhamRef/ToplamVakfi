@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from "@/lib/prisma";
 import {
   buildCategoryPagePatch,
-  categoryChildrenWrite,
   categoryPageTranslation,
   pageTemplate,
   releasePageTemplateFromOthers,
@@ -199,7 +198,6 @@ export async function POST(request: NextRequest) {
           /* The landing page, when the form sent one. A category created
              without it renders as its hero and its campaigns. */
           ...buildCategoryPagePatch(data),
-          ...categoryChildrenWrite(data),
         }
       });
 

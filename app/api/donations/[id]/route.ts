@@ -107,9 +107,6 @@ export async function GET(
             },
           },
         },
-        /* Waqf shares/metres are part of `amount` too; the edit dialog lists
-           them so its line total adds up to the donation. */
-        waqfItems: { select: { id: true, unit: true, count: true, unitPrice: true, amount: true } },
       },
     });
 
@@ -512,7 +509,7 @@ export async function PATCH(
 
     const existing = await prisma.donation.findUnique({
       where: { id },
-      include: { items: true, categoryItems: true, waqfItems: { select: { amount: true } } },
+      include: { items: true, categoryItems: true },
     });
     if (!existing) {
       return NextResponse.json({ error: 'Donation not found' }, { status: 404 });
@@ -618,11 +615,8 @@ export async function PATCH(
       : null;
 
     // Derived donation-level fields (only if items/categoryItems changed).
-    // Waqf lines are not edited here, but they are part of the donation's
-    // amount: leaving them out would shrink the donation by their value.
     const newLineSum = (newItems ?? existing.items).reduce((s, i) => s + i.amount, 0)
-      + (newCatItems ?? existing.categoryItems).reduce((s, i) => s + i.amount, 0)
-      + existing.waqfItems.reduce((s, i) => s + i.amount, 0);
+      + (newCatItems ?? existing.categoryItems).reduce((s, i) => s + i.amount, 0);
 
     const newAmount = (newItems || newCatItems) ? newLineSum : existing.amount;
     // totalAmount = donation amount + teamSupport + fees(if coverFees). Preserve

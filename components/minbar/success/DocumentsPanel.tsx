@@ -4,25 +4,22 @@ import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import type { SuccessDocuments } from "@/lib/certificates/documents";
 import ThanksCertificate from "@/components/minbar/certificates/ThanksCertificate";
-import WaqfCertificateSheet from "@/components/minbar/certificates/WaqfCertificateSheet";
 import { withDonationToken } from "@/lib/donations/access-token-link";
 import ReceiptSheet from "@/components/minbar/certificates/ReceiptSheet";
 import ScaledSheet from "@/components/minbar/certificates/ScaledSheet";
 
 /**
  * The download surface of the success page  `نجاح التبرع.dc.html`
- * (`#succ-downloads` and the three preview panels).
+ * (`#succ-downloads` and the preview panels).
  *
- * Receipt and thank-you certificate are always offered; a waqf certificate
- * button appears once per waqf line the order held, each with its own number
- * and its own panel. Every preview is the live sheet component scaled down,
- * never an image, and every download is the server's PDF of the persisted
- * record  the placeholders in the handoff (`receiptHref`, `certificateHref`,
- * `waqfCertHref`) are the real endpoints here.
+ * Receipt and thank-you certificate are always offered. Every preview is the
+ * live sheet component scaled down, never an image, and every download is the
+ * server's PDF of the persisted record  the placeholders in the handoff
+ * (`receiptHref`, `certificateHref`) are the real endpoints here.
  *
- * The donor may correct the name on the thank-you certificate and on each
- * waqf certificate; the preview follows as they type, and the final name is
- * what the PDF endpoint receives (`?name=`) and stores.
+ * The donor may correct the name on the thank-you certificate; the preview
+ * follows as they type, and the final name is what the PDF endpoint receives
+ * (`?name=`) and stores.
  */
 
 const DownloadIcon = (
@@ -34,7 +31,7 @@ const DownloadIcon = (
 /* Toplum Vakfı thank-you (`Thank You.dc.html` § `.certificate`): the document
    toggles are the design's outline pills (`.btn-outline-full`), the previews sit
    in the miniature-sheet frame (`.cert-mini`), and each download is a full pill. */
-const rowButton = (tone: "plain" | "gold" | "red"): React.CSSProperties => ({
+const rowButton = (tone: "plain" | "gold"): React.CSSProperties => ({
   display: "inline-flex",
   alignItems: "center",
   justifyContent: "center",
@@ -43,7 +40,7 @@ const rowButton = (tone: "plain" | "gold" | "red"): React.CSSProperties => ({
   padding: "0 20px",
   borderRadius: 999,
   border: tone === "plain" ? "1.5px solid #e2eaf0" : "1.5px solid var(--brand)",
-  background: tone === "red" ? "#eaf6fd" : "#fff",
+  background: "#fff",
   fontFamily: "inherit",
   fontWeight: 800,
   fontSize: 13.5,
@@ -120,30 +117,16 @@ export default function DocumentsPanel({
   extraButtons?: ReactNode;
 }) {
   const t = useTranslations("system");
-  const tCart = useTranslations("cart");
-  const tCert = useTranslations("certificates");
 
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [certOpen, setCertOpen] = useState(false);
   const [certName, setCertName] = useState(documents?.thanks.donorName || donorName);
-  const [waqfOpen, setWaqfOpen] = useState<Record<string, boolean>>({});
-  const [waqfNames, setWaqfNames] = useState<Record<string, string>>({});
-
-  const waqf = documents?.waqf ?? [];
-  const waqfKey = (index: number) => waqf[index].certificateId || String(index);
-  const waqfName = (index: number) => waqfNames[waqfKey(index)] ?? waqf[index].donorName;
 
   const receiptHref = withDonationToken(`/api/receipts/${donationId}`, accessToken);
   const certificateHref = withDonationToken(
     `/api/certificates/thanks/${donationId}${certName.trim() ? `?name=${encodeURIComponent(certName.trim())}` : ""}`,
     accessToken
   );
-  const waqfHref = (index: number) => {
-    const doc = waqf[index];
-    if (!doc.certificateId) return null;
-    const name = waqfName(index).trim();
-    return withDonationToken(`/api/certificates/waqf/${doc.certificateId}${name ? `?name=${encodeURIComponent(name)}` : ""}`, accessToken);
-  };
 
   return (
     <>
@@ -158,22 +141,6 @@ export default function DocumentsPanel({
           {t("thankYouCertTitle")}
         </button>
 
-        {waqf.map((doc, index) => {
-          const key = waqfKey(index);
-          return (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setWaqfOpen((state) => ({ ...state, [key]: !state[key] }))}
-              aria-expanded={Boolean(waqfOpen[key])}
-              className="succ-link2 succ-link-waqf"
-              style={rowButton("red")}
-            >
-              {DownloadIcon}
-              {doc.unit === "meter" ? tCart("meterCertName") : tCart("shareCertName")}
-            </button>
-          );
-        })}
 
         {extraButtons}
       </div>
@@ -232,50 +199,6 @@ export default function DocumentsPanel({
           </a>
         </div>
       ) : null}
-
-      {waqf.map((doc, index) => {
-        const key = waqfKey(index);
-        if (!waqfOpen[key]) return null;
-        const href = waqfHref(index);
-        const name = waqfName(index);
-        return (
-          <div key={key} style={panel}>
-            <span aria-hidden="true" style={panelRule} />
-            <label style={{ display: "grid", gap: 7 }}>
-              <b style={{ fontSize: 12.5, fontWeight: 800, color: "var(--ink)" }}>{t("waqfNameLabel")}</b>
-              <input value={name} onChange={(event) => setWaqfNames((state) => ({ ...state, [key]: event.target.value }))} placeholder={t("writeYourName")} style={input} />
-            </label>
-            {/* The face alone, as the handoff previews it; the presentation panel is on the PDF. */}
-            <ScaledSheet width={1200} height={null} maxWidth={420} className="succ-waqf-canvas">
-              <div style={{ width: 1200 }}>
-                <WaqfCertificateSheet
-                  unit={doc.unit}
-                  count={doc.count}
-                  total={doc.total}
-                  donorName={name.trim()}
-                  onBehalf={doc.onBehalf}
-                  certNo={doc.certNo || "—"}
-                  certDate={doc.certDate || "—"}
-                  copy={doc.copy}
-                  locale={doc.locale}
-                  dir={doc.dir}
-                  faceOnly
-                />
-              </div>
-            </ScaledSheet>
-            {href ? (
-              <a href={href} style={downloadLink("var(--cta-gradient)", "#fff")}>
-                {DownloadIcon}
-                {doc.unit === "meter" ? tCart("downloadMeterCert") : tCart("downloadShareCert")}
-              </a>
-            ) : (
-              <p style={{ margin: 0, textAlign: "center", fontSize: 13.5, color: "var(--muted)" }}>
-                {t("issuing")}  {tCert("certNoLabel")}
-              </p>
-            )}
-          </div>
-        );
-      })}
     </>
   );
 }

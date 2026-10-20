@@ -25,17 +25,11 @@ import { LocaleFormTabs, collectLocaleTranslations, type LocaleFormField } from 
 import {
   CategoryPageSection,
   emptyCategoryPage,
-  emptyCategoryValue,
-  emptyCategoryCard,
   parseAmountList,
   currencyRowsToMap,
   donateTargetPayload,
-  CATEGORY_VALUE_TRANSLATION_FIELDS,
-  CATEGORY_CARD_TRANSLATION_FIELDS,
   type CategoryPageValues,
 } from '../_components/CategoryPageSection';
-import { translationsFromRows } from '../../_components/ContentTranslationTabs';
-import type { ContentOption } from '../../super-categories/_components/ContentPicker';
 import { TRANSLATION_LOCALES, localeDefaults, localeKey, type TranslationLocale } from '../../_components/locale-form';
 import { CategoryIconPicker } from '../_components/CategoryIconPicker';
 import { dt } from "@/lib/dashboard/i18n";
@@ -52,9 +46,8 @@ const LOCALE_FIELDS: readonly LocaleFormField[] = [
   { name: 'projectsTitle', get label() { return dt("عنوان قسم المشاريع"); } },
   { name: 'donateTitle', get label() { return dt("عنوان صندوق التبرع"); } },
   { name: 'donateNote', get label() { return dt("ملاحظة صندوق التبرع"); } },
-  { name: 'achievementsTitle', get label() { return dt("عنوان قسم الإنجازات"); } },
 ];
-const LOCALE_FIELD_NAMES = ['name', 'description', 'heroLead', 'ctaLabel', 'statDoneLabel', 'statGoalLabel', 'projectsTitle', 'donateTitle', 'donateNote', 'achievementsTitle'] as const;
+const LOCALE_FIELD_NAMES = ['name', 'description', 'heroLead', 'ctaLabel', 'statDoneLabel', 'statGoalLabel', 'projectsTitle', 'donateTitle', 'donateNote'] as const;
 type LocaleShape = { [K in `${(typeof LOCALE_FIELD_NAMES)[number]}_${TranslationLocale}`]: z.ZodOptional<z.ZodString> };
 const LOCALE_SHAPE = Object.fromEntries(
   TRANSLATION_LOCALES.flatMap((locale) => [
@@ -112,9 +105,6 @@ export default function NewCategoryPage() {
         suggestedAmounts: parseAmountList(page.suggestedAmounts),
         suggestedByCurrency: currencyRowsToMap(page.suggestedByCurrency),
         ...donateTargetPayload(page.donateTarget),
-        achievementVideoIds: page.achievementVideoIds,
-        values: page.values.filter((v) => v.label.trim()),
-        infoCards: page.infoCards.filter((c) => c.title.trim()),
         translations: collectLocaleTranslations(values, LOCALE_FIELDS),
       });
       toast.success(dt("تم إنشاء الحملة بنجاح"));

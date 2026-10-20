@@ -3,24 +3,15 @@
 import { useTranslations } from "next-intl";
 import { ArrowGlyph } from "@/components/minbar/home/TopSections";
 import type { CategoryPageContent } from "@/lib/minbar/category-page";
-import {
-  CategoryAchievements,
-  CategoryDonateBox,
-  CategoryHeroFilm,
-  CategoryInfoCards,
-  CategoryProjectsGrid,
-  CategoryStatsBand,
-  CategoryValuesStrip,
-} from "./CategorySections";
+import { CategoryDonateBox, CategoryHeroFilm, CategoryProjectsGrid, CategoryStatsBand } from "./CategorySections";
 
 /**
  * A category's landing page  ported from
  * `Minbar/مشروع ترميم منازل القدس.dc.html`.
  *
  * Every category is published this way: a hero with the programme's film, a
- * navy band of figures over a progress bar, the values it stands on, its
- * campaigns as the site's own donate cards, a donation box scoped to the
- * category, three explanatory cards, and its achievements in video.
+ * navy band of figures over a progress bar, its campaigns as the site's own
+ * donate cards, and a donation box scoped to the category.
  *
  * Nothing here is hard-coded: `lib/minbar/category-page.ts` resolves every
  * string for the visitor's locale, and each section is skipped when its data is
@@ -36,10 +27,9 @@ export default function CategoryLandingPage({ page }: { page: CategoryPageConten
 
   return (
     /* Laid out as `ToplamVakfi-design/Toplum Vakfı Program - Aytam.dc.html`:
-       a photograph hero with the name at its foot, the values as a row of
-       white tiles, the campaigns on a white band under a centred heading, the
-       donation box on the dark "be part of it" band, then the explanatory
-       cards and the films. Layout: styles/minbar/pages/projects.css (`tvc-*`). */
+       a photograph hero with the name at its foot, the campaigns on a white
+       band under a centred heading, then the donation box on the dark "be part
+       of it" band. Layout: styles/minbar/pages/projects.css (`tvc-*`). */
     <div className="cat-page tvc-page">
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section className="tvc-hero">
@@ -88,14 +78,6 @@ export default function CategoryLandingPage({ page }: { page: CategoryPageConten
         </section>
       ) : null}
 
-      {/* ── The values ─────────────────────────────────────────────────── */}
-      {page.values.length ? (
-        <section className="tvc-sec">
-          <div className="tvc-wrap">
-            <CategoryValuesStrip values={page.values} />
-          </div>
-        </section>
-      ) : null}
 
       {/* ── The campaigns ──────────────────────────────────────────────── */}
       <section id="category-projects" className="tvc-sec tvc-sec--white">
@@ -110,24 +92,6 @@ export default function CategoryLandingPage({ page }: { page: CategoryPageConten
         <section id="category-donate" className="tvc-cta">
           <div className="tvc-wrap tvc-cta-in">
             <CategoryDonateBox page={page} />
-          </div>
-        </section>
-      ) : null}
-
-      {/* ── Why / what / impact ────────────────────────────────────────── */}
-      {page.cards.length ? (
-        <section className="tvc-sec">
-          <div className="tvc-wrap">
-            <CategoryInfoCards cards={page.cards} />
-          </div>
-        </section>
-      ) : null}
-
-      {/* ── Achievements in video ──────────────────────────────────────── */}
-      {page.achievements.length ? (
-        <section className="tvc-sec tvc-sec--last">
-          <div className="tvc-wrap">
-            <CategoryAchievements page={page} />
           </div>
         </section>
       ) : null}

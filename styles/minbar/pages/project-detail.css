@@ -93,7 +93,7 @@
 .mia-scope .pd-card { background: #fff; border: 1px solid #e6eef3; border-radius: 12px; }
 
 /* Zakat / waqf cross-links: a dark band card and a light one, side by side. */
-.mia-scope .pd-cross-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.mia-scope .pd-cross-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
 .mia-scope .pd-cross {
   position: relative; overflow: hidden; display: grid; gap: 8px; align-content: start;
   padding: 22px; border-radius: 16px; transition: transform .2s ease, box-shadow .2s ease;
@@ -106,7 +106,6 @@
   content: ""; position: absolute; inset-inline-end: -60px; top: -60px; width: 180px; height: 180px; border-radius: 50%;
   background: radial-gradient(circle, rgba(39,184,242,.32), rgba(39,184,242,0) 70%); pointer-events: none;
 }
-.mia-scope .pd-cross--waqf { background: #fff; border: 1px solid #e6eef3; box-shadow: 0 12px 28px rgba(2,52,88,.07); }
 .mia-scope .pd-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 800; letter-spacing: .06em; }
 .mia-scope .pd-eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 999px; background: var(--gold); }
 

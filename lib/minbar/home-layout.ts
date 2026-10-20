@@ -1,9 +1,8 @@
 /**
  * The homepage's arrangement, as the dashboard configures it
  * (`/dashboard/homepage-layout`): which sections show, in what order, and
- * for every section that lists things (events, reels, programmes, courses,
- * projects, categories, articles, news, FAQs) which items it shows and how
- * they are ranked.
+ * for every section that lists things (projects, categories, articles, news)
+ * which items it shows and how they are ranked.
  *
  * Not content. Every item is still written in its own dashboard page; this
  * document only picks and orders. Stored as one JSON document on
@@ -13,7 +12,8 @@
  * Pure  no Prisma, no React  so the same parse runs on the server (page
  * render, API) and in the browser (dashboard form). Same two strictnesses as
  * `quick-donation.ts`:
- *   · `parseHomeLayout` is TOLERANT. An unknown section is dropped, a section
+ *   · `parseHomeLayout` is TOLERANT. An unknown section is dropped (a stored row
+ *     may still name sections that were retired since), a section
  *     added to the code after the row was saved is slotted in at its default
  *     place, a bad list setting falls back to its default. A bad row must
  *     never blank the homepage.
@@ -30,46 +30,30 @@
  */
 export const HOME_SECTION_IDS = [
   "verse",
-  "bannersTop",
-  "events",
-  "reels",
   "path",
-  "programs",
-  "courses",
   "impact",
-  "bannersMiddle",
   "travel",
-  "ibadan",
   "urgent",
   "categories",
   "zakat",
-  "waqf",
   "recurring",
   "regions",
   "account",
-  "bannersBottom",
   "articles",
   "news",
-  "faqs",
 ] as const;
 export type HomeSectionId = (typeof HOME_SECTION_IDS)[number];
 
 /** The lists a section may own; each has its own pick-and-rank settings. */
 export const HOME_LIST_IDS = [
-  "events",
-  "endorsements",
-  "achievements",
-  "programs",
-  "courses",
   "projects",
   "categories",
   "articles",
   "news",
-  "faqs",
 ] as const;
 export type HomeListId = (typeof HOME_LIST_IDS)[number];
 
-export type HomeSectionKind = "list" | "static" | "banners";
+export type HomeSectionKind = "list" | "static";
 
 export interface HomeSectionMeta {
   label: string;
@@ -83,27 +67,17 @@ export interface HomeSectionMeta {
 
 export const HOME_SECTIONS: Record<HomeSectionId, HomeSectionMeta> = {
   verse: { label: "شريط الآية", description: "آية الإسراء ورابط صفحة المسجد الأقصى.", kind: "static", lists: [] },
-  bannersTop: { label: "البانرات — الموضع العلوي", description: "البانرات المنشورة على الصفحة الرئيسية في الموضع العلوي.", kind: "banners", lists: [], editHref: "/dashboard/urgent-banners" },
-  events: { label: "فعالياتنا", description: "تسجيلات المؤتمرات والفعاليات. أضف فعالية جديدة من صفحة الفيديوهات بنوع «فعالياتنا».", kind: "list", lists: ["events"], editHref: "/dashboard/videos" },
-  reels: { label: "تزكياتنا وإنجازاتنا", description: "شريطا فيديو التزكيات والإنجازات.", kind: "list", lists: ["endorsements", "achievements"], editHref: "/dashboard/videos" },
   path: { label: "كيف يصل تبرعك؟", description: "خطوات وصول التبرع ورابط التقارير.", kind: "static", lists: [] },
-  programs: { label: "برامجنا", description: "البرامج المصورة (قوائم يوتيوب).", kind: "list", lists: ["programs"], editHref: "/dashboard/playlists" },
-  courses: { label: "دوراتنا", description: "الدورات والندوات.", kind: "list", lists: ["courses"], editHref: "/dashboard/courses" },
   impact: { label: "أثرنا في القدس", description: "أرقام الأثر الرسمية.", kind: "static", lists: [] },
-  bannersMiddle: { label: "البانرات — الموضع الأوسط", description: "البانرات المنشورة على الصفحة الرئيسية في الموضع الأوسط.", kind: "banners", lists: [], editHref: "/dashboard/urgent-banners" },
   travel: { label: "بانر شد الرحال", description: "بانر الجمعة وشد الرحال إلى الأقصى.", kind: "static", lists: [] },
-  ibadan: { label: "بانر «عبادًا لنا»", description: "بانر برنامج عبادًا لنا وآية الإسراء ٥.", kind: "static", lists: [] },
   urgent: { label: "مشاريع عاجلة", description: "شريط المشاريع مع زر التبرع المباشر.", kind: "list", lists: ["projects"], editHref: "/dashboard/campaigns" },
   categories: { label: "الحملات والدول", description: "بطاقات الحملات والدول تحت المشاريع العاجلة.", kind: "list", lists: ["categories"], editHref: "/dashboard/categories" },
   zakat: { label: "بانر الزكاة", description: "بانر الزكاة وحاسبتها.", kind: "static", lists: [] },
-  waqf: { label: "صندوق منبر الأقصى الوقفي", description: "قسم الوقف.", kind: "static", lists: [] },
   recurring: { label: "عطاء منتظم يستمر أثره", description: "قسم التبرع المتكرر.", kind: "static", lists: [] },
   regions: { label: "بطاقات المناطق", description: "مشاريع القدس، مشاريع الأقصى، والإغاثة العاجلة.", kind: "static", lists: [] },
   account: { label: "حسابك في منبر الأقصى", description: "دعوة إنشاء حساب أو تسجيل الدخول.", kind: "static", lists: [] },
-  bannersBottom: { label: "البانرات — الموضع السفلي", description: "البانرات المنشورة على الصفحة الرئيسية في الموضع السفلي.", kind: "banners", lists: [], editHref: "/dashboard/urgent-banners" },
   articles: { label: "المدونة", description: "أحدث المقالات.", kind: "list", lists: ["articles"], editHref: "/dashboard/blog" },
   news: { label: "الأخبار", description: "أخبار المنبر.", kind: "list", lists: ["news"], editHref: "/dashboard/blog" },
-  faqs: { label: "الأسئلة الشائعة", description: "الأسئلة الشائعة مع تصفية حسب الموضوع.", kind: "list", lists: ["faqs"], editHref: "/dashboard/faqs" },
 };
 
 /* ── Lists ───────────────────────────────────────────────────────────────── */
@@ -137,7 +111,7 @@ export const HOME_SORT_LABELS: Record<HomeListSort, string> = {
 };
 
 export interface HomeListConfig {
-  /** Off hides this list only (for a section with two lists, the reels). */
+  /** Off hides this list only, leaving the rest of its section. */
   show: boolean;
   mode: HomeListMode;
   sort: HomeListSort;
@@ -155,37 +129,16 @@ export interface HomeListMeta {
 }
 
 export const HOME_LISTS: Record<HomeListId, HomeListMeta> = {
-  events: { label: "فعالياتنا", sorts: ["default", "newest"], defaultLimit: 3 },
-  endorsements: { label: "تزكياتنا", sorts: ["default", "newest", "oldest"], defaultLimit: 8 },
-  achievements: { label: "إنجازاتنا", sorts: ["default", "newest", "oldest"], defaultLimit: 5 },
-  programs: { label: "برامجنا", sorts: ["default", "newest", "oldest"], defaultLimit: 0 },
-  courses: { label: "دوراتنا", sorts: ["default", "newest", "oldest"], defaultLimit: 0 },
   projects: { label: "المشاريع العاجلة", sorts: ["default", "newest", "oldest", "mostRaised", "mostProgress"], defaultLimit: 12 },
   categories: { label: "الحملات والدول", sorts: ["default", "newest", "oldest", "mostProjects"], defaultLimit: 0 },
   articles: { label: "المقالات", sorts: ["newest", "oldest"], defaultLimit: 4 },
   news: { label: "الأخبار", sorts: ["newest", "oldest"], defaultLimit: 4 },
-  faqs: { label: "الأسئلة الشائعة", sorts: ["default", "newest", "oldest"], defaultLimit: 0 },
 };
 
 /** The most any one list may show, so a typo cannot put 10 000 cards on the page. */
 export const HOME_LIST_MAX_LIMIT = 60;
 /** The most items a manual or pinned list may name. */
 export const HOME_LIST_MAX_IDS = 60;
-
-/**
- * The three conference recordings `فعالياتنا` showed before events were CMS
- * content. They stay selectable under these ids, ahead of the event videos.
- */
-export const BUILTIN_EVENT_IDS = ["builtin:khatib", "builtin:conf3", "builtin:conf2"] as const;
-export type BuiltinEventId = (typeof BUILTIN_EVENT_IDS)[number];
-export const BUILTIN_EVENT_LABELS: Record<BuiltinEventId, string> = {
-  "builtin:khatib": "كلمة خطيب المسجد الأقصى — المؤتمر الثالث",
-  "builtin:conf3": "المؤتمر الثالث (قائمة تشغيل)",
-  "builtin:conf2": "المؤتمر الثاني",
-};
-export function isBuiltinEventId(id: string): id is BuiltinEventId {
-  return (BUILTIN_EVENT_IDS as readonly string[]).includes(id);
-}
 
 /* ── The document ────────────────────────────────────────────────────────── */
 
@@ -298,9 +251,9 @@ export function validateHomeLayoutBody(body: unknown): HomeLayoutConfig {
 
 /**
  * Creation time of a MongoDB ObjectId, in ms. Every model here is keyed by
- * one, which gives "newest/oldest" for every list  including the categories
- * and programmes, which have no `createdAt` of their own  without a second
- * query. A non-ObjectId id (the built-in events) reads as the epoch: oldest.
+ * one, which gives "newest/oldest" for every list  including the categories,
+ * which have no `createdAt` of their own  without a second query. A
+ * non-ObjectId id reads as the epoch: oldest.
  */
 export function objectIdTime(id: string): number {
   return /^[0-9a-f]{24}$/i.test(id) ? parseInt(id.slice(0, 8), 16) * 1000 : 0;

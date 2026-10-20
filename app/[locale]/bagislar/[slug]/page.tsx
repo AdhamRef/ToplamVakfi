@@ -13,9 +13,6 @@ import { galleryFor } from "@/lib/minbar/content/media";
 import { miaPath, slugFor } from "@/lib/minbar/routes";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import ProjectDetail from "@/components/minbar/projects/ProjectDetail";
-import SuperCategoryPage from "@/components/minbar/projects/SuperCategoryPage";
-import { getSuperCategory } from "@/lib/minbar/super-category";
-import PageBanners from "@/components/minbar/banners/PageBanners";
 
 interface Props {
   params: Promise<{ locale: string; slug: string }>;
@@ -27,18 +24,6 @@ const NAMESPACES = ["projects", "cart", "homepage", "quran", "ProjectExtras"] as
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const key = decodeURIComponent(slug);
-
-  /* A super category owns this slug ahead of any campaign  the programme
-     pages live under /projects/<slug> and are rows, not files. */
-  const superCategory = await getSuperCategory(key, locale);
-  if (superCategory) {
-    return buildPageMetadata(locale, {
-      title: superCategory.metaTitle || superCategory.title,
-      description: (superCategory.metaDescription || superCategory.intro || superCategory.subtitle),
-      path: `/${slugFor("projectDetail", locale)}/${superCategory.slug}`,
-      image: superCategory.heroImage || undefined,
-    });
-  }
 
   const project = await getProject(key, locale);
   // An unpublished or missing project must not produce indexable metadata 
@@ -77,17 +62,6 @@ export default async function ProjectPage({ params }: Props) {
   const { locale, slug } = await params;
   const key = decodeURIComponent(slug);
 
-  const superCategory = await getSuperCategory(key, locale);
-  if (superCategory) {
-    return (
-      <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-        <PageBanners locale={locale} page="projectDetail" slot="top" />
-        <SuperCategoryPage page={superCategory} />
-        <PageBanners locale={locale} page="projectDetail" slot="bottom" />
-      </MinbarMessages>
-    );
-  }
-
   const project = await getProject(key, locale);
   if (!project) notFound();
 
@@ -119,9 +93,7 @@ export default async function ProjectPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-        <PageBanners locale={locale} page="projectDetail" slot="top" />
         <ProjectDetail project={project} updates={updates} gallery={gallery} related={related} donorCount={donorCount} comments={comments} />
-        <PageBanners locale={locale} page="projectDetail" slot="bottom" />
       </MinbarMessages>
     </>
   );

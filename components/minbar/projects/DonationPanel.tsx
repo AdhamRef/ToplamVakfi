@@ -186,7 +186,7 @@ export default function DonationPanel({ project, donorCount = 0 }: { project: Mi
 
   return (
     /* The design's `.donate-sidebar` card. It no longer sticks itself: the
-       project page sticks the column it sits in (with the concierge entry). */
+       project page sticks the column it sits in. */
     <div
       id="pd-aside"
       className="pd-donate"

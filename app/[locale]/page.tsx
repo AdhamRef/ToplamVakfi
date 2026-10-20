@@ -9,12 +9,10 @@ import { readQuickDonation } from "@/lib/minbar/quick-donation-read";
 import { readHomeLayout, resolveHomeLists, visibleSections } from "@/lib/minbar/home-layout-read";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import HomePage from "@/components/minbar/home/HomePage";
-import PageBanners from "@/components/minbar/banners/PageBanners";
 
 /**
  * Namespaces this page renders, on top of the shell bundle: its own copy, the
- * official impact figures' labels, and the verse strips (the hero's Al-Isra 1
- * and the 'Ibādan Lanā banner's Al-Isra 5).
+ * official impact figures' labels, and the verse strip (Al-Isra 1).
  */
 const NAMESPACES = ["homepage", "achievements", "quran"] as const;
 
@@ -107,11 +105,6 @@ export default async function Home({ params }: Props) {
              of the inline payload, parsed during hydration). Pass `allProjects`
              again when the bar is restored. */
           quick={{ config: quick, projects: [] }}
-          banners={{
-            top: <PageBanners locale={locale} page="home" slot="top" />,
-            middle: <PageBanners locale={locale} page="home" slot="middle" />,
-            bottom: <PageBanners locale={locale} page="home" slot="bottom" />,
-          }}
           signedIn={!!session?.user}
         />
       </MinbarMessages>

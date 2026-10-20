@@ -14,7 +14,6 @@ import { useMinbarCartCount } from "@/hooks/useMinbarCart";
 import { CART_BUMP_EVENT, CART_TARGET_ATTR } from "@/lib/minbar/cart-feedback";
 import { useMinbarLabel } from "@/hooks/useMinbarLabel";
 import type { NavCategory } from "@/lib/minbar/categories";
-import type { NavSuperCategory } from "@/lib/minbar/super-category";
 import HeaderSearch from "./HeaderSearch";
 import { imageSrcSet, imageUrl } from "@/lib/minbar/image-url";
 import { QUICK_DONATE_OPEN_EVENT } from "./quick-donate-styles";
@@ -51,7 +50,6 @@ const NAV: ReadonlyArray<readonly [MinbarRoute, string]> = [
   ["projects", "projects"],
   ["aqsa", "aqsa"],
   ["zakat", "zakat"],
-  ["waqf", "waqf"],
   ["recurring", "recurring"],
   ["reports", "reports"],
   ["blog", "blog"],
@@ -68,7 +66,6 @@ const MENU_GROUPS: ReadonlyArray<{
       ["projects", "allProjects"],
       ["zakat", "zakat"],
       ["zakatCalculator", "zakatCalculator"],
-      ["waqf", "waqf"],
       ["recurring", "recurring"],
       ["bankAccounts", "bankAccounts"],
     ],
@@ -79,7 +76,6 @@ const MENU_GROUPS: ReadonlyArray<{
       ["aqsa", "aqsa"],
       ["jerusalem", "jerusalem"],
       ["reports", "reports"],
-      ["ibadanProject", "ibadanProject"],
     ],
   },
   {
@@ -87,9 +83,6 @@ const MENU_GROUPS: ReadonlyArray<{
     items: [
       ["blog", "blog"],
       ["news", "news"],
-      ["publications", "publications"],
-      ["programs", "programs"],
-      ["courses", "courses"],
       ["zenkiCourse", "zenkiCourse"],
     ],
   },
@@ -128,8 +121,6 @@ export interface HeaderProps {
    * where the nav is hidden.
    */
   categories?: NavCategory[];
-  /** Published super categories (programmes), shown above the categories in both menus. */
-  superCategories?: NavSuperCategory[];
 }
 
 export default function Header({
@@ -139,7 +130,6 @@ export default function Header({
   signedIn = false,
   isAdmin = false,
   categories = [],
-  superCategories = [],
 }: HeaderProps) {
   const locale = useLocale();
   const dir = localeDirection(locale);
@@ -155,9 +145,8 @@ export default function Header({
      and the currency each have their own labelled button and open only theirs. */
   const [localePanel, setLocalePanel] = useState<"both" | "language" | "currency">("both");
   const [menuOpen, setMenuOpen] = useState(false);
-  const hasSupers = superCategories.length > 0;
-  /* The "all pages" menu lists categories and programmes when there are any. */
-  const hasCats = categories.length > 0 || hasSupers;
+  /* The "all pages" menu lists the categories when there are any. */
+  const hasCats = categories.length > 0;
   const [currency, setCurrency] = useState("USD");
   const [showBack, setShowBack] = useState(false);
   const basket = useMinbarCartCount();
@@ -261,8 +250,8 @@ export default function Header({
   }, [pathname]);
 
   /* On a phone the menu and the language panel are full-height drawers: the
-     page behind them must not scroll, and the floating buttons (WhatsApp, the
-     concierge, quick donate) step aside  the CSS keys off `data-mia-drawer`. */
+     page behind them must not scroll, and the floating buttons (WhatsApp and
+     quick donate) step aside  the CSS keys off `data-mia-drawer`. */
   const drawerOpen = menuOpen || localeOpen;
   useEffect(() => {
     if (!drawerOpen || !window.matchMedia("(max-width: 700px)").matches) return;
@@ -824,12 +813,6 @@ export default function Header({
                         {tCats("title")}
                       </span>
                       <div className="mia-menu-cats">
-                        {superCategories.map((s) => (
-                          <Link key={s.id} href={s.href} onClick={() => setMenuOpen(false)} className="mia-menu-link mia-menu-cat" style={{ fontWeight: 900 }}>
-                            <CategoryThumb image={s.image} size={26} contain />
-                            <span style={{ minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.name}</span>
-                          </Link>
-                        ))}
                         {categories.map((c) => (
                           <Link key={c.id} href={c.href} onClick={() => setMenuOpen(false)} className="mia-menu-link mia-menu-cat">
                             <CategoryThumb image={c.image} size={26} />
@@ -935,7 +918,7 @@ function GlobeIcon({ stroke = "currentColor", size = 17 }: { stroke?: string; si
  * category has none. The header ships on every page, so this deliberately does
  * not pull in `CategoryIcon` and its icon set.
  */
-function CategoryThumb({ image, size, contain = false }: { image: string; size: number; contain?: boolean }) {
+function CategoryThumb({ image, size }: { image: string; size: number }) {
   return (
     <span
       aria-hidden="true"
@@ -952,7 +935,7 @@ function CategoryThumb({ image, size, contain = false }: { image: string; size: 
       }}
     >
       {image ? (
-        <img src={image} alt="" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: contain ? "contain" : "cover", display: "block" }} />
+        <img src={image} alt="" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
       ) : (
         <span style={{ width: size / 4, height: size / 4, background: "#00A2E0", transform: "rotate(45deg)" }} />
       )}

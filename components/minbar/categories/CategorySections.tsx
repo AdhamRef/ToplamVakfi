@@ -4,18 +4,14 @@ import { decimalAmount } from "@/lib/minbar/numeric-input";
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
-import { youtubeEmbed, youtubeThumb } from "@/lib/minbar/content/media";
+import { youtubeEmbed } from "@/lib/minbar/content/media";
 import { addToCart, type CartFreqKey, type CartTypeKey } from "@/lib/minbar/cart";
 import { formatMoney } from "@/lib/minbar/money";
 import { useMinbarMoney } from "@/hooks/useMinbarMoney";
 import { useMinbarCountUp } from "@/hooks/useMinbarReveal";
 import ProjectDonateCard from "@/components/minbar/ProjectDonateCard";
-import VideoModal, { useVideoModal } from "@/components/minbar/VideoModal";
 import { NoProjects } from "@/components/minbar/states/ContentStates";
-import Rail from "@/components/minbar/Rail";
-import { ArrowGlyph } from "@/components/minbar/home/TopSections";
 import type { CategoryPageContent } from "@/lib/minbar/category-page";
-import { CategoryCardIcon } from "./CategoryCardIcon";
 
 /**
  * The parts of a category's page, as separate pieces.
@@ -26,8 +22,8 @@ import { CategoryCardIcon } from "./CategoryCardIcon";
  * themselves, and those pages say far more than a category page could. Rather
  * than throw that away, a category can be bound to one of those pages
  * (`Category.pageTemplate`), and the page then folds the category's editable
- * parts into itself: the figures, the values, the campaigns, the donation box,
- * the explanatory cards and the achievements, each in the place it belongs.
+ * parts into itself: the figures, the campaigns and the donation box, each in
+ * the place it belongs.
  *
  * Every piece here renders only its own content  no full-bleed section, no
  * page background  so the landing page can wrap each in a band of its own
@@ -79,26 +75,6 @@ export function CategoryStatsBand({ stats, contained = false }: { stats: NonNull
           <span className="cat-bar tv-bar" style={{ display: "block", height: "100%", width: `${stats.percent}%`, borderRadius: 999, background: "linear-gradient(90deg, #1b6fe0, #27b8f2)" }} />
         </div>
       </div>
-    </div>
-  );
-}
-
-/* ── The values strip ────────────────────────────────────────────────────── */
-
-export function CategoryValuesStrip({ values }: { values: CategoryPageContent["values"] }) {
-  if (!values.length) return null;
-  return (
-    <div id="cat-values" style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(values.length, 5)},minmax(0,1fr))`, gap: 16 }}>
-      {values.map((value) => (
-        <span
-          key={value.id}
-          className="cat-value"
-          style={{ position: "relative", display: "grid", alignContent: "center", justifyItems: "center", gap: 10, minHeight: 96, padding: 20, background: "#fff", border: "1px solid #e6eef3", borderRadius: 14, boxShadow: "0 12px 28px rgba(2,52,88,.07)", fontSize: 13.5, fontWeight: 800, color: "var(--deep)", textAlign: "center", lineHeight: 1.65 }}
-        >
-          <span aria-hidden="true" style={{ width: 26, height: 3, borderRadius: 3, background: "linear-gradient(90deg, #1b6fe0, #27b8f2)" }} />
-          {value.label}
-        </span>
-      ))}
     </div>
   );
 }
@@ -308,93 +284,6 @@ export function CategoryDonateBox({ page, typeKey = "project" }: { page: Categor
   );
 }
 
-/* ── Why / what / impact ─────────────────────────────────────────────────── */
-
-function CardIcon({ name }: { name: string }) {
-  return (
-    <span
-      aria-hidden="true"
-      style={{ display: "grid", placeItems: "center", width: 42, height: 42, borderRadius: "50%", background: "#eaf5fc", color: "#0077b3" }}
-    >
-      <CategoryCardIcon name={name} className="h-[18px] w-[18px]" />
-    </span>
-  );
-}
-
-export function CategoryInfoCards({ cards }: { cards: CategoryPageContent["cards"] }) {
-  if (!cards.length) return null;
-  return (
-    <div id="cat-cards" style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(cards.length, 3)},minmax(0,1fr))`, gap: 16 }}>
-      {cards.map((card) => (
-        <div key={card.id} className="cat-card" style={{ display: "grid", alignContent: "start", gap: 10, padding: 22, background: "#fff", border: "1px solid #e6eef3", borderRadius: 16, boxShadow: "0 12px 28px rgba(2,52,88,.07)" }}>
-          <CardIcon name={card.icon} />
-          <b style={{ fontSize: 16, fontWeight: 800, color: "var(--deep)" }}>{card.title}</b>
-          <span style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.9, whiteSpace: "pre-line" }}>{card.body}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ── Achievements in video ───────────────────────────────────────────────── */
-
-export function CategoryAchievements({ page }: { page: CategoryPageContent }) {
-  const t = useTranslations("common");
-  const tHome = useTranslations("homepage");
-  const video = useVideoModal();
-
-  if (!page.achievements.length) return null;
-
-  return (
-    <>
-      <Rail
-        id="cat-achievements"
-        step={472}
-        prevLabel={t("prev")}
-        nextLabel={t("next")}
-        heading={
-          <h2 style={{ margin: 0, fontSize: "clamp(22px,2.4vw,28px)", lineHeight: 1.25, fontWeight: 900, letterSpacing: "-.3px", color: "var(--deep)" }}>
-            {page.achievementsTitle || tHome("achTitle")}
-          </h2>
-        }
-      >
-        {page.achievements.map((clip) => {
-          const image = clip.thumbnail || (clip.youtubeId ? youtubeThumb(clip.youtubeId) : "");
-          return (
-            <button
-              key={clip.id}
-              type="button"
-              className="mia-reel"
-              onClick={() => video.open(youtubeEmbed(clip.youtubeId, { autoplay: true, start: clip.startSeconds ?? undefined }))}
-              style={{ flex: "0 0 232px", position: "relative", display: "block", aspectRatio: "9 / 16", borderRadius: 18, overflow: "hidden", background: "var(--deep)", border: "1px solid var(--border)", padding: 0, cursor: "pointer", textAlign: "start" }}
-            >
-              {image ? (
-                <span role="img" aria-label={clip.title} style={{ position: "absolute", inset: 0, display: "block", backgroundImage: `url('${image}')`, backgroundSize: "cover", backgroundPosition: "center" }} />
-              ) : null}
-              <span style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(6,36,66,.94) 8%, rgba(6,36,66,.55) 44%, rgba(6,36,66,.05) 74%)" }} />
-              <span style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center" }}>
-                <span style={{ display: "grid", placeItems: "center", width: 52, height: 52, borderRadius: "50%", background: "rgba(255,255,255,.94)", color: "var(--red)", boxShadow: "0 8px 22px rgba(0,0,0,.28)" }}>
-                  <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z" /></svg>
-                </span>
-              </span>
-              <span style={{ position: "absolute", insetInline: 14, bottom: 14, display: "grid", gap: 8 }}>
-                <b style={{ color: "#fff", fontWeight: 800, fontSize: 16, lineHeight: 1.45 }}>{clip.title}</b>
-                <span style={{ display: "flex", alignItems: "center", gap: 8, paddingTop: 8, borderTop: "1px solid rgba(255,255,255,.18)", color: "#7fd6f5", fontSize: 11.5, fontWeight: 900 }}>
-                  <span style={{ marginInlineStart: "auto", display: "inline-flex", alignItems: "center", gap: 4 }}>
-                    {tHome("watch")}
-                    <ArrowGlyph size={12} />
-                  </span>
-                </span>
-              </span>
-            </button>
-          );
-        })}
-      </Rail>
-      <VideoModal embed={video.embed} onClose={video.close} />
-    </>
-  );
-}
-
 /* ── The film ────────────────────────────────────────────────────────────── */
 
 export function CategoryHeroFilm({ page, style }: { page: CategoryPageContent; style?: CSSProperties }) {
@@ -418,10 +307,9 @@ export function CategoryHeroFilm({ page, style }: { page: CategoryPageContent; s
 
 /**
  * Everything editable about a category, inside a host page's own container:
- * the film, the figures, the values, the campaigns, the donation box, the
- * explanatory cards and the achievements. The host supplies the heading and
- * the band around it; `children`, when given, replaces the default campaign
- * grid so a host can lay the cards out its own way.
+ * the film, the figures, the campaigns and the donation box. The host supplies
+ * the heading and the band around it; `children`, when given, replaces the
+ * default campaign grid so a host can lay the cards out its own way.
  */
 export function CategoryProgramme({
   page,
@@ -444,15 +332,12 @@ export function CategoryProgramme({
     <div style={{ display: "grid", gap: 28 }}>
       {film && page.heroVideoId ? <CategoryHeroFilm page={page} style={{ boxShadow: "0 18px 50px rgba(6,36,66,.14)", border: "1px solid var(--border)" }} /> : null}
       {page.stats ? <CategoryStatsBand stats={page.stats} contained /> : null}
-      <CategoryValuesStrip values={page.values} />
       {projects ? (children ?? <CategoryProjectsGrid page={page} columns={columns} />) : null}
       {page.donateTarget ? (
         <div id="category-donate">
           <CategoryDonateBox page={page} typeKey={typeKey} />
         </div>
       ) : null}
-      <CategoryInfoCards cards={page.cards} />
-      <CategoryAchievements page={page} />
     </div>
   );
 }

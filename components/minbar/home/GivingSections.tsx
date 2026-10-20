@@ -6,56 +6,12 @@ import { Button } from "@/components/minbar/ds";
 import { miaPath } from "@/lib/minbar/routes";
 
 /**
- * The waqf, recurring-giving and donor-account sections of the homepage.
+ * The recurring-giving and donor-account sections of the homepage.
  * Ported from `Minbar/الصفحة الرئيسية.dc.html`, laid out in the Toplum Vakfı
  * design's language (`ToplamVakfi-design/Toplum Vakfı Homepage.dc.html`):
- * the waqf as the dark giving card with its white box (`.rg-card`), recurring
- * giving as the closing call-to-action band (`.cf-card`), and the account as a
- * white panel of numbered cards (`.wt`).
+ * recurring giving as the closing call-to-action band (`.cf-card`), and the
+ * account as a white panel of numbered cards (`.wt`).
  */
-
-const Check = () => (
-  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d="m5 12 5 5L20 7" />
-  </svg>
-);
-
-/* ── Waqf ───────────────────────────────────────────────────────────────────
- * The eight areas of continuing benefit are approved interface copy translated
- * in full, not dashboard content  they name the endowment's own programmes. */
-export function WaqfSection() {
-  const locale = useLocale();
-  const t = useTranslations("homepage");
-
-  const areas = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => t(`waqfArea${n}`));
-
-  return (
-    <section id="waqf" className="tv-sec" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
-      <div className="tv-wrap">
-        <div id="waqf-grid" className="tv-dark-card tv-waqf">
-          <span aria-hidden="true" className="tv-dark-glow" />
-          <div className="tv-dark-text">
-            <h2 className="tv-h2">{t("waqfTitle")}</h2>
-            <p className="tv-dark-lede">{t("waqfLead")}</p>
-            <Button variant="primary" size="lg" href={miaPath("waqf", locale)} className="tv-pill-cta" style={{ whiteSpace: "nowrap" }}>
-              {t("waqfCtaQuds")}
-            </Button>
-          </div>
-          <div id="waqf-areas" className="tv-waqf-box">
-            {areas.map((area) => (
-              <span key={area} className="tv-waqf-area">
-                <i aria-hidden="true">
-                  <Check />
-                </i>
-                {area}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 /* ── Recurring giving ───────────────────────────────────────────────────────── */
 export function RecurringSection() {

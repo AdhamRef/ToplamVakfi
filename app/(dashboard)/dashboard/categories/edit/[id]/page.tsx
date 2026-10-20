@@ -25,19 +25,14 @@ import { LocaleFormTabs, collectLocaleTranslations, type LocaleFormField } from 
 import {
   CategoryPageSection,
   emptyCategoryPage,
-  emptyCategoryValue,
-  emptyCategoryCard,
   parseAmountList,
   currencyRowsFrom,
   currencyRowsToMap,
   donateTargetPayload,
   DONATE_TO_CATEGORY,
-  CATEGORY_VALUE_TRANSLATION_FIELDS,
-  CATEGORY_CARD_TRANSLATION_FIELDS,
+  type CampaignOption,
   type CategoryPageValues,
 } from '../../_components/CategoryPageSection';
-import { translationsFromRows } from '../../../_components/ContentTranslationTabs';
-import type { ContentOption } from '../../../super-categories/_components/ContentPicker';
 import { TRANSLATION_LOCALES, localeDefaults, localeKey, type FormLocale, type TranslationLocale } from '../../../_components/locale-form';
 import type { SupportedLocale } from '@/lib/locales';
 import { CategoryIconPicker } from '../../_components/CategoryIconPicker';
@@ -57,9 +52,8 @@ const LOCALE_FIELDS: readonly LocaleFormField[] = [
   { name: 'projectsTitle', get label() { return dt("عنوان قسم المشاريع"); } },
   { name: 'donateTitle', get label() { return dt("عنوان صندوق التبرع"); } },
   { name: 'donateNote', get label() { return dt("ملاحظة صندوق التبرع"); } },
-  { name: 'achievementsTitle', get label() { return dt("عنوان قسم الإنجازات"); } },
 ];
-const LOCALE_FIELD_NAMES = ['name', 'description', 'heroLead', 'ctaLabel', 'statDoneLabel', 'statGoalLabel', 'projectsTitle', 'donateTitle', 'donateNote', 'achievementsTitle'] as const;
+const LOCALE_FIELD_NAMES = ['name', 'description', 'heroLead', 'ctaLabel', 'statDoneLabel', 'statGoalLabel', 'projectsTitle', 'donateTitle', 'donateNote'] as const;
 type LocaleShape = { [K in `${(typeof LOCALE_FIELD_NAMES)[number]}_${TranslationLocale}`]: z.ZodOptional<z.ZodString> };
 const LOCALE_SHAPE = Object.fromEntries(
   TRANSLATION_LOCALES.flatMap((locale) => [
@@ -89,7 +83,7 @@ export default function EditCategoryPage() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [activeLocale, setActiveLocale] = useState<SeoLocale>('ar');
   const [page, setPage] = useState<CategoryPageValues>(emptyCategoryPage());
-  const [campaignOptions, setCampaignOptions] = useState<ContentOption[]>([]);
+  const [campaignOptions, setCampaignOptions] = useState<CampaignOption[]>([]);
   const [saveStatus, setSaveStatus] = useState<SaveStatusState | null>(null);
 
   const form = useForm<FormValues>({
@@ -107,8 +101,7 @@ export default function EditCategoryPage() {
         const category = response.data;
         const getTr = (locale: string) => category.translations?.find((t: { locale: string }) => t.locale === locale);
 
-        /* The landing page this category owns. Child rows come back with their
-           own translations, which the editors below edit in place. */
+        /* The landing page this category owns. */
         setPage({
           ...emptyCategoryPage(),
           pageTemplate: category.pageTemplate ?? '',
@@ -119,19 +112,6 @@ export default function EditCategoryPage() {
           suggestedAmounts: Array.isArray(category.suggestedAmounts) ? category.suggestedAmounts.join(', ') : '',
           suggestedByCurrency: currencyRowsFrom(category.suggestedByCurrency),
           donateTarget: category.donateToCategory ? DONATE_TO_CATEGORY : (category.donateCampaignId ?? ''),
-          achievementVideoIds: Array.isArray(category.achievementVideoIds) ? category.achievementVideoIds : [],
-          values: (category.values ?? []).map((v: { label?: string; translations?: Array<Record<string, unknown>> }) => ({
-            ...emptyCategoryValue(),
-            label: v.label ?? '',
-            translations: translationsFromRows(v.translations ?? [], CATEGORY_VALUE_TRANSLATION_FIELDS),
-          })),
-          infoCards: (category.infoCards ?? []).map((c: { icon?: string; title?: string; body?: string; translations?: Array<Record<string, unknown>> }) => ({
-            ...emptyCategoryCard(c.icon ?? 'alert'),
-            icon: c.icon ?? 'alert',
-            title: c.title ?? '',
-            body: c.body ?? '',
-            translations: translationsFromRows(c.translations ?? [], CATEGORY_CARD_TRANSLATION_FIELDS),
-          })),
         });
         form.reset({
           name: category.name || '',
@@ -166,7 +146,7 @@ export default function EditCategoryPage() {
       .then((res) => {
         if (!live) return;
         const items = (res.data?.items ?? []) as Array<{ id: string; title?: string; slug?: string; isActive?: boolean }>;
-        setCampaignOptions(items.map((c) => ({ id: c.id, title: c.title || c.slug || c.id, hint: c.slug ?? '', live: c.isActive !== false })));
+        setCampaignOptions(items.map((c) => ({ id: c.id, title: c.title || c.slug || c.id })));
       })
       .catch(() => { /* the select simply falls back to "automatic" */ });
     return () => { live = false; };
@@ -190,9 +170,6 @@ export default function EditCategoryPage() {
         suggestedAmounts: parseAmountList(page.suggestedAmounts),
         suggestedByCurrency: currencyRowsToMap(page.suggestedByCurrency),
         ...donateTargetPayload(page.donateTarget),
-        achievementVideoIds: page.achievementVideoIds,
-        values: page.values.filter((v) => v.label.trim()),
-        infoCards: page.infoCards.filter((c) => c.title.trim()),
         translations: collectLocaleTranslations(values, LOCALE_FIELDS),
       });
       setSaveStatus({ type: 'success', message: dt("تم تحديث الحملة بنجاح"), detail: dt("أنت ما زلت داخل صفحة التعديل") });

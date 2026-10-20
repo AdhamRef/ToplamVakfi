@@ -118,7 +118,7 @@ for (const locale of LOCALES) {
   // this language (glossary-locked labels), not from translating an English
   // keyword list  which is the rule in DEVELOPER_HANDOFF §11.
   const keywords = [
-    pick(nav, "projects"), pick(nav, "zakat"), pick(nav, "waqf"),
+    pick(nav, "projects"), pick(nav, "zakat"),
     pick(nav, "recurring"), pick(nav, "aqsa"), pick(nav, "jerusalem"),
     pick(common, "donate"), pick(common, "zakatCalculator"), pick(common, "sadaqah"),
     pick(common, "palestine"), pick(common, "donateNow"), pick(common, "zakatToPalestine"),

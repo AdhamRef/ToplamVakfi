@@ -1980,7 +1980,6 @@
   .mia-scope #pd-top .pd-project-summary { order: 2; }
   .mia-scope #pd-top #pd-aside { order: 3; }
   .mia-scope #pd-top .pd-project-video { order: 4; }
-  .mia-scope #pd-top > .pd-project-concierge { order: 5; }
   /* The donation panel stops being sticky once it is the full width  a
      full-width sticky block would cover the article as you scroll. */
   .mia-scope #pd-aside { position: static !important; }
@@ -3281,7 +3280,6 @@ html.cg-open .mia-scope:has(.mia-qb-sec) { padding-bottom: 0; }
 }
 
 /* A waqf certificate button: maroon, the certificate's own colour. */
-.mia-scope .succ-link-waqf:hover { background: #1B6FE0 !important; color: #fff !important; }
 @media (max-width: 480px) {
   .mia-scope #succ-downloads { flex-direction: column; align-items: stretch; }
   .mia-scope #succ-downloads > * { width: 100%; justify-content: center; }
@@ -4748,7 +4746,7 @@ html[data-mia-drawer="open"] .mia-scope .mia-qb-sec { display: none !important; 
   .mia-mobile-bottom-nav__inner {
     pointer-events: auto;
     display: grid;
-    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     align-items: end;
     gap: 2px;
     min-height: 62px;
@@ -5674,7 +5672,6 @@ html[data-mia-form="1"] .mia-scope .cg-launch-wrap { display: none !important; }
  * that fold a category in (mosque, zakat), so those get the same reflow. */
 @media (max-width: 1100px) {
   .mia-scope #cat-projects-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  .mia-scope #cat-values { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important; }
 }
 @media (max-width: 900px) {
   .mia-scope .cat-page { min-width: 0; width: 100%; max-width: 100%; overflow-x: clip; }
@@ -5690,7 +5687,6 @@ html[data-mia-form="1"] .mia-scope .cg-launch-wrap { display: none !important; }
   .mia-scope .cat-page section > div { padding-inline: 16px !important; }
   .mia-scope #cat-projects-grid { gap: 14px !important; min-width: 0; }
   .mia-scope #cat-projects-grid > * { min-width: 0; max-width: 100%; }
-  .mia-scope #cat-cards { grid-template-columns: minmax(0, 1fr) !important; gap: 12px !important; }
   .mia-scope #cat-amounts { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
   .mia-scope #cat-donate-box { padding: 20px 18px !important; }
 }
@@ -5702,8 +5698,6 @@ html[data-mia-form="1"] .mia-scope .cg-launch-wrap { display: none !important; }
   .mia-scope #cat-projects-grid { grid-template-columns: minmax(0, 1fr) !important; gap: 12px !important; }
   .mia-scope #cat-projects-grid .pdc-card { width: 100%; min-width: 0; margin: 0 !important; transform: none; }
   .mia-scope #cat-projects-grid .pdc-card .pdc-body b { overflow-wrap: anywhere; }
-  .mia-scope #cat-values { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 8px !important; }
-  .mia-scope #cat-values > .cat-value { min-height: 64px !important; padding: 10px 8px !important; }
   /* Frequencies scroll sideways instead of overflowing the box. */
   .mia-scope #cat-freqs { width: 100% !important; overflow-x: auto; scrollbar-width: none; }
   .mia-scope #cat-freqs::-webkit-scrollbar { display: none; }

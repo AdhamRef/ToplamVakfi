@@ -38,8 +38,8 @@ const WRAPPERS = new Set(["dt", "dtx", "dtList", "dtMaybe"]);
 const SKIP_PROPS = new Set(["keywords", "aliases", "synonyms", "searchTerms", "body", "template", "html", "subject", "bodyAr", "textAr"]);
 /* Interpolated messages are collected only from the dashboard's own routes, and
    never from routes that write content for the public site. */
-const API_PATTERN_ROUTES = /^app\/api\/(admin|dashboard|bank-accounts|upload|campaigns|communication|categories|users|donations|super-categories|videos|urgent-banners|stories|slides|playlists|faqs|courses|global-settings|referrals|telegram|home-layout|reports|quick-donation|live-donation-ticker|booklets)\//;
-const API_CONTENT_ROUTES = /\/(seo|translate|translations|auto-translate|content-generation|ai\/(?!concierge\/(conversations|insights|settings)))/;
+const API_PATTERN_ROUTES = /^app\/api\/(admin|dashboard|bank-accounts|upload|campaigns|communication|categories|users|donations|slides|global-settings|referrals|telegram|home-layout|quick-donation|live-donation-ticker)\//;
+const API_CONTENT_ROUTES = /\/(seo|translate|translations|auto-translate|content-generation|ai\/)/;
 const API_MESSAGE_PROPS =new Set(["error", "message", "msg", "reason", "details", "detail", "hint"]);
 
 /** FNV-1a, base 36  must match `dashKeyHash` in lib/dashboard/i18n/index.ts. */

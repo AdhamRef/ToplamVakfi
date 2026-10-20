@@ -10,15 +10,13 @@ import { useMinbarLabel } from "@/hooks/useMinbarLabel";
 type Item = {
   route: MinbarRoute;
   labelKey: string;
-  icon: "account" | "projects" | "video" | "home" | "waqf" | "recurring" | "zakat";
+  icon: "account" | "projects" | "home" | "recurring" | "zakat";
 };
 
 const ITEMS: readonly Item[] = [
   { route: "account", labelKey: "account", icon: "account" },
   { route: "projects", labelKey: "projects", icon: "projects" },
-  { route: "achievementVideos", labelKey: "reports", icon: "video" },
   { route: "home", labelKey: "home", icon: "home" },
-  { route: "waqf", labelKey: "waqf", icon: "waqf" },
   { route: "recurring", labelKey: "recurring", icon: "recurring" },
   { route: "zakat", labelKey: "zakat", icon: "zakat" },
 ];
@@ -54,33 +52,12 @@ function NavIcon({ name }: { name: Item["icon"] }) {
       </svg>
     );
   }
-  if (name === "video") {
-    return (
-      <svg {...common}>
-        <rect x="3" y="5" width="18" height="14" rx="3" />
-        <path d="m10 9 5 3-5 3V9Z" />
-        <circle cx="18.2" cy="7.7" r="1.25" fill="currentColor" stroke="none" />
-      </svg>
-    );
-  }
   if (name === "home") {
     return (
       <svg {...common} width="24" height="24" strokeWidth="2">
         <path d="m3.5 10.5 8.5-7 8.5 7" />
         <path d="M5.5 9.5V20h13V9.5" />
         <path d="M9.5 20v-6h5v6" />
-      </svg>
-    );
-  }
-  if (name === "waqf") {
-    return (
-      <svg {...common}>
-        <path d="M4 20h16" />
-        <path d="M6 20V10h12v10" />
-        <path d="M9 20v-6h6v6" />
-        <path d="M5 10h14" />
-        <path d="M8 10V7.5a4 4 0 0 1 8 0V10" />
-        <path d="M12 3V1.8" />
       </svg>
     );
   }
@@ -123,7 +100,7 @@ export default function MobileBottomNav({ signedIn = false }: { signedIn?: boole
             item.route === "account" && !signedIn
               ? `/auth/signin?callbackUrl=${encodeURIComponent(miaPath("account", locale))}`
               : miaPath(item.route, locale);
-          const ariaLabel = item.route === "achievementVideos" ? label("reports") : label(item.labelKey);
+          const ariaLabel = label(item.labelKey);
 
           return (
             <Link

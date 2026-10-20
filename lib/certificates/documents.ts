@@ -1,6 +1,5 @@
 import "server-only";
 
-import type { Certificate } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { messagesFor } from "@/i18n/locale-messages";
 import { localeDirection, isValidLocale } from "@/lib/locales";
@@ -9,13 +8,13 @@ import { verseBlock } from "@/lib/minbar/quran";
 import { pickTranslation, translationLocaleWhere } from "@/lib/i18n/translation-fallback";
 import type { CertificateVerse } from "@/components/minbar/certificates/ThanksCertificate";
 import type { ReceiptLine } from "@/components/minbar/certificates/ReceiptSheet";
-import { getReceiptCopy, getThanksCopy, getWaqfCopy, loadCopyOverrides } from "./copy";
-import type { ReceiptCopy, ReceiptOrgData, ThanksCopy, WaqfCopy } from "./copy-defaults";
-import type { IssuedDocuments, IssuedWaqfCertificate } from "./issue";
+import { getReceiptCopy, getThanksCopy } from "./copy";
+import type { ReceiptCopy, ReceiptOrgData, ThanksCopy } from "./copy-defaults";
+import type { IssuedDocuments } from "./issue";
 
 /**
  * From the persisted records to the props each sheet renders  the one place
- * the three documents read their data. The PDF endpoints, the print pages
+ * the two documents read their data. The PDF endpoints, the print pages
  * and the success page's previews all come through here, so what a donor
  * sees on screen is what the PDF says and what the email attaches.
  *
@@ -32,23 +31,6 @@ export interface ThanksDocument {
   copy: ThanksCopy;
   verse: CertificateVerse;
   duaVerse: CertificateVerse;
-  locale: string;
-  dir: "rtl" | "ltr";
-}
-
-export interface WaqfDocument {
-  kind: "waqf";
-  certificateId: string;
-  donationId: string;
-  serial: string;
-  unit: "share" | "meter";
-  count: number;
-  total: string;
-  donorName: string;
-  onBehalf: string;
-  certNo: string;
-  certDate: string;
-  copy: WaqfCopy;
   locale: string;
   dir: "rtl" | "ltr";
 }
@@ -124,48 +106,6 @@ export async function thanksDocumentFor(docs: IssuedDocuments): Promise<ThanksDo
   return buildThanksDocument(docs, await getThanksCopy(docs.locale));
 }
 
-export function buildWaqfDocument(cert: IssuedWaqfCertificate, copy: WaqfCopy, locale = cert.locale): WaqfDocument {
-  return {
-    kind: "waqf",
-    certificateId: cert.id,
-    donationId: cert.donationId,
-    serial: cert.serial,
-    unit: cert.type === "METER" ? "meter" : "share",
-    count: cert.count,
-    total: money(cert.amount, cert.currency, locale),
-    donorName: cert.donorName,
-    onBehalf: cert.dedicatedTo ?? cert.waqfItem.onBehalf,
-    certNo: String(cert.number),
-    certDate: documentDate(cert.issuedAt, locale),
-    copy,
-    locale,
-    dir: localeDirection(locale),
-  };
-}
-
-export async function waqfDocumentFor(cert: IssuedWaqfCertificate): Promise<WaqfDocument> {
-  return buildWaqfDocument(cert, await getWaqfCopy(cert.locale));
-}
-
-/** Every waqf certificate of a donation, ready to render. */
-export async function waqfDocumentsFor(docs: IssuedDocuments): Promise<WaqfDocument[]> {
-  if (!docs.waqf.length) return [];
-  const overrides = await loadCopyOverrides();
-  const copy = await getWaqfCopy(docs.locale, overrides);
-  return docs.waqf.map((cert) => buildWaqfDocument(cert, copy));
-}
-
-/** A waqf certificate by its own id, with the line it was issued for. */
-export async function findWaqfCertificate(certificateId: string): Promise<(IssuedWaqfCertificate & { donation: { donorId: string } }) | null> {
-  if (!/^[0-9a-fA-F]{24}$/.test(certificateId)) return null;
-  const row = await prisma.certificate.findUnique({
-    where: { id: certificateId },
-    include: { waqfItem: true, donation: { select: { donorId: true } } },
-  });
-  if (!row || row.type === "THANKS" || !row.waqfItem) return null;
-  return row as Certificate & { waqfItem: NonNullable<typeof row.waqfItem>; donation: { donorId: string } };
-}
-
 /**
  * The receipt in one language.
  *
@@ -207,7 +147,6 @@ export async function receiptDocumentFor(
           category: { select: { name: true, translations: { where: translationLocaleWhere(lang), take: 2, select: { locale: true, name: true } } } },
         },
       },
-      waqfItems: { orderBy: { createdAt: "asc" } },
     },
   });
   if (!donation) throw new Error(`donation ${docs.donationId} not found`);
@@ -216,7 +155,6 @@ export async function receiptDocumentFor(
   const currency = donation.currency;
   const kindProject = t(lang, "cart", "typeProject");
   const kindRecurring = t(lang, "cart", "typeRecurring");
-  const kindWaqf = t(lang, "cart", "typeWaqf");
   const kindExtra = t(lang, "cart", "typeExtra");
   const lineKind = donation.subscriptionId ? kindRecurring : kindProject;
 
@@ -229,10 +167,6 @@ export async function receiptDocumentFor(
   for (const item of donation.categoryItems) {
     const tr = pickTranslation(item.category.translations, lang);
     lines.push({ title: tr?.name || item.category.name, kind: lineKind, amount: money(item.amount, currency, lang) });
-  }
-  for (const item of donation.waqfItems) {
-    const unitTitle = t(lang, "waqf", item.unit === "METER" ? "unitMeter" : "unitShare");
-    lines.push({ title: `${unitTitle} × ${item.count}`, kind: kindWaqf, amount: money(item.amount, currency, lang) });
   }
   if (donation.teamSupport > 0) lines.push({ title: t(lang, "system", "successTeam"), kind: kindExtra, amount: money(donation.teamSupport, currency, lang) });
   if (donation.fees > 0) lines.push({ title: t(lang, "system", "successFees"), kind: kindExtra, amount: money(donation.fees, currency, lang) });
@@ -279,7 +213,7 @@ export async function receiptPagesFor(docs: IssuedDocuments): Promise<ReceiptDoc
 }
 
 /**
- * What the success page previews: the three documents, issued when the
+ * What the success page previews: the two documents, issued when the
  * payment is confirmed. Before confirmation  a card donor usually lands
  * before the webhook  the previews render from the donation itself with no
  * serials, and the download links wait for the records.
@@ -289,18 +223,16 @@ export interface SuccessDocuments {
   issued: boolean;
   receiptNo: string | null;
   thanks: ThanksDocument;
-  waqf: WaqfDocument[];
   receipt: ReceiptDocument | null;
 }
 
 export async function successDocumentsFor(donationId: string, docs: IssuedDocuments | null): Promise<SuccessDocuments | null> {
   if (docs) {
-    const [thanks, waqf, receipt] = await Promise.all([
+    const [thanks, receipt] = await Promise.all([
       thanksDocumentFor(docs),
-      waqfDocumentsFor(docs),
       receiptDocumentFor(docs, docs.locale, { index: 1, total: docs.locale === "tr" ? 1 : 2 }),
     ]);
-    return { issued: true, receiptNo: docs.receipt.receiptNo, thanks, waqf, receipt };
+    return { issued: true, receiptNo: docs.receipt.receiptNo, thanks, receipt };
   }
 
   if (!/^[0-9a-fA-F]{24}$/.test(donationId)) return null;
@@ -313,14 +245,12 @@ export async function successDocumentsFor(donationId: string, docs: IssuedDocume
       totalAmount: true,
       createdAt: true,
       donor: { select: { name: true, preferredLang: true } },
-      waqfItems: { orderBy: { createdAt: "asc" } },
     },
   });
   if (!donation) return null;
 
   const locale = [donation.locale, donation.donor?.preferredLang].find((c): c is string => Boolean(c && isValidLocale(c))) ?? "ar";
-  const overrides = await loadCopyOverrides();
-  const [thanksCopy, waqfCopy] = await Promise.all([getThanksCopy(locale, overrides), getWaqfCopy(locale, overrides)]);
+  const thanksCopy = await getThanksCopy(locale);
   const dir = localeDirection(locale);
 
   return {
@@ -338,22 +268,6 @@ export async function successDocumentsFor(donationId: string, docs: IssuedDocume
       locale,
       dir,
     },
-    waqf: donation.waqfItems.map((item) => ({
-      kind: "waqf" as const,
-      certificateId: "",
-      donationId: donation.id,
-      serial: "",
-      unit: item.unit === "METER" ? ("meter" as const) : ("share" as const),
-      count: item.count,
-      total: money(item.amount, donation.currency, locale),
-      donorName: item.donorName,
-      onBehalf: item.onBehalf,
-      certNo: "",
-      certDate: "",
-      copy: waqfCopy,
-      locale,
-      dir,
-    })),
     receipt: null,
   };
 }

@@ -103,14 +103,11 @@ function read(locale: string, path: string[]): string {
 
 /**
  * Localized filenames. The email namespace already names the two attachments
- * (`success.attachment0/1`); the waqf certificate takes its cart label plus
- * its number so two certificates from one order never share a name.
+ * (`success.attachment0/1`).
  */
 export const documentFilename = {
   thanks: (locale: string, serial: string) => `${stripPdf(read(locale, ["email", "success", "attachment0"]) || "Thank-you certificate")} ${serial}.pdf`,
   receipt: (locale: string, receiptNo: string) => `${stripPdf(read(locale, ["email", "success", "attachment1"]) || "Donation receipt")} ${receiptNo}.pdf`,
-  waqf: (locale: string, unit: "share" | "meter", number: number) =>
-    `${read(locale, ["cart", unit === "meter" ? "meterCertName" : "shareCertName"]) || (unit === "meter" ? "Waqf-metre certificate" : "Waqf-share certificate")} ${number}.pdf`,
 };
 
 function stripPdf(name: string): string {

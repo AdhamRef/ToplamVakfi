@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * The newsroom  ported from `Minbar/الأخبار.dc.html`.
  *
  * Its copy lives in the shell's `common` namespace, so only `homepage` is
- * added, for the three closing banners.
+ * added, for the two closing banners.
  */
 export default async function News({ params }: Props) {
   const { locale } = await params;

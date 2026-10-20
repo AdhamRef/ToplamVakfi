@@ -109,7 +109,7 @@ export default function QuickDonate({ amounts = DEFAULT_AMOUNTS }: QuickDonatePr
 
   /* Only the pages in `QUICK_DONATE_ROUTES` carry the pill: the homepage has
      its own quick-donation card, the pages with a donation module of their own
-     (projects, zakat, waqf, recurring) and the blog do without it, and the
+     (projects, zakat, recurring) and the blog do without it, and the
      transactional surfaces never had it. An allowlist, so a new page is silent
      until someone decides it should not be (`DEPLOYED_VS_DESIGN_AUDIT.md` § P2.1). */
   const route = routeForPathname(pathname ?? "");

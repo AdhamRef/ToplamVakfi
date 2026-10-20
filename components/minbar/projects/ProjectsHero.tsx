@@ -26,8 +26,8 @@ export default function ProjectsHero({ slides }: { slides: ProjectSlide[] }) {
   const locale = useLocale();
   const rtl = localeDirection(locale) === "rtl";
   const t = useTranslations("common");
-  // "View project"  the shell bundle's Concierge namespace carries the label.
-  const tConcierge = useTranslations("Concierge");
+  // "View project"  the shell bundle's `projects` namespace carries the label.
+  const tProjects = useTranslations("projects");
 
   const [index, setIndex] = useState(0);
   const startX = useRef<number | null>(null);
@@ -134,7 +134,7 @@ export default function ProjectsHero({ slides }: { slides: ProjectSlide[] }) {
                 <h2>{slide.title}</h2>
                 {slide.href ? (
                   <a href={slide.href} tabIndex={i === index ? undefined : -1} className="tvp-slide-cta">
-                    {tConcierge("a_view")}
+                    {tProjects("viewProject")}
                     <span aria-hidden="true">{rtl ? "←" : "→"}</span>
                   </a>
                 ) : null}

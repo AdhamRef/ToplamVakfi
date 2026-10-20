@@ -103,10 +103,9 @@ export function useDonationAmount() {
     [code, format, formatLocal, locale]
   );
 
-  /** A cart line is below the floor (waqf is priced by the server, not checked). */
+  /** A cart line is below the floor. */
   const lineTooSmall = useCallback(
-    (item: Line & Pick<MinbarCartItem, "waqf">) => {
-      if (item.waqf) return false;
+    (item: Line) => {
       const local = lineLocal(item);
       // A legacy row in another currency has no USD value to check here.
       if (local && !item.local && local.currency !== code) return false;

@@ -56,7 +56,6 @@ const FREQ_LABEL: Record<CartFreqKey, string> = {
 const GENERIC_LABEL: Record<QuickGenericDestination, string> = {
   get "where-needed"() { return dt("حيث الحاجة أشد"); },
   get zakat() { return dt("الزكاة"); },
-  get waqf() { return dt("الوقف"); },
   get "gaza-relief"() { return dt("إغاثة غزة"); },
 };
 

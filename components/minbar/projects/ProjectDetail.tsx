@@ -8,14 +8,12 @@ import type { MinbarProject, MinbarProjectComment, MinbarProjectUpdate } from "@
 import { useMinbarMoney } from "@/hooks/useMinbarMoney";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import { ArrowGlyph } from "@/components/minbar/home/TopSections";
 import DonationPanel from "./DonationPanel";
 import ProjectHeroMedia from "./ProjectHeroMedia";
 import ProjectVideo from "./ProjectVideo";
 import ProjectComments from "./ProjectComments";
 import ProjectUpdatePost from "./ProjectUpdatePost";
-import ConciergeEntry from "@/components/minbar/concierge/ConciergeEntry";
 
 /**
  * Project detail  laid out on `ToplamVakfi-design/Toplum Vakfı Project - *.dc.html`.
@@ -24,7 +22,7 @@ import ConciergeEntry from "@/components/minbar/concierge/ConciergeEntry";
  * several) carrying the breadcrumb, the category tags, the title and the
  * opening of the description; under it the design's two columns: the story
  * (video, key facts, the tabbed body  about / field updates / gallery /
- * donors' messages  the project FAQ and the zakat and waqf cross-links)
+ * donors' messages  the project FAQ and the zakat cross-link)
  * beside the sticky donation sidebar; then related projects.
  *
  * The design draws its hero behind a glass header. The app's header is a
@@ -269,7 +267,7 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
             </div>
           </div>
 
-          {/* ── Zakat and waqf cross-links ──────────────────────────────── */}
+          {/* ── Zakat cross-link ────────────────────────────────────────── */}
           <div className="pd-cross-row">
             <Link href={miaPath("zakat", locale)} className="pd-cross pd-cross--zakat">
               <span className="pd-eyebrow" style={{ color: "#cfe3f1" }}>
@@ -281,17 +279,6 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
                 <ArrowGlyph />
               </span>
             </Link>
-
-            <Link href={miaPath("waqf", locale)} className="pd-cross pd-cross--waqf">
-              <span className="pd-eyebrow" style={{ color: "#0077b3" }}>
-                {tNav("waqf")}
-              </span>
-              <b style={{ fontSize: 17, lineHeight: 1.5, color: "var(--deep)" }}>{tHome("waqfTitle")}</b>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13.5, fontWeight: 800, color: "#0077b3" }}>
-                {tCommon("contributeWaqf")}
-                <ArrowGlyph />
-              </span>
-            </Link>
           </div>
         </div>
 
@@ -300,9 +287,6 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
         <aside className="pd-aside-col" style={{ minWidth: 0 }}>
           <div className="pd-aside-sticky" style={{ display: "grid", gap: 14 }}>
             <DonationPanel project={project} donorCount={donorCount} />
-            <div className="pd-project-concierge">
-              <ConciergeEntry intent="current_page" />
-            </div>
           </div>
         </aside>
       </div>
@@ -342,7 +326,6 @@ export default function ProjectDetail({ project, updates, gallery, related, dono
 
       <ZakatBanner />
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

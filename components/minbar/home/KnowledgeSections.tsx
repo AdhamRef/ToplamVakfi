@@ -1,21 +1,19 @@
 "use client";
 
-import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
 import type { MinbarArticle } from "@/lib/minbar/posts";
-import type { CmsFaq } from "@/lib/minbar/cms";
 import { ArrowGlyph } from "./TopSections";
 import ViewAllLink from "./ViewAllLink";
 import { cssImage } from "@/lib/minbar/image-url";
 
 /**
- * The knowledge end of the homepage  articles, news and the FAQ. Ported from
+ * The knowledge end of the homepage  articles and news. Ported from
  * `Minbar/الصفحة الرئيسية.dc.html`.
  *
  * Everything shown here is CMS content, read on the server by the page and
- * passed down: the articles and news are posts, the FAQ is the Faq model. The
+ * passed down: the articles and news are posts. The
  * hand-written lists that used to sit in this file were the design's
  * placeholders and are gone  an editor publishes, and it appears.
  */
@@ -154,112 +152,6 @@ export function NewsSection({ news }: { news: MinbarArticle[] }) {
               ))}
             </div>
           ) : null}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ── FAQ ────────────────────────────────────────────────────────────────────
- * Questions come from the Faq model; each row's `page` is the category it was
- * filed under, and the filter chips are built from whatever categories the
- * rows actually use. The chip label is an interface string where one exists
- * for that id (zakat, waqf, donation, reports) and the raw id otherwise, so an
- * editor can introduce a new category without a code change and still see it
- * filter correctly  comparing ids, never labels. */
-const CATEGORY_LABEL: Record<string, { ns: "navigation" | "common"; key: string }> = {
-  zakat: { ns: "navigation", key: "zakat" },
-  waqf: { ns: "navigation", key: "waqf" },
-  donation: { ns: "common", key: "donate" },
-  reports: { ns: "navigation", key: "reports" },
-};
-
-export function FaqSection({ faqs, whatsappNumber = "905398436050" }: { faqs: CmsFaq[]; whatsappNumber?: string }) {
-  const t = useTranslations("homepage");
-  const tNav = useTranslations("navigation");
-  const tCommon = useTranslations("common");
-  const tSystem = useTranslations("system");
-
-  const [category, setCategory] = useState<string>("all");
-  const [open, setOpen] = useState(0);
-
-  const categories = useMemo(() => {
-    const ids: string[] = [];
-    for (const f of faqs) if (f.page && !ids.includes(f.page)) ids.push(f.page);
-    return ids;
-  }, [faqs]);
-
-  const label = (id: string) => {
-    const m = CATEGORY_LABEL[id];
-    if (!m) return id;
-    return m.ns === "navigation" ? tNav(m.key) : tCommon(m.key);
-  };
-
-  const visible = faqs.filter((f) => category === "all" || f.page === category);
-
-  if (faqs.length === 0) return null;
-
-  /* The Toplum design's FAQ block (`.fq` on the homepage, the FAQ page's
-     `.faq-item`): one centred column  the heading and the filter chips, each
-     question its own white card with a round +/− mark that fills with the CTA
-     gradient when open, and the "didn't find your answer" line closing it. */
-  return (
-    <section id="faq" className="tv-sec" style={{ position: "relative", zIndex: 1, overflow: "hidden" }}>
-      <div id="faq-grid" className="tv-faq">
-        <div id="faq-aside" className="tv-faq-head">
-          <h2 className="tv-h2">{t("faqTitle")}</h2>
-          <p className="tv-lead">{t("faqLead")}</p>
-          <div id="faq-chips" className="tv-chips">
-            {["all", ...categories].map((id) => (
-              <button
-                key={id}
-                type="button"
-                className="tv-chip"
-                data-chip={category === id ? "faq" : ""}
-                aria-pressed={category === id}
-                onClick={() => {
-                  setCategory(id);
-                  setOpen(0);
-                }}
-              >
-                {id === "all" ? tSystem("allFilter") : label(id)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div id="faq-list" className="tv-faq-list">
-          {visible.map((faq, i) => {
-            const isOpen = open === i;
-            return (
-              <div key={faq.id} className="tv-faq-item" data-open={isOpen ? "true" : "false"}>
-                <button
-                  type="button"
-                  onClick={() => setOpen(isOpen ? -1 : i)}
-                  aria-expanded={isOpen}
-                  className="faq-q"
-                >
-                  {faq.page ? <span className="faq-tag">{label(faq.page)}</span> : null}
-                  <span className="faq-qtext">{faq.question}</span>
-                  <span className="faq-plus" aria-hidden="true">
-                    {isOpen ? "−" : "+"}
-                  </span>
-                </button>
-                {isOpen ? <div className="faq-a">{faq.answer}</div> : null}
-              </div>
-            );
-          })}
-        </div>
-
-        <div id="faq-help" className="tv-faq-foot">
-          <span className="tv-faq-foot-text">
-            <b>{t("faqNotFound")}</b>
-            <span>{t("faqWhatsapp")}</span>
-          </span>
-          <a href={`https://wa.me/${whatsappNumber}`} target="_blank" rel="noopener noreferrer" className="tv-faq-ask">
-            {tNav("contact")}
-            <ArrowGlyph />
-          </a>
         </div>
       </div>
     </section>

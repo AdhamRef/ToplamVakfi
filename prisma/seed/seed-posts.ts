@@ -273,15 +273,8 @@ async function main() {
       postTranslations: await prisma.postTranslation.count(),
       categories: await prisma.postCategory.count(),
       categoryTranslations: await prisma.postCategoryTranslation.count(),
-      superCategoryItems: await prisma.superCategoryItem.count({
-        where: { kind: "POST" },
-      }),
-      storyCtas: await prisma.storySlide.count({
-        where: { ctaKind: "POST" },
-      }),
     };
     console.log("existing before replace:", before);
-    await prisma.superCategoryItem.deleteMany({ where: { kind: "POST" } });
     await prisma.postTranslation.deleteMany({});
     await prisma.post.deleteMany({});
     await prisma.postCategoryTranslation.deleteMany({});

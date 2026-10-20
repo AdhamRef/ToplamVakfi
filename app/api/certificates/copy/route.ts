@@ -12,7 +12,6 @@ import {
   RECEIPT_LITERAL_DEFAULTS,
   RECEIPT_ORG_DEFAULTS,
   THANKS_FIELDS,
-  WAQF_FIELDS,
   sanitizeCopyOverrides,
   type CertificateCopyOverrides,
 } from "@/lib/certificates/copy-defaults";
@@ -41,7 +40,6 @@ function defaultsFor(locale: string): Record<string, Record<string, string>> {
   const pick = (key: string | null) => (key && typeof ns[key] === "string" ? (ns[key] as string) : "");
   return {
     thanks: Object.fromEntries(THANKS_FIELDS.map((f) => [f.name, pick(f.i18nKey)])),
-    waqf: Object.fromEntries(WAQF_FIELDS.map((f) => [f.name, pick(f.i18nKey)])),
     receipt: Object.fromEntries(
       RECEIPT_FIELDS.map((f) => [f.name, f.i18nKey ? pick(f.i18nKey) : RECEIPT_LITERAL_DEFAULTS[f.name as keyof typeof RECEIPT_LITERAL_DEFAULTS] ?? ""])
     ),

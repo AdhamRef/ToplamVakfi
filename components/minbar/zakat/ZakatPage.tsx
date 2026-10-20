@@ -11,7 +11,6 @@ import { formatMoney } from "@/lib/minbar/money";
 import { youtubeEmbed } from "@/lib/minbar/content/media";
 import { useMinbarMoney } from "@/hooks/useMinbarMoney";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import { ArrowGlyph } from "@/components/minbar/home/TopSections";
 import type { CategoryPageContent } from "@/lib/minbar/category-page";
 
@@ -525,9 +524,6 @@ export default function ZakatPage({
                 <Button variant="primary" size="lg" href="#calculator" style={{ whiteSpace: "nowrap", borderRadius: 999 }}>
                   {t("donateZakatNowArrow")}
                 </Button>
-                <Button variant="outline" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap", borderRadius: 999 }}>
-                  {t("allWaqfProjects")}
-                </Button>
               </div>
             </div>
           </div>
@@ -535,7 +531,6 @@ export default function ZakatPage({
       </div>
 
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

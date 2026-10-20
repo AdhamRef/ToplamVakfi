@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowDown, ArrowUp, ChevronLeft, GripVertical, LayoutTemplate, ListOrdered, Lock, Megaphone } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronLeft, GripVertical, LayoutTemplate, ListOrdered, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -19,7 +19,6 @@ import { dt } from "@/lib/dashboard/i18n";
 const KIND_ICON: Record<HomeSectionKind, typeof ListOrdered> = {
   list: ListOrdered,
   static: LayoutTemplate,
-  banners: Megaphone,
 };
 
 /** One line saying how a list picks its items, for the row under the section's name. */
@@ -33,7 +32,6 @@ export function listSummary(config: HomeListConfig): string {
 
 function sectionSummary(id: HomeSectionId, layout: HomeLayoutConfig): string {
   const meta = HOME_SECTIONS[id];
-  if (meta.kind === "banners") return dt("من صفحة البانرات");
   if (meta.kind === "static") return dt("قسم ثابت التصميم");
   return meta.lists
     .map((listId) => (meta.lists.length > 1 ? `${HOME_LISTS[listId].label}: ${listSummary(layout.lists[listId])}` : listSummary(layout.lists[listId])))

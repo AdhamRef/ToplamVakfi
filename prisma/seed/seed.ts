@@ -10,29 +10,14 @@
  *
  * idempotent: كل شيء upsert على الـslug  إعادة التشغيل تحدّث ولا تكرّر.
  */
-import { PrismaClient, PlaylistKind, VideoType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import seed from "./seed-data.json";
-import extra from "./seed-data-extra.json";
 import fs from "fs";
 import path from "path";
 
 const prisma = new PrismaClient();
 
 type Tr = { locale: string; name?: string; title?: string; description?: string; slug?: string };
-
-/** A YouTube entry under a playlist or a course.
- *  Declared rather than inferred: every course in seed-data-extra.json currently
- *  ships `videos: []`, which TypeScript narrows to `never[]`  so the fields
- *  would be unreachable the moment real episodes are added to the file. */
-type SeedVideoRef = {
-  youtubeId: string;
-  url: string;
-  thumbnail?: string | null;
-  title?: string | null;
-  durationSeconds?: number | null;
-  order: number;
-  isActive?: boolean;
-};
 
 /**
  * Media that lives in `public/` is served from the site root, but the generated
@@ -57,343 +42,117 @@ const publicPath = (src?: string | null): string | undefined => {
 };
 
 async function main() {
-  console.log("Seeding:", seed._meta.counts, extra._meta.counts);
+  console.log("Seeding:", seed._meta.counts);
 
-  /* SEED_ONLY=extra skips the site content (categories, campaigns, posts) and
-     seeds only seed-data-extra.json. The first four steps are ~7,000 upserts
-     against Atlas and take ten minutes; when they are already in place and only
-     the extra models are missing, re-walking them is where a run goes to die. */
-  const onlyExtra = process.env.SEED_ONLY === "extra";
-  if (onlyExtra) console.log("SEED_ONLY=extra  skipping categories, campaigns, post categories, posts");
-
-  if (!onlyExtra) {
-    /* ── 1) Category (مناطق + أنواع تبرع) ───────────────────────── */
-    const categoryIdByKey = new Map<string, string>();
-    for (const c of seed.categories) {
-      const row = await prisma.category.upsert({
-        where: { name: c.name },
-        update: { slug: c.slug, order: c.order, isActive: c.isActive },
-        create: { name: c.name, slug: c.slug, order: c.order, isActive: c.isActive },
-      });
-      categoryIdByKey.set(c.externalKey, row.id);
-      for (const t of c.translations as Tr[]) {
-        await prisma.categoryTranslation.upsert({
-          where: { categoryId_locale: { categoryId: row.id, locale: t.locale } },
-          update: { name: t.name!, slug: t.slug },
-          create: { categoryId: row.id, locale: t.locale, name: t.name!, slug: t.slug },
-        });
-      }
-    }
-    console.log(`✓ categories: ${categoryIdByKey.size}`);
-
-    /* ── 2) Campaign (المشاريع) ─────────────────────────────────── */
-    let campaignCount = 0;
-    for (const p of seed.campaigns) {
-      const categoryIds = p.categoryKeys
-        .map((k: string) => categoryIdByKey.get(k))
-        .filter((id): id is string => Boolean(id));
-
-      const base = {
-        title: p.title,
-        description: p.description,
-        targetAmount: p.targetAmount,
-        currentAmount: p.currentAmount,
-        baselineAmount: p.baselineAmount,
-        goalType: p.goalType,
-        fundraisingMode: p.fundraisingMode,
-        sharePriceUSD: p.sharePriceUSD ?? undefined,
-        images: (p.images as string[]).map(publicPath).filter((v): v is string => Boolean(v)),
-        videoUrl: p.videoUrl ?? undefined,
-        isActive: p.isActive,
-        isDeleted: false,
-        priority: p.priority,
-        categories: { set: categoryIds.map((id) => ({ id })) },
-      };
-
-      const row = await prisma.campaign.upsert({
-        where: { slug: p.slug },
-        update: base,
-        create: { ...base, slug: p.slug, categories: { connect: categoryIds.map((id) => ({ id })) } },
-      });
-
-      for (const t of p.translations as Tr[]) {
-        await prisma.campaignTranslation.upsert({
-          where: { campaignId_locale: { campaignId: row.id, locale: t.locale } },
-          update: { title: t.title!, description: t.description!, slug: t.slug },
-          create: { campaignId: row.id, locale: t.locale, title: t.title!, description: t.description!, slug: t.slug },
-        });
-      }
-      campaignCount++;
-    }
-    console.log(`✓ campaigns: ${campaignCount}`);
-
-    /* ── 3) PostCategory (تصنيفات المدونة) ──────────────────────── */
-    const postCatIdByKey = new Map<string, string>();
-    for (const c of seed.postCategories) {
-      const row = await prisma.postCategory.upsert({
-        where: { name: c.name },
-        update: { slug: c.slug },
-        create: { name: c.name, slug: c.slug },
-      });
-      postCatIdByKey.set(c.externalKey, row.id);
-      for (const t of c.translations as Tr[]) {
-        await prisma.postCategoryTranslation.upsert({
-          where: { categoryId_locale: { categoryId: row.id, locale: t.locale } },
-          update: { name: t.name! },
-          create: { categoryId: row.id, locale: t.locale, name: t.name! },
-        });
-      }
-    }
-    console.log(`✓ postCategories: ${postCatIdByKey.size}`);
-
-    /* ── 4) Post (المقالات) ─────────────────────────────────────── */
-    let postCount = 0;
-    for (const a of seed.posts) {
-      const categoryId = postCatIdByKey.get(a.categoryKey);
-      const base = {
-        title: a.title,
-        description: a.description,
-        content: a.content,
-        image: publicPath(a.image),
-        published: a.published,
-        categoryId,
-      };
-      const row = await prisma.post.upsert({
-        where: { slug: a.slug },
-        update: base,
-        create: { ...base, slug: a.slug },
-      });
-      for (const t of a.translations as Tr[]) {
-        await prisma.postTranslation.upsert({
-          where: { postId_locale: { postId: row.id, locale: t.locale } },
-          update: { title: t.title, description: t.description, slug: t.slug },
-          create: { postId: row.id, locale: t.locale, title: t.title, description: t.description, slug: t.slug },
-        });
-      }
-      postCount++;
-    }
-    console.log(`✓ posts: ${postCount}`);
-
-  } // !onlyExtra
-
-  /* ── 5) Story (شريط القصص) ──────────────────────────────────
-   * `startsAt`/`endsAt` are carried through as they come  null means the story
-   * runs indefinitely. The 24-hour default belongs to the dashboard's create
-   * path, not here: a seed re-run must not start rewriting the windows of
-   * stories an editor has already scheduled. */
-  let storyCount = 0;
-  let slideCount = 0;
-  for (const s of extra.stories) {
-    const base = {
-      title: s.title,
-      image: publicPath(s.image)!,
-      order: s.order,
-      isActive: s.isActive,
-      startsAt: s.startsAt ? new Date(s.startsAt) : null,
-      endsAt: s.endsAt ? new Date(s.endsAt) : null,
-    };
-    const row = await prisma.story.upsert({
-      where: { slug: s.slug },
-      update: base,
-      create: { ...base, slug: s.slug },
+  /* ── 1) Category (مناطق + أنواع تبرع) ───────────────────────── */
+  const categoryIdByKey = new Map<string, string>();
+  for (const c of seed.categories) {
+    const row = await prisma.category.upsert({
+      where: { name: c.name },
+      update: { slug: c.slug, order: c.order, isActive: c.isActive },
+      create: { name: c.name, slug: c.slug, order: c.order, isActive: c.isActive },
     });
-    for (const t of s.translations as Tr[]) {
-      await prisma.storyTranslation.upsert({
-        where: { storyId_locale: { storyId: row.id, locale: t.locale } },
-        update: { title: t.title! },
-        create: { storyId: row.id, locale: t.locale, title: t.title! },
+    categoryIdByKey.set(c.externalKey, row.id);
+    for (const t of c.translations as Tr[]) {
+      await prisma.categoryTranslation.upsert({
+        where: { categoryId_locale: { categoryId: row.id, locale: t.locale } },
+        update: { name: t.name!, slug: t.slug },
+        create: { categoryId: row.id, locale: t.locale, name: t.name!, slug: t.slug },
       });
     }
-
-    /* Slides. The data file may carry an explicit `slides` list; the legacy
-       shape carries only `image` + `linkUrl`, which becomes one slide whose CTA
-       is that link  the resolver localises it per visitor. Replaced wholesale,
-       like playlist episodes: no stable key of their own, so a re-run must not
-       stack duplicates. */
-    type SeedSlide = {
-      mediaType?: string; mediaUrl: string; durationSeconds?: number; caption?: string;
-      ctaLabel?: string; ctaKind?: string; ctaValue?: string;
-    };
-    const legacy = s as unknown as { linkUrl?: string | null; slides?: SeedSlide[] };
-    const slides: SeedSlide[] = Array.isArray(legacy.slides) && legacy.slides.length
-      ? legacy.slides
-      : [{ mediaUrl: s.image, ...(legacy.linkUrl ? { ctaKind: "URL", ctaValue: legacy.linkUrl } : {}) }];
-
-    await prisma.storySlide.deleteMany({ where: { storyId: row.id } });
-    await prisma.storySlide.createMany({
-      data: slides.map((sl, i) => ({
-        storyId: row.id,
-        mediaType: sl.mediaType === "VIDEO" ? "VIDEO" : "IMAGE",
-        mediaUrl: publicPath(sl.mediaUrl)!,
-        durationSeconds: sl.durationSeconds ?? 5,
-        caption: sl.caption ?? undefined,
-        ctaLabel: sl.ctaLabel ?? undefined,
-        ...(sl.ctaKind && sl.ctaValue
-          ? { ctaKind: sl.ctaKind as "PAGE" | "CAMPAIGN" | "POST" | "URL", ctaValue: sl.ctaValue }
-          : {}),
-        order: i,
-      })),
-    });
-    slideCount += slides.length;
-    storyCount++;
   }
-  console.log(`✓ stories: ${storyCount} (slides: ${slideCount})`);
+  console.log(`✓ categories: ${categoryIdByKey.size}`);
 
-  /* ── 6) VideoPlaylist + PlaylistVideo (برامجنا المصورة) ─────
-   * Episodes are replaced wholesale rather than upserted: they have no stable
-   * key of their own, and YouTube is the source of truth for what a playlist
-   * contains. deleteMany-then-createMany keeps a re-run from stacking
-   * duplicates, and is why the parent upsert comes first  the children need
-   * its id. */
-  let playlistCount = 0;
-  let playlistVideoCount = 0;
-  for (const p of extra.playlists) {
+  /* ── 2) Campaign (المشاريع) ─────────────────────────────────── */
+  let campaignCount = 0;
+  for (const p of seed.campaigns) {
+    const categoryIds = p.categoryKeys
+      .map((k: string) => categoryIdByKey.get(k))
+      .filter((id): id is string => Boolean(id));
+
     const base = {
       title: p.title,
-      description: p.description ?? undefined,
-      youtubePlaylistUrl: p.youtubePlaylistUrl ?? undefined,
-      kind: p.kind === "SERIES" ? PlaylistKind.SERIES : PlaylistKind.PROGRAM,
-      coverImage: publicPath((p as { coverImage?: string }).coverImage),
-      order: p.order,
+      description: p.description,
+      targetAmount: p.targetAmount,
+      currentAmount: p.currentAmount,
+      baselineAmount: p.baselineAmount,
+      goalType: p.goalType,
+      fundraisingMode: p.fundraisingMode,
+      sharePriceUSD: p.sharePriceUSD ?? undefined,
+      images: (p.images as string[]).map(publicPath).filter((v): v is string => Boolean(v)),
+      videoUrl: p.videoUrl ?? undefined,
       isActive: p.isActive,
+      isDeleted: false,
+      priority: p.priority,
+      categories: { set: categoryIds.map((id) => ({ id })) },
     };
-    const row = await prisma.videoPlaylist.upsert({
+
+    const row = await prisma.campaign.upsert({
       where: { slug: p.slug },
       update: base,
-      create: { ...base, slug: p.slug },
+      create: { ...base, slug: p.slug, categories: { connect: categoryIds.map((id) => ({ id })) } },
     });
 
     for (const t of p.translations as Tr[]) {
-      await prisma.playlistTranslation.upsert({
-        where: { playlistId_locale: { playlistId: row.id, locale: t.locale } },
-        update: { title: t.title!, description: t.description },
-        create: {
-          playlistId: row.id,
-          locale: t.locale,
-          title: t.title!,
-          description: t.description,
-        },
+      await prisma.campaignTranslation.upsert({
+        where: { campaignId_locale: { campaignId: row.id, locale: t.locale } },
+        update: { title: t.title!, description: t.description!, slug: t.slug },
+        create: { campaignId: row.id, locale: t.locale, title: t.title!, description: t.description!, slug: t.slug },
       });
     }
-
-    await prisma.playlistVideo.deleteMany({ where: { playlistId: row.id } });
-    if (p.videos.length) {
-      await prisma.playlistVideo.createMany({
-        data: (p.videos as SeedVideoRef[]).map((v) => ({
-          playlistId: row.id,
-          youtubeId: v.youtubeId,
-          url: v.url,
-          thumbnail: v.thumbnail ?? undefined,
-          title: v.title ?? undefined ?? undefined,
-          durationSeconds: v.durationSeconds ?? undefined ?? undefined,
-          order: v.order,
-          isActive: v.isActive,
-        })),
-      });
-      playlistVideoCount += p.videos.length;
-    }
-    playlistCount++;
+    campaignCount++;
   }
-  console.log(`✓ playlists: ${playlistCount} (episodes: ${playlistVideoCount})`);
+  console.log(`✓ campaigns: ${campaignCount}`);
 
-  /* ── 7) Course + CourseVideo (دوراتنا) ──────────────────────── */
-  let courseCount = 0;
-  let courseVideoCount = 0;
-  for (const c of extra.courses) {
-    const base = {
-      title: c.title,
-      kind: ((c as { kind?: string }).kind === "SEMINAR" ? "SEMINAR" : "COURSE") as "COURSE" | "SEMINAR",
-      description: c.description ?? undefined,
-      coverImage: publicPath(c.coverImage),
-      introVideoId: c.introVideoId ?? undefined,
-      introVideoUrl: c.introVideoUrl ?? undefined,
-      unitsCount: c.unitsCount ?? undefined,
-      isPinned: c.isPinned,
-      isExternal: c.isExternal,
-      externalUrl: c.externalUrl ?? undefined,
-      hasDetailPage: c.hasDetailPage,
-      order: c.order,
-      isActive: c.isActive,
-    };
-    const row = await prisma.course.upsert({
-      where: { slug: c.slug },
-      update: base,
-      create: { ...base, slug: c.slug },
+  /* ── 3) PostCategory (تصنيفات المدونة) ──────────────────────── */
+  const postCatIdByKey = new Map<string, string>();
+  for (const c of seed.postCategories) {
+    const row = await prisma.postCategory.upsert({
+      where: { name: c.name },
+      update: { slug: c.slug },
+      create: { name: c.name, slug: c.slug },
     });
-
+    postCatIdByKey.set(c.externalKey, row.id);
     for (const t of c.translations as Tr[]) {
-      await prisma.courseTranslation.upsert({
-        where: { courseId_locale: { courseId: row.id, locale: t.locale } },
-        update: { title: t.title!, description: t.description },
-        create: {
-          courseId: row.id,
-          locale: t.locale,
-          title: t.title!,
-          description: t.description,
-        },
+      await prisma.postCategoryTranslation.upsert({
+        where: { categoryId_locale: { categoryId: row.id, locale: t.locale } },
+        update: { name: t.name! },
+        create: { categoryId: row.id, locale: t.locale, name: t.name! },
       });
     }
-
-    await prisma.courseVideo.deleteMany({ where: { courseId: row.id } });
-    if (c.videos.length) {
-      await prisma.courseVideo.createMany({
-        data: (c.videos as SeedVideoRef[]).map((v) => ({
-          courseId: row.id,
-          youtubeId: v.youtubeId,
-          url: v.url,
-          thumbnail: v.thumbnail ?? undefined,
-          title: v.title ?? undefined ?? undefined,
-          order: v.order,
-        })),
-      });
-      courseVideoCount += c.videos.length;
-    }
-    courseCount++;
   }
-  console.log(`✓ courses: ${courseCount} (videos: ${courseVideoCount})`);
+  console.log(`✓ postCategories: ${postCatIdByKey.size}`);
 
-  /* ── 8) Video (إنجازاتنا + تزكياتنا) ────────────────────────
-   * `localeFilter` travels verbatim: the Turkish endorsements carry ["tr"] and
-   * must stay hidden from every other language, so an empty-array fallback here
-   * would quietly publish them everywhere. */
-  let videoCount = 0;
-  for (const v of extra.videos) {
+  /* ── 4) Post (المقالات) ─────────────────────────────────────── */
+  let postCount = 0;
+  for (const a of seed.posts) {
+    const categoryId = postCatIdByKey.get(a.categoryKey);
     const base = {
-      type: v.type === "ENDORSEMENT" ? VideoType.ENDORSEMENT
-        : v.type === "FIELD" ? VideoType.FIELD
-        : VideoType.ACHIEVEMENT,
-      title: v.title,
-      youtubeId: v.youtubeId ?? undefined,
-      url: v.url ?? undefined,
-      startSeconds: v.startSeconds ?? undefined,
-      thumbnail: publicPath(v.thumbnail),
-      regionKey: v.regionKey ?? undefined,
-      localeFilter: v.localeFilter ?? [],
-      showOnHome: v.showOnHome,
-      order: v.order,
-      isActive: v.isActive,
+      title: a.title,
+      description: a.description,
+      content: a.content,
+      image: publicPath(a.image),
+      published: a.published,
+      categoryId,
     };
-    const row = await prisma.video.upsert({
-      where: { slug: v.slug },
+    const row = await prisma.post.upsert({
+      where: { slug: a.slug },
       update: base,
-      create: { ...base, slug: v.slug },
+      create: { ...base, slug: a.slug },
     });
-    for (const t of v.translations as Tr[]) {
-      await prisma.videoTranslation.upsert({
-        where: { videoId_locale: { videoId: row.id, locale: t.locale } },
-        update: { title: t.title! },
-        create: { videoId: row.id, locale: t.locale, title: t.title! },
+    for (const t of a.translations as Tr[]) {
+      await prisma.postTranslation.upsert({
+        where: { postId_locale: { postId: row.id, locale: t.locale } },
+        update: { title: t.title, description: t.description, slug: t.slug },
+        create: { postId: row.id, locale: t.locale, title: t.title, description: t.description, slug: t.slug },
       });
     }
-    videoCount++;
+    postCount++;
   }
-  console.log(`✓ videos: ${videoCount}`);
+  console.log(`✓ posts: ${postCount}`);
 
-  /* Report · Booklet · BankAccount · Faq are
-     deliberately NOT seeded. The first two need the official PDF URLs; a
-     BankAccount holds live IBANs and a placeholder there sends a donor's
-     transfer nowhere; the rest are editorial and managed from the dashboard.
-     The two shared bands are seeded separately by `seed-banners.ts`. */
+  /* BankAccount is deliberately NOT seeded: it holds live IBANs and a
+     placeholder there sends a donor's transfer nowhere. */
 }
 
 main()

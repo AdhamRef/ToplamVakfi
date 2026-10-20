@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { pickTranslation, translationLocaleWhere } from "@/lib/i18n/translation-fallback";
 import { whereByIdOrAnyLocaleSlug } from "@/lib/slug";
 import { listProjectsInCategory, type MinbarProject } from "./projects";
-import { listVideos, type CmsVideo } from "./cms";
 import { youtubeId as parseYoutubeId } from "@/lib/content/translation-write";
 import { amountsByCurrency, type CategoryPageTemplate } from "@/lib/content/category-page-write";
 import { getTranslations } from "next-intl/server";
@@ -12,8 +11,7 @@ import { getTranslations } from "next-intl/server";
  *
  * Every category is published as a project page in the shape of
  * `Minbar/مشروع ترميم منازل القدس.dc.html`  hero with a film, a figures band,
- * the values it stands on, its campaigns as donate cards, a donation box,
- * three explanatory cards, and its achievements in video.
+ * its campaigns as donate cards and a donation box.
  *
  * Text arrives already resolved for the visitor's locale  Arabic from the row,
  * anything else from the translation with English as the fallback. Landing copy
@@ -23,18 +21,6 @@ import { getTranslations } from "next-intl/server";
  * back empty and are not rendered, which is what lets a bare category still
  * publish as a hero plus its campaigns.
  */
-
-export interface CategoryPageValue {
-  id: string;
-  label: string;
-}
-
-export interface CategoryPageCard {
-  id: string;
-  icon: string;
-  title: string;
-  body: string;
-}
 
 export interface CategoryPageContent {
   id: string;
@@ -69,11 +55,7 @@ export interface CategoryPageContent {
     | { kind: "category"; id: string; title: string }
     | { kind: "campaign"; id: string; slug: string; title: string }
     | null;
-  achievementsTitle: string;
-  values: CategoryPageValue[];
-  cards: CategoryPageCard[];
   projects: MinbarProject[];
-  achievements: CmsVideo[];
 }
 
 const PAGE_SELECT = {
@@ -98,16 +80,6 @@ const PAGE_SELECT = {
   suggestedByCurrency: true,
   donateToCategory: true,
   donateCampaignId: true,
-  achievementsTitle: true,
-  achievementVideoIds: true,
-  values: {
-    orderBy: { order: "asc" as const },
-    select: { id: true, label: true },
-  },
-  infoCards: {
-    orderBy: { order: "asc" as const },
-    select: { id: true, icon: true, title: true, body: true },
-  },
 } as const;
 
 /** One category's whole page, or `null` when the slug names nothing. */
@@ -151,7 +123,6 @@ async function readCategoryPage(where: CategoryWhere, locale: string): Promise<C
           projectsTitle: true,
           donateTitle: true,
           donateNote: true,
-          achievementsTitle: true,
         },
       },
     },
@@ -160,58 +131,7 @@ async function readCategoryPage(where: CategoryWhere, locale: string): Promise<C
 
   const t = pickTranslation(row.translations, locale);
 
-  /* Child translations are fetched together rather than per row: a page with
-     five values and three cards would otherwise be eight extra queries. */
-  const valueIds = row.values.map((v) => v.id);
-  const cardIds = row.infoCards.map((c) => c.id);
-  const achievementIds = row.achievementVideoIds ?? [];
-
-  const [valueTranslations, cardTranslations, allAchievements, projects] = await Promise.all([
-    valueIds.length
-      ? prisma.categoryValueTranslation.findMany({
-          where: { valueId: { in: valueIds }, ...translationLocaleWhere(locale) },
-          select: { valueId: true, locale: true, label: true },
-        })
-      : Promise.resolve([]),
-    cardIds.length
-      ? prisma.categoryInfoCardTranslation.findMany({
-          where: { cardId: { in: cardIds }, ...translationLocaleWhere(locale) },
-          select: { cardId: true, locale: true, title: true, body: true },
-        })
-      : Promise.resolve([]),
-    achievementIds.length ? listVideos(locale, "ACHIEVEMENT") : Promise.resolve([] as CmsVideo[]),
-    listProjectsInCategory(row.id, locale),
-  ]);
-
-  const byValue = new Map<string, typeof valueTranslations>();
-  for (const tr of valueTranslations) {
-    const list = byValue.get(tr.valueId) ?? [];
-    list.push(tr);
-    byValue.set(tr.valueId, list);
-  }
-  const byCard = new Map<string, typeof cardTranslations>();
-  for (const tr of cardTranslations) {
-    const list = byCard.get(tr.cardId) ?? [];
-    list.push(tr);
-    byCard.set(tr.cardId, list);
-  }
-
-  const values: CategoryPageValue[] = row.values.map((v) => ({
-    id: v.id,
-    label: pickTranslation(byValue.get(v.id) ?? [], locale)?.label || v.label,
-  }));
-
-  const cards: CategoryPageCard[] = row.infoCards.map((c) => {
-    const ct = pickTranslation(byCard.get(c.id) ?? [], locale);
-    return { id: c.id, icon: c.icon, title: ct?.title || c.title, body: ct?.body || c.body };
-  });
-
-  /* The achievements rail keeps the editor's order, and a video that has since
-     been unpublished drops out of it. */
-  const achievementsById = new Map(allAchievements.map((v) => [v.id, v] as const));
-  const achievements = achievementIds
-    .map((id) => achievementsById.get(id))
-    .filter((v): v is CmsVideo => Boolean(v));
+  const projects = await listProjectsInCategory(row.id, locale);
 
   const name = t?.name || row.name;
 
@@ -220,7 +140,7 @@ async function readCategoryPage(where: CategoryWhere, locale: string): Promise<C
      where it is empty, the field stays empty and its section is skipped. */
   const tLanding = locale === "ar" ? null : await getTranslations({ locale, namespace: "CategoryLanding" });
   const tCert = locale === "ar" ? null : await getTranslations({ locale, namespace: "certificates" });
-  type LandingKey = "heroLead" | "ctaLabel" | "projectsTitle" | "donateTitle" | "achievementsTitle" | "statDoneLabel" | "statGoalLabel";
+  type LandingKey = "heroLead" | "ctaLabel" | "projectsTitle" | "donateTitle" | "statDoneLabel" | "statGoalLabel";
   const copy = (key: LandingKey, own: string | null | undefined, arabic: string | null | undefined): string =>
     own || (!tLanding ? arabic || "" : arabic ? tLanding(key, { name, org: tCert!("orgName") }) : "");
 
@@ -268,11 +188,7 @@ async function readCategoryPage(where: CategoryWhere, locale: string): Promise<C
     donateNote: t?.donateNote || (locale === "ar" ? row.donateNote || "" : ""),
     suggestedAmounts: row.suggestedAmounts ?? [],
     suggestedByCurrency: amountsByCurrency(row.suggestedByCurrency),
-    achievementsTitle: copy("achievementsTitle", t?.achievementsTitle, row.achievementsTitle),
-    values,
-    cards,
     projects,
-    achievements,
   };
 }
 

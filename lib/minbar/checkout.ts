@@ -2,7 +2,6 @@ import type { MinbarCartItem } from "./cart";
 import { lineLocal, type LocalAmount } from "@/lib/minbar/donation-amount";
 import type { MinbarProject } from "./projects";
 import { orderTypeForItems, type OrderType } from "@/lib/donations/recurring-schedule";
-import { readConciergeAssisted, readConciergeTouched } from "@/lib/ai/concierge/client";
 import { getDonationAttributionPayload } from "@/lib/attribution/client-payload";
 
 /**
@@ -101,7 +100,6 @@ export interface GatewayForm {
   fields: Record<string, string>;
 }
 
-/** The three kinds of line the order API takes. */
 /** A gift, as the order API takes it on a campaign line. */
 export interface OrderGift {
   recipientName: string;
@@ -117,11 +115,6 @@ export interface OrderLines {
      currency, charged exactly when the order is in that currency. */
   items: Array<{ campaignId: string; amount: number; local?: LocalAmount; shareCount?: number; gift?: OrderGift }>;
   categoryItems: Array<{ categoryId: string; amount: number; local?: LocalAmount }>;
-  /**
-   * Waqf rows carry no amount: the server prices them from the fixed unit
-   * price, so a basket edited by hand cannot buy a metre for a dollar.
-   */
-  waqfItems: Array<{ unit: "share" | "meter"; count: number; donorName: string; onBehalf: string }>;
 }
 
 /**
@@ -146,7 +139,7 @@ export function toOrderItems(
   aliases: Readonly<Record<string, string>> = {}
 ): OrderLines & { unmatched: MinbarCartItem[] } {
   const bySlug = new Map(projects.map((project) => [project.slug, project.id]));
-  const lines: OrderLines & { unmatched: MinbarCartItem[] } = { items: [], categoryItems: [], waqfItems: [], unmatched: [] };
+  const lines: OrderLines & { unmatched: MinbarCartItem[] } = { items: [], categoryItems: [], unmatched: [] };
 
   for (const item of items) {
     const local = lineLocal(item);
@@ -173,14 +166,6 @@ export function toOrderItems(
     }
     else if (item.categoryId) {
       lines.categoryItems.push({ categoryId: item.categoryId, amount: item.amount, ...(local ? { local } : {}) });
-    }
-    else if (item.waqf) {
-      lines.waqfItems.push({
-        unit: item.waqf.unit,
-        count: item.waqf.count,
-        donorName: item.waqf.donorName.trim(),
-        onBehalf: item.waqf.onBehalf.trim(),
-      });
     }
     else {
       // Nothing the server can price: a generic intention with no target, or
@@ -253,15 +238,10 @@ export function browserTimezone(): string {
  * Throws with the server's message when the order is rejected, so the form can
  * say what went wrong rather than failing silently.
  */
-function conciergeMarker(): { sessionId: string; intent: string | null; campaignId: string | null } | null {
-  const assist = readConciergeAssisted();
-  return assist ? { sessionId: assist.sessionId, intent: assist.intent, campaignId: assist.campaignId } : null;
-}
-
 export async function createDonation(input: CreateDonationInput): Promise<CreatedDonation> {
-  const { items, categoryItems, waqfItems, unmatched } = toOrderItems(input.items, input.projects, input.projectAliases);
+  const { items, categoryItems, unmatched } = toOrderItems(input.items, input.projects, input.projectAliases);
   if (unmatched.length) throw new UnpayableItemsError(unmatched);
-  if (items.length === 0 && categoryItems.length === 0 && waqfItems.length === 0) throw new Error("cart-empty");
+  if (items.length === 0 && categoryItems.length === 0) throw new Error("cart-empty");
 
   const response = await fetch("/api/cart/payment", {
     method: "POST",
@@ -269,7 +249,6 @@ export async function createDonation(input: CreateDonationInput): Promise<Create
     body: JSON.stringify({
       items,
       ...(categoryItems.length ? { categoryItems } : {}),
-      ...(waqfItems.length ? { waqfItems } : {}),
       currency: input.currency,
       /* The basket stores USD (plus each line's exact local figure); the
          server charges a line given in `currency` as given and converts the
@@ -281,10 +260,6 @@ export async function createDonation(input: CreateDonationInput): Promise<Create
       ...(orderType(input.items) !== "ONE_TIME" && orderSchedule(input.items) ? { schedule: orderSchedule(input.items) } : {}),
       teamSupport: input.teamSupport > 0 ? input.teamSupport : 0,
       teamSupportRecurring: input.teamSupportRecurring,
-      /* Analytics only: marks an order whose basket went through the concierge. */
-      ...(conciergeMarker() ? { concierge: conciergeMarker() } : {}),
-      /* Analytics only: this browser talked to the concierge before (indirect influence). */
-      ...(readConciergeTouched() ? { conciergeTouch: readConciergeTouched() } : {}),
       /* Where the donor came from (UTM, click ids, landing page), kept in
          cookies by `AttributionCapture`. Feeds the dashboard's "مصدر التبرع". */
       attribution: getDonationAttributionPayload(),

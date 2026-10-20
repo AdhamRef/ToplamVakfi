@@ -1,11 +1,11 @@
 import "server-only";
 
 import { messagesFor } from "@/i18n/locale-messages";
-import { receiptPagesFor, thanksDocumentFor, waqfDocumentFor } from "./documents";
+import { receiptPagesFor, thanksDocumentFor } from "./documents";
 import { htmlToPdf } from "./pdf";
-import { renderReceiptHtml, renderThanksHtml, renderWaqfHtml, type ThanksLayout } from "./render";
+import { renderReceiptHtml, renderThanksHtml, type ThanksLayout } from "./render";
 import { documentFilename } from "./http";
-import type { IssuedDocuments, IssuedWaqfCertificate } from "./issue";
+import type { IssuedDocuments } from "./issue";
 
 /**
  * From issued records to PDF bytes. The endpoints call the single-document
@@ -23,13 +23,6 @@ export async function generateThanksPdf(docs: IssuedDocuments, assetBase: string
   const html = await renderThanksHtml(doc, assetBase, layout);
   const pdf = await htmlToPdf(html, { landscape: layout === "landscape", marginMm: 0 });
   return { pdf, filename: documentFilename.thanks(docs.locale, doc.serial) };
-}
-
-export async function generateWaqfPdf(cert: IssuedWaqfCertificate, assetBase: string): Promise<GeneratedPdf> {
-  const doc = await waqfDocumentFor(cert);
-  const html = await renderWaqfHtml(doc, assetBase);
-  const pdf = await htmlToPdf(html, { landscape: true, marginMm: 4 });
-  return { pdf, filename: documentFilename.waqf(cert.locale, doc.unit, cert.number) };
 }
 
 export async function generateReceiptPdf(docs: IssuedDocuments, assetBase: string): Promise<GeneratedPdf> {
@@ -56,8 +49,7 @@ function attachmentName(locale: string, key: "attachment0" | "attachment1", fall
 /**
  * The PDFs the confirmation email attaches (`CERTIFICATES_DOWNLOADS_HANDOFF §7`):
  * the thank-you certificate and the receipt under the names
- * `email.success.attachment0/1` give them in the donor's language, plus one
- * waqf certificate per waqf line.
+ * `email.success.attachment0/1` give them in the donor's language.
  */
 export async function donationAttachments(docs: IssuedDocuments, assetBase: string): Promise<EmailAttachment[]> {
   const out: EmailAttachment[] = [];
@@ -65,9 +57,5 @@ export async function donationAttachments(docs: IssuedDocuments, assetBase: stri
   out.push({ filename: attachmentName(docs.locale, "attachment0", thanks.filename), content: thanks.pdf.toString("base64"), contentType: "application/pdf" });
   const receipt = await generateReceiptPdf(docs, assetBase);
   out.push({ filename: attachmentName(docs.locale, "attachment1", receipt.filename), content: receipt.pdf.toString("base64"), contentType: "application/pdf" });
-  for (const cert of docs.waqf) {
-    const waqf = await generateWaqfPdf(cert, assetBase);
-    out.push({ filename: waqf.filename, content: waqf.pdf.toString("base64"), contentType: "application/pdf" });
-  }
   return out;
 }

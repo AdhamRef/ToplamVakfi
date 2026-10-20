@@ -3,9 +3,8 @@ import "server-only";
 import type { ReactElement } from "react";
 import ThanksCertificate from "@/components/minbar/certificates/ThanksCertificate";
 import ThanksCertificatePortrait from "@/components/minbar/certificates/ThanksCertificatePortrait";
-import WaqfCertificateSheet from "@/components/minbar/certificates/WaqfCertificateSheet";
 import ReceiptSheet, { RECEIPT_RESPONSIVE_CSS } from "@/components/minbar/certificates/ReceiptSheet";
-import type { ReceiptDocument, ThanksDocument, WaqfDocument } from "./documents";
+import type { ReceiptDocument, ThanksDocument } from "./documents";
 
 /**
  * Self-contained HTML for each document, for the PDF renderer.
@@ -68,32 +67,6 @@ export async function renderThanksHtml(doc: ThanksDocument, assetBase: string, l
   `;
   const props = { donorName: doc.donorName, copy: doc.copy, verse: doc.verse, duaVerse: doc.duaVerse, dir: doc.dir, assetBase };
   const body = await toMarkup(layout === "portrait" ? <ThanksCertificatePortrait {...props} /> : <ThanksCertificate {...props} />);
-  return page(doc.locale, doc.dir, css, body);
-}
-
-/** `شهادة الاوقاف.dc.html`  both panels on one A4 landscape sheet, 4mm margin. */
-export async function renderWaqfHtml(doc: WaqfDocument, assetBase: string): Promise<string> {
-  const css = `
-  @page { size: A4 landscape; margin: 4mm; }
-  .waqf-pair { width: 289mm !important; height: 202mm !important; grid-template-columns: 1fr 1fr !important; max-width: none !important; aspect-ratio: auto !important; margin: 0 !important; padding: 0 !important; box-shadow: none !important; align-items: center !important; break-inside: avoid; overflow: hidden; }
-  .waqf-pair > .waqf-sheet { grid-column: 1 !important; grid-row: 1 !important; }
-  .waqf-pair > .waqf-back { grid-column: 2 !important; grid-row: 1 !important; }
-  `;
-  const body = await toMarkup(
-    <WaqfCertificateSheet
-      unit={doc.unit}
-      count={doc.count}
-      total={doc.total}
-      donorName={doc.donorName}
-      onBehalf={doc.onBehalf}
-      certNo={doc.certNo}
-      certDate={doc.certDate}
-      copy={doc.copy}
-      locale={doc.locale}
-      dir={doc.dir}
-      assetBase={assetBase}
-    />
-  );
   return page(doc.locale, doc.dir, css, body);
 }
 

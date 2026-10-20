@@ -1,30 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
-import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { errorMessage } from '@/lib/dashboard/client-error-message';
 import { SUPPORTED_CURRENCY_OPTIONS } from '@/lib/supported-currencies';
 import { ImageUploadField } from '../../_components/ImageUploadField';
-import {
-  ContentTranslationTabs,
-  emptyTranslations,
-  type TranslationField,
-  type TranslationMap,
-} from '../../_components/ContentTranslationTabs';
-import { ContentPicker, type ContentOption } from '../../super-categories/_components/ContentPicker';
-import { CategoryIconPicker } from './CategoryIconPicker';
-import { iconLabel } from './category-icon-catalog';
-import { parseCategoryIcon } from '@/components/CategoryIcon';
-import { CategoryCardIcon, isLegacyCardIcon } from '@/components/minbar/categories/CategoryCardIcon';
-import { dashIntl, dt } from "@/lib/dashboard/i18n";
+import { dt } from "@/lib/dashboard/i18n";
 
 /**
  * The landing page a category owns, as the dashboard edits it.
@@ -33,58 +16,16 @@ import { dashIntl, dt } from "@/lib/dashboard/i18n";
  * `Minbar/مشروع ترميم منازل القدس.dc.html`. The translated copy  the lead, the
  * figure labels, the headings  lives in the form's language tabs above this
  * section, because it is per-locale; everything here is the page's structure:
- * the images, the numbers, the strip of values, the three explanatory cards,
- * the campaign the donation box gives to, and the achievement videos.
+ * the images, the numbers and the campaign the donation box gives to.
  *
  * Each part is optional. A category with none of it still publishes  as its
  * hero and its campaigns  so this section never has to be filled in to save.
  */
 
-export const CATEGORY_VALUE_TRANSLATION_FIELDS: readonly TranslationField[] = [
-  { name: 'label', get label() { return dt("النص"); } },
-];
-
-export const CATEGORY_CARD_TRANSLATION_FIELDS: readonly TranslationField[] = [
-  { name: 'title', get label() { return dt("العنوان"); } },
-  { name: 'body', get label() { return dt("النص"); }, multiline: true },
-];
-
-/** The cards' original eight drawn glyphs  mirrors `CATEGORY_CARD_ICON_KEYS` on the write side. */
-export const CARD_ICON_LABELS: Record<string, string> = {
-  get alert() { return dt("تنبيه / خطر"); },
-  get home() { return dt("منزل"); },
-  get heart() { return dt("قلب / أثر"); },
-  get hands() { return dt("أيادٍ / تكافل"); },
-  get book() { return dt("كتاب / تعليم"); },
-  get shield() { return dt("حماية"); },
-  get water() { return dt("ماء"); },
-  get users() { return dt("أسرة / مجتمع"); },
-};
-
-/** What to call a card's icon  a drawn glyph, a catalogue icon, or a flag. */
-function cardIconLabel(icon: string): string {
-  if (CARD_ICON_LABELS[icon]) return CARD_ICON_LABELS[icon];
-  const parsed = parseCategoryIcon(icon);
-  if (parsed.kind === 'flag') {
-    try {
-      return dt("علم {0}", [new Intl.DisplayNames([dashIntl('ar')], { type: 'region' }).of(parsed.countryCode) ?? parsed.countryCode]);
-    } catch {
-      return dt("علم {0}", [parsed.countryCode]);
-    }
-  }
-  return iconLabel(parsed.name);
-}
-
-export interface CategoryValueRow {
-  label: string;
-  translations: TranslationMap;
-}
-
-export interface CategoryCardRow {
-  icon: string;
+/** A campaign the donation box can give to. */
+export interface CampaignOption {
+  id: string;
   title: string;
-  body: string;
-  translations: TranslationMap;
 }
 
 /** One per-currency exception to the USD amounts, as the editor types it. */
@@ -112,9 +53,6 @@ export interface CategoryPageValues {
   suggestedAmounts: string;
   suggestedByCurrency: CurrencyAmountsRow[];
   donateTarget: string;
-  achievementVideoIds: string[];
-  values: CategoryValueRow[];
-  infoCards: CategoryCardRow[];
 }
 
 export function emptyCategoryPage(): CategoryPageValues {
@@ -127,9 +65,6 @@ export function emptyCategoryPage(): CategoryPageValues {
     suggestedAmounts: '',
     suggestedByCurrency: [],
     donateTarget: '',
-    achievementVideoIds: [],
-    values: [],
-    infoCards: [],
   };
 }
 
@@ -164,14 +99,6 @@ export function donateTargetPayload(target: string): { donateToCategory: boolean
   };
 }
 
-export function emptyCategoryValue(): CategoryValueRow {
-  return { label: '', translations: emptyTranslations(CATEGORY_VALUE_TRANSLATION_FIELDS) };
-}
-
-export function emptyCategoryCard(icon = 'alert'): CategoryCardRow {
-  return { icon, title: '', body: '', translations: emptyTranslations(CATEGORY_CARD_TRANSLATION_FIELDS) };
-}
-
 /** `"100, 300, 500"` → `[100, 300, 500]`; the API drops anything ≤ 0 anyway. */
 export function parseAmountList(raw: string): number[] {
   return raw
@@ -188,44 +115,13 @@ export function CategoryPageSection({
 }: {
   values: CategoryPageValues;
   onChange: (next: CategoryPageValues) => void;
-  campaignOptions: ContentOption[];
+  campaignOptions: CampaignOption[];
 }) {
-  const [achievementOptions, setAchievementOptions] = useState<ContentOption[]>([]);
-
-  /* The achievement videos this page can show. Read once; the picker only
-     stores ids, so without this it could not name anything already chosen. */
-  useEffect(() => {
-    let live = true;
-    axios
-      .get('/api/super-categories/content-options')
-      .then((res) => {
-        if (!live) return;
-        const all = (res.data?.VIDEO ?? []) as Array<ContentOption & { hint?: string }>;
-        setAchievementOptions(all.filter((v) => v.hint === 'ACHIEVEMENT'));
-      })
-      .catch((e) => { if (live) toast.error(errorMessage(e, dt("تعذّر تحميل قائمة الفيديوهات"))); });
-    return () => { live = false; };
-  }, []);
-
   const set = <K extends keyof CategoryPageValues>(key: K, v: CategoryPageValues[K]) =>
     onChange({ ...values, [key]: v });
 
-  const setValueRow = (index: number, patch: Partial<CategoryValueRow>) =>
-    set('values', values.values.map((row, i) => (i === index ? { ...row, ...patch } : row)));
-
-  const setCardRow = (index: number, patch: Partial<CategoryCardRow>) =>
-    set('infoCards', values.infoCards.map((row, i) => (i === index ? { ...row, ...patch } : row)));
-
   const setCurrencyRow = (id: string, patch: Partial<Pick<CurrencyAmountsRow, 'currency' | 'amountsStr'>>) =>
     set('suggestedByCurrency', values.suggestedByCurrency.map((row) => (row.id === id ? { ...row, ...patch } : row)));
-
-  const move = <T,>(list: T[], index: number, delta: number): T[] => {
-    const target = index + delta;
-    if (target < 0 || target >= list.length) return list;
-    const next = [...list];
-    [next[index], next[target]] = [next[target], next[index]];
-    return next;
-  };
 
   return (
     <>
@@ -252,7 +148,7 @@ export function CategoryPageSection({
           </Select>
           <span className="block text-[11px] text-slate-500">
             {values.pageTemplate
-              ? dt("رابط الحملة يحوّل إلى هذه الصفحة، وتظهر فيها مشاريعها كلها وكل ما تضبطه هنا: الأرقام والقيم وصندوق التبرع والبطاقات والإنجازات، كلٌّ في مكانه. صورة الواجهة ومقدمتها وزرّها تحل محل صورة الصفحة ومقدمتها.")
+              ? dt("رابط الحملة يحوّل إلى هذه الصفحة، وتظهر فيها مشاريعها كلها وكل ما تضبطه هنا: الأرقام وصندوق التبرع، كلٌّ في مكانه. صورة الواجهة ومقدمتها وزرّها تحل محل صورة الصفحة ومقدمتها.")
               : dt("الافتراضي: صفحة مستقلة بالشكل الموحّد. اختر صفحة ثابتة لتُدمج الحملة فيها بدل ذلك.")}
           </span>
         </div>
@@ -362,148 +258,6 @@ export function CategoryPageSection({
             </div>
           )}
         </div>
-      </Card>
-
-      {/* ── The values strip ─────────────────────────────────────────── */}
-      <Card className="space-y-3 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-sm font-bold">{dt("قيم الحملة")}</h2>
-            <p className="text-xs text-slate-500">{dt("عبارات قصيرة تظهر في شريط مربعات أعلى المشاريع. الأفضل خمس أو أقل.")}</p>
-          </div>
-          <Badge variant="outline">{values.values.length}</Badge>
-        </div>
-
-        {values.values.map((row, index) => (
-          <div key={index} className="space-y-2 rounded-lg border p-3">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline">{index + 1}</Badge>
-              <Input className="h-8 flex-1 text-xs" placeholder={dt("نحمي الوجود ونعزز الصمود")} value={row.label} onChange={(e) => setValueRow(index, { label: e.target.value })} />
-              <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => set('values', move(values.values, index, -1))} aria-label={dt("أعلى")}>
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => set('values', move(values.values, index, 1))} aria-label={dt("أسفل")}>
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => set('values', values.values.filter((_, i) => i !== index))} aria-label={dt("حذف")}>
-                <Trash2 className="h-4 w-4 text-red-600" />
-              </Button>
-            </div>
-            <details className="rounded border bg-slate-50/60 p-2">
-              <summary className="cursor-pointer text-[11px] font-bold text-slate-600">{dt("ترجمات هذه العبارة")}</summary>
-              <div className="pt-2">
-                <ContentTranslationTabs
-                  fields={CATEGORY_VALUE_TRANSLATION_FIELDS}
-                  requiredField="label"
-                  value={row.translations}
-                  onChange={(next) => setValueRow(index, { translations: next })}
-                  source={{ label: row.label }}
-                  itemLabel="campaign value statement"
-                />
-              </div>
-            </details>
-          </div>
-        ))}
-
-        <Button type="button" variant="outline" size="sm" onClick={() => set('values', [...values.values, emptyCategoryValue()])}>
-          <Plus className="me-1 h-4 w-4" />
-          {dt("إضافة قيمة")}</Button>
-      </Card>
-
-      {/* ── The explanatory cards ────────────────────────────────────── */}
-      <Card className="space-y-3 p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-sm font-bold">{dt("بطاقات التعريف")}</h2>
-            <p className="text-xs text-slate-500">{dt("ثلاث بطاقات أسفل الصفحة  لماذا، وماذا نفعل، والأثر. لكل واحدة أيقونة مرسومة.")}</p>
-          </div>
-          <Badge variant="outline">{values.infoCards.length}</Badge>
-        </div>
-
-        {values.infoCards.map((row, index) => (
-          <div key={index} className="space-y-3 rounded-lg border p-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="outline">{index + 1}</Badge>
-              <span className="inline-flex items-center gap-2 rounded-md border bg-white px-2 py-1 text-xs text-slate-700">
-                <span className="grid h-7 w-7 place-items-center rounded-md bg-amber-50 text-amber-600">
-                  <CategoryCardIcon name={row.icon} className="h-4 w-4" />
-                </span>
-                {cardIconLabel(row.icon)}
-              </span>
-              <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => set('infoCards', move(values.infoCards, index, -1))} aria-label={dt("أعلى")}>
-                <ChevronUp className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => set('infoCards', move(values.infoCards, index, 1))} aria-label={dt("أسفل")}>
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-              <Button type="button" variant="ghost" size="icon" className="h-7 w-7" onClick={() => set('infoCards', values.infoCards.filter((_, i) => i !== index))} aria-label={dt("حذف")}>
-                <Trash2 className="h-4 w-4 text-red-600" />
-              </Button>
-            </div>
-            <Input className="h-8 text-xs" placeholder={dt("لماذا هذه الحملة؟")} value={row.title} onChange={(e) => setCardRow(index, { title: e.target.value })} />
-            <Textarea rows={3} className="text-xs" placeholder={dt("نص البطاقة…")} value={row.body} onChange={(e) => setCardRow(index, { body: e.target.value })} />
-            {/* The same picker as the category's own icon, so a card can carry
-                any of its icons or a flag. The first eight drawn glyphs stay
-                available above for the cards that already use them. */}
-            <details className="rounded border bg-slate-50/60 p-2">
-              <summary className="cursor-pointer text-[11px] font-bold text-slate-600">{dt("تغيير الأيقونة")}</summary>
-              <div className="space-y-2 pt-2">
-                <div className="flex flex-wrap gap-1.5">
-                  {Object.entries(CARD_ICON_LABELS).map(([value, label]) => (
-                    <button
-                      key={value}
-                      type="button"
-                      title={label}
-                      onClick={() => setCardRow(index, { icon: value })}
-                      className={`grid h-8 w-8 place-items-center rounded-md border transition-colors ${
-                        row.icon === value ? 'border-amber-500 bg-amber-50 text-amber-600' : 'border-slate-200 text-slate-500 hover:border-amber-400'
-                      }`}
-                    >
-                      <CategoryCardIcon name={value} className="h-4 w-4" />
-                    </button>
-                  ))}
-                </div>
-                <CategoryIconPicker
-                  value={isLegacyCardIcon(row.icon) ? '' : row.icon}
-                  onChange={(v) => setCardRow(index, { icon: v || 'alert' })}
-                />
-              </div>
-            </details>
-            <details className="rounded border bg-slate-50/60 p-2">
-              <summary className="cursor-pointer text-[11px] font-bold text-slate-600">{dt("ترجمات هذه البطاقة")}</summary>
-              <div className="pt-2">
-                <ContentTranslationTabs
-                  fields={CATEGORY_CARD_TRANSLATION_FIELDS}
-                  requiredField="title"
-                  value={row.translations}
-                  onChange={(next) => setCardRow(index, { translations: next })}
-                  source={{ title: row.title, body: row.body }}
-                  itemLabel="explanatory card on a campaign page"
-                />
-              </div>
-            </details>
-          </div>
-        ))}
-
-        <Button type="button" variant="outline" size="sm" onClick={() => set('infoCards', [...values.infoCards, emptyCategoryCard()])}>
-          <Plus className="me-1 h-4 w-4" />
-          {dt("إضافة بطاقة")}</Button>
-      </Card>
-
-      {/* ── Achievements ─────────────────────────────────────────────── */}
-      <Card className="space-y-3 p-6">
-        <div>
-          <h2 className="text-sm font-bold">{dt("الإنجازات بالفيديو")}</h2>
-          <p className="text-xs text-slate-500">
-            {dt("من مكتبة الفيديوهات  نوع «الإنجازات». تظهر في شريط أسفل الصفحة بالترتيب المحدد هنا، بنفس شكل شريط الإنجازات في الصفحة الرئيسية. فيديو يُحذف أو يُخفى يسقط من الشريط تلقائيًا.")}</p>
-        </div>
-        <ContentPicker
-          label={dt("الفيديوهات")}
-          description={dt("اختر ما يخص هذه الحملة.")}
-          options={achievementOptions}
-          value={values.achievementVideoIds}
-          onChange={(next) => set('achievementVideoIds', next)}
-        />
       </Card>
     </>
   );

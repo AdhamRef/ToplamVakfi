@@ -10,28 +10,15 @@ import { prisma } from "@/lib/prisma";
  * advanced with an atomic `$inc`, so two confirmations landing in the same
  * millisecond get two different numbers  never the same one twice.
  *
- * The waqf counters start where the foundation's printed books left off
- * (`شهادة الاوقاف.dc.html`: "الأمتار من 9876، الأسهم من 76543"), so the first
- * certificate the site issues continues the paper series rather than
- * restarting it. The thank-you and receipt counters run per calendar year.
+ * The thank-you and receipt counters run per calendar year.
  */
 
-export type SequenceKey = "waqf-share" | "waqf-meter" | `thanks-${number}` | `receipt-${number}`;
-
-/** The first number each sequence hands out. */
-const FIRST_NUMBER: Record<string, number> = {
-  "waqf-share": 76543,
-  "waqf-meter": 9876,
-};
-
-function firstNumber(key: string): number {
-  return FIRST_NUMBER[key] ?? 1;
-}
+export type SequenceKey = `thanks-${number}` | `receipt-${number}`;
 
 /**
  * Claim the next number in a sequence.
  *
- * The row is created on first use holding the series' first number; every
+ * The row is created on first use holding 1; every
  * later call increments it in place. A concurrent first use is caught by the
  * primary key and retried as a plain increment, so no number is skipped or
  * handed out twice.
@@ -40,7 +27,7 @@ export async function nextSequenceNumber(key: SequenceKey): Promise<number> {
   const existing = await prisma.documentSequence.findUnique({ where: { id: key } });
   if (!existing) {
     try {
-      const created = await prisma.documentSequence.create({ data: { id: key, value: firstNumber(key) } });
+      const created = await prisma.documentSequence.create({ data: { id: key, value: 1 } });
       return created.value;
     } catch {
       /* Someone else created it between the read and the write  fall through

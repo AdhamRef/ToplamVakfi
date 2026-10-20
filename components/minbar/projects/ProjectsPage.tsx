@@ -8,7 +8,6 @@ import ProjectDonateCard from "@/components/minbar/ProjectDonateCard";
 import { NoResults } from "@/components/minbar/states/ContentStates";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import CategoryIcon, { type CategoryIconName } from "./CategoryIcons";
 import ProjectsHero, { type ProjectSlide } from "./ProjectsHero";
 
@@ -39,8 +38,8 @@ const PAGE_SIZE = 6;
  * for the public information architecture. Other CMS categories remain usable
  * internally, but never grow the public filter rail automatically.
  *
- * Three entries filter the project grid; three are direct site destinations
- * (zakat, waqf, Jerusalem-home restoration); "all" clears the filter.
+ * Three entries filter the project grid; two are direct site destinations
+ * (zakat, Jerusalem-home restoration); "all" clears the filter.
  */
 const PUBLIC_PROJECT_FILTERS = [
   { id: "all", icon: "layout-grid" as CategoryIconName, kind: "filter" as const },
@@ -48,8 +47,6 @@ const PUBLIC_PROJECT_FILTERS = [
   { id: "region-gaza", icon: "hand-heart" as CategoryIconName, kind: "filter" as const },
   { id: "region-al-aqsa", icon: "moon-star" as CategoryIconName, kind: "filter" as const },
   { id: "zakat", icon: "hand-coins" as CategoryIconName, kind: "link" as const, route: "zakat" as const },
-  { id: "waqf", icon: "scroll-text" as CategoryIconName, kind: "link" as const, route: "waqf" as const },
-  { id: "ibadan", icon: "book-open" as CategoryIconName, kind: "link" as const, route: "ibadan" as const },
   { id: "repair", icon: "home" as CategoryIconName, kind: "link" as const, route: "restoration" as const },
 ] as const;
 
@@ -75,8 +72,6 @@ export default function ProjectsPage({ projects, slides }: ProjectsPageProps) {
     if (item.id === "region-gaza") return { ...item, label: tHome("storyGaza") };
     if (item.id === "region-al-aqsa") return { ...item, label: tNav("aqsa") };
     if (item.id === "zakat") return { ...item, label: locale === "ar" ? "زكاة" : tNav("zakat") };
-    if (item.id === "waqf") return { ...item, label: locale === "ar" ? "أوقاف" : tNav("waqf") };
-    if (item.id === "ibadan") return { ...item, label: locale === "ar" ? "عبادًا لنا" : tHome("ibadanHeading1") };
     return { ...item, label: t("catHomeRepair") };
   }), [locale, t, tHome, tNav, tSystem]);
 
@@ -120,11 +115,7 @@ export default function ProjectsPage({ projects, slides }: ProjectsPageProps) {
             <div className="tvp-filters" id="tvp-filters">
             {categories.map((c) => {
               if (c.kind === "link") {
-                const href =
-                  c.route === "zakat" ? miaPath("zakat", locale)
-                    : c.route === "waqf" ? miaPath("waqf", locale)
-                      : c.route === "ibadan" ? miaPath("ibadanProject", locale)
-                        : miaPath("restorationProject", locale);
+                const href = c.route === "zakat" ? miaPath("zakat", locale) : miaPath("restorationProject", locale);
                 return (
                   <a key={c.id} href={href} className="tvp-chip">
                     <span className="tvp-chip-ico">
@@ -187,7 +178,6 @@ export default function ProjectsPage({ projects, slides }: ProjectsPageProps) {
 
       <ZakatBanner />
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

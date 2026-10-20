@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /**
  * Contact us  ported from `Minbar/تواصل معنا.dc.html`.
  *
- * `homepage` rides along for the three closing banners.
+ * `homepage` rides along for the two closing banners.
  */
 export default async function Contact({ params }: Props) {
   const { locale } = await params;

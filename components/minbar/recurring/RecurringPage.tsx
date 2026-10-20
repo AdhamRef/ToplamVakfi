@@ -429,9 +429,6 @@ export default function RecurringPage({ projects }: RecurringPageProps) {
                 <Button variant="primary" size="lg" href="#plan" style={{ whiteSpace: "nowrap", borderRadius: 999 }}>
                   {t("createPlan")}
                 </Button>
-                <Button variant="outline" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap", borderRadius: 999 }}>
-                  {t("waqfProjects")}
-                </Button>
               </div>
             </div>
           </div>

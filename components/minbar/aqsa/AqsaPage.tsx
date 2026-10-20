@@ -536,9 +536,6 @@ export default function AqsaPage({ verse, isra, projects, category = null }: Aqs
             <Button variant="primary" size="lg" href={miaPath("projects", locale)} style={{ whiteSpace: "nowrap" }}>
               {tCommon("donate")}
             </Button>
-            <Button variant="outline" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap" }}>
-              {t("endowInQuds")}
-            </Button>
           </div>
         </div>
       </section>

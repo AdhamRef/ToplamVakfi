@@ -24,7 +24,6 @@ import { createBankTransferClaim } from "@/lib/donations/bank-transfer-claims";
 import { BANK_TRANSFER_PROVIDER } from "@/lib/donations/bank-transfer-shared";
 import { listBankAccounts } from "@/lib/minbar/cms";
 import { getUsdBaseRatesForServer } from "@/lib/exchange/rates-service";
-import { WAQF_MAX_COUNT, WAQF_UNIT_PRICE_USD, isWaqfUnitKey } from "@/lib/minbar/waqf";
 import { MIN_DONATION_USD, MIN_DONATION_USD_TOLERANCE, parseLocalAmount } from "@/lib/minbar/donation-amount";
 import {
   consentSnapshotFor,
@@ -41,37 +40,6 @@ import { isAlbarakaConfigured, isAlbarakaRecurringEnabled } from "@/lib/albaraka
 import { isPayPalConfigured, isPayPalRecurringEnabled } from "@/lib/paypal";
 import { mintDonationAccessToken } from "@/lib/donations/access-token";
 import { giftLineData, parseGiftOrder, type GiftOrderInput } from "@/lib/donations/gift-order";
-import { recordConciergeEvents } from "@/lib/ai/concierge/events";
-
-/**
- * Analytics-only marker sent by the checkout when the basket went through the
- * donation concierge (`lib/ai/concierge/client.ts`). Stored under
- * `Donation.attribution.ai_concierge` so paid orders can be counted per
- * concierge session; it never changes what is charged.
- */
-function parseConciergeMarker(raw: unknown): { sessionId: string; intent: string | null; campaignId: string | null } | null {
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
-  const o = raw as Record<string, unknown>;
-  const sessionId = typeof o.sessionId === "string" && /^[A-Za-z0-9_-]{8,64}$/.test(o.sessionId) ? o.sessionId : null;
-  if (!sessionId) return null;
-  const intent = typeof o.intent === "string" ? o.intent.slice(0, 40) : null;
-  const campaignId = typeof o.campaignId === "string" && /^[0-9a-fA-F]{24}$/.test(o.campaignId) ? o.campaignId : null;
-  return { sessionId, intent, campaignId };
-}
-
-/**
- * Analytics-only: the browser had talked to the concierge (`markConciergeTouched`)
- * before this order, whether or not this basket came from it. Stored under
- * `Donation.attribution.ai_concierge_touch`; the dashboard counts it as an
- * indirect donation when `at` falls inside its attribution window.
- */
-function parseConciergeTouch(raw: unknown): { sessionId: string; at: string } | null {
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
-  const o = raw as Record<string, unknown>;
-  const sessionId = typeof o.sessionId === "string" && /^[A-Za-z0-9_-]{8,64}$/.test(o.sessionId) ? o.sessionId : null;
-  const at = typeof o.at === "number" && Number.isFinite(o.at) && o.at > 0 && o.at <= Date.now() + 60_000 ? new Date(o.at) : null;
-  return sessionId && at ? { sessionId, at: at.toISOString() } : null;
-}
 
 const PAYMENT_METHODS = new Set(["CARD", "PAYPAL", "BANK_TRANSFER"]);
 
@@ -159,7 +127,6 @@ export async function POST(request: NextRequest) {
     const {
       items: itemsIn,
       categoryItems: categoryItemsIn,
-      waqfItems: waqfItemsIn,
       currency: requestedCurrency,
       /* "USD" when the line and team-support amounts are USD figures to be
          converted into the charge currency (the Minbar checkout). */
@@ -187,11 +154,7 @@ export async function POST(request: NextRequest) {
          the finance review knows where to look. */
       bankSlug,
       bankCurrency,
-      concierge: conciergeIn,
-      conciergeTouch: conciergeTouchIn,
     } = body;
-    const concierge = parseConciergeMarker(conciergeIn);
-    const conciergeTouch = parseConciergeTouch(conciergeTouchIn);
     /* Where the donor came from (UTM, click ids, landing page) as the browser
        recorded it, whitelisted the same way as `POST /api/donations`. The
        dashboard's "مصدر التبرع" column and the ad conversion events read it. */
@@ -205,13 +168,7 @@ export async function POST(request: NextRequest) {
       ...(userAgent ? { user_agent: userAgent } : {}),
       ...(clientIp ? { client_ip: clientIp } : {}),
     }) as Record<string, unknown> | undefined;
-    const donationAttribution = concierge || conciergeTouch || adAttribution
-      ? ({
-          ...(adAttribution ?? {}),
-          ...(concierge ? { ai_concierge: { ...concierge, source: "ai_concierge", at: new Date().toISOString() } } : {}),
-          ...(conciergeTouch ? { ai_concierge_touch: conciergeTouch } : {}),
-        } as Prisma.InputJsonValue)
-      : undefined;
+    const donationAttribution = adAttribution ? (adAttribution as Prisma.InputJsonValue) : undefined;
 
     type CartItemIn = {
       campaignId: string;
@@ -224,31 +181,15 @@ export async function POST(request: NextRequest) {
       gift?: unknown;
     };
     type CategoryItemIn = { categoryId: string; amount: number; local?: unknown };
-    type WaqfItemIn = { unit: "share" | "meter"; count: number; donorName: string; onBehalf: string };
 
-    /* A line gives either to a campaign, to a category as a whole (a category
-       page's donation box may target the category itself), or buys waqf units.
-       The lists are independent; an order needs at least one line of any kind. */
+    /* A line gives either to a campaign or to a category as a whole (a
+       category page's donation box may target the category itself). The
+       lists are independent; an order needs at least one line of either kind. */
     const items: CartItemIn[] = Array.isArray(itemsIn) ? itemsIn : [];
     const categoryItems: CategoryItemIn[] = Array.isArray(categoryItemsIn) ? categoryItemsIn : [];
-    const waqfItemsRaw: unknown[] = Array.isArray(waqfItemsIn) ? waqfItemsIn : [];
-
-    /* Waqf lines arrive without a price: the unit price is the server's, and
-       both names are required because both go on the certificate. */
-    const waqfItems: WaqfItemIn[] = [];
-    for (const raw of waqfItemsRaw) {
-      const line = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : null;
-      const count = line && typeof line.count === "number" && Number.isInteger(line.count) ? line.count : NaN;
-      const donorName = line && typeof line.donorName === "string" ? line.donorName.trim().slice(0, 120) : "";
-      const onBehalf = line && typeof line.onBehalf === "string" ? line.onBehalf.trim().slice(0, 120) : "";
-      if (!line || !isWaqfUnitKey(line.unit) || !(count >= 1 && count <= WAQF_MAX_COUNT) || !donorName || !onBehalf) {
-        return NextResponse.json({ error: "Every waqf line needs a unit, a count and both names" }, { status: 400 });
-      }
-      waqfItems.push({ unit: line.unit, count, donorName, onBehalf });
-    }
 
     // Validate required fields
-    if ((!items.length && !categoryItems.length && !waqfItems.length) || !requestedCurrency || !paymentMethod) {
+    if ((!items.length && !categoryItems.length) || !requestedCurrency || !paymentMethod) {
       return NextResponse.json(
         { error: "Items, currency, and payment method are required" },
         { status: 400 }
@@ -440,35 +381,8 @@ export async function POST(request: NextRequest) {
 
     // Card payments are handled via PayFor 3D Secure redirect flow (we do not store PAN/CVV).
 
-    /* Waqf lines priced in the order's currency from the USD unit price. The
-       rate is the same USD-base table the rest of the site converts with. */
-    const currencyForWaqf = normalizeDonationCurrencyCode(currency);
-    let waqfResolved: Array<WaqfItemIn & { unitPrice: number; amount: number; amountUSD: number }> = [];
-    if (waqfItems.length) {
-      let usdRate = 1;
-      if (currencyForWaqf !== "USD") {
-        try {
-          const rates = await getUsdBaseRatesForServer();
-          const rate = rates[currencyForWaqf];
-          if (!(typeof rate === "number" && rate > 0)) throw new Error(`no rate for ${currencyForWaqf}`);
-          usdRate = rate;
-        } catch (e) {
-          console.error("[cart/payment] waqf pricing rate:", e);
-          return NextResponse.json(
-            { error: "Exchange rate unavailable. Please try again in a moment." },
-            { status: 503 }
-          );
-        }
-      }
-      waqfResolved = waqfItems.map((line) => {
-        const unitPrice = WAQF_UNIT_PRICE_USD[line.unit];
-        const amountUSD = unitPrice * line.count;
-        return { ...line, unitPrice, amountUSD, amount: Math.round(amountUSD * usdRate * 100) / 100 };
-      });
-    }
-
     // Calculate totals
-    const totalAmount = [...items, ...categoryItems, ...waqfResolved].reduce(
+    const totalAmount = [...items, ...categoryItems].reduce(
       (sum: number, item: { amount: number }) => sum + item.amount,
       0
     );
@@ -612,24 +526,6 @@ export async function POST(request: NextRequest) {
         }
       : {};
 
-    /* Waqf lines on the donation only: they are what the certificates are
-       issued for. A recurring waqf plan's later charges are plain donations. */
-    const waqfLines = waqfResolved.length
-      ? {
-          waqfItems: {
-            create: waqfResolved.map((line) => ({
-              unit: line.unit === "meter" ? ("METER" as const) : ("SHARE" as const),
-              count: line.count,
-              unitPrice: line.unitPrice,
-              amount: line.amount,
-              amountUSD: line.amountUSD,
-              donorName: line.donorName,
-              onBehalf: line.onBehalf,
-            })),
-          },
-        }
-      : {};
-
     const referralId = await resolveReferralId(referralCode);
 
     const validLocale =
@@ -729,7 +625,6 @@ export async function POST(request: NextRequest) {
             ...(donationAttribution ? { attribution: donationAttribution } : {}),
             ...campaignLines,
             ...categoryLines,
-            ...waqfLines,
           },
           include: {
             donor: { select: { name: true, email: true } },
@@ -755,7 +650,6 @@ export async function POST(request: NextRequest) {
       }, { timeout: 15000 });
 
       const d = result.donation;
-      if (concierge) void recordConciergeEvents([{ sessionId: concierge.sessionId, event: "order_created", locale: validLocale ?? "ar", intent: concierge.intent, campaignId: concierge.campaignId, amountUSD: donationTotalUsd, frequency: frequency.toLowerCase(), donationId: d.id }]);
       const actorRole = session?.user?.role ?? "DONOR";
       await writeAuditLog({
         actorId: donorId,
@@ -814,7 +708,6 @@ export async function POST(request: NextRequest) {
           ...(donationAttribution ? { attribution: donationAttribution } : {}),
           ...campaignLines,
           ...categoryLines,
-          ...waqfLines,
         },
         include: {
           donor: { select: { name: true, email: true } },
@@ -849,7 +742,6 @@ export async function POST(request: NextRequest) {
     }, { timeout: 15000 });
 
     const { claim, ...donationRow } = donation;
-    if (concierge) void recordConciergeEvents([{ sessionId: concierge.sessionId, event: "order_created", locale: validLocale ?? "ar", intent: concierge.intent, campaignId: concierge.campaignId, amountUSD: donationTotalUsd, frequency: "once", donationId: donationRow.id }]);
     const actorRole = session?.user?.role ?? "DONOR";
     await writeAuditLog({
       actorId: donorId,

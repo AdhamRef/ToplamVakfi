@@ -10,18 +10,16 @@
  *   · a hero photograph, taken from the first image of the category's first
  *     campaign  a real field photograph of that work, not a stock picture;
  *   · a one-line lead that states what the page is, with no claim in it;
- *   · the quick amounts the donation box offers;
- *   · the achievement videos, matched to the category by the `regionKey` the
- *     video library already tags them with.
+ *   · the quick amounts the donation box offers.
  *
  * What it deliberately does NOT invent: the figures band (how many homes were
- * restored, of how many), the values strip, and the three explanatory cards.
- * Those are claims about the organisation's work  they belong to whoever knows
- * them, and the dashboard now has a field for each, with the translate button
- * beside it. A category without them simply renders without those sections.
+ * restored, of how many). That is a claim about the organisation's work  it
+ * belongs to whoever knows it, and the dashboard has a field for it, with the
+ * translate button beside it. A category without it simply renders without
+ * that section.
  *
  * Idempotent: a field that already carries something is left alone unless
- * `--force` is passed. Re-running never duplicates a value or a card.
+ * `--force` is passed. Re-running never duplicates a value.
  *
  *   npx tsx prisma/seed/seed-category-pages.ts [--force] [--dry]
  */
@@ -36,18 +34,6 @@ const DRY = process.argv.includes("--dry");
 
 /** The quick amounts the donation box offers, in USD. */
 const AMOUNTS = [100, 200, 300, 500, 700, 1000, 1500, 2000, 3000];
-
-/**
- * `Video.regionKey` → category slug. The video library tags its achievements
- * with the homepage's region keys; these are the categories they belong to.
- * A key with no entry here (e.g. `regionField`, which is the field team rather
- * than a place) is not attached to any category.
- */
-const VIDEO_REGION_TO_CATEGORY: Record<string, string> = {
-  regionGaza: "region-gaza",
-  regionQuds: "region-al-quds",
-  regionAqsa: "region-al-aqsa",
-};
 
 /**
  * Categories published as one of the site's own pages rather than as a
@@ -174,29 +160,12 @@ async function main() {
       ctaLabel: true,
       projectsTitle: true,
       donateTitle: true,
-      achievementsTitle: true,
       suggestedAmounts: true,
-      achievementVideoIds: true,
       campaignIds: true,
       pageTemplate: true,
     },
     orderBy: { order: "asc" },
   });
-
-  const achievements = await prisma.video.findMany({
-    where: { type: "ACHIEVEMENT" },
-    select: { id: true, regionKey: true, order: true },
-    orderBy: { order: "asc" },
-  });
-
-  const videosByCategory = new Map<string, string[]>();
-  for (const video of achievements) {
-    const slug = video.regionKey ? VIDEO_REGION_TO_CATEGORY[video.regionKey] : undefined;
-    if (!slug) continue;
-    const list = videosByCategory.get(slug) ?? [];
-    list.push(video.id);
-    videosByCategory.set(slug, list);
-  }
 
   let touched = 0;
   const withoutHero: string[] = [];
@@ -224,31 +193,25 @@ async function main() {
     const data = {
       heroImage: keep(category.heroImage, heroImage || null, emptyText),
       /* States what the page is. No claim about the work  those belong to the
-         values and the cards, which a person writes. */
+         figures band, which a person writes. */
       heroLead: keep(category.heroLead, `مشاريع مؤسسة منبر الأقصى الدولية في ${name}.`, emptyText),
       ctaLabel: keep(category.ctaLabel, "تصفّح المشاريع", emptyText),
       projectsTitle: keep(category.projectsTitle, `مشاريع ${name}`, emptyText),
       donateTitle: keep(category.donateTitle, `ساهم في ${name}`, emptyText),
-      achievementsTitle: keep(category.achievementsTitle, `إنجازاتنا في ${name}`, emptyText),
       suggestedAmounts:
         FORCE || category.suggestedAmounts.length === 0 ? AMOUNTS : category.suggestedAmounts,
-      achievementVideoIds:
-        FORCE || category.achievementVideoIds.length === 0
-          ? videosByCategory.get(category.slug ?? "") ?? category.achievementVideoIds
-          : category.achievementVideoIds,
       pageTemplate: keep(category.pageTemplate, PAGE_TEMPLATES[category.slug ?? ""] ?? null, emptyText),
     };
 
     if (DRY) {
-      console.log(`  · ${category.slug}: hero=${data.heroImage ? "yes" : "—"} videos=${data.achievementVideoIds.length}`);
+      console.log(`  · ${category.slug}: hero=${data.heroImage ? "yes" : "—"}`);
       continue;
     }
 
     await prisma.category.update({ where: { id: category.id }, data });
     touched += 1;
     console.log(
-      `  ✓ ${category.slug ?? category.id}  hero ${data.heroImage ? "set" : "none"}, ` +
-        `${data.achievementVideoIds.length} achievement video(s)`
+      `  ✓ ${category.slug ?? category.id}  hero ${data.heroImage ? "set" : "none"}`
     );
   }
 
@@ -260,10 +223,8 @@ async function main() {
     console.log("  (their campaigns carry no image; upload one in the dashboard)");
   }
   console.log(
-    "left for an editor  they are claims, not derivable data:\n" +
-      "  · the figures band (done / goal)\n" +
-      "  · the values strip\n" +
-      "  · the three explanatory cards (why / what we do / the impact)"
+    "left for an editor  a claim, not derivable data:\n" +
+      "  · the figures band (done / goal)"
   );
 }
 

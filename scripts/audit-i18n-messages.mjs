@@ -18,7 +18,6 @@ const PUBLIC_APP_NAMESPACES = new Set([
   "Recurring",
   "TeamSupport",
   "Gift",
-  "Concierge",
   "ProjectShares",
   "CategoryNav",
   "CardGive",

@@ -10,7 +10,6 @@ import { contentToBlocks } from "@/lib/blog/rich-text";
 import ArticleCta from "./ArticleCta";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 
 /**
  * An article  laid out after `ToplamVakfi-design/Toplum Vakfı Blog Article -
@@ -161,7 +160,6 @@ export default function ArticleDetail({ article, ctaKey }: ArticleDetailProps) {
 
       <ZakatBanner />
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

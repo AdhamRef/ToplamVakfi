@@ -26,7 +26,7 @@ import { SUPPORTED_LOCALES } from "@/lib/locales";
 export const QUICK_FREQUENCIES: readonly CartFreqKey[] = ["once", "daily", "friday", "monthly"];
 
 /** The generic destinations, in the order the card shows them. */
-export const QUICK_GENERIC_DESTINATIONS = ["where-needed", "zakat", "waqf", "gaza-relief"] as const;
+export const QUICK_GENERIC_DESTINATIONS = ["where-needed", "zakat", "gaza-relief"] as const;
 export type QuickGenericDestination = (typeof QUICK_GENERIC_DESTINATIONS)[number];
 
 export type QuickProjectsMode = "all" | "selected" | "none";

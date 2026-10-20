@@ -19,7 +19,6 @@ import {
   RECEIPT_FIELDS,
   RECEIPT_ORG_DEFAULTS,
   THANKS_FIELDS,
-  WAQF_FIELDS,
   type CertificateCopyOverrides,
   type CertificateTemplateId,
   type ReceiptOrgData,
@@ -27,8 +26,8 @@ import {
 import { dashIntl, dt, dtx } from "@/lib/dashboard/i18n";
 
 /**
- * The wording on the three documents  thank-you certificate, waqf
- * certificate, donation receipt  per template and per locale
+ * The wording on the two documents  thank-you certificate and donation
+ * receipt  per template and per locale
  * (`CERTIFICATES_DOWNLOADS_HANDOFF §4`).
  *
  * Every field shows its i18n default as the placeholder; typing over it stores
@@ -42,7 +41,6 @@ type FieldDef = { name: string; label: string; i18nKey: string | null; multiline
 
 const TEMPLATES: ReadonlyArray<{ id: CertificateTemplateId; title: string; hint: string; fields: readonly FieldDef[] }> = [
   { id: "thanks", get title() { return dt("شهادة الشكر"); }, get hint() { return dt("تُصدر لكل تبرع مؤكد  النسخة العرضية هي المعتمدة وتُرسل بالبريد."); }, fields: THANKS_FIELDS },
-  { id: "waqf", get title() { return dt("شهادة الوقف"); }, get hint() { return dt("تُصدر لكل سهم/متر وقفي في الطلب. نصوص الإنجليزية والتركية معتمدة حرفيًا من الشهادات المطبوعة  لا تُعاد صياغتها."); }, fields: WAQF_FIELDS },
   { id: "receipt", get title() { return dt("إيصال التبرع"); }, get hint() { return dt("المستند المحاسبي: بلا شعارات ولا عبارات وجدانية. يُصدر بلغة المتبرع وبنسخة تركية."); }, fields: RECEIPT_FIELDS },
 ];
 

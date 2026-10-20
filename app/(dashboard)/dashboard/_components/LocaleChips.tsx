@@ -6,9 +6,9 @@ import { dt } from "@/lib/dashboard/i18n";
 /**
  * A locale allow-list picker for content that is scoped to some languages.
  *
- * Empty means "every locale" for all the models that use it (video
- * `localeFilter`, bank-account and urgent-banner `locales`), so the empty state
- * says so explicitly rather than looking like nothing was chosen.
+ * Empty means "every locale" for the models that use it (bank-account
+ * `locales`), so the empty state says so explicitly rather than looking like
+ * nothing was chosen.
  */
 export function LocaleChips({
   value,

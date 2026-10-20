@@ -6,7 +6,6 @@ import { miaPath } from "@/lib/minbar/routes";
 import { ORG } from "@/lib/minbar/org";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import InnerBanner from "./InnerBanner";
 
 /**
@@ -260,7 +259,6 @@ export default function AboutPage() {
 
       <ZakatBanner />
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

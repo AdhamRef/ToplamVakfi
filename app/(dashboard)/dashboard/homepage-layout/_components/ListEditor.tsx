@@ -32,9 +32,6 @@ const MODES: Array<{ id: HomeListMode; title: string; hint: string; icon: typeof
 
 const QUICK_LIMITS = [3, 4, 5, 6, 8, 12];
 
-/** Lists whose candidates may be restricted to some languages, so the Arabic preview can differ. */
-const LOCALE_FILTERED: HomeListId[] = ["events", "endorsements", "achievements"];
-
 function Thumb({ src }: { src?: string | null }) {
   return src ? (
     // eslint-disable-next-line @next/next/no-img-element
@@ -276,9 +273,6 @@ export function ListEditor({
               <Label className="flex items-center gap-1.5">
                 <Eye className="h-4 w-4 text-muted-foreground" />
                 {dt("ما سيظهر في الصفحة الرئيسية، بهذا الترتيب")}</Label>
-              {LOCALE_FILTERED.includes(listId) && (
-                <span className="text-xs text-muted-foreground">{dt("الفيديو المقيّد بلغة يظهر لزوار تلك اللغة فقط.")}</span>
-              )}
             </div>
             {!options ? (
               <p className="rounded-xl border p-4 text-sm text-muted-foreground">{dt("جارٍ تحميل المعاينة…")}</p>

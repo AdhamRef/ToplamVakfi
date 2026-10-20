@@ -56,7 +56,6 @@ import type { MinbarCategoryTitle } from "@/lib/minbar/category-page";
  */
 const SUGGESTIONS = [
   { id: "field-team", key: "upsell_field_team", amounts: [50, 75, 100] },
-  { id: "waqf-share-quds", key: "upsell_waqf_share_quds", amounts: [50, 75, 100] },
   { id: "quran-quds", key: "upsell_quran_quds", amounts: [50, 75, 100] },
   { id: "friday-transport", key: "upsell_friday_transport", amounts: [50, 75, 100] },
 ] as const;
@@ -73,7 +72,6 @@ const FREQ_LABEL: Record<string, string> = {
 const TYPE_LABEL: Record<string, string> = {
   project: "typeProject",
   zakat: "typeZakat",
-  waqf: "typeWaqf",
   recurring: "typeRecurring",
   extra: "typeExtra",
 };
@@ -84,7 +82,6 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
   const t = useTranslations("cart");
   const tCommon = useTranslations("common");
   const tProjects = useTranslations("projects");
-  const tCert = useTranslations("certificates");
   const tTeam = useTranslations("TeamSupport");
   const { format, formatNumber, formatLocal, code, rate, currency } = useMinbarMoney();
   const { fromLocal, tooSmall, lineTooSmall, minLocal, minLabel, lineValue, formatLine, inLocal } = useDonationAmount();
@@ -204,12 +201,6 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
     if (item.categoryId) {
       const fromCms = categoryTitleById.get(item.categoryId);
       if (fromCms) return fromCms;
-    }
-    /* A waqf row names its unit, count and endower  the same line the
-       certificate will carry  resolved live in the reader's language. */
-    if (item.waqf) {
-      const unit = item.waqf.unit === "meter" ? tCert("meterUnitTitle") : tCert("shareUnitTitle");
-      return `${unit} × ${item.waqf.count}${item.waqf.donorName ? `  ${tCert("inNameOf")} ${item.waqf.donorName}` : ""}`;
     }
     if (item.titleKey) {
       if (t.has(item.titleKey)) return t(item.titleKey);

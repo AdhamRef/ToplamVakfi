@@ -27,20 +27,13 @@ export type MinbarRoute =
   | "projectDetail"
   | "zakat"
   | "zakatCalculator"
-  | "waqf"
   | "recurring"
   | "aqsa"
   | "jerusalem"
   | "reports"
-  | "reportDetail"
   | "blog"
   | "article"
   | "news"
-  | "programs"
-  | "achievementVideos"
-  | "endorsementVideos"
-  | "publications"
-  | "courses"
   | "zenkiCourse"
   | "about"
   | "contact"
@@ -56,10 +49,8 @@ export type MinbarRoute =
   | "paymentProcessing"
   | "paymentPending"
   | "receipt"
-  | "waqfCertificate"
   | "thanksCertificate"
   | "restorationProject"
-  | "ibadanProject"
   | "terms"
   | "privacy"
   | "donationPolicy"
@@ -74,20 +65,13 @@ export const SLUGS: Record<MinbarRoute, string> = {
   projectDetail: "bagislar",
   zakat: "pay-zakat-to-palestine",
   zakatCalculator: "zakat-calculator",
-  waqf: "msharya-alqds-alwqfy",
   recurring: "recurring-donation",
   aqsa: "al-aqsa-mosque",
   jerusalem: "al-quds-and-the-old-city",
   reports: "achievements-and-reports",
-  reportDetail: "achievements-and-reports",
   blog: "blog",
   article: "blog",
   news: "news",
-  programs: "video-programmes",
-  achievementVideos: "achievements-in-video",
-  endorsementVideos: "endorsements-in-video",
-  publications: "publications",
-  courses: "courses",
   zenkiCourse: "courses/nur-ad-din-zengi",
   about: "about-us",
   contact: "contact-us",
@@ -107,10 +91,8 @@ export const SLUGS: Record<MinbarRoute, string> = {
   paymentProcessing: "payment-processing",
   paymentPending: "payment-pending",
   receipt: "receipt",
-  waqfCertificate: "certificates/waqf",
   thanksCertificate: "certificates/thanks",
   restorationProject: "bagislar/al-quds-home-restoration",
-  ibadanProject: "bagislar/ibadan-lana",
   terms: "terms",
   privacy: "privacy",
   donationPolicy: "donation-policy",
@@ -132,20 +114,13 @@ export const LEGACY_SLUGS: Partial<Record<SupportedLocale, Partial<Record<Minbar
     projectDetail: "المشاريع",
     zakat: "الزكاة",
     zakatCalculator: "حاسبة-الزكاة",
-    waqf: "الأوقاف",
     recurring: "التبرع-الدوري",
     aqsa: "المسجد-الأقصى",
     jerusalem: "القدس-والبلدة-القديمة",
     reports: "إنجازات-وتقارير-المؤسسة",
-    reportDetail: "إنجازات-وتقارير-المؤسسة",
     blog: "المدونة",
     article: "المدونة",
     news: "الأخبار",
-    programs: "برامجنا-المصورة",
-    achievementVideos: "إنجازاتنا-بالفيديو",
-    endorsementVideos: "تزكياتنا-بالفيديو",
-    publications: "كتيبات-المؤسسة",
-    courses: "دوراتنا",
     zenkiCourse: "دوراتنا/دورة-نور-الدين-زنكي",
     about: "من-نحن",
     contact: "تواصل-معنا",
@@ -163,7 +138,6 @@ export const LEGACY_SLUGS: Partial<Record<SupportedLocale, Partial<Record<Minbar
     projects: "projects",
     projectDetail: "projects",
     zakat: "zakat",
-    waqf: "waqf",
   },
 };
 
@@ -182,7 +156,6 @@ export const NOINDEX_ROUTES: ReadonlySet<MinbarRoute> = new Set<MinbarRoute>([
   "paymentProcessing",
   "paymentPending",
   "receipt",
-  "waqfCertificate",
   "thanksCertificate",
   "maintenance",
 ]);
@@ -193,7 +166,7 @@ export const NOINDEX_ROUTES: ReadonlySet<MinbarRoute> = new Set<MinbarRoute>([
  * A central allowlist, not a growing blacklist (`DEPLOYED_VS_DESIGN_AUDIT.md`
  * § P2.1). The approved design gives the homepage its own quick-donation card
  * and removes the pill from the pages that already hold a donation module 
- * projects, zakat, waqf, recurring  and from the blog; the transactional
+ * projects, zakat, recurring  and from the blog; the transactional
  * surfaces (cart, checkout, payment states, documents, account) never had it.
  * What is left is the reading pages, where a visitor moved to give has no
  * donation control in reach.
@@ -202,13 +175,7 @@ export const QUICK_DONATE_ROUTES: ReadonlySet<MinbarRoute> = new Set<MinbarRoute
   "aqsa",
   "jerusalem",
   "reports",
-  "reportDetail",
   "news",
-  "programs",
-  "achievementVideos",
-  "endorsementVideos",
-  "publications",
-  "courses",
   "zenkiCourse",
   "about",
   "contact",
@@ -231,7 +198,7 @@ export function routeForPathname(pathname: string): MinbarRoute | null {
   if (rest === "") return "home";
 
   /* A list page and its detail page share a slug; the child segment decides. */
-  const DETAIL_OF: Partial<Record<MinbarRoute, MinbarRoute>> = { projects: "projectDetail", blog: "article", reports: "reportDetail" };
+  const DETAIL_OF: Partial<Record<MinbarRoute, MinbarRoute>> = { projects: "projectDetail", blog: "article" };
   const DETAIL_ROUTES = new Set<MinbarRoute>(Object.values(DETAIL_OF) as MinbarRoute[]);
 
   let best: { route: MinbarRoute; length: number } | null = null;

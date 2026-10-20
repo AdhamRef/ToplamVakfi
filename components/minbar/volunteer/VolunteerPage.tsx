@@ -6,7 +6,6 @@ import { track } from "@vercel/analytics";
 import { miaPath } from "@/lib/minbar/routes";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import InnerBanner from "@/components/minbar/about/InnerBanner";
 
 /**
@@ -298,7 +297,6 @@ export default function VolunteerPage() {
 
       <ZakatBanner />
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

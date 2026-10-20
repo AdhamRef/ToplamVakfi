@@ -37,7 +37,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "المشاريع",
       "الزكاة",
-      "الأوقاف",
       "التبرع الدوري",
       "المسجد الأقصى",
       "القدس والبلدة القديمة",
@@ -73,7 +72,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Projeler",
       "Zekât",
-      "Vakıflar",
       "Düzenli Bağış",
       "Mescid-i Aksâ",
       "Kudüs ve Eski Şehir",
@@ -110,7 +108,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Projects",
       "Zakat",
-      "Waqf",
       "Recurring Donation",
       "Al-Aqsa Mosque",
       "Al-Quds & the Old City",
@@ -146,7 +143,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Projets",
       "Zakat",
-      "Waqf",
       "Don Récurrent",
       "Mosquée Al-Aqsa",
       "Al-Quds et la Vieille Ville",
@@ -182,7 +178,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Projekte",
       "Zakat",
-      "Waqf",
       "Regelmäßige Spende",
       "Al-Aqsa-Moschee",
       "Al-Quds und die Altstadt",
@@ -218,7 +213,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Proyectos",
       "Zakat",
-      "Waqf",
       "Donación Recurrente",
       "Mezquita de Al-Aqsa",
       "Al-Quds y la Ciudad Vieja",
@@ -254,7 +248,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Proyek",
       "Zakat",
-      "Waqf",
       "Donasi Berkala",
       "Masjid Al-Aqsa",
       "Al-Quds dan Kota Tua",
@@ -290,7 +283,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Projetos",
       "Zakat",
-      "Waqf",
       "Doação Recorrente",
       "Mesquita de Al-Aqsa",
       "Al-Quds e a Cidade Velha",
@@ -326,7 +318,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "منصوبے",
       "زکوٰۃ",
-      "اوقاف",
       "مستقل عطیہ",
       "مسجدِ اقصیٰ",
       "القدس اور پرانا شہر",
@@ -362,7 +353,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Projektet",
       "Zekati",
-      "Vakëfet",
       "Donacion i Përsëritur",
       "Xhamia e Aksasë",
       "Kudsi Dhe Qyteti i Vjetër",
@@ -398,7 +388,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Progetti",
       "Zakat",
-      "Waqf",
       "Donazione Ricorrente",
       "Moschea di Al-Aqsa",
       "Al-Quds e la Città Vecchia",
@@ -434,7 +423,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Projecten",
       "Zakat",
-      "Waqf",
       "Periodieke Donatie",
       "Al-Aqsa-moskee",
       "Al-Quds en de Oude Stad",
@@ -470,7 +458,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Projekt",
       "Zakat",
-      "Waqf",
       "Återkommande Donation",
       "Al-Aqsa-moskén",
       "Al-Quds och Gamla Staden",
@@ -506,7 +493,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Prosjekter",
       "Zakat",
-      "Waqf",
       "Fast Gave",
       "Al-Aqsa-moskeen",
       "Al-Quds og Gamlebyen",
@@ -543,7 +529,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Projekter",
       "Zakat",
-      "Waqf",
       "Fast Donation",
       "Al-Aqsa-moskéen",
       "Al-Quds og Den Gamle Bydel",
@@ -580,7 +565,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "Projek",
       "Zakat",
-      "Waqaf",
       "Sumbangan Berkala",
       "Masjid Al-Aqsa",
       "Al-Quds dan Kota Lama",
@@ -617,7 +601,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "プロジェクト",
       "ザカート",
-      "ワクフ",
       "継続寄付",
       "アル・アクサー・モスク",
       "アル・クドゥスと旧市街",
@@ -654,7 +637,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "项目",
       "天课",
-      "瓦克夫",
       "定期捐赠",
       "阿克萨清真寺",
       "古都与老城",
@@ -691,7 +673,6 @@ export const MINBAR_LOCALE_SEO = {
     "keywords": [
       "परियोजनाएँ",
       "ज़कात",
-      "वक़्फ़",
       "नियमित दान",
       "मस्जिद अल-अक़्सा",
       "अल-क़ुद्स और पुराना शहर",

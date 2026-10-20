@@ -104,7 +104,6 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
   const tProjects = useTranslations("projects");
   const tValidation = useTranslations("validation");
   const tSystem = useTranslations("system");
-  const tCert = useTranslations("certificates");
   const { format, formatNumber, formatLocal } = useMinbarMoney();
   const { formatLine, lineValue, lineTooSmall, minLabel, inLocal } = useDonationAmount();
   const tGive = useTranslations("CardGive");
@@ -204,10 +203,6 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
     if (item.categoryId) {
       const fromCms = categoryTitleById.get(item.categoryId);
       if (fromCms) return fromCms;
-    }
-    if (item.waqf) {
-      const unit = item.waqf.unit === "meter" ? tCert("meterUnitTitle") : tCert("shareUnitTitle");
-      return `${unit} × ${item.waqf.count}${item.waqf.donorName ? `  ${tCert("inNameOf")} ${item.waqf.donorName}` : ""}`;
     }
     if (item.titleKey) {
       if (t.has(item.titleKey)) return t(item.titleKey);

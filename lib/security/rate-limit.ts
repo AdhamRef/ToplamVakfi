@@ -1,9 +1,10 @@
 /**
- * Sliding-window limiter for the public concierge endpoints.
+ * Sliding-window limiter for public endpoints (card-attempt brakes and the
+ * like).
  *
  * In-memory, per server instance: on Vercel every warm function keeps its own
  * counters, so the real ceiling is this × the number of live instances. That
- * is enough to stop one browser looping the model endpoint, which is what the
+ * is enough to stop one browser looping an endpoint, which is what the
  * limit is for; a shared store (Upstash/KV) can replace `hit` without changing
  * callers if abuse ever needs a global ceiling.
  */
