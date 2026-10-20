@@ -54,6 +54,6 @@ test("cart direction uses the canonical locale reference without a narrowed lang
 });
 for (const locale of SUPPORTED_LOCALES) {
   test(`cart direction supports locale ${locale}`, () => {
-    assert.equal(localeDirection(locale), locale === "ar" || locale === "ur" ? "rtl" : "ltr");
+    assert.equal(localeDirection(locale), locale === "ar" ? "rtl" : "ltr");
   });
 }

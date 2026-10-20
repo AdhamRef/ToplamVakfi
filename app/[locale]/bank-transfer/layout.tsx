@@ -17,30 +17,12 @@ const BANK_TRANSFER_SEO: { en: PageSeo } & Partial<Record<Locale, PageSeo>> = {
     title: "Donate by Bank Transfer | ToplamVakfi",
     description: "View ToplamVakfi bank accounts and complete your donation safely by bank transfer to support humanitarian, medical, and educational projects.",
   },
-  fr: {
-    title: "Faire un don par virement bancaire | ToplamVakfi",
-    description: "Consultez les comptes bancaires de ToplamVakfi et effectuez votre don en toute sécurité par virement bancaire pour soutenir nos projets humanitaires.",
-  },
   tr: {
     title: "Banka Havalesi ile Bağış | ToplamVakfi Derneği",
     description: "ToplamVakfi Derneği banka hesaplarını görüntüleyin ve insani, tıbbi ve eğitim projelerine güvenle havale yoluyla bağış yapın.",
   },
-  id: {
-    title: "Donasi melalui Transfer Bank | ToplamVakfi",
-    description: "Lihat rekening bank ToplamVakfi dan selesaikan donasi Anda dengan aman melalui transfer bank untuk mendukung program kemanusiaan.",
-  },
-  pt: {
-    title: "Doar por transferência bancária | ToplamVakfi",
-    description: "Veja as contas bancárias da ToplamVakfi e conclua a sua doação com segurança por transferência bancária para apoiar projetos humanitários.",
-  },
-  es: {
-    title: "Donar por transferencia bancaria | ToplamVakfi",
-    description: "Consulta las cuentas bancarias de ToplamVakfi y completa tu donación de forma segura mediante transferencia bancaria para apoyar proyectos humanitarios.",
-  },
-  de: {
-    title: "Per Banküberweisung spenden | ToplamVakfi",
-    description: "Sieh dir die Bankkonten von ToplamVakfi an und schließe deine Spende sicher per Banküberweisung ab, um humanitäre Projekte zu unterstützen.",
-  },
+
+
 };
 
 interface Props {

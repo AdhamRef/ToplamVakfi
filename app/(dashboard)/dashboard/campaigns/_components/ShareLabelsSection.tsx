@@ -24,12 +24,10 @@ interface LocaleMeta {
 const LOCALE_META: LocaleMeta[] = [
   { code: "ar", get name() { return dt("العربية"); }, dir: "rtl", placeholderSingular: "مثال: خروف", placeholderPlural: "مثال: خراف" },
   { code: "en", name: "English", dir: "ltr", placeholderSingular: "e.g. sheep", placeholderPlural: "e.g. sheep" },
-  { code: "fr", name: "Français", dir: "ltr", placeholderSingular: "ex. mouton", placeholderPlural: "ex. moutons" },
   { code: "tr", name: "Türkçe", dir: "ltr", placeholderSingular: "örn. koyun", placeholderPlural: "örn. koyunlar" },
-  { code: "id", name: "Bahasa", dir: "ltr", placeholderSingular: "contoh: domba", placeholderPlural: "contoh: domba" },
-  { code: "pt", name: "Português", dir: "ltr", placeholderSingular: "ex. ovelha", placeholderPlural: "ex. ovelhas" },
-  { code: "es", name: "Español", dir: "ltr", placeholderSingular: "ej. oveja", placeholderPlural: "ej. ovejas" },
-  { code: "de", name: "Deutsch", dir: "ltr", placeholderSingular: "z. B. Schaf", placeholderPlural: "z. B. Schafe" },
+  { code: "sq", name: "Shqip", dir: "ltr", placeholderSingular: "p.sh. dele", placeholderPlural: "p.sh. dele" },
+
+
 ];
 
 export type ShareLabelsPayload = ShareLabelsConfig | null;

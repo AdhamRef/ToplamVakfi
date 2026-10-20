@@ -6,12 +6,14 @@ import {
 } from './lib/currency-link';
 import { currencyForCountry } from './lib/geo/country-to-currency';
 import { localeForCountry } from './lib/geo/country-to-locale';
-import { SUPPORTED_LOCALES, DEFAULT_LOCALE } from './lib/locales';
+import { SUPPORTED_LOCALES, FUTURE_LOCALES, DEFAULT_LOCALE } from './lib/locales';
 import { redirectLegacyPath } from './lib/minbar/slug-routing';
 
 // Single source of truth (enabled/public locales)  see `lib/locales.ts`.
 const LOCALES = SUPPORTED_LOCALES;
 const LOCALE_IN_PATH_RE = new RegExp(`^/(${SUPPORTED_LOCALES.join('|')})(/|$)`);
+/** Languages the site used to serve; their URLs are still indexed and shared. */
+const RETIRED_LOCALE_RE = new RegExp(`^/(${FUTURE_LOCALES.join('|')})(/|$)`);
 
 const intl = createIntlMiddleware({
   locales: LOCALES,
@@ -52,6 +54,15 @@ export default function proxy(req: NextRequest) {
   // expected format". Remove this if a Server Action is ever added.
   if (req.headers.has('next-action')) {
     return new NextResponse(null, { status: 400 });
+  }
+
+  // A retired language prefix (the site now serves ar / en / tr / sq) goes to
+  // the English page at the same path; a slug English spells differently is
+  // then caught by the legacy-slug redirect below.
+  if (RETIRED_LOCALE_RE.test(pathname)) {
+    const url = req.nextUrl.clone();
+    url.pathname = pathname.replace(RETIRED_LOCALE_RE, '/en$2');
+    return NextResponse.redirect(url, 301);
   }
 
   // Locale-less URL (e.g. a share link generated with auto-locale): pick a

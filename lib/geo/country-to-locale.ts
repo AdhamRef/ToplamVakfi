@@ -81,6 +81,7 @@ export function localeForCountry(
   else if (FRENCH.has(code)) picked = "fr";
   else if (PORTUGUESE.has(code)) picked = "pt";
   else if (SPANISH.has(code)) picked = "es";
+  else if (code === "AL" || code === "XK") picked = "sq";
   else if (ENGLISH.has(code)) picked = "en";
 
   return picked && SUPPORTED.has(picked) ? (picked as SupportedLocale) : null;

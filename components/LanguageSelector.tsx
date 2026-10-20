@@ -13,12 +13,10 @@ type Locale = (typeof SUPPORTED_LOCALES)[number];
 
 /**
  * Flag shown beside each language. A language is not a country, so these are a
- * best-fit convention rather than a mapping: Arabic uses SA, Urdu PK, Malay MY.
+ * best-fit convention rather than a mapping: Arabic uses SA, Albanian AL.
  */
 const COUNTRY_CODES: Record<Locale, string> = {
-  ar: "SA", en: "US", fr: "FR", tr: "TR", id: "ID", pt: "PT", es: "ES", de: "DE",
-  ur: "PK", sq: "AL", it: "IT", nl: "NL", sv: "SE", no: "NO", da: "DK",
-  ms: "MY", ja: "JP", zh: "CN", hi: "IN",
+  ar: "SA", en: "US", tr: "TR", sq: "AL",
 };
 
 const languages: { code: Locale; name: string; countryCode: string }[] =

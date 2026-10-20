@@ -35,12 +35,8 @@ declare global {
 const localeByLabel: Record<string, LocaleCode> = {
   العربية: "ar",
   English: "en",
-  Français: "fr",
   Türkçe: "tr",
-  Bahasa: "id",
-  Português: "pt",
-  Español: "es",
-  Deutsch: "de",
+  Shqip: "sq",
 };
 /* The Arabic tab is labelled in the interface language. */
 localeByLabel[dt("العربية")] = "ar";

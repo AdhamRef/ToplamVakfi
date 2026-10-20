@@ -20,39 +20,25 @@
 
 /**
  * Enabled / public locales. Order is significant (drives dropdowns + routing)
- * and is the order the locked Minbar design ships in `Header.dc.html`
- * → `Component.LANGS`, so the language picker reads as designed.
+ * and is the Toplum Vakfı design's language order (ToplamVakfi-design/i18n.js:
+ * Arabic source, then English, Turkish, Albanian).
  */
 export const SUPPORTED_LOCALES = [
   "ar",
-  "tr",
   "en",
-  "fr",
-  "de",
-  "es",
-  "id",
-  "pt",
-  "ur",
+  "tr",
   "sq",
-  "it",
-  "nl",
-  "sv",
-  "no",
-  "da",
-  "ms",
-  "ja",
-  "zh",
-  "hi",
 ] as const;
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 /**
- * Registered but not yet publicly routed. Empty since the Minbar handoff landed
- * complete `i18n/<lang>/` bundles for all 19 languages (Core Website
- * Localization Pass) and every one of them is now routed.
+ * Registered but not publicly routed. The site serves the four languages of the
+ * Toplum Vakfı design; these fifteen keep their metadata so stored data that
+ * names them (donor languages, template variants, audiences) still reads, and
+ * their old URLs are redirected to English by `proxy.ts`.
  */
-export const FUTURE_LOCALES = [] as const;
+export const FUTURE_LOCALES = ["fr", "de", "es", "id", "pt", "ur", "it", "nl", "sv", "no", "da", "ms", "ja", "zh", "hi"] as const;
 
 /** Every locale the platform knows about (enabled + future). */
 export const ALL_LOCALES = [...SUPPORTED_LOCALES, ...FUTURE_LOCALES] as const;
@@ -82,25 +68,25 @@ export interface LocaleMeta {
 export const LOCALES: Record<AnyLocale, LocaleMeta> = {
   ar: { code: "ar", label: "العربية", nativeLabel: "العربية", direction: "rtl", fallbackLocale: "ar", enabled: true },
   en: { code: "en", label: "English", nativeLabel: "English", direction: "ltr", fallbackLocale: "en", enabled: true },
-  fr: { code: "fr", label: "Français", nativeLabel: "Français", direction: "ltr", fallbackLocale: "en", enabled: true },
+  fr: { code: "fr", label: "Français", nativeLabel: "Français", direction: "ltr", fallbackLocale: "en", enabled: false },
   tr: { code: "tr", label: "Türkçe", nativeLabel: "Türkçe", direction: "ltr", fallbackLocale: "en", enabled: true },
-  id: { code: "id", label: "Indonesia", nativeLabel: "Bahasa Indonesia", direction: "ltr", fallbackLocale: "en", enabled: true },
-  pt: { code: "pt", label: "Português", nativeLabel: "Português", direction: "ltr", fallbackLocale: "en", enabled: true },
-  es: { code: "es", label: "Español", nativeLabel: "Español", direction: "ltr", fallbackLocale: "en", enabled: true },
-  de: { code: "de", label: "Deutsch", nativeLabel: "Deutsch", direction: "ltr", fallbackLocale: "en", enabled: true },
+  id: { code: "id", label: "Indonesia", nativeLabel: "Bahasa Indonesia", direction: "ltr", fallbackLocale: "en", enabled: false },
+  pt: { code: "pt", label: "Português", nativeLabel: "Português", direction: "ltr", fallbackLocale: "en", enabled: false },
+  es: { code: "es", label: "Español", nativeLabel: "Español", direction: "ltr", fallbackLocale: "en", enabled: false },
+  de: { code: "de", label: "Deutsch", nativeLabel: "Deutsch", direction: "ltr", fallbackLocale: "en", enabled: false },
   // Promoted with the Minbar handoff  `Component.BODY_TRANSLATED` lists all 19
   // as body-translated, and `Minbar/i18n/<lang>/` ships complete bundles.
-  ur: { code: "ur", label: "Urdu", nativeLabel: "اردو", direction: "rtl", fallbackLocale: "en", enabled: true },
+  ur: { code: "ur", label: "Urdu", nativeLabel: "اردو", direction: "rtl", fallbackLocale: "en", enabled: false },
   sq: { code: "sq", label: "Albanian", nativeLabel: "Shqip", direction: "ltr", fallbackLocale: "en", enabled: true },
-  it: { code: "it", label: "Italian", nativeLabel: "Italiano", direction: "ltr", fallbackLocale: "en", enabled: true },
-  nl: { code: "nl", label: "Dutch", nativeLabel: "Nederlands", direction: "ltr", fallbackLocale: "en", enabled: true },
-  sv: { code: "sv", label: "Swedish", nativeLabel: "Svenska", direction: "ltr", fallbackLocale: "en", enabled: true },
-  no: { code: "no", label: "Norwegian", nativeLabel: "Norsk", direction: "ltr", fallbackLocale: "en", enabled: true },
-  da: { code: "da", label: "Danish", nativeLabel: "Dansk", direction: "ltr", fallbackLocale: "en", enabled: true },
-  ms: { code: "ms", label: "Malay", nativeLabel: "Bahasa Melayu", direction: "ltr", fallbackLocale: "en", enabled: true },
-  ja: { code: "ja", label: "Japanese", nativeLabel: "日本語", direction: "ltr", fallbackLocale: "en", enabled: true },
-  zh: { code: "zh", label: "Chinese", nativeLabel: "中文", direction: "ltr", fallbackLocale: "en", enabled: true },
-  hi: { code: "hi", label: "Hindi", nativeLabel: "हिन्दी", direction: "ltr", fallbackLocale: "en", enabled: true },
+  it: { code: "it", label: "Italian", nativeLabel: "Italiano", direction: "ltr", fallbackLocale: "en", enabled: false },
+  nl: { code: "nl", label: "Dutch", nativeLabel: "Nederlands", direction: "ltr", fallbackLocale: "en", enabled: false },
+  sv: { code: "sv", label: "Swedish", nativeLabel: "Svenska", direction: "ltr", fallbackLocale: "en", enabled: false },
+  no: { code: "no", label: "Norwegian", nativeLabel: "Norsk", direction: "ltr", fallbackLocale: "en", enabled: false },
+  da: { code: "da", label: "Danish", nativeLabel: "Dansk", direction: "ltr", fallbackLocale: "en", enabled: false },
+  ms: { code: "ms", label: "Malay", nativeLabel: "Bahasa Melayu", direction: "ltr", fallbackLocale: "en", enabled: false },
+  ja: { code: "ja", label: "Japanese", nativeLabel: "日本語", direction: "ltr", fallbackLocale: "en", enabled: false },
+  zh: { code: "zh", label: "Chinese", nativeLabel: "中文", direction: "ltr", fallbackLocale: "en", enabled: false },
+  hi: { code: "hi", label: "Hindi", nativeLabel: "हिन्दी", direction: "ltr", fallbackLocale: "en", enabled: false },
 };
 
 /** Historical export  label map for the enabled locales. Unchanged values. */
