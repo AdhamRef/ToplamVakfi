@@ -4,8 +4,6 @@ import { buildPageMetadata } from "@/lib/seo";
 import { slugFor } from "@/lib/minbar/routes";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import ReportsPage from "@/components/minbar/reports/ReportsPage";
-import { listReports } from "@/lib/minbar/cms";
-import PageBanners from "@/components/minbar/banners/PageBanners";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -28,17 +26,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * Achievements and reports  ported from
  * `Minbar/إنجازات وتقارير المؤسسة.dc.html`.
  *
- * `homepage` rides along for the three closing banners.
+ * `homepage` rides along for the two closing banners.
  */
 export default async function Achievements({ params }: Props) {
   const { locale } = await params;
-  const reports = await listReports(locale);
 
   return (
     <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-        <PageBanners locale={locale} page="reports" slot="top" />
-      <ReportsPage reports={reports} />
-      <PageBanners locale={locale} page="reports" slot="bottom" />
+      <ReportsPage />
     </MinbarMessages>
   );
 }

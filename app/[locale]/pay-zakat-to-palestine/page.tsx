@@ -5,7 +5,6 @@ import { slugFor } from "@/lib/minbar/routes";
 import { getCategoryPageByTemplate } from "@/lib/minbar/category-page";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import ZakatPage from "@/components/minbar/zakat/ZakatPage";
-import PageBanners from "@/components/minbar/banners/PageBanners";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -58,9 +57,7 @@ export default async function Zakat({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-        <PageBanners locale={locale} page="zakat" slot="top" />
         <ZakatPage category={category} />
-        <PageBanners locale={locale} page="zakat" slot="bottom" />
       </MinbarMessages>
     </>
   );

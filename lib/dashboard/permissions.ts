@@ -8,8 +8,8 @@ export const DASHBOARD_PERMISSION_KEYS = [
   // "operations" was removed with the التشغيل section. Any value still stored on a user row is
   // simply inert  it maps to no page and grants nothing.
   "ticker", "pixels", "ads", "platformConnections", "archive",
-  // Site content: stories, video programmes, courses, videos, reports, booklets,
-  // urgent banners, FAQs and site settings. One key for the group, the way
+  // Site content: homepage layout, quick donation, certificate copy and other site
+  // settings. One key for the group, the way
   // "blog" already covers both posts and their categories.
   "siteContent",
   // Bank accounts are gated separately from the rest of the content. A row here
@@ -18,10 +18,8 @@ export const DASHBOARD_PERMISSION_KEYS = [
   // editing a video title. Distinct from "bankTransfers", which only reads the
   // incoming transfer list.
   "bankAccounts",
-  // The donation concierge (مساعد العطاء): its analytics, the visitors' conversations,
-  // the AI insights and its settings. Conversations are what visitors typed, so reading
-  // them is its own grant rather than riding on `ads` like the old funnel endpoint.
-  "aiConcierge",
+  // "aiConcierge" was removed with the donation concierge; like "operations" above, a value
+  // still stored on a user row is inert.
   "generalSettings", "platformConnectionsTest", "platformConnectionsManage",
   "platformConnectionsAdmin", "archiveUpload", "archiveDelete", "archiveAnalyze",
   "archiveDocuments", "donationsEdit", "reportsExport",
@@ -123,24 +121,14 @@ const PATH_RULES: { prefix: string; key: DashboardPermissionKey }[] = [
   // "/dashboard → revenue" catch-all below, so the guard demanded `revenue` while the sidebar
   // entry and the API both check `siteContent`  a staffer granted the content section was
   // bounced out of each page. Same failure the /dashboard/inbox rule above exists to prevent.
-  { prefix: "/dashboard/super-categories", key: "siteContent" },
-  { prefix: "/dashboard/stories", key: "siteContent" },
-  { prefix: "/dashboard/videos", key: "siteContent" },
-  { prefix: "/dashboard/playlists", key: "siteContent" },
-  { prefix: "/dashboard/courses", key: "siteContent" },
-  { prefix: "/dashboard/reports", key: "siteContent" },
-  { prefix: "/dashboard/booklets", key: "siteContent" },
-  { prefix: "/dashboard/faqs", key: "siteContent" },
   // A live payment destination (IBAN/SWIFT), not content  see the `bankAccounts` key above.
   { prefix: "/dashboard/bank-accounts", key: "bankAccounts" },
-  { prefix: "/dashboard/urgent-banners", key: "siteContent" },
   { prefix: "/dashboard/quick-donation", key: "siteContent" },
   { prefix: "/dashboard/homepage-layout", key: "siteContent" },
   { prefix: "/dashboard/certificates", key: "siteContent" },
   { prefix: "/dashboard/pixels", key: "pixels" },
   { prefix: "/dashboard/donations", key: "revenue" },
   { prefix: "/dashboard/general", key: "generalSettings" },
-  { prefix: "/dashboard/ai-concierge", key: "aiConcierge" },
   { prefix: "/dashboard/telegram", key: "platformConnectionsAdmin" },
   { prefix: "/dashboard", key: "revenue" },
 ];

@@ -4,7 +4,6 @@ import { slugFor } from "@/lib/minbar/routes";
 import { listArticles, listPostCategories } from "@/lib/minbar/posts";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import BlogPage from "@/components/minbar/blog/BlogPage";
-import PageBanners from "@/components/minbar/banners/PageBanners";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -45,9 +44,7 @@ export default async function Blog({ params }: Props) {
 
   return (
     <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-        <PageBanners locale={locale} page="blog" slot="top" />
       <BlogPage initialArticles={page.items} initialCursor={page.nextCursor} categories={categories} />
-      <PageBanners locale={locale} page="blog" slot="bottom" />
     </MinbarMessages>
   );
 }

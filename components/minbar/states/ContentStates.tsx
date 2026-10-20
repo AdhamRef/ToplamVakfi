@@ -6,21 +6,19 @@ import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
 
 /**
- * The five in-page content states  ported from `Minbar/لا توجد تقارير.dc.html`,
- * `لا توجد مشاريع`, `لا توجد نتائج`, `حالة تحميل المحتوى` and
- * `حالة خطأ تحميل المحتوى`.
+ * The four in-page content states  ported from `Minbar/لا توجد مشاريع.dc.html`,
+ * `لا توجد نتائج`, `حالة تحميل المحتوى` and `حالة خطأ تحميل المحتوى`.
  *
  * None of these is a page. Each replaces one region of a page  a project grid,
- * a report list, an article grid  and leaves the rest of it, including the
+ * an article grid  and leaves the rest of it, including the
  * ways to give, standing. That is the distinction the handoff draws against the
  * full-page states in `StatusScreen`: a failed fetch is not a 500, and an empty
  * category is not a 404.
  *
- * The three empty states are also distinct from one another, and the handoff is
+ * The two empty states are also distinct from one another, and the handoff is
  * explicit that they must not be collapsed into one:
  *  - `NoResults`  filters or a search matched nothing that exists.
  *  - `NoProjects`  nothing is published in this category at all.
- *  - `NoReports`  nothing has been approved for publication yet.
  * A reader who filtered their way to an empty grid needs a reset button; a
  * reader looking at a category with nothing in it needs a way out of it.
  */
@@ -121,21 +119,6 @@ export function NoProjects() {
   );
 }
 
-/** Nothing has been approved for publication yet. */
-export function NoReports() {
-  const t = useTranslations("system");
-  return (
-    <Frame>
-      <Glyph size={56}>
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M7 3h8l4 4v14H7z" />
-          <path d="M15 3v4h4" />
-        </svg>
-      </Glyph>
-      <p className="st-in st-in-1" style={{ margin: 0, fontSize: 16, fontWeight: 800, color: "var(--deep)" }}>{t("noReports")}</p>
-    </Frame>
-  );
-}
 
 /**
  * Placeholder cards while a request is in flight.

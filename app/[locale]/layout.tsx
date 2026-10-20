@@ -9,7 +9,6 @@ import Header from "@/components/minbar/shell/Header";
 import MobileBottomNav from "@/components/minbar/shell/MobileBottomNav";
 import MinbarFooter from "@/components/minbar/shell/Footer";
 import QuickDonate from "@/components/minbar/shell/QuickDonate";
-import ConciergeLauncher from "@/components/minbar/concierge/ConciergeLauncher";
 import CartReminder from "@/components/CartReminder";
 import { CurrencyFromUrlSync } from "@/components/CurrencyFromUrlSync";
 import IntlProviderClient from "./IntlProviderClient";
@@ -26,7 +25,6 @@ import { CurrencyProvider } from "@/context/CurrencyContext";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { listCategories, type NavCategory } from "@/lib/minbar/categories";
-import { listNavSuperCategories } from "@/lib/minbar/super-category";
 import "@/styles/minbar/minbar.css";
 import "@/styles/minbar/locale-fonts.css";
 import "@/styles/minbar/toplum.css";
@@ -134,12 +132,10 @@ export default async function Rootlayout({
   // RTL too, and the previous `locale === "ar"` test silently rendered it LTR.
   const dir = localeDirection(locale);
   // Drives where the header's account icon points (`[AUTH-INTEGRATION]`).
-  // Categories feed the header's projects dropdown and the footer's band; super
-  // categories join them in the dropdown only.
-  const [session, categories, superCategories] = await Promise.all([
+  // Categories feed the header's projects dropdown and the footer's band.
+  const [session, categories] = await Promise.all([
     getServerSession(authOptions),
     listCategories(locale),
-    listNavSuperCategories(locale),
   ]);
   const navCategories: NavCategory[] = categories.map(({ id, href, name, image, projectCount }) => ({ id, href, name, image, projectCount }));
   const localeFont = LOCALE_FONT_STYLESHEETS[locale];
@@ -167,7 +163,7 @@ export default async function Rootlayout({
             <SessionProvider>
               <PreferredLangSync />
               <ScrollToTop />
-              <Header signedIn={!!session?.user} isAdmin={session?.user?.role === "ADMIN"} categories={navCategories} superCategories={superCategories} />
+              <Header signedIn={!!session?.user} isAdmin={session?.user?.role === "ADMIN"} categories={navCategories} />
               <MobileBottomNav signedIn={!!session?.user} />
               {/* No top padding here: the header renders its own spacer, sized
                   from its measured height, because that height changes with the
@@ -181,7 +177,6 @@ export default async function Rootlayout({
                 <MinbarFooter tagline={tagline} categories={navCategories} />
               </Suspense>
               <QuickDonate />
-              <ConciergeLauncher />
               <CartReminder />
               <ConfettiProvider />
               <Toaster position="top-center" />

@@ -3,7 +3,6 @@ import { listProjects } from "@/lib/minbar/projects";
 import { listCategoryTitles } from "@/lib/minbar/category-page";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import CartPage from "@/components/minbar/cart/CartPage";
-import PageBanners from "@/components/minbar/banners/PageBanners";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -33,9 +32,7 @@ export default async function Cart({ params }: Props) {
 
   return (
     <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-        <PageBanners locale={locale} page="cart" slot="top" />
       <CartPage projects={projects} categories={categories} />
-      <PageBanners locale={locale} page="cart" slot="bottom" />
     </MinbarMessages>
   );
 }

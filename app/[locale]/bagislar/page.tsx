@@ -6,7 +6,6 @@ import { slugFor } from "@/lib/minbar/routes";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import ProjectsPage from "@/components/minbar/projects/ProjectsPage";
 import type { ProjectSlide } from "@/components/minbar/projects/ProjectsHero";
-import PageBanners from "@/components/minbar/banners/PageBanners";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -53,9 +52,7 @@ export default async function Projects({ params }: Props) {
 
   return (
     <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-        <PageBanners locale={locale} page="projects" slot="top" />
       <ProjectsPage projects={projects} slides={slides} />
-      <PageBanners locale={locale} page="projects" slot="bottom" />
     </MinbarMessages>
   );
 }

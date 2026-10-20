@@ -11,9 +11,7 @@ import { Button } from "@/components/minbar/ds";
 import Rail from "@/components/minbar/Rail";
 import ZakatBanner from "@/components/minbar/banners/ZakatBanner";
 import TravelBanner from "@/components/minbar/banners/TravelBanner";
-import IbadanBanner from "@/components/minbar/banners/IbadanBanner";
 import { ProgramIcon } from "./ProgramIcons";
-import { NoReports } from "@/components/minbar/states/ContentStates";
 import {
   BIG_STATS,
   CLOSING_IMAGE,
@@ -25,7 +23,6 @@ import {
   SECTOR_STATS,
   VOICES,
 } from "@/lib/minbar/achievements";
-import type { CmsDocument } from "@/lib/minbar/cms";
 
 /**
  * Achievements and reports  first ported from
@@ -33,7 +30,7 @@ import type { CmsDocument } from "@/lib/minbar/cms";
  * page system of `ToplamVakfi-design/Toplum Vakfı Impact.dc.html` and
  * `… Transparency.dc.html`: a photographic navy banner closing on the wave,
  * then the light page with white figure cards, rounded field-photo panels,
- * giving-path cards, and the documents as a list of white rows.
+ * giving-path cards, and a closing note on how to request the reports.
  *
  * Every figure comes from `lib/minbar/achievements.ts`, which carries the
  * handoff's rule with it: these are approved published numbers, replaced only
@@ -94,7 +91,7 @@ function Head({ eyebrow, title, lead }: { eyebrow?: string; title: string; lead?
   );
 }
 
-export default function ReportsPage({ reports }: { reports: CmsDocument[] }) {
+export default function ReportsPage() {
   const locale = useLocale();
   const t = useTranslations("achievements");
   const tCommon = useTranslations("common");
@@ -292,46 +289,17 @@ export default function ReportsPage({ reports }: { reports: CmsDocument[] }) {
             </div>
           </section>
 
-          {/* ── Documents ─────────────────────────────────────────────────────
-              The Transparency page's document list: one white row per
-              published report, opening its file. */}
+          {/* ── Reports ───────────────────────────────────────────────────────
+              The full reports are sent on request, over WhatsApp. */}
           <section id="reports" className="rpx-sec">
-            <div className="rpx-reports">
-              <Rise className="rpx-reports-side">
-                <span className="rpx-eyebrow">{t("reports.eyebrow")}</span>
-                <h2 className="rpx-h2">{t("reports.title")}</h2>
-                <p className="rpx-sub" style={{ lineHeight: 1.9 }}>{t("reports.lead")}</p>
-                <a href={ORG_WHATSAPP} target="_blank" rel="noopener noreferrer" className="rpx-ghost">
-                  {t("reports.cta")}
-                </a>
-              </Rise>
-
-              <div style={{ display: "grid", gap: 10, alignContent: "start" }}>
-                {reports.length === 0 ? (
-                  /* The empty state sits in the design's dashed placeholder card. */
-                  <div className="rpx-empty">
-                    <NoReports />
-                  </div>
-                ) : null}
-                {reports.map((report) => (
-                  <a key={report.id} href={report.fileUrl} target="_blank" rel="noopener noreferrer" className="rp-report rpx-report">
-                    <span className="rpx-report-ico" aria-hidden="true">
-                      <ProgramIcon name="document" size={18} />
-                    </span>
-                    <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
-                      <b className="rpx-report-title">{report.title}</b>
-                      <span className="rpx-muted" style={{ fontSize: 12.5 }}>
-                        PDF{report.year ? ` · ${report.year}` : ""}{report.description ? ` · ${report.description}` : ""}
-                      </span>
-                    </span>
-                    <span className="rpx-report-status">{t("reportStatusAvailable")}</span>
-                    <span className="rpx-report-arrow" aria-hidden="true">
-                      <ProgramIcon name="arrow" size={15} />
-                    </span>
-                  </a>
-                ))}
-              </div>
-            </div>
+            <Rise className="rpx-reports-side">
+              <span className="rpx-eyebrow">{t("reports.eyebrow")}</span>
+              <h2 className="rpx-h2">{t("reports.title")}</h2>
+              <p className="rpx-sub" style={{ lineHeight: 1.9 }}>{t("reports.lead")}</p>
+              <a href={ORG_WHATSAPP} target="_blank" rel="noopener noreferrer" className="rpx-ghost">
+                {t("reports.cta")}
+              </a>
+            </Rise>
           </section>
 
           {/* ── Closing call ──────────────────────────────────────────────────
@@ -350,9 +318,6 @@ export default function ReportsPage({ reports }: { reports: CmsDocument[] }) {
                 <Button variant="primary" size="lg" href={miaPath("projects", locale)} style={{ whiteSpace: "nowrap" }}>
                   {t("closing.cta1")}
                 </Button>
-                <Button variant="outline" size="lg" href={miaPath("waqf", locale)} style={{ whiteSpace: "nowrap" }}>
-                  {t("closing.cta2")}
-                </Button>
               </div>
             </div>
           </section>
@@ -361,7 +326,6 @@ export default function ReportsPage({ reports }: { reports: CmsDocument[] }) {
 
       <ZakatBanner />
       <TravelBanner />
-      <IbadanBanner />
     </div>
   );
 }

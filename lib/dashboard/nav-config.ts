@@ -55,34 +55,25 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
   },
   {
     // Everything an editor publishes to the public site  the fundraising catalogue
-    // (projects, categories, blog, hero slides, ticker) and the CMS content behind the
-    // homepage rails. Per-item permissions still apply; a staffer sees the rows they hold.
+    // (projects, categories, blog, hero slides, ticker) and the settings behind the
+    // homepage sections. Per-item permissions still apply; a staffer sees the rows they hold.
     get group() { return dt("محتوى الموقع"); },
     items: [
       // The fundraising entries that used to head their own "الحملات والمحتوى" group. One
       // content group now: projects, categories and the blog are as much site content as
-      // the stories and videos below them, and splitting fifteen items across two headings
+      // the settings pages below them, and splitting the items across two headings
       // put related things behind different folds.
       { key: "campaigns", get title() { return dt("المشاريع"); }, href: "/dashboard/campaigns", icon: "heart", keywords: ["projects", "campaigns", "مشاريع"] },
       { key: "categories", get title() { return dt("الحملات والدول"); }, href: "/dashboard/categories", icon: "globe", keywords: ["categories", "countries", "تصنيفات"] },
       { key: "blog", get title() { return dt("المدونة"); }, href: "/dashboard/blog", icon: "penLine", keywords: ["blog", "posts", "مقالات"] },
       { key: "slides", get title() { return dt("الشرائح"); }, href: "/dashboard/slides", icon: "images", keywords: ["slides", "slider", "hero"] },
       { key: "ticker", get title() { return dt("شريط التبرعات"); }, href: "/dashboard/ticker", icon: "ticket", keywords: ["ticker", "marquee"] },
-      // ── CMS content (lib/content), all under the one siteContent permission ──
-      { key: "siteContent", get title() { return dt("الأقسام الكبرى"); }, href: "/dashboard/super-categories", icon: "layers", keywords: ["super", "category", "programme", "landing", "أقسام", "برنامج", "عبادا لنا"] },
-      { key: "siteContent", get title() { return dt("شريط القصص"); }, href: "/dashboard/stories", icon: "images", keywords: ["stories", "قصص", "rail", "highlights"] },
-      { key: "siteContent", get title() { return dt("البانرات"); }, href: "/dashboard/urgent-banners", icon: "alertTriangle", keywords: ["urgent", "banner", "banners", "emergency", "طوارئ", "بانر", "بانرات", "عاجل", "شد الرحال", "placement"] },
+      // ── Site settings, all under the one siteContent permission ──
       // Arranges the homepage: section order and visibility, and which items each rail
       // picks and how it ranks them. The items themselves are edited in the pages around it.
-      { key: "siteContent", get title() { return dt("ترتيب الصفحة الرئيسية"); }, href: "/dashboard/homepage-layout", icon: "layoutTemplate", keywords: ["homepage", "home", "layout", "order", "sections", "arrange", "الرئيسية", "ترتيب", "أقسام", "فعاليات", "تزكيات", "أولوية", "priority"] },
+      { key: "siteContent", get title() { return dt("ترتيب الصفحة الرئيسية"); }, href: "/dashboard/homepage-layout", icon: "layoutTemplate", keywords: ["homepage", "home", "layout", "order", "sections", "arrange", "الرئيسية", "ترتيب", "أقسام", "أولوية", "priority"] },
       { key: "siteContent", get title() { return dt("التبرع السريع"); }, href: "/dashboard/quick-donation", icon: "heartHandshake", keywords: ["quick", "donation", "donate", "amounts", "presets", "سريع", "مبالغ", "مقترحة", "dock"] },
-      { key: "siteContent", get title() { return dt("نصوص الشهادات"); }, href: "/dashboard/certificates", icon: "award", keywords: ["certificate", "certificates", "receipt", "waqf", "thanks", "شهادة", "شهادات", "إيصال", "وقف", "شكر"] },
-      { key: "siteContent", get title() { return dt("الفيديوهات"); }, href: "/dashboard/videos", icon: "video", keywords: ["videos", "فيديو", "achievements", "endorsements", "إنجازات", "تزكيات"] },
-      { key: "siteContent", get title() { return dt("برامجنا المصورة"); }, href: "/dashboard/playlists", icon: "listVideo", keywords: ["playlists", "programs", "series", "برامج", "سلاسل", "youtube"] },
-      { key: "siteContent", get title() { return dt("دوراتنا"); }, href: "/dashboard/courses", icon: "graduationCap", keywords: ["courses", "دورات", "training"] },
-      { key: "siteContent", get title() { return dt("التقارير"); }, href: "/dashboard/reports", icon: "fileText", keywords: ["reports", "تقارير", "pdf", "annual"] },
-      { key: "siteContent", get title() { return dt("الكتيبات"); }, href: "/dashboard/booklets", icon: "bookOpen", keywords: ["booklets", "كتيبات", "pdf", "library"] },
-      { key: "siteContent", get title() { return dt("الأسئلة الشائعة"); }, href: "/dashboard/faqs", icon: "helpCircle", keywords: ["faq", "أسئلة", "questions", "help"] },
+      { key: "siteContent", get title() { return dt("نصوص الشهادات"); }, href: "/dashboard/certificates", icon: "award", keywords: ["certificate", "certificates", "receipt", "thanks", "شهادة", "شهادات", "إيصال", "شكر"] },
       // The basket's own steps: the "support the team" switch and amounts, and the
       // cross-sell campaigns offered under the rows  none of it per campaign.
       { key: "campaigns", get title() { return dt("إعدادات السلة"); }, href: "/dashboard/cart-settings", icon: "shoppingCart", keywords: ["cart", "basket", "السلة", "team", "support", "دعم", "الفريق", "upsell", "suggestions", "مقترحات", "amounts", "مبالغ"] },
@@ -116,17 +107,6 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
       // The flat outbound send log (/dashboard/messages) is gone. Per-channel delivery detail lives
       // in البريد الإلكتروني / واتساب / الرسائل النصية above.
       { key: "messages", get title() { return dt("الرسائل الواردة"); }, href: "/dashboard/inbox", icon: "inbox", keywords: ["inbox", "inbound", "contact", "واردة", "زوار", "تواصل"], badge: "inboxUnread" },
-    ],
-  },
-  {
-    // The donation concierge on the public site: how it performs, what visitors ask it, what
-    // the AI concludes from those conversations, and its switches. One grant for the group.
-    get group() { return dt("مساعد العطاء (AI)"); },
-    items: [
-      { key: "aiConcierge", get title() { return dt("أداء المساعد"); }, href: "/dashboard/ai-concierge", icon: "sparkles", keywords: ["ai", "concierge", "assistant", "chat", "مساعد", "العطاء", "ذكاء", "analytics"] },
-      { key: "aiConcierge", get title() { return dt("محادثات المساعد"); }, href: "/dashboard/ai-concierge/conversations", icon: "messagesSquare", keywords: ["ai", "chats", "conversations", "transcripts", "محادثات", "دردشة"] },
-      { key: "aiConcierge", get title() { return dt("استنتاجات الذكاء الاصطناعي"); }, href: "/dashboard/ai-concierge/insights", icon: "lightbulb", keywords: ["ai", "insights", "summary", "تلخيص", "استنتاج", "تحليل"] },
-      { key: "aiConcierge", get title() { return dt("إعدادات المساعد"); }, href: "/dashboard/ai-concierge/settings", icon: "bot", keywords: ["ai", "settings", "concierge", "إعدادات", "مساعد"] },
     ],
   },
   {
@@ -217,7 +197,7 @@ export const DASHBOARD_PERMISSION_ROWS: {
   { key: "ticker", get group() { return dt("محتوى الموقع"); }, get title() { return dt("شريط التبرعات"); } },
   // One key for the whole "محتوى الموقع" group. Was enforced by every /api/* content route and
   // shown in the nav, but absent here  the same P3-2 shape: valid, checked, and ungrantable.
-  { key: "siteContent", get group() { return dt("محتوى الموقع"); }, get title() { return dt("محتوى الموقع (قصص، فيديو، تقارير، أسئلة…)"); } },
+  { key: "siteContent", get group() { return dt("محتوى الموقع"); }, get title() { return dt("محتوى الموقع (ترتيب الرئيسية، التبرع السريع، نصوص الشهادات…)"); } },
   // Group was "التشغيل / التواصل"; التشغيل no longer exists, so these two are plain التواصل.
   { key: "templates", get group() { return dt("التواصل"); }, get title() { return dt("قوالب البريد والمحفّزات"); } },
   // The outbound send log page is gone; `messages` now grants the inbox and the per-channel
@@ -231,7 +211,6 @@ export const DASHBOARD_PERMISSION_ROWS: {
   { key: "ads", get group() { return dt("التسويق"); }, get title() { return dt("(قديم) صفحة تحليل الإعلانات /dashboard/ads  ليست في القائمة؛ للإسناد والتتبع استخدم الصلاحيتين التاليتين"); } },
   { key: "referrals", get group() { return dt("التسويق"); }, get title() { return dt("إدارة الروابط والإسناد"); } },
   { key: "pixels", get group() { return dt("التسويق"); }, get title() { return dt("عرض التتبع والتحويلات"); } },
-  { key: "aiConcierge", get group() { return dt("مساعد العطاء (AI)"); }, get title() { return dt("مساعد العطاء: الأداء والمحادثات والاستنتاجات والإعدادات"); } },
   { key: "platformConnections", get group() { return dt("ربط المنصات والإرسال"); }, get title() { return dt("ربط المنصات والإرسال"); } },
   // Same P3-2 shape as the five above: `/dashboard/archive` is guarded by this key in
   // PATH_RULES and every archive API asks for it, but it was in no grant screen  so the archive
