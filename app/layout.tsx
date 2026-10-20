@@ -13,7 +13,7 @@ import "@/styles/self-hosted-fonts.css";
 
 
 /**
- * Minbar identity type. The brand leans heavy  headings and CTAs are 800–900 
+ * Minbarr identity type. The brand leans heavy  headings and CTAs are 800–900 
  * so those weights are loaded rather than synthesised, which is what makes a
  * faux-bold Arabic heading look wrong.
  *
