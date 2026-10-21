@@ -36,6 +36,7 @@ import {
   scheduleRuleFor,
 } from "@/lib/donations/recurring-schedule";
 import { parseMainGateway } from "@/lib/payment-gateway";
+import { isFrequencyEnabled } from "@/lib/minbar/frequencies";
 import { isAlbarakaConfigured, isAlbarakaRecurringEnabled } from "@/lib/albaraka";
 import { isPayPalConfigured, isPayPalRecurringEnabled } from "@/lib/paypal";
 import { mintDonationAccessToken } from "@/lib/donations/access-token";
@@ -204,6 +205,11 @@ export async function POST(request: NextRequest) {
        choice into MONTHLY (`DEPLOYED_VS_DESIGN_AUDIT.md` § P0.2). */
     if (!isOrderType(type)) {
       return NextResponse.json({ error: "Unsupported donation type" }, { status: 400 });
+    }
+    /* Only the ways of giving the site offers (config/donation-frequencies.ts). */
+    const ORDER_FREQ = { ONE_TIME: "once", DAILY: "daily", FRIDAY: "friday", MONTHLY: "monthly" } as const;
+    if (!isFrequencyEnabled(ORDER_FREQ[type])) {
+      return NextResponse.json({ error: "This donation frequency is not available" }, { status: 400 });
     }
     const frequency = frequencyOfOrderType(type);
     const timezone = normalizeTimezone(timezoneIn);

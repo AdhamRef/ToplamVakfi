@@ -1,5 +1,6 @@
 "use client";
 
+import { offeredFrequencies } from "@/lib/minbar/frequencies";
 import { decimalAmount, digitsOnly } from "@/lib/minbar/numeric-input";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -36,12 +37,13 @@ import type { MinbarProject } from "@/lib/minbar/projects";
 
 const AMOUNTS = [100, 200, 300, 500, 700, 1000];
 
-const FREQUENCIES: ReadonlyArray<{ id: CartFreqKey; key: string }> = [
+/* Only the frequencies enabled in `config/donation-frequencies.ts`. */
+const FREQUENCIES = offeredFrequencies<{ id: CartFreqKey; key: string }>([
   { id: "once", key: "oneTime" },
   { id: "monthly", key: "monthly" },
   { id: "friday", key: "everyFriday" },
   { id: "daily", key: "daily" },
-];
+]);
 
 /** Note length that fits the certificate's dedication line. */
 const NOTE_MAX = 90;
@@ -66,7 +68,7 @@ export default function DonationPanel({ project }: { project: MinbarProject; don
 
   const [picked, setPicked] = useState(0);
   const [custom, setCustom] = useState("");
-  const [freq, setFreq] = useState<CartFreqKey>("once");
+  const [freq, setFreq] = useState<CartFreqKey>(FREQUENCIES[0]?.id ?? "once");
   const [giftOpen, setGiftOpen] = useState(false);
   const [giftName, setGiftName] = useState("");
   const [channels, setChannels] = useState<{ whatsapp: boolean; email: boolean }>({ whatsapp: false, email: false });

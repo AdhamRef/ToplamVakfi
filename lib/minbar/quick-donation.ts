@@ -1,4 +1,5 @@
 import type { CartFreqKey } from "@/lib/minbar/cart";
+import { isFrequencyEnabled } from "@/lib/minbar/frequencies";
 import { SUPPORTED_LOCALES } from "@/lib/locales";
 
 /**
@@ -22,8 +23,10 @@ import { SUPPORTED_LOCALES } from "@/lib/locales";
  * visitor in that currency sees AND what goes to the cart, in that currency.
  */
 
-/** The four frequencies, in the order the card shows them. */
-export const QUICK_FREQUENCIES: readonly CartFreqKey[] = ["once", "daily", "friday", "monthly"];
+/** The frequencies, in the order the card shows them. */
+/* Only the frequencies enabled in `config/donation-frequencies.ts`: a stored
+   config that names another one drops it on read. */
+export const QUICK_FREQUENCIES: readonly CartFreqKey[] = (["once", "daily", "friday", "monthly"] as const).filter(isFrequencyEnabled);
 
 /** The generic destinations, in the order the card shows them. */
 export const QUICK_GENERIC_DESTINATIONS = ["where-needed", "zakat", "gaza-relief"] as const;
@@ -69,7 +72,7 @@ export const DEFAULT_QUICK_DONATION: QuickDonationConfig = {
   suggestedIndex: 1,
   allowCustomAmount: true,
   frequencies: [...QUICK_FREQUENCIES],
-  defaultFrequency: "once",
+  defaultFrequency: QUICK_FREQUENCIES[0] ?? "once",
   genericDestinations: [...QUICK_GENERIC_DESTINATIONS],
   projectsMode: "all",
   projectIds: [],

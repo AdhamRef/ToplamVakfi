@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { buildPageMetadata } from "@/lib/seo";
+import { redirect } from "next/navigation";
 import { listProjects } from "@/lib/minbar/projects";
+import { ENABLED_RECURRING_FREQUENCIES } from "@/lib/minbar/frequencies";
 import { miaPath, slugFor } from "@/lib/minbar/routes";
 import { imageForTheme, targetForTheme, toGivingTarget, type GivingTheme } from "@/lib/minbar/programs-match";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
@@ -45,6 +47,8 @@ const CAUSES: ReadonlyArray<{ id: RecurringCauseId; theme: GivingTheme | null; p
  */
 export default async function Recurring({ params }: Props) {
   const { locale } = await params;
+  /* No recurring frequency enabled (`config/donation-frequencies.ts`): nothing to set up here. */
+  if (!ENABLED_RECURRING_FREQUENCIES.length) redirect(miaPath("projects", locale));
   const projects = await listProjects(locale);
   const urgent = projects.find((p) => !p.shares) ?? null;
 

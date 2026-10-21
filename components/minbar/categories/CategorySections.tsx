@@ -1,5 +1,6 @@
 "use client";
 
+import { offeredFrequencies } from "@/lib/minbar/frequencies";
 import { decimalAmount } from "@/lib/minbar/numeric-input";
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import { useLocale, useTranslations } from "next-intl";
@@ -33,12 +34,13 @@ import type { CategoryPageContent } from "@/lib/minbar/category-page";
 
 const DEFAULT_AMOUNTS = [100, 200, 300, 500, 700, 1000, 1500, 2000, 3000];
 
-const FREQUENCIES: ReadonlyArray<{ id: CartFreqKey; key: string }> = [
+/* Only the frequencies enabled in `config/donation-frequencies.ts`. */
+const FREQUENCIES = offeredFrequencies<{ id: CartFreqKey; key: string }>([
   { id: "once", key: "oneTime" },
   { id: "daily", key: "daily" },
   { id: "friday", key: "everyFriday" },
   { id: "monthly", key: "monthly" },
-];
+]);
 
 /* ── The figures ─────────────────────────────────────────────────────────── */
 
@@ -118,7 +120,7 @@ export function CategoryDonateBox({ page, typeKey = "project" }: { page: Categor
 
   const [picked, setPicked] = useState(suggested);
   const [custom, setCustom] = useState("");
-  const [freq, setFreq] = useState<CartFreqKey>("once");
+  const [freq, setFreq] = useState<CartFreqKey>(FREQUENCIES[0]?.id ?? "once");
   const [added, setAdded] = useState(false);
 
   /* Switching to a currency with its own list can orphan the chosen chip. */

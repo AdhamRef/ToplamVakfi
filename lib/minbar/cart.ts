@@ -24,6 +24,12 @@
  */
 
 import { parseLocalAmount, type LocalAmount } from "@/lib/minbar/donation-amount";
+import { ENABLED_FREQUENCIES, isFrequencyEnabled } from "@/lib/minbar/frequencies";
+
+/* A row saved before a frequency was turned off (config/donation-frequencies.ts)
+   becomes one-time (or the first enabled frequency) rather than failing at checkout. */
+const offeredFreq = (freq: CartFreqKey): CartFreqKey =>
+  isFrequencyEnabled(freq) ? freq : isFrequencyEnabled("once") ? "once" : ENABLED_FREQUENCIES[0];
 
 /** Donation kind. Drives which proof path (receipt / certificate) applies. */
 export type CartTypeKey = "project" | "zakat" | "recurring" | "extra";
@@ -209,7 +215,7 @@ export function migrateItem(
     categoryId: typeof raw.categoryId === "string" ? raw.categoryId : undefined,
     titleKey: typeof raw.titleKey === "string" ? raw.titleKey : undefined,
     typeKey: (raw.typeKey as CartTypeKey) || LEGACY_TYPES[String(raw.type ?? "")] || undefined,
-    freqKey: (raw.freqKey as CartFreqKey) || LEGACY_FREQS[String(raw.frequency ?? "")] || "once",
+    freqKey: offeredFreq((raw.freqKey as CartFreqKey) || LEGACY_FREQS[String(raw.frequency ?? "")] || "once"),
     amount: parseAmount(raw.amount),
     currency: typeof raw.currency === "string" && raw.currency ? raw.currency : "USD",
     upsellId: typeof raw.upsellId === "string" ? raw.upsellId : undefined,

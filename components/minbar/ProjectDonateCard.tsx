@@ -9,6 +9,7 @@ import { toast } from "react-hot-toast";
 import { miaPath } from "@/lib/minbar/routes";
 import { addToCart, type CartFreqKey } from "@/lib/minbar/cart";
 import { flyToCart } from "@/lib/minbar/cart-feedback";
+import { ENABLED_FREQUENCIES, isFrequencyEnabled } from "@/lib/minbar/frequencies";
 import GiveFrequencyDialog, { type GiveIntent } from "@/components/minbar/GiveFrequencyDialog";
 import type { MinbarProject } from "@/lib/minbar/projects";
 import { useMinbarMoney } from "@/hooks/useMinbarMoney";
@@ -114,6 +115,12 @@ export default function ProjectDonateCard({ project, width, tag }: ProjectDonate
       setNudge((n) => n + 1);
       return;
     }
+    /* With a single frequency enabled there is nothing to choose. */
+    if (ENABLED_FREQUENCIES.length === 1) {
+      add(ENABLED_FREQUENCIES[0]);
+      router.push(miaPath("cart", locale));
+      return;
+    }
     setDialogOpen(true);
   };
 
@@ -168,14 +175,15 @@ export default function ProjectDonateCard({ project, width, tag }: ProjectDonate
     confirmAdded(freq, origin);
   };
 
-  /* "+ Add to cart": a one-time gift, straight into the basket. */
+  /* "+ Add to cart": a one-time gift (or the first enabled frequency), straight into the basket. */
+  const quickFreq: CartFreqKey = isFrequencyEnabled("once") ? "once" : ENABLED_FREQUENCIES[0];
   const onAddToCart = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!ready) {
       setNudge((n) => n + 1);
       return;
     }
-    add("once");
-    confirmAdded("once", event.currentTarget);
+    add(quickFreq);
+    confirmAdded(quickFreq, event.currentTarget);
     setAdded(true);
     if (addedTimer.current) window.clearTimeout(addedTimer.current);
     addedTimer.current = window.setTimeout(() => setAdded(false), 2400);

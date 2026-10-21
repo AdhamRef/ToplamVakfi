@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
 import { ORG } from "@/lib/minbar/org";
 import { addToCart, type CartFreqKey } from "@/lib/minbar/cart";
+import { isFrequencyEnabled } from "@/lib/minbar/frequencies";
 import { flyToCart } from "@/lib/minbar/cart-feedback";
 import { cssImage } from "@/lib/minbar/image-url";
 import { decimalAmount } from "@/lib/minbar/numeric-input";
@@ -51,6 +52,12 @@ import { Icon } from "./HomeIntro";
  */
 
 const NO_AMOUNTS: readonly number[] = [];
+
+/* The regular-giving tab and its weekly/monthly switch follow
+   config/donation-frequencies.ts. */
+const CAN_WEEKLY = isFrequencyEnabled("friday");
+const CAN_MONTHLY = isFrequencyEnabled("monthly");
+const TABS = WAYS_TABS.filter((id) => id !== "monthly" || CAN_WEEKLY || CAN_MONTHLY);
 const ARROW = <span className="tv-arrow" aria-hidden="true">←</span>;
 
 export default function WaysSection({ projects, images, zakat }: { projects: MinbarProject[]; images: string[]; zakat: HomeZakatTarget }) {
@@ -60,17 +67,17 @@ export default function WaysSection({ projects, images, zakat }: { projects: Min
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const onKey = (event: KeyboardEvent<HTMLDivElement>) => {
-    const at = WAYS_TABS.indexOf(tab);
+    const at = TABS.indexOf(tab);
     const rtl = getComputedStyle(event.currentTarget).direction === "rtl";
     let next = -1;
     if (event.key === "ArrowRight") next = rtl ? at - 1 : at + 1;
     else if (event.key === "ArrowLeft") next = rtl ? at + 1 : at - 1;
     else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = WAYS_TABS.length - 1;
+    else if (event.key === "End") next = TABS.length - 1;
     else return;
     event.preventDefault();
-    const target = (next + WAYS_TABS.length) % WAYS_TABS.length;
-    setTab(WAYS_TABS[target]);
+    const target = (next + TABS.length) % TABS.length;
+    setTab(TABS[target]);
     tabRefs.current[target]?.focus();
   };
 
@@ -91,7 +98,7 @@ export default function WaysSection({ projects, images, zakat }: { projects: Min
           <p>{t("lead")}</p>
         </div>
         <div className="wg-tabs" role="tablist" aria-label={t("tabsLabel")} onKeyDown={onKey}>
-          {WAYS_TABS.map((id, i) => (
+          {TABS.map((id, i) => (
             <button
               key={id}
               ref={(el) => {
@@ -113,7 +120,7 @@ export default function WaysSection({ projects, images, zakat }: { projects: Min
         </div>
       </div>
 
-      {WAYS_TABS.map((id) => (
+      {TABS.map((id) => (
         <div
           key={id}
           className="wg-panel"
@@ -352,7 +359,7 @@ function MonthlyPanel({ projects }: { projects: MinbarProject[] }) {
   const t = useTranslations("tvHome.monthly");
   const { format, formatLocal, symbol } = useMinbarMoney();
   const { fromLocal } = useDonationAmount();
-  const [weekly, setWeekly] = useState(false);
+  const [weekly, setWeekly] = useState(!CAN_MONTHLY);
   const [amount, setAmount] = useState<number>(MONTHLY_AMOUNTS[0]);
   const [custom, setCustom] = useState("");
   const [fund, setFund] = useState(projects[0]?.slug ?? "");
@@ -395,14 +402,16 @@ function MonthlyPanel({ projects }: { projects: MinbarProject[] }) {
           </Link>
         </div>
         <div className="rg-box">
-          <div className="rg-freq" role="group" aria-label={t("freqLabel")}>
-            <button type="button" className={weekly ? "active" : undefined} aria-pressed={weekly} onClick={() => setWeekly(true)}>
-              {t("weekly")}
-            </button>
-            <button type="button" className={!weekly ? "active" : undefined} aria-pressed={!weekly} onClick={() => setWeekly(false)}>
-              {t("monthly")}
-            </button>
-          </div>
+          {CAN_WEEKLY && CAN_MONTHLY ? (
+            <div className="rg-freq" role="group" aria-label={t("freqLabel")}>
+              <button type="button" className={weekly ? "active" : undefined} aria-pressed={weekly} onClick={() => setWeekly(true)}>
+                {t("weekly")}
+              </button>
+              <button type="button" className={!weekly ? "active" : undefined} aria-pressed={!weekly} onClick={() => setWeekly(false)}>
+                {t("monthly")}
+              </button>
+            </div>
+          ) : null}
           <span className="rg-label" id="rgAmtLabel">
             {weekly ? t("amountWeekly") : t("amountMonthly")}
           </span>

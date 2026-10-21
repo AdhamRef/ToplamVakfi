@@ -112,7 +112,8 @@ import {
   type ShareLabelsSectionRef,
 } from '../../_components/ShareLabelsSection';
 import { parseShareLabels, type ShareLabelsConfig } from '@/lib/campaign/share-labels';
-import { isRecommendedFrequencySetting } from "@/lib/minbar/recommended-frequency";
+import { parseRecommendedFrequency } from "@/lib/minbar/recommended-frequency";
+import { isFrequencyEnabled } from "@/lib/minbar/frequencies";
 import { dashDir, dt, dtx } from "@/lib/dashboard/i18n";
 
 // ✅ Enhanced schema with translations (limits aligned with DB / real data  not stricter than Prisma)
@@ -305,7 +306,7 @@ export default function EditCampaignPage() {
       currentAmount: 0,
       categoryIds: [],
       isActive: true,
-      recommendedFrequency: 'monthly',
+      recommendedFrequency: parseRecommendedFrequency(null) ?? 'none',
       images: [],
       videoUrl: '',
       ...localeDefaults(LOCALE_FIELDS),
@@ -376,10 +377,9 @@ export default function EditCampaignPage() {
             ? campaign.categoryIds
             : (campaign.category?.id ? [campaign.category.id] : []),
           isActive: Boolean(campaign.isActive),
-          // Unset on the campaign means the default, monthly.
-          recommendedFrequency: isRecommendedFrequencySetting(campaign.recommendedFrequency)
-            ? campaign.recommendedFrequency
-            : 'monthly',
+          // What the site actually shows: unset means the default, and a
+          // frequency turned off in config/donation-frequencies.ts falls back.
+          recommendedFrequency: parseRecommendedFrequency(campaign.recommendedFrequency) ?? 'none',
           images: imgs,
           videoUrl: campaign.videoUrl || '',
           // Legacy rows may lack EN; fall back to Arabic title so validation passes until translated.
@@ -1126,10 +1126,11 @@ export default function EditCampaignPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="monthly">{dt("شهريًا (الافتراضي)")}</SelectItem>
-                        <SelectItem value="friday">{dt("أسبوعياً")}</SelectItem>
-                        <SelectItem value="daily">{dt("يوميًا")}</SelectItem>
-                        <SelectItem value="once">{dt("مرة واحدة")}</SelectItem>
+                        {/* Only the frequencies enabled in config/donation-frequencies.ts. */}
+                        {isFrequencyEnabled("monthly") ? <SelectItem value="monthly">{dt("شهريًا (الافتراضي)")}</SelectItem> : null}
+                        {isFrequencyEnabled("friday") ? <SelectItem value="friday">{dt("أسبوعياً")}</SelectItem> : null}
+                        {isFrequencyEnabled("daily") ? <SelectItem value="daily">{dt("يوميًا")}</SelectItem> : null}
+                        {isFrequencyEnabled("once") ? <SelectItem value="once">{dt("مرة واحدة")}</SelectItem> : null}
                         <SelectItem value="none">{dt("بدون توصية")}</SelectItem>
                       </SelectContent>
                     </Select>

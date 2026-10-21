@@ -4,6 +4,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import type { CartFreqKey } from "@/lib/minbar/cart";
+import { offeredFrequencies } from "@/lib/minbar/frequencies";
 
 /**
  * "How often should this gift reach people?" asked between a card's amount and
@@ -23,12 +24,13 @@ import type { CartFreqKey } from "@/lib/minbar/cart";
 
 export type GiveIntent = "donate" | "cart";
 
-const RHYTHMS: ReadonlyArray<{ id: CartFreqKey; times: number; key: string }> = [
+/* Only the frequencies enabled in `config/donation-frequencies.ts`. */
+const RHYTHMS = offeredFrequencies<{ id: CartFreqKey; times: number; key: string }>([
   { id: "once", times: 1, key: "Once" },
   { id: "monthly", times: 12, key: "Monthly" },
   { id: "friday", times: 52, key: "Weekly" },
   { id: "daily", times: 365, key: "Daily" },
-];
+]);
 
 export default function GiveFrequencyDialog({
   open,
@@ -134,7 +136,7 @@ export default function GiveFrequencyDialog({
             <span aria-hidden="true">1</span>
             {t("sheetStep")}
           </p>
-          <div ref={gridRef} role="radiogroup" aria-labelledby={titleId} className="tg-grid">
+          <div ref={gridRef} role="radiogroup" aria-labelledby={titleId} className="tg-grid" data-count={RHYTHMS.length}>
             {RHYTHMS.map((rhythm) => {
               const isRecommended = rhythm.id === recommended;
               const isSelected = rhythm.id === selected;
@@ -149,9 +151,8 @@ export default function GiveFrequencyDialog({
                 >
                   {isRecommended ? <span className="tg-pick">{t("sheetPick")}</span> : null}
                   <span className="tg-times" dir="ltr">
-                    ×{rhythm.times}
+                    {t(`sheet${rhythm.key}`)}
                   </span>
-                  <b className="tg-name">{t(`sheet${rhythm.key}`)}</b>
                   <small className="tg-desc">{t(`sheet${rhythm.key}Desc`)}</small>
                   <span className="tg-tick" aria-hidden="true">
                     <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">

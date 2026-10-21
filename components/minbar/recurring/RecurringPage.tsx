@@ -1,5 +1,6 @@
 "use client";
 
+import { offeredFrequencies } from "@/lib/minbar/frequencies";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -38,11 +39,13 @@ import { TV_FALLBACK_IMAGE, type GivingTarget } from "@/lib/minbar/programs-matc
 const AMOUNTS = [25, 50, 75, 100];
 
 type Freq = Exclude<CartFreqKey, "once">;
-const FREQS: ReadonlyArray<{ id: Freq; word: string; amount: string; builder: string; cta: string }> = [
+/* Only the recurring frequencies enabled in `config/donation-frequencies.ts`. */
+const FREQS = offeredFrequencies<{ id: Freq; word: string; amount: string; builder: string; cta: string }>([
   { id: "friday", word: "weekly", amount: "amountWeekly", builder: "builderWeekly", cta: "ctaWeekly" },
   { id: "monthly", word: "monthly", amount: "amountMonthly", builder: "builderMonthly", cta: "ctaMonthly" },
   { id: "daily", word: "daily", amount: "amountDaily", builder: "builderDaily", cta: "ctaDaily" },
-];
+]);
+const FIRST_FREQ: Freq = FREQS.find((x) => x.id === "monthly")?.id ?? FREQS[0]?.id ?? "monthly";
 
 /** Days 1–28 only: every month has them, so a plan can never skip a month. */
 const MONTH_DAYS = Array.from({ length: 28 }, (_, i) => i + 1);
@@ -106,7 +109,7 @@ export default function RecurringPage({ causes, projects }: RecurringPageProps) 
   }, [causes, projects, t]);
 
   const [choice, setChoice] = useState<string>(options[0]?.value ?? "");
-  const [freq, setFreq] = useState<Freq>("monthly");
+  const [freq, setFreq] = useState<Freq>(FIRST_FREQ);
   const [amount, setAmount] = useState(AMOUNTS[0]);
   const [custom, setCustom] = useState("");
   const [scheduleOpen, setScheduleOpen] = useState(false);
@@ -116,7 +119,7 @@ export default function RecurringPage({ causes, projects }: RecurringPageProps) 
 
   const selected = options.find((o) => o.value === choice) ?? options[0] ?? null;
   const given = custom ? fromLocal(Number(custom)) : { usd: amount };
-  const f = FREQS.find((x) => x.id === freq) ?? FREQS[1];
+  const f = FREQS.find((x) => x.id === freq) ?? FREQS[0];
 
   const onStart = () => {
     if (!(given.usd > 0) || !selected) return;

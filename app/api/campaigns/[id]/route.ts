@@ -43,6 +43,7 @@ import { NOT_SOFT_DELETED } from "@/lib/campaign/soft-delete-filter";
 import { setCampaignDisplayTotal } from "@/lib/campaign/current-amount";
 import { PAID_DONATION_FILTER } from "@/lib/dashboard/donation-usd-revenue";
 import { RECOMMENDED_FREQUENCY_VALUES, isRecommendedFrequencySetting } from "@/lib/minbar/recommended-frequency";
+import { ENABLED_FREQUENCIES, isFrequencyEnabled } from "@/lib/minbar/frequencies";
 
 // This file used to build its own `new PrismaClient()` behind a global that is
 // only assigned when NODE_ENV !== "production". The comment claimed it was a
@@ -412,7 +413,12 @@ export async function PUT(
     if (body.recommendedFrequency !== undefined) {
       const value = body.recommendedFrequency;
       if (value === null || value === "") updateData.recommendedFrequency = null;
-      else if (isRecommendedFrequencySetting(value)) updateData.recommendedFrequency = value;
+      else if (isRecommendedFrequencySetting(value) && value !== "none" && !isFrequencyEnabled(value)) {
+        return NextResponse.json(
+          { error: `recommendedFrequency "${value}" is turned off; enabled: ${ENABLED_FREQUENCIES.join(", ")}, none` },
+          { status: 400 }
+        );
+      } else if (isRecommendedFrequencySetting(value)) updateData.recommendedFrequency = value;
       else {
         return NextResponse.json(
           { error: `recommendedFrequency must be one of ${RECOMMENDED_FREQUENCY_VALUES.join(", ")}` },
