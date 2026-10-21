@@ -2,80 +2,99 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { Link } from '@/i18n/routing';
-import { Heart } from 'lucide-react';
+import Link from 'next/link';
 import GoogleSignInButton from '@/components/GoogleSignInButton';
+import { miaPath } from '@/lib/minbar/routes';
+import { ORG } from '@/lib/minbar/org';
 
 const LOGO_URL = '/toplum/logo-mark.png';
+
+/* One Google step covers both signing in and signing up: the first sign-in
+   creates the donor account. Styles: `styles/minbar/pages/auth.css`. */
+const PERKS = ['perkHistory', 'perkReceipts', 'perkRecurring', 'perkFaster'] as const;
 
 export default function SignIn() {
   const locale = useLocale();
   const t = useTranslations('SignInPage');
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Left: decorative panel */}
-      <div className="hidden lg:flex lg:w-1/2 hero-pattern flex-col items-center justify-center p-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1b6fe0]/40 to-[#062442]/80" />
-        {/* Decorative circles */}
-        <div className="absolute top-[-80px] right-[-80px] w-80 h-80 rounded-full bg-white/5" />
-        <div className="absolute bottom-[-60px] left-[-60px] w-64 h-64 rounded-full bg-white/5" />
+    <div className="tva">
+      <div className="tva-wrap">
+        <section className="tva-story">
+          <span className="tva-story-pattern" aria-hidden="true" />
+          <div className="tva-story-in">
+            <span className="tva-chip">{t('storyKicker')}</span>
+            <h2 className="tva-story-title">{t('storyTitle')}</h2>
+            <p className="tva-story-sub">{t('storySub')}</p>
 
-        <div className="relative z-10 text-center text-white max-w-sm">
-          <Image src={LOGO_URL} alt={t('logoAlt')} width={80} height={80} className="h-20 w-auto object-contain mx-auto mb-8 brightness-0 invert" />
-          <div className="gold-mark mx-auto mb-6" />
-          <h2 className="text-2xl font-extrabold mb-4 uppercase tracking-wide">{t('headline')}</h2>
-          <p className="text-white/75 text-sm leading-relaxed mb-8">{t('sub')}</p>
-          <Link
-            href="/campaigns"
-            className="shape-button inline-flex items-center gap-2 bg-[#1b6fe0] hover:bg-[#0f55b8] text-white font-bold px-6 py-3 transition-colors"
-          >
-            <Heart className="w-4 h-4" />
-            {t('donateNow')}
-          </Link>
-        </div>
-      </div>
+            <ul className="tva-perks">
+              {PERKS.map((key, i) => (
+                <li key={key}>
+                  <span className="tva-perk-n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <span>
+                    <b>{t(`${key}Title`)}</b>
+                    <small>{t(`${key}Desc`)}</small>
+                  </span>
+                </li>
+              ))}
+            </ul>
 
-      {/* Right: form panel */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md">
-          {/* Mobile logo */}
-          <div className="lg:hidden text-center mb-8">
-            <Image src={LOGO_URL} alt={t('logoAlt')} width={56} height={56} className="h-14 w-auto object-contain mx-auto" />
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <h1 className="text-2xl font-extrabold text-gray-900 mb-1">{t('title')}</h1>
-            <p className="text-sm text-gray-500 mb-8">{t('welcome')}</p>
-
-            <div className="space-y-3">
-              <div className="flex w-full justify-center">
-                <GoogleSignInButton callbackUrl="/" locale={locale} />
+            <div className="tva-facts">
+              <div>
+                <b dir="ltr">{ORG.foundedYear}</b>
+                <small>{t('factFounded')}</small>
               </div>
-
-              {/* <button
-                onClick={() => signIn('facebook', { callbackUrl: '/' })}
-                className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-transparent rounded-lg text-sm font-semibold text-white bg-[#1877F2] hover:bg-[#1874EA] transition-colors shadow-sm"
-              >
-                <Image src="/facebook.svg" alt="Facebook" width={20} height={20} />
-                Facebook
-              </button> */}
+              <div>
+                <b dir="ltr">{ORG.licenseNumber}</b>
+                <small>{t('factLicense')}</small>
+              </div>
             </div>
-
-            <div className="mt-6 flex items-center gap-3">
-              <div className="flex-1 h-px bg-gray-200" />
-              <span className="text-xs text-gray-400">{t('orContinue')}</span>
-              <div className="flex-1 h-px bg-gray-200" />
-            </div>
-
-            {/* <p className="mt-6 text-center text-sm text-gray-500">
-              {t('noAccount')}{" "}
-              <Link href="/campaigns" className="text-[#A5243D] font-semibold hover:text-[#D8AA55] transition-colors inline-flex items-center gap-1">
-                {t('createOne')} <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
-              </Link>
-            </p> */}
           </div>
-        </div>
+        </section>
+
+        <section className="tva-card">
+          <Image src={LOGO_URL} alt={t('logoAlt')} width={64} height={64} className="tva-logo" priority />
+          <h1 className="tva-title">{t('title')}</h1>
+          <p className="tva-welcome">{t('welcome')}</p>
+
+          <div className="tva-tabs" aria-hidden="true">
+            <span>{t('tabSignIn')}</span>
+            <span className="tva-tabs-plus">+</span>
+            <span>{t('tabSignUp')}</span>
+          </div>
+
+          <div className="tva-google">
+            <GoogleSignInButton callbackUrl={miaPath('account', locale)} locale={locale} text="continue_with" width={300} />
+          </div>
+          <p className="tva-hint">{t('oneStep')}</p>
+
+          <div className="tva-or">
+            <span>{t('orContinue')}</span>
+          </div>
+
+          <div className="tva-alt">
+            <Link href={miaPath('projects', locale)} className="tva-alt-go">
+              {t('donateNow')}
+            </Link>
+            <Link href={miaPath('contact', locale)} className="tva-alt-help">
+              {t('needHelp')}
+            </Link>
+          </div>
+
+          <p className="tva-legal">
+            {t.rich('legal', {
+              terms: (chunks) => <Link href={miaPath('terms', locale)}>{chunks}</Link>,
+              privacy: (chunks) => <Link href={miaPath('privacy', locale)}>{chunks}</Link>,
+            })}
+          </p>
+          <p className="tva-secure">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="5" y="11" width="14" height="9" rx="2" />
+              <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+            </svg>
+            {t('secure')}
+          </p>
+        </section>
       </div>
     </div>
   );

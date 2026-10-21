@@ -35,6 +35,8 @@ import "@/styles/minbar/pages/about.css";
 import "@/styles/minbar/pages/blog.css";
 import "@/styles/minbar/pages/giving.css";
 import "@/styles/minbar/pages/reports.css";
+import "@/styles/minbar/pages/give-sheet.css";
+import "@/styles/minbar/pages/auth.css";
 
 // Valid public locales derive from the single source of truth (enabled set).
 const VALID_LOCALES = SUPPORTED_LOCALES;
@@ -88,7 +90,6 @@ export async function generateMetadata({
     title: { default: seo.title, template: seo.titleTemplate },
     description: seo.description,
     keywords: seo.keywords,
-    icons: { icon: "/toplum/logo-mark.png" },
     alternates,
     openGraph: {
       title: seo.title,

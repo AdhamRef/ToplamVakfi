@@ -58,7 +58,7 @@ const COPY: Record<"ar" | "en" | "tr" | "fr", Copy> = {
     },
     amount: "المبلغ",
     reference: "رقم الطلب",
-    signature: "مؤسسة منبر الأقصى الدولية",
+    signature: "وقف التضامن الاجتماعي (Toplum Vakfı)",
   },
   en: {
     received: {
@@ -85,7 +85,7 @@ const COPY: Record<"ar" | "en" | "tr" | "fr", Copy> = {
     },
     amount: "Amount",
     reference: "Order number",
-    signature: "Minbar Al-Aqsa International Foundation",
+    signature: "Toplum Vakfı",
   },
   tr: {
     received: {
@@ -112,7 +112,7 @@ const COPY: Record<"ar" | "en" | "tr" | "fr", Copy> = {
     },
     amount: "Tutar",
     reference: "Sipariş numarası",
-    signature: "Minber-i Aksa Uluslararası Vakfı",
+    signature: "Toplumsal Dayanışma Vakfı",
   },
   fr: {
     received: {
@@ -139,7 +139,7 @@ const COPY: Record<"ar" | "en" | "tr" | "fr", Copy> = {
     },
     amount: "Montant",
     reference: "Numéro de commande",
-    signature: "Fondation internationale Minbar Al-Aqsa",
+    signature: "Toplum Vakfı",
   },
 };
 

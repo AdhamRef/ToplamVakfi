@@ -1,0 +1,93 @@
+/* Sign in / sign up (app/[locale]/auth/signin/page.tsx). */
+
+.mia-scope .tva {
+  min-height: calc(100vh - var(--mia-head-h, 64px));
+  padding: 48px 16px 64px;
+  background:
+    radial-gradient(60% 50% at 85% 0%, rgba(0,162,224,.14), transparent 70%),
+    radial-gradient(50% 40% at 0% 100%, rgba(27,111,224,.10), transparent 70%),
+    #f3f7fb;
+}
+.mia-scope .tva-wrap {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  max-width: 1080px; margin: 0 auto; overflow: hidden;
+  border-radius: 28px; background: #fff;
+  box-shadow: 0 30px 80px rgba(6,36,66,.14), 0 0 0 1px #e3ecf4;
+}
+
+/* Story side */
+.mia-scope .tva-story {
+  position: relative; isolation: isolate; overflow: hidden;
+  padding: 48px 44px; color: #fff;
+  background: linear-gradient(160deg, #0b3a6b 0%, var(--tv-ink) 70%);
+}
+.mia-scope .tva-story-pattern {
+  position: absolute; inset: 0; z-index: -1; opacity: .12;
+  background: url("/toplum/pattern.svg") center / 220px repeat;
+}
+.mia-scope .tva-story::after {
+  content: ""; position: absolute; z-index: -1; width: 380px; height: 380px; border-radius: 50%;
+  inset-inline-end: -140px; bottom: -160px;
+  background: radial-gradient(circle, rgba(0,162,224,.55), transparent 65%);
+}
+.mia-scope .tva-chip {
+  display: inline-block; padding: 6px 14px; border-radius: 999px;
+  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22);
+  font-size: 12px; font-weight: 800;
+}
+.mia-scope .tva-story-title { margin: 18px 0 10px; color: #fff; font-size: clamp(26px, 3vw, 36px); font-weight: 900; line-height: 1.25; }
+.mia-scope .tva-story-sub { margin: 0 0 28px; color: #c4dbee; font-size: 15px; line-height: 1.8; }
+.mia-scope .tva-perks { display: grid; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.mia-scope .tva-perks li {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 16px; border-radius: 16px;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+}
+.mia-scope .tva-perk-n {
+  flex-shrink: 0; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px;
+  background: var(--tv-cta); color: #fff; font-size: 13px; font-weight: 900;
+}
+.mia-scope .tva-perks b { display: block; color: #fff; font-size: 15px; font-weight: 800; }
+.mia-scope .tva-perks small { display: block; margin-top: 2px; color: #b4cde3; font-size: 13px; line-height: 1.65; }
+.mia-scope .tva-facts { display: flex; gap: 28px; margin-top: 28px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.14); }
+.mia-scope .tva-facts b { display: block; color: #fff; font-size: 26px; font-weight: 900; line-height: 1.1; }
+.mia-scope .tva-facts small { color: #9fc0db; font-size: 12px; font-weight: 700; }
+
+/* Form side */
+.mia-scope .tva-card {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 48px 44px; text-align: center;
+}
+.mia-scope .tva-logo { width: 64px; height: 64px; object-fit: contain; margin-bottom: 18px; }
+.mia-scope .tva-title { margin: 0 0 6px; color: var(--tv-ink); font-size: 28px; font-weight: 900; }
+.mia-scope .tva-welcome { margin: 0 0 22px; max-width: 340px; color: var(--tv-muted); font-size: 14px; line-height: 1.75; }
+.mia-scope .tva-tabs {
+  display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px;
+  padding: 6px 16px; border-radius: 999px; background: #eef5fb;
+  color: var(--tv-brand-ink); font-size: 13px; font-weight: 800;
+}
+.mia-scope .tva-tabs-plus { color: var(--tv-muted); }
+.mia-scope .tva-google { display: flex; justify-content: center; width: 100%; min-height: 44px; }
+.mia-scope .tva-hint { margin: 12px 0 0; max-width: 320px; color: var(--tv-muted); font-size: 12.5px; line-height: 1.7; }
+.mia-scope .tva-or { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 320px; margin: 22px 0 16px; color: #8da0b3; font-size: 12px; font-weight: 700; }
+.mia-scope .tva-or::before, .mia-scope .tva-or::after { content: ""; flex: 1; height: 1px; background: #e2ebf3; }
+.mia-scope .tva-alt { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 320px; }
+.mia-scope .tva-alt a {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 12px;
+  border-radius: 12px; font-size: 14px; font-weight: 800; transition: filter .15s, background .15s;
+}
+.mia-scope .tva-alt-go { background: var(--tv-cta); color: #fff; }
+.mia-scope .tva-alt-go:hover { color: #fff; filter: brightness(1.06); }
+.mia-scope .tva-alt-help { border: 1.5px solid #d3e2ee; color: var(--tv-ink); }
+.mia-scope .tva-alt-help:hover { background: #f2f7fb; color: var(--tv-ink); }
+.mia-scope .tva-legal { margin: 22px 0 0; max-width: 340px; color: #8da0b3; font-size: 12px; line-height: 1.7; }
+.mia-scope .tva-legal a { color: var(--tv-brand-ink); font-weight: 700; text-decoration: underline; }
+.mia-scope .tva-secure { display: inline-flex; align-items: center; gap: 6px; margin: 10px 0 0; color: #2b9a63; font-size: 12px; font-weight: 800; }
+
+@media (max-width: 900px) {
+  .mia-scope .tva { padding: 20px 16px 96px; }
+  .mia-scope .tva-wrap { grid-template-columns: minmax(0, 1fr); border-radius: 22px; }
+  .mia-scope .tva-card { order: -1; padding: 32px 20px; }
+  .mia-scope .tva-story { padding: 30px 20px; }
+  .mia-scope .tva-title { font-size: 24px; }
+}

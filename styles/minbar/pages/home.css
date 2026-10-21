@@ -784,3 +784,27 @@
 .mia-scope .tv-home .cf-card:hover { transform: none; box-shadow: none; }
 .mia-scope .tv-home .pt-track:hover { transform: none; box-shadow: none; }
 @media (max-width: 760px) { .mia-scope .tv-home .pt-track { padding: 0 2px !important; } }
+
+/* ── Landing size ─────────────────────────────────────────────────────────
+ * A taller landing on tablets and desktops: the hero fills most of the first
+ * screen, with a larger donation disc and headline. Phones keep their compact
+ * stacked layout. */
+@media (min-width: 761px) {
+  .mia-scope .tv-home .th {
+    --th-disc: 400px; --th-gap: 64px;
+    min-height: clamp(620px, 86vh, 820px);
+    padding-bottom: 96px;
+  }
+  .mia-scope .tv-home .th-h1 { font-size: clamp(46px, 6vw, 78px); margin-bottom: 16px; }
+  .mia-scope .tv-home .th-lead { font-size: clamp(19px, 1.8vw, 25px); margin-bottom: 16px; }
+  .mia-scope .tv-home .th-body { font-size: 16px; margin-bottom: 30px; }
+  .mia-scope .tv-home .th-cta { min-height: 56px; font-size: 16px; }
+}
+/* The disc's inner layout is sized for 360px (CLAUDE.md: circle geometry), so
+   it grows as a whole rather than by re-flowing its contents. */
+@media (min-width: 1101px) {
+  .mia-scope .tv-home .th-ring-slot .tv-ring { transform: scale(1.1); }
+}
+@media (min-width: 761px) and (max-width: 1100px) {
+  .mia-scope .tv-home .th { --th-disc: 360px; --th-gap: 36px; min-height: clamp(560px, 78vh, 700px); }
+}

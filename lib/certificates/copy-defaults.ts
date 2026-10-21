@@ -65,10 +65,10 @@ export interface ReceiptOrgData {
 }
 
 export const RECEIPT_ORG_DEFAULTS: ReceiptOrgData = {
-  orgLegalName: "Uluslararası Minber-i Aksâ Derneği",
+  orgLegalName: "Toplumsal Dayanışma Vakfı (Toplum Vakfı)",
   taxNo: "8900363807",
-  orgAddress: "Haseki Sultan Mah. Turgut Özal Millet Cad. No:55 Daire:4 Fatih/İstanbul",
-  orgContact: "info@ToplamVakfi.org",
+  orgAddress: "Mimar Sinan Cd. No:38, Bağlar, 34209 Bağcılar / İstanbul",
+  orgContact: "info@toplumsalvakfi.org",
 };
 
 /** The shape stored in `GlobalSettings.certificateCopy`. */

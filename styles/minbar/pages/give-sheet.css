@@ -1,0 +1,139 @@
+/* Give sheet: the "how often" step between a project card and the basket
+   (components/minbar/GiveFrequencyDialog.tsx). A drawer on the inline end
+   from 761px, a bottom sheet below. */
+
+.mia-scope .tg-scrim {
+  position: fixed; inset: 0; z-index: 2100; /* over the header (1000), floating bars and the menu drawer (2000) */
+  display: flex; justify-content: flex-end; align-items: stretch;
+  background: rgba(6,36,66,.38);
+  animation: tg-fade .2s ease;
+}
+.mia-scope .tg-sheet {
+  position: relative; display: flex; flex-direction: column;
+  width: min(440px, 100%); height: 100%; overflow: hidden;
+  background: #f4f8fc; color: var(--tv-ink);
+  box-shadow: -24px 0 60px rgba(6,36,66,.22);
+  animation: tg-drawer .34s cubic-bezier(.22,.8,.28,1);
+  cursor: default;
+}
+.mia-scope[dir="rtl"] .tg-scrim { justify-content: flex-start; }
+.mia-scope[dir="rtl"] .tg-sheet { box-shadow: 24px 0 60px rgba(6,36,66,.22); animation-name: tg-drawer-rtl; }
+.mia-scope .tg-grip { display: none; }
+
+/* Head: white card with the gift as a receipt line. */
+.mia-scope .tg-head {
+  padding: 22px 24px 20px; background: #fff;
+  border-bottom: 1px solid #e2ebf3;
+}
+.mia-scope .tg-head-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.mia-scope .tg-kicker {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 12px; border-radius: 999px;
+  background: #e6f5fc; color: var(--tv-brand-ink);
+  font-size: 12px; font-weight: 800; letter-spacing: .02em;
+}
+.mia-scope .tg-close {
+  display: grid; place-items: center; width: 38px; height: 38px; flex-shrink: 0;
+  border: 1px solid #dbe6ef; border-radius: 12px; background: #fff; color: var(--tv-muted);
+  cursor: pointer; transition: background .15s, color .15s;
+}
+.mia-scope .tg-close:hover { background: #eef4f9; color: var(--tv-ink); }
+.mia-scope .tg-title { margin: 0 0 6px; color: var(--tv-ink); font-size: 24px; font-weight: 900; line-height: 1.3; }
+.mia-scope .tg-lead { margin: 0; color: var(--tv-muted); font-size: 14px; line-height: 1.75; }
+.mia-scope .tg-receipt {
+  display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 2px 12px;
+  margin-top: 16px; padding: 14px 16px; border-radius: 14px;
+  background: var(--tv-ink); color: #fff;
+}
+.mia-scope .tg-receipt-label { color: #9fc4e0; font-size: 12px; font-weight: 700; }
+.mia-scope .tg-receipt-amount { grid-row: span 2; align-self: center; font-size: 26px; font-weight: 900; unicode-bidi: isolate; }
+.mia-scope .tg-receipt-project { overflow: hidden; color: #fff; font-size: 14px; font-weight: 800; white-space: nowrap; text-overflow: ellipsis; }
+
+/* Body: four rhythm tiles in a 2×2 grid. */
+.mia-scope .tg-body { flex: 1; overflow: auto; padding: 20px 24px 8px; }
+.mia-scope .tg-step { display: flex; align-items: center; gap: 10px; margin: 0 0 12px; color: var(--tv-ink); font-size: 14px; font-weight: 800; }
+.mia-scope .tg-step > span {
+  display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+  background: var(--tv-cta); color: #fff; font-size: 12px; font-weight: 900;
+}
+.mia-scope .tg-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+.mia-scope .tg-tile {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+  min-height: 132px; padding: 16px 14px 14px; border: 1.5px solid #dbe6ef; border-radius: 16px;
+  background: #fff; color: var(--tv-ink); text-align: start; cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.mia-scope .tg-tile:hover { border-color: #9fd3ee; transform: translateY(-1px); }
+.mia-scope .tg-tile:focus-visible { outline: 3px solid rgba(0,162,224,.45); outline-offset: 2px; }
+.mia-scope .tg-tile.is-pick { border-style: dashed; border-color: var(--tv-brand); }
+.mia-scope .tg-tile.is-on { border: 1.5px solid var(--tv-brand); background: #eaf7fd; box-shadow: 0 10px 24px rgba(0,119,179,.16); }
+.mia-scope .tg-times { color: var(--tv-brand-ink); font-size: 26px; font-weight: 900; line-height: 1; letter-spacing: -.02em; }
+.mia-scope .tg-name { margin-top: 6px; font-size: 15px; font-weight: 900; }
+.mia-scope .tg-desc { color: var(--tv-muted); font-size: 12px; line-height: 1.6; }
+.mia-scope .tg-pick {
+  position: absolute; top: -10px; inset-inline-end: 12px;
+  padding: 3px 10px; border-radius: 999px; background: var(--tv-cta); color: #fff;
+  font-size: 11px; font-weight: 900;
+}
+.mia-scope .tg-tick {
+  position: absolute; top: 14px; inset-inline-end: 14px;
+  display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid #cbd9e5; color: transparent; transition: background .15s, border-color .15s, color .15s;
+}
+.mia-scope .tg-tile.is-pick .tg-tick { top: 22px; }
+.mia-scope .tg-tile.is-on .tg-tick { border-color: var(--tv-brand); background: var(--tv-brand); color: #fff; }
+.mia-scope .tg-reach {
+  min-height: 48px; margin: 14px 0 0; padding: 12px 14px; border-radius: 12px;
+  background: #fff; border: 1px solid #e2ebf3; color: var(--tv-muted);
+  font-size: 13px; line-height: 1.7;
+}
+.mia-scope .tg-reach[data-on="1"] { border-color: #bfe4f5; background: #f0f9fe; color: var(--tv-ink); }
+.mia-scope .tg-reach b { color: var(--tv-brand-ink); unicode-bidi: isolate; }
+
+/* Foot: actions stay in view. */
+.mia-scope .tg-foot { padding: 14px 24px 20px; background: #fff; border-top: 1px solid #e2ebf3; }
+.mia-scope .tg-actions { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.mia-scope .tg-go, .mia-scope .tg-basket {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 52px; border-radius: 14px; font-size: 15px; font-weight: 900; cursor: pointer;
+  transition: filter .15s, opacity .15s, background .15s;
+}
+.mia-scope .tg-go { border: 0; background: var(--tv-cta); color: #fff; box-shadow: 0 10px 22px rgba(27,111,224,.28); }
+.mia-scope .tg-go:hover:not(:disabled) { filter: brightness(1.06); }
+.mia-scope[dir="rtl"] .tg-go-arrow { transform: scaleX(-1); }
+.mia-scope .tg-basket { border: 1.5px solid #cfe0ec; background: #fff; color: var(--tv-ink); }
+.mia-scope .tg-basket:hover:not(:disabled) { background: #f2f7fb; }
+.mia-scope .tg-go:disabled, .mia-scope .tg-basket:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
+.mia-scope .tg-trust { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; margin: 12px 0 0; padding: 0; list-style: none; }
+.mia-scope .tg-trust li { display: inline-flex; align-items: center; gap: 6px; color: var(--tv-muted); font-size: 11.5px; font-weight: 700; }
+.mia-scope .tg-trust li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: #2bb673; }
+
+/* Phones: bottom sheet. */
+@media (max-width: 760px) {
+  .mia-scope .tg-scrim, .mia-scope[dir="rtl"] .tg-scrim { justify-content: stretch; align-items: flex-end; }
+  .mia-scope .tg-sheet, .mia-scope[dir="rtl"] .tg-sheet {
+    width: 100%; height: auto; max-height: calc(100dvh - 24px);
+    border-radius: 22px 22px 0 0; box-shadow: 0 -20px 50px rgba(6,36,66,.25);
+    animation-name: tg-sheet-up;
+  }
+  .mia-scope .tg-grip { display: block; width: 44px; height: 5px; margin: 8px auto -4px; border-radius: 999px; background: #cfdbe6; }
+  .mia-scope .tg-head { padding: 14px 16px 16px; }
+  .mia-scope .tg-title { font-size: 20px; }
+  .mia-scope .tg-lead { font-size: 13px; }
+  .mia-scope .tg-receipt-amount { font-size: 22px; }
+  .mia-scope .tg-body { padding: 16px 16px 6px; }
+  .mia-scope .tg-tile { min-height: 116px; padding: 14px 12px 12px; }
+  .mia-scope .tg-times { font-size: 22px; }
+  .mia-scope .tg-foot { padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); }
+  .mia-scope .tg-actions { grid-template-columns: 1fr 1fr; }
+  .mia-scope .tg-go, .mia-scope .tg-basket { min-height: 50px; font-size: 14px; }
+}
+
+@keyframes tg-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes tg-drawer { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes tg-drawer-rtl { from { transform: translateX(-100%); } to { transform: none; } }
+@keyframes tg-sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .mia-scope .tg-scrim, .mia-scope .tg-sheet, .mia-scope .tg-tile { animation: none !important; transition: none !important; }
+}

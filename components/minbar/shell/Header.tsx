@@ -306,7 +306,14 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
       setDropdown(null);
       setSearchOpen(false);
     };
-    const onClick = () => setDropdown(null);
+    /* React listens on `document` too (app router), so a trigger's
+       stopPropagation cannot stop this listener: without the guard the click
+       that opens a menu closes it again in the same tick. */
+    const onClick = (event: MouseEvent) => {
+      const target = event.target as Element | null;
+      if (target?.closest?.("[data-tv-dd]")) return;
+      setDropdown(null);
+    };
     document.addEventListener("keydown", onKey);
     document.addEventListener("click", onClick);
     return () => {
@@ -450,6 +457,7 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
                   className="tv-lang"
                   type="button"
                   onClick={toggleDropdown("lang")}
+                  data-tv-dd=""
                   aria-label={t("language")}
                   title={t("language")}
                   aria-expanded={dropdown?.id === "lang"}
@@ -462,6 +470,7 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
                   className="tv-curr"
                   type="button"
                   onClick={toggleDropdown("curr")}
+                  data-tv-dd=""
                   aria-label={t("currency")}
                   title={t("currency")}
                   aria-expanded={dropdown?.id === "curr"}
@@ -566,6 +575,7 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
                     className="tv-mrail-btn tv-mrail-lang"
                     type="button"
                     onClick={toggleDropdown("lang")}
+                  data-tv-dd=""
                     aria-label={t("language")}
                     aria-expanded={dropdown?.id === "lang"}
                     aria-haspopup="menu"
@@ -576,6 +586,7 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
                     className="tv-mrail-btn tv-mrail-curr"
                     type="button"
                     onClick={toggleDropdown("curr")}
+                  data-tv-dd=""
                     aria-label={t("currency")}
                     aria-expanded={dropdown?.id === "curr"}
                     aria-haspopup="menu"
@@ -618,6 +629,7 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
       {dropdown ? (
         <div
           className="tv-dropdown-menu open"
+          data-tv-dd=""
           role="menu"
           dir={dir}
           style={dir === "rtl" ? { top: dropdown.top, right: dropdown.side } : { top: dropdown.top, left: dropdown.side }}
