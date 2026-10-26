@@ -13,7 +13,7 @@ import { withDonationToken } from "@/lib/donations/access-token";
 // get the signal on bank rejects.
 import { sendDonationFailedConversions } from "@/lib/tracking/donation-conversion-server";
 import { dispatchDonationPaid, dispatchEvent } from "@/lib/events/dispatch";
-import { mergePayForProviderRaw, PAYFOR_UNVERIFIED_APPROVAL, payForErrorMessage, redactPayForResponse, verifyPayForResponseHash } from "@/lib/payfor";
+import { mergePayForProviderRaw, PAYFOR_UNVERIFIED_APPROVAL, payForErrorMessage, redactPayForResponse, stripeFallbackPath, verifyPayForResponseHash, wantsStripeFallback } from "@/lib/payfor";
 
 export async function POST(req: NextRequest) {
   const origin = new URL(req.url).origin;
@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
             providerRaw: mergePayForProviderRaw(donation.providerRaw, raw) as Prisma.InputJsonValue,
           },
         });
-        return { ok: false as const, reason: "failed" as const };
+        return { ok: false as const, reason: "failed" as const, fallbackToStripe: wantsStripeFallback(donation.providerRaw) };
       }
 
       /* An approval only counts when the bank signed it. A response that says
@@ -171,6 +171,13 @@ export async function POST(req: NextRequest) {
     if (result.ok) {
       after(() => dispatchDonationPaid(donationId));
       return NextResponse.redirect(new URL(withDonationToken(`/${locale}/success/${donationId}`, result.accessToken), origin));
+    }
+    /* A plain decline of a 3D attempt the donor chose: finish it on Stripe.
+       Never after a mismatch or an unverified approval, where money may have
+       moved and a second charge must not be offered. */
+    if (result.reason === "failed" && result.fallbackToStripe) {
+      after(() => sendDonationFailedConversions(donationId));
+      return NextResponse.redirect(new URL(stripeFallbackPath(locale, donationId), origin), 303);
     }
     if (result.reason === "failed") {
       after(async () => {

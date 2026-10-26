@@ -331,7 +331,9 @@ export async function initiateBankPayment(
   donationId: string,
   locale: string,
   gateway: "PAYFOR" | "ALBARAKA",
-  card?: { number: string; expiry: string; cvv: string; holder: string }
+  card?: { number: string; expiry: string; cvv: string; holder: string },
+  /** PayFor only: a decline returns the donor to checkout to finish on Stripe. */
+  options: { fallbackToStripe?: boolean } = {}
 ): Promise<GatewayForm> {
   const endpoint = gateway === "ALBARAKA" ? "/api/albaraka/3d/initiate" : "/api/payfor/3dpay/initiate";
 
@@ -342,6 +344,7 @@ export async function initiateBankPayment(
       donationId,
       locale,
       ...(gateway === "ALBARAKA" && card ? { card } : {}),
+      ...(gateway === "PAYFOR" && options.fallbackToStripe ? { fallbackToStripe: true } : {}),
     }),
   });
 

@@ -111,15 +111,17 @@ export function chargesPerMonth(frequency: RecurringFrequency): number {
 }
 
 /**
- * Which rail bills a plan of this cadence.
- *
- * Stripe is kept to what it always did here  one-time and monthly. Daily
- * and Friday plans go to Albaraka whatever the admin's main gateway is,
- * because that is the rail whose recurring transactions the site schedules
- * itself. A monthly plan follows the main gateway.
+ * Which rail bills a new plan of this cadence: the main gateway, at every
+ * cadence. Stripe bills daily, weekly (Friday) and monthly plans as
+ * Subscriptions anchored on the donor's chosen slot (`app/api/stripe/charge`).
  */
-export function railForFrequency(frequency: RecurringFrequency, mainGateway: CardRail): CardRail {
-  return frequency === "MONTHLY" ? mainGateway : "ALBARAKA";
+export function railForFrequency(_frequency: RecurringFrequency, mainGateway: CardRail): CardRail {
+  return mainGateway;
+}
+
+/** Stripe's recurring interval for a plan's cadence. */
+export function stripeIntervalFor(frequency: RecurringFrequency): "day" | "week" | "month" {
+  return frequency === "DAILY" ? "day" : frequency === "FRIDAY" ? "week" : "month";
 }
 
 /** A valid IANA zone, or the fallback. Never trust a browser string unchecked. */

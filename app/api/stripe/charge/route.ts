@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { prisma } from "@/lib/prisma";
 import Stripe from "stripe";
-import { firstChargeForPlan, normalizeTimezone, type RecurringFrequency } from "@/lib/donations/recurring-schedule";
+import { firstChargeForPlan, normalizeTimezone, stripeIntervalFor, type RecurringFrequency } from "@/lib/donations/recurring-schedule";
 import { toStripeMinorUnits } from "@/lib/stripe-amount";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -18,13 +18,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
  * goes from the donor to Stripe and never through this server:
  *
  *  - a one-time gift → a PaymentIntent;
- *  - a monthly plan (the donation carries a `subscriptionId` with
- *    `frequency: MONTHLY`) → a real Stripe Subscription billed monthly, whose
- *    first invoice's PaymentIntent is what the browser confirms.
- *
- * That is Stripe's whole scope here  one-time and monthly, as it always was.
- * Daily and Friday plans are billed by Albaraka (`railForFrequency`) and are
- * refused rather than mis-billed if they reach this route.
+ *  - a plan (the donation carries a `subscriptionId`) → a real Stripe
+ *    Subscription billed daily, weekly (on Friday) or monthly, whose first
+ *    invoice's PaymentIntent is what the browser confirms.
  *
  * Until this route knew about plans it created a bare PaymentIntent for every
  * order, so a monthly checkout produced a `Subscription` row with no Stripe
@@ -102,15 +98,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ clientSecret: intent.client_secret });
     }
 
-    // ── A monthly plan: a Stripe Subscription ────────────────────────────
+    // ── A plan: a Stripe Subscription (daily, weekly on Friday, or monthly) ──
     const plan = donation.subscription;
     const frequency = plan.frequency as RecurringFrequency;
-    if (frequency !== "MONTHLY") {
-      return NextResponse.json(
-        { error: `A ${frequency.toLowerCase()} plan is billed by Albaraka, not Stripe` },
-        { status: 400 }
-      );
-    }
     const timezone = normalizeTimezone(plan.timezone);
     const now = new Date();
 
@@ -163,7 +153,7 @@ export async function POST(req: NextRequest) {
             currency,
             product: product.id,
             unit_amount: recurringInSmallestUnit > 0 ? recurringInSmallestUnit : amountInSmallestUnit,
-            recurring: { interval: "month" },
+            recurring: { interval: stripeIntervalFor(frequency) },
           },
         },
       ],

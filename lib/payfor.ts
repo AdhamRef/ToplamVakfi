@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { miaPath } from "./minbar/routes";
 
 export type PayForCurrencyCode = "949" | "840" | "978";
 
@@ -19,6 +20,21 @@ export function formatPayForPurchAmount(amount: number): string {
   const n = Number(amount);
   if (!Number.isFinite(n) || n <= 0) return "0.00";
   return n.toFixed(2);
+}
+
+/**
+ * Whether a declined attempt should be finished on Stripe instead of ending on
+ * the failure page: the donor ticked "3D (optional)" at checkout, and the
+ * initiate route recorded it in the request snapshot.
+ */
+export function wantsStripeFallback(providerRaw: unknown): boolean {
+  const request = (providerRaw as { payforRequest?: { fallbackToStripe?: unknown } } | null)?.payforRequest;
+  return request?.fallbackToStripe === true;
+}
+
+/** Back to the checkout, which restores the basket kept under this order and takes the card in 2D. */
+export function stripeFallbackPath(locale: string, donationId: string): string {
+  return `${miaPath("checkout", locale)}?fallback=${encodeURIComponent(donationId)}`;
 }
 
 /**

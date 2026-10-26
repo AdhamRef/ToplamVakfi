@@ -19,6 +19,7 @@ import {
   parseScheduleChoice,
   parseScheduleRule,
   railForFrequency,
+  stripeIntervalFor,
   retryLadderHours,
   scheduleRuleFor,
   stripeRecurringFor,
@@ -54,14 +55,11 @@ test("order type validation and frequency extraction", () => {
   assert.equal(frequencyOfOrderType("FRIDAY"), "FRIDAY");
 });
 
-test("rail: Stripe keeps one-time + monthly; daily and Friday plans are Albaraka's", () => {
-  assert.equal(railForFrequency("DAILY", "STRIPE"), "ALBARAKA");
-  assert.equal(railForFrequency("FRIDAY", "STRIPE"), "ALBARAKA");
-  assert.equal(railForFrequency("DAILY", "ALBARAKA"), "ALBARAKA");
-  assert.equal(railForFrequency("FRIDAY", "ALBARAKA"), "ALBARAKA");
-  // Monthly follows the main gateway.
-  assert.equal(railForFrequency("MONTHLY", "STRIPE"), "STRIPE");
-  assert.equal(railForFrequency("MONTHLY", "ALBARAKA"), "ALBARAKA");
+test("rail: every cadence runs on the main gateway, and Stripe bills it at the matching interval", () => {
+  for (const f of ["DAILY", "FRIDAY", "MONTHLY"] as const) assert.equal(railForFrequency(f, "STRIPE"), "STRIPE");
+  assert.equal(stripeIntervalFor("DAILY"), "day");
+  assert.equal(stripeIntervalFor("FRIDAY"), "week");
+  assert.equal(stripeIntervalFor("MONTHLY"), "month");
 });
 
 test("monthly equivalent: daily ≈30.44 charges, Friday ≈4.35, monthly exactly 1", () => {

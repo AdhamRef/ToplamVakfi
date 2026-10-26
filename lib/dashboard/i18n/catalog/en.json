@@ -6664,5 +6664,7 @@
  "تعذر فك تشفير قيم محفوظة. تحقق من مفتاح تشفير الإعدادات.": "Could not decrypt saved values. Check the settings encryption key.",
  "{0} متر وقف": "{0} waqf metre(s)",
  "{0} سهم وقف": "{0} waqf share(s)",
- "أسطر الوقف جزء من قيمة التبرع ولا تُعدَّل من هنا.": "Waqf lines are part of the donation amount and cannot be edited here."
+ "أسطر الوقف جزء من قيمة التبرع ولا تُعدَّل من هنا.": "Waqf lines are part of the donation amount and cannot be edited here.",
+ "البوابة العالمية. تقبل كل العملات وتدعم التبرعات اليومية والأسبوعية والشهرية والبطاقات المحفوظة.": "The global gateway. Accepts every currency and supports daily, weekly and monthly donations and saved cards.",
+ "Stripe تتولّى كل حالات الدفع التي لا تمر عبر PayFor: التبرعات لمرة واحدة والتبرعات الدورية.": "Stripe handles every payment that does not go through PayFor: one-time and recurring donations."
 }

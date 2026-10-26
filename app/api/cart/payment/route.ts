@@ -540,11 +540,10 @@ export async function POST(request: NextRequest) {
         : null;
 
     if (frequency) {
-      /* The rail follows the cadence: Stripe keeps one-time + monthly, so a
-         monthly plan runs on the main gateway; daily and Friday plans are
-         Albaraka's (`railForFrequency`). A plan Albaraka would bill needs the
-         scheduler switched on  refusing here is what stops a donor being
-         promised a cadence nothing will ever charge. */
+      /* A card plan runs on the main gateway (Stripe) at every cadence
+         (`railForFrequency`). The Albaraka check below only matters if a
+         plan were ever routed there again: refusing is what stops a donor
+         being promised a cadence nothing will ever charge. */
       const settings = await prisma.globalSettings.findFirst({
         orderBy: { createdAt: "asc" },
         select: { mainGateway: true },

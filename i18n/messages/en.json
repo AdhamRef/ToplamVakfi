@@ -4037,6 +4037,9 @@
       "bankReviewNote": "Once you upload proof of the transfer, the donation moves to “under review” until the team confirms the money has arrived.",
       "paypalNote": "You'll be taken to PayPal to complete the payment, then brought back to the confirmation page automatically.",
       "trustEncrypted": "Encrypted payment",
+      "secure3dLabel": "Donate with 3D Secure (optional)",
+      "secure3dHint": "An extra check with a code from your bank. If it doesn't go through, we finish your donation with standard payment.",
+      "secure3dFallback": "The 3D Secure payment didn't go through, so we switched your donation to standard payment. Enter your card to complete it.",
       "trustRefund": "Cancellation & refund policy",
       "confirm": "Confirm payment"
     },

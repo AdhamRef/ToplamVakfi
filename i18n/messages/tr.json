@@ -4037,6 +4037,9 @@
       "bankReviewNote": "Havale dekontunu yükledikten sonra bağışın durumu, ekip tutarın ulaştığını teyit edene kadar «inceleniyor» olarak görünür.",
       "paypalNote": "Ödemeyi tamamlamak için PayPal'a yönlendirileceksiniz; ardından otomatik olarak onay sayfasına döneceksiniz.",
       "trustEncrypted": "Şifreli ödeme",
+      "secure3dLabel": "3D Secure ile bağış yap (isteğe bağlı)",
+      "secure3dHint": "Bankanızın göndereceği kodla ek doğrulama. İşlem gerçekleşmezse bağışınızı standart ödemeyle tamamlarız.",
+      "secure3dFallback": "3D Secure ödeme gerçekleşmedi, bağışınızı standart ödemeye aldık. Tamamlamak için kart bilgilerinizi girin.",
       "trustRefund": "İptal ve iade politikası",
       "confirm": "Ödemeyi onayla"
     },

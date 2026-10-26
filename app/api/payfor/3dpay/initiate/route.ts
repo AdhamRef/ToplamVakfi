@@ -28,6 +28,9 @@ type InitiateBody = {
    *  in the returned fields by decrypting the stored card. Only the user's own cards
    *  are accepted. The browser still appends Cvv2 (CVC isn't stored). */
   savedCardId?: string;
+  /** The donor ticked "3D (optional)" at checkout: a decline here hands them
+   *  back to the checkout to finish on Stripe instead of the failure page. */
+  fallbackToStripe?: boolean;
 };
 
 export async function POST(req: NextRequest) {
@@ -162,6 +165,7 @@ export async function POST(req: NextRequest) {
             purchAmount,
             currency,
             txnType,
+            fallbackToStripe: body.fallbackToStripe === true,
             createdAt: new Date().toISOString(),
           },
         } as Prisma.InputJsonValue,

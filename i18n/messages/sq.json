@@ -2995,6 +2995,9 @@
       "bankReviewNote": "Pasi të ngarkoni dëshminë e transfertës, dhurimi kalon në «në shqyrtim» derisa ekipi të konfirmojë që shuma ka mbërritur.",
       "paypalNote": "Do të ridrejtoheni te PayPal për të përfunduar pagesën, pastaj do të ktheheni automatikisht te faqja e konfirmimit.",
       "trustEncrypted": "Pagesë e koduar",
+      "secure3dLabel": "Dhuro me 3D Secure (opsionale)",
+      "secure3dHint": "Një verifikim shtesë me kod nga banka juaj. Nëse nuk kalon, e përfundojmë dhurimin me pagesën standarde.",
+      "secure3dFallback": "Pagesa me 3D Secure nuk kaloi, prandaj e kaluam dhurimin tuaj në pagesën standarde. Vendosni kartën për ta përfunduar.",
       "trustRefund": "Politika e anulimit dhe rimbursimit",
       "confirm": "Konfirmo pagesën"
     },

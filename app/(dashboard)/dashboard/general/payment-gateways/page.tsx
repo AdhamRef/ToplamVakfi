@@ -10,7 +10,6 @@ import {
   Check,
   CreditCard,
   Coins,
-  Landmark,
   Loader2,
   Settings,
   ShieldCheck,
@@ -37,17 +36,12 @@ const MAIN_GATEWAY_CARDS: {
   {
     value: "STRIPE",
     name: "Stripe",
-    get description() { return dt("البوابة العالمية. تقبل كل العملات وتدعم التبرعات الشهرية والبطاقات المحفوظة."); },
+    get description() { return dt("البوابة العالمية. تقبل كل العملات وتدعم التبرعات اليومية والأسبوعية والشهرية والبطاقات المحفوظة."); },
     icon: ShieldCheck,
     tone: "bg-indigo-50 text-indigo-700",
   },
-  {
-    value: "ALBARAKA",
-    name: "Albaraka Türk (2D)",
-    get description() { return dt("بوابة بنك البركة التركي بالدفع المباشر (2D) دون تحقق 3D Secure: تُخصم البطاقة فورًا في صفحة الدفع دون تحويل المتبرع إلى صفحة البنك."); },
-    icon: Landmark,
-    tone: "bg-emerald-50 text-emerald-700",
-  },
+  /* Albaraka was the alternative main gateway; Stripe has replaced it
+     (lib/payment-gateway.ts). Plans Albaraka already bills keep running. */
 ];
 
 export default function PaymentGatewaysPage() {
@@ -197,7 +191,7 @@ export default function PaymentGatewaysPage() {
               )}
             </div>
             <p className="text-sm text-muted-foreground">
-              {dt("البوابة المختارة تتولّى كل حالات الدفع التي لا تمر عبر PayFor. يمكن اختيار واحدة فقط، وتعمل البوابتان في نفس الحالات تمامًا.")}</p>
+              {dt("Stripe تتولّى كل حالات الدفع التي لا تمر عبر PayFor: التبرعات لمرة واحدة والتبرعات الدورية.")}</p>
 
             <div className="grid gap-4 sm:grid-cols-2">
               {MAIN_GATEWAY_CARDS.map((gateway) => {

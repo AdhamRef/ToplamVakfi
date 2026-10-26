@@ -6664,5 +6664,7 @@
  "تعذر فك تشفير قيم محفوظة. تحقق من مفتاح تشفير الإعدادات.": "Kayıtlı değerlerin şifresi çözülemedi. Ayarların şifreleme anahtarını kontrol edin.",
  "{0} متر وقف": "{0} metre vakıf",
  "{0} سهم وقف": "{0} vakıf hissesi",
- "أسطر الوقف جزء من قيمة التبرع ولا تُعدَّل من هنا.": "Vakıf satırları bağış tutarının parçasıdır ve buradan düzenlenemez."
+ "أسطر الوقف جزء من قيمة التبرع ولا تُعدَّل من هنا.": "Vakıf satırları bağış tutarının parçasıdır ve buradan düzenlenemez.",
+ "البوابة العالمية. تقبل كل العملات وتدعم التبرعات اليومية والأسبوعية والشهرية والبطاقات المحفوظة.": "Küresel ödeme geçidi. Tüm para birimlerini kabul eder; günlük, haftalık ve aylık bağışları ve kayıtlı kartları destekler.",
+ "Stripe تتولّى كل حالات الدفع التي لا تمر عبر PayFor: التبرعات لمرة واحدة والتبرعات الدورية.": "Stripe, PayFor üzerinden geçmeyen tüm ödemeleri üstlenir: tek seferlik ve düzenli bağışlar."
 }

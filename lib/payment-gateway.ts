@@ -1,20 +1,19 @@
 /**
  * Which gateway a given donation should be charged through.
  *
- * Three rails exist:
+ * Two rails take new payments:
  *   - PAYFOR    Ziraat Katılım 3D Secure. Unchanged, opt-out only: it keeps
  *                exactly the case it always had (one-time TRY donations) as long
  *                as the admin leaves its switch on.
- *   - STRIPE    the original main gateway.
- *   - ALBARAKA  Albaraka Türk EPOS 3D Secure, an alternative main gateway.
+ *   - STRIPE    the main gateway: every other case, one-time and recurring at
+ *                any cadence (daily, every Friday, monthly).
  *
- * STRIPE and ALBARAKA are interchangeable: whichever the admin picks as the main
- * gateway handles every case the other would have handled, with one exception 
- * monthly subscriptions, which need stored-credential recurring billing that the
- * Albaraka EPOS integration doesn't offer. Those stay on Stripe regardless.
+ * Albaraka used to be selectable as the main gateway; Stripe has replaced it.
+ * A stored `mainGateway: "ALBARAKA"` now reads as Stripe. Plans already billed
+ * by Albaraka keep their own rail (`planRail`) and are not moved.
  */
 
-import { railForFrequency } from "@/lib/donations/recurring-schedule";
+import { railForFrequency } from "./donations/recurring-schedule";
 
 /** Gateway an admin can nominate as the main one in the dashboard. */
 export type MainGateway = "STRIPE" | "ALBARAKA";
@@ -22,15 +21,15 @@ export type MainGateway = "STRIPE" | "ALBARAKA";
 /** Gateway actually used to charge a specific donation. */
 export type ResolvedGateway = "STRIPE" | "ALBARAKA" | "PAYFOR";
 
-export const MAIN_GATEWAYS: readonly MainGateway[] = ["STRIPE", "ALBARAKA"] as const;
+export const MAIN_GATEWAYS: readonly MainGateway[] = ["STRIPE"] as const;
 
 export function isMainGateway(value: unknown): value is MainGateway {
   return value === "STRIPE" || value === "ALBARAKA";
 }
 
-/** Normalises anything stored/received into a valid main gateway, defaulting to Stripe. */
+/** The main gateway for new payments: always Stripe, whatever was stored (an old "ALBARAKA" included). */
 export function parseMainGateway(value: unknown): MainGateway {
-  return isMainGateway(value) ? value : "STRIPE";
+  return isMainGateway(value) && MAIN_GATEWAYS.includes(value) ? value : "STRIPE";
 }
 
 export type GatewayResolutionInput = {
@@ -40,7 +39,7 @@ export type GatewayResolutionInput = {
   currency: string;
   /**
    * Recurring donations  daily, every Friday or monthly  create a
-   * subscription and can only run on Stripe. `ONE_TIME` is the only value
+   * subscription on the main gateway. `ONE_TIME` is the only value
    * that reaches a bank rail.
    */
   donationType?: "ONE_TIME" | "DAILY" | "FRIDAY" | "MONTHLY" | null;
@@ -49,6 +48,13 @@ export type GatewayResolutionInput = {
    * PaymentIntent to retry with  that forces Stripe for the rest of the attempt.
    */
   forceStripe?: boolean;
+  /**
+   * The donor's own 3D Secure choice, from the checkout's checkbox. When it is
+   * given, a one-time donation runs on PayFor (3D) only if it is true, and on
+   * the main gateway (2D) otherwise, whatever the currency. Left out, the
+   * currency rule below decides, as it always has.
+   */
+  secure3d?: boolean;
 };
 
 export function resolveGateway({
@@ -57,17 +63,18 @@ export function resolveGateway({
   currency,
   donationType = "ONE_TIME",
   forceStripe = false,
+  secure3d,
 }: GatewayResolutionInput): ResolvedGateway {
   if (forceStripe) return "STRIPE";
-  // A plan's rail follows its cadence (`railForFrequency`): Stripe keeps its
-  // one-time + monthly scope, so a monthly plan runs on the main gateway as a
-  // Stripe Subscription or an Albaraka scheduled plan; daily and Friday plans
-  // are Albaraka's, since Stripe is not used for those cadences here.
+  // A plan runs on the main gateway at every cadence (`railForFrequency`).
   if (donationType && donationType !== "ONE_TIME") {
     return railForFrequency(donationType, mainGateway);
   }
-  // PayFor's case is unchanged from before Albaraka existed: an explicitly
-  // one-time TRY donation, with the admin switch on.
+  if (secure3d !== undefined && donationType === "ONE_TIME") {
+    return secure3d && payforEnabled ? "PAYFOR" : mainGateway;
+  }
+  // Without a choice, PayFor keeps its case: an explicitly one-time TRY
+  // donation, with the admin switch on.
   if (
     payforEnabled &&
     donationType === "ONE_TIME" &&

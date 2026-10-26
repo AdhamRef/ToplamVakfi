@@ -43,7 +43,7 @@ import {
 } from "@/lib/minbar/checkout";
 import { firstChargeAfterCheckout, frequencyOfOrderType, scheduleRuleFor } from "@/lib/donations/recurring-schedule";
 import { withDonationToken } from "@/lib/donations/access-token-link";
-import { clearCart, readTeamSupport, readTeamSupportRecurring, rememberCheckoutAttempt, teamSupportIsRecurring } from "@/lib/minbar/cart";
+import { clearCart, readTeamSupport, readTeamSupportRecurring, rememberCheckoutAttempt, restoreCheckoutAttempt, teamSupportIsRecurring } from "@/lib/minbar/cart";
 import { fetchGlobalSettings } from "@/lib/global-settings-client";
 import { useReferralCode } from "@/hooks/useReferralCode";
 import { resolveGateway, type MainGateway } from "@/lib/payment-gateway";
@@ -119,6 +119,24 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCvc, setCardCvc] = useState("");
   const [cardName, setCardName] = useState("");
+
+  /* "Donate with 3D (optional)": off by default, so a one-time card gift runs
+     in 2D on Stripe. Ticked, it runs on PayFor's 3D Secure page, and a decline
+     there brings the donor back here (`?fallback=<order>`) with the same
+     basket to finish on Stripe. `fellBackFrom3d` is that return trip. */
+  const [secure3d, setSecure3d] = useState(false);
+  const [fellBackFrom3d, setFellBackFrom3d] = useState(false);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const failedOrder = params.get("fallback");
+    if (!failedOrder) return;
+    restoreCheckoutAttempt(failedOrder);
+    setFellBackFrom3d(true);
+    // A reload must not restore the basket a second time.
+    params.delete("fallback");
+    const query = params.toString();
+    window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`);
+  }, []);
 
   /* Stripe's own card fields, when Stripe is the rail. The card never touches
      this origin: the step confirms the intent in the browser, and the handle
@@ -249,11 +267,15 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
      it, so the card step can render what that rail actually needs. Before the
      settings arrive this is Stripe, which collects the card on our page  the
      same thing the design shows, so nothing flickers. */
+  /* 3D is offered only when every line is one-time: a plan is charged again
+     later without the donor present, so it always runs in 2D on Stripe. */
+  const secure3dOffered = method === "card" && orderTypeForCart === "ONE_TIME" && (gatewayConfig?.payforEnabled ?? true);
   const gateway = resolveGateway({
     mainGateway: gatewayConfig?.mainGateway ?? "STRIPE",
     payforEnabled: gatewayConfig?.payforEnabled ?? true,
     currency,
     donationType: orderTypeForCart,
+    secure3d: secure3dOffered && secure3d,
   });
 
   /* Albaraka in Ortak Ödeme Sayfası mode collects the card on the bank's own
@@ -451,7 +473,8 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
               cvv: cardCvc,
               holder: cardName,
             }
-          : undefined
+          : undefined,
+        { fallbackToStripe: gateway === "PAYFOR" }
       );
 
       const browserFields: Record<string, string> =
@@ -655,6 +678,13 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
           {/* ── Payment method ─────────────────────────────────────────── */}
           <div className="gf-panel">
             <h2>{tv("methodHeading")}</h2>
+
+            {fellBackFrom3d ? (
+              <p role="status" className="gf-3d-fallback">
+                {InfoGlyph}
+                <span>{tv("secure3dFallback")}</span>
+              </p>
+            ) : null}
 
             {/* The design's tiles (`.pay-option`): icon box over the name and
                 its hint, the picked tile outlined in blue with a corner check. */}
@@ -902,6 +932,21 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
                 {tv("trustRefund")}
               </Link>
             </div>
+
+            {secure3dOffered ? (
+              <label className="gf-3d" data-on={secure3d ? "1" : undefined}>
+                <input type="checkbox" checked={secure3d} onChange={(e) => setSecure3d(e.target.checked)} />
+                <span className="gf-3d-box" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m5 12 5 5 9-10" />
+                  </svg>
+                </span>
+                <span className="gf-3d-text">
+                  <b>{tv("secure3dLabel")}</b>
+                  <small>{tv("secure3dHint")}</small>
+                </span>
+              </label>
+            ) : null}
 
             <button
               type="submit"

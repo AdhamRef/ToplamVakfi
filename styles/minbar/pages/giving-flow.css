@@ -352,6 +352,32 @@
 .mia-scope .gf-redirect-note[data-error="1"] { color: #b3391f; font-weight: 700; }
 .mia-scope .gf-redirect-note svg { width: 17px; height: 17px; color: var(--brand); flex-shrink: 0; margin-top: 2px; }
 
+/* "Donate with 3D (optional)": a checkbox row right above the confirm button,
+   shown for one-time baskets only. The native input stays for keyboard and
+   screen readers; the box beside it is what is seen. */
+.mia-scope .gf-3d {
+  position: relative; display: flex; align-items: flex-start; gap: 12px; margin-top: 16px; padding: 12px 14px;
+  border: 1.5px solid #dbe6ef; border-radius: 12px; background: #fff; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.mia-scope .gf-3d:hover { border-color: #9fd3ee; }
+.mia-scope .gf-3d[data-on="1"] { border-color: var(--brand); background: #eaf6fd; }
+.mia-scope .gf-3d input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.mia-scope .gf-3d-box {
+  flex-shrink: 0; display: grid; place-items: center; width: 22px; height: 22px; margin-top: 1px; border-radius: 6px;
+  border: 1.5px solid #b9cbd9; background: #fff; color: transparent; transition: background .15s, border-color .15s, color .15s;
+}
+.mia-scope .gf-3d-box svg { width: 13px; height: 13px; }
+.mia-scope .gf-3d input:checked + .gf-3d-box { border-color: var(--brand); background: var(--brand); color: #fff; }
+.mia-scope .gf-3d input:focus-visible + .gf-3d-box { outline: 3px solid rgba(0,162,224,.45); outline-offset: 2px; }
+.mia-scope .gf-3d-text { display: grid; gap: 2px; min-width: 0; }
+.mia-scope .gf-3d-text b { color: var(--ink); font-size: 13.5px; font-weight: 800; line-height: 1.5; }
+.mia-scope .gf-3d-text small { color: var(--muted); font-size: 12px; line-height: 1.7; }
+.mia-scope .gf-3d-fallback {
+  display: flex; align-items: flex-start; gap: 10px; margin: 0 0 14px; padding: 10px 14px; border-radius: 12px;
+  background: #fff8e8; border: 1px solid #f1d9a0; color: #7a5410; font-size: 13px; font-weight: 700; line-height: 1.7;
+}
+.mia-scope .gf-3d-fallback svg { width: 17px; height: 17px; flex-shrink: 0; margin-top: 2px; color: #b07a12; }
+
 .mia-scope .gf-plan-note {
   display: grid; gap: 2px; margin-top: 18px; padding: 12px 14px; font-size: 12.5px; line-height: 1.7; color: var(--ink);
   background: var(--page-bg); border: 1px solid #e2ebf1; border-radius: 12px;
