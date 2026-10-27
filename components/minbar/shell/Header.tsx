@@ -18,20 +18,17 @@ import { imageSrcSet, imageUrl } from "@/lib/minbar/image-url";
 import HeaderSearch from "./HeaderSearch";
 import ShellIcon, { type ShellIconName } from "./ShellIcons";
 import {
-  ALERT_CLOSED_KEY,
   LANG_CHOSEN_KEY,
-  LANG_SUGGEST_DISMISSED_KEY,
   SHELL_DRAWER_OPEN_EVENT,
 } from "./shell-events";
 
 /**
  * Site header — `ToplamVakfi-design/Toplum Vakfı Header.dc.html`.
  *
- * One fixed stack, measured into the spacer below it:
- *   1. the "this site is available in …" bar (browser language ≠ page language),
- *   2. the homepage announcement strip (`Toplum Vakfı Homepage.dc.html`, `.alert-bar`),
- *   3. the header itself: logo · language pill · currency · nav with the
- *      design's dropdown groups · search · profile · cart · «تبرع الآن».
+ * One fixed bar, measured into the spacer below it: logo · language pill ·
+ * currency · nav with the design's dropdown groups · search · profile · cart ·
+ * «تبرع الآن». Nothing sits above it: the "this site is available in …" bar
+ * and the homepage announcement strip were removed.
  *
  * Under 829px the nav moves into the drawer; under 761px the bottom navigation
  * (`MobileBottomNav`) carries home / programmes / donate / stories / more, and
@@ -168,14 +165,11 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
   const pathname = usePathname() ?? "";
   const route = active ?? routeForPathname(pathname);
   const activeKey = route ? ACTIVE_OF[route] : undefined;
-  const isHome = route === "home";
 
   const [currency, setCurrency] = useState("USD");
   const [dropdown, setDropdown] = useState<Dropdown>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [suggest, setSuggest] = useState<SupportedLocale | null>(null);
-  const [alertOpen, setAlertOpen] = useState(true);
   const basket = useMinbarCartCount();
 
   const closeSearch = useCallback(() => setSearchOpen(false), []);
@@ -260,34 +254,6 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
     return () => window.removeEventListener(CURRENCY_COOKIE_UPDATED_EVENT, sync);
   }, []);
 
-  /* ── Language suggestion: the browser prefers another site language ── */
-  useEffect(() => {
-    try {
-      if (window.localStorage.getItem(LANG_CHOSEN_KEY)) return;
-      if (window.localStorage.getItem(LANG_SUGGEST_DISMISSED_KEY) === "1") return;
-    } catch {
-      return;
-    }
-    const list = navigator.languages?.length ? navigator.languages : [navigator.language || ""];
-    for (const entry of list) {
-      const code = String(entry).slice(0, 2).toLowerCase();
-      if (code === locale) return;
-      if ((SUPPORTED_LOCALES as readonly string[]).includes(code)) {
-        setSuggest(code as SupportedLocale);
-        return;
-      }
-    }
-  }, [locale]);
-
-  /* ── Announcement strip: homepage only, until dismissed ─────────────── */
-  useEffect(() => {
-    try {
-      if (window.localStorage.getItem(ALERT_CLOSED_KEY) === "1") setAlertOpen(false);
-    } catch {
-      /* storage blocked: the strip simply stays */
-    }
-  }, []);
-
   /* ── Panels close on navigation, outside click and Escape ───────────── */
   useEffect(() => {
     setDrawerOpen(false);
@@ -354,24 +320,6 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
     window.dispatchEvent(new CustomEvent(CURRENCY_COOKIE_UPDATED_EVENT, { detail: { code } }));
   };
 
-  const dismissSuggest = () => {
-    setSuggest(null);
-    try {
-      window.localStorage.setItem(LANG_SUGGEST_DISMISSED_KEY, "1");
-    } catch {
-      /* the bar returns next visit */
-    }
-  };
-
-  const closeAlert = () => {
-    setAlertOpen(false);
-    try {
-      window.localStorage.setItem(ALERT_CLOSED_KEY, "1");
-    } catch {
-      /* the strip returns next visit */
-    }
-  };
-
   /* Menus are fixed under their trigger, aligned to its inline-start edge. */
   const toggleDropdown = (id: "lang" | "curr") => (event: ReactMouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
@@ -405,39 +353,6 @@ export default function Header({ active, linkOverrides, signedIn = false, isAdmi
       <div ref={spacerRef} className="mia-head-spacer tv-head-spacer" aria-hidden="true" />
 
       <div ref={stackRef} className="tv-header-root" dir={dir}>
-        {suggest ? (
-          <div className="tv-lang-suggest" role="region" aria-label={t("language")}>
-            <span>{t("langSuggest.text", { language: langName(suggest) })}</span>
-            <button
-              className="ls-yes"
-              type="button"
-              onClick={() => {
-                dismissSuggest();
-                selectLocale(suggest);
-              }}
-            >
-              {t("langSuggest.switch", { language: langName(suggest) })}
-            </button>
-            <button className="ls-no" type="button" onClick={dismissSuggest}>
-              {t("langSuggest.stay")}
-            </button>
-          </div>
-        ) : null}
-
-        {isHome && alertOpen ? (
-          <div className="tv-alert" role="region" aria-label={t("nav.hope")}>
-            <span className="ab-dot" aria-hidden="true" />
-            <span className="ab-text">
-              <span className="ab-full">{t("alert.full")}</span>
-              <span className="ab-brief">{t("alert.brief")}</span>
-            </span>
-            <Link href={miaPath("projects", locale)}>{t("alert.cta")}</Link>
-            <button className="ab-close" type="button" onClick={closeAlert} aria-label={t("alert.close")}>
-              ✕
-            </button>
-          </div>
-        ) : null}
-
         <header className="tv-header">
           <div className="tv-header-shell">
             <div className="tv-header-row">
