@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { isObjectId } from "@/lib/slug";
 import { miaPath } from "@/lib/minbar/routes";
-import { banksFor } from "@/lib/minbar/banks-server";
+import { BANK_ACCOUNTS } from "@/lib/minbar/banks";
 import { donorMayAccessClaim, findClaimByDonation } from "@/lib/donations/bank-transfer-claims";
 import { serializeClaimForDonor } from "@/lib/donations/bank-transfer-serializers";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
@@ -62,8 +62,7 @@ export default async function Page({ params, searchParams }: Props) {
     );
   }
 
-  const banks = claim.bankSlug ? await banksFor(locale) : [];
-  const bank = banks.find((b) => b.id === claim.bankSlug) ?? null;
+  const bank = BANK_ACCOUNTS.find((b) => b.id === claim.bankSlug) ?? null;
   const isOwner = Boolean(session?.user?.id && session.user.id === claim.donation.donorId);
 
   return (

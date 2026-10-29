@@ -31,7 +31,6 @@ const CONTENT_PERMISSIONS: DashboardPermissionKey[] = [
   "siteContent",
   "badges",
   "templates",
-  "bankAccounts",
 ];
 
 const bodySchema = z.object({

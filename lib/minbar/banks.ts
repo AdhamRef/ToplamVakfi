@@ -1,17 +1,13 @@
 /**
  * Bank accounts for the bank-transfer donation path.
  *
- * These used to be a hand-written list in this file. They are now rows of the
- * BankAccount model, entered and maintained from the dashboard, and this module
- * is the seam the bank-transfer page and the checkout read them through  the
- * shape they render is unchanged, so neither had to be touched.
+ * A fixed list, copied from the foundation catalogue ("Hesap numaralarımız").
+ * The bank-accounts page, the bank-transfer block, the checkout and the
+ * payment-pending page all read it from here; nothing is kept in the database.
  *
- * `locales` on a row is an allow-list: an account published only to the
- * Turkish edition is not handed to a Gulf donor. Empty means every edition.
- *
- * `banksFor`  the database read  lives in `banks-server.ts`: this file is
- * imported by client components for the type and `formatIban`, and the CMS
- * reader pulls `server-only` in behind it, which a client bundle rejects.
+ * The bank names come from the bank code inside each IBAN (00010 Ziraat
+ * Bankası, 00210 Vakıf Katılım). The catalogue gives no SWIFT codes, so
+ * `swift` is empty and the pages leave that row out until one is added.
  */
 
 export interface BankCurrencyAccount {
@@ -38,3 +34,30 @@ export interface MinbarBank {
 export function formatIban(iban: string): string {
   return iban.replace(/(.{4})/g, "$1 ").trim();
 }
+
+export const BANK_ACCOUNTS: readonly MinbarBank[] = [
+  {
+    id: "ziraat",
+    name: "Ziraat Bankası",
+    holder: "Toplum Vakfı",
+    swift: "",
+    logo: "/ziraat.jpg",
+    currencies: [
+      { code: "TRY", iban: "TR250001002116978321515001" },
+      { code: "USD", iban: "TR950001002116978321515002" },
+      { code: "GBP", iban: "TR680001002116978321515003" },
+    ],
+  },
+  {
+    id: "vakif-katilim",
+    name: "Vakıf Katılım",
+    holder: "Toplum Vakfı",
+    swift: "",
+    logo: "/vakif.png",
+    currencies: [
+      { code: "TRY", iban: "TR880021000000106985300001" },
+      { code: "USD", iban: "TR070021000000106985300101" },
+      { code: "GBP", iban: "TR770021000000106985300102" },
+    ],
+  },
+];

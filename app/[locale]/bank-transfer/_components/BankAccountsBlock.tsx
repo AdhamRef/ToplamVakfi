@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Copy, Check } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
+import { BANK_ACCOUNTS, type MinbarBank } from "@/lib/minbar/banks";
 
 interface Account {
   type: string;
@@ -22,29 +23,16 @@ interface Bank {
   logo?: string;
 }
 
-/* The accounts come from the dashboard (Dashboard → الحسابات البنكية), the
-   same list the checkout's bank transfer and /bank-accounts show  edited in
-   one place, shown everywhere. Shape of GET /api/bank-accounts?locale=… */
-type ApiBank = {
-  slug: string;
-  name: string;
-  branch: string;
-  holder: string;
-  swift: string;
-  logo: string;
-  currencies: Array<{ code: string; accountNo: string; extNo: string; iban: string }>;
-};
-
-function toBank(b: ApiBank): Bank {
+/* The fixed list in `lib/minbar/banks.ts`, the same one /bank-accounts and
+   the checkout show. */
+function toBank(b: MinbarBank): Bank {
   return {
     name: b.name,
     swift: b.swift,
     accountName: b.holder,
-    branch: b.branch || undefined,
-    logo: b.logo || undefined,
-    accounts: b.currencies
-      .filter((c) => c.iban)
-      .map((c) => ({ type: c.code, iban: c.iban, number: c.accountNo || undefined, ext: c.extNo || undefined })),
+    branch: b.branch,
+    logo: b.logo,
+    accounts: b.currencies.map((c) => ({ type: c.code, iban: c.iban, number: c.accountNo, ext: c.extNo })),
   };
 }
 
@@ -53,6 +41,7 @@ const CURRENCY_STYLE: Record<string, string> = {
   TRY: "bg-red-50 text-red-600 border border-red-200",
   USD: "bg-emerald-50 text-emerald-700 border border-emerald-200",
   EUR: "bg-blue-50 text-blue-700 border border-blue-200",
+  GBP: "bg-violet-50 text-violet-700 border border-violet-200",
 };
 
 function formatIBAN(iban: string) {
@@ -105,6 +94,7 @@ function BankCard({ bank, t }: { bank: Bank; t: ReturnType<typeof useTranslation
             <p className="text-xs text-gray-400 mt-0.5">{t("branch")} {bank.branch}</p>
           )}
         </div>
+        {bank.swift && (
         <div className="hidden sm:block text-right flex-shrink-0">
           <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold">Swift / BIC</p>
           <div className="flex items-center gap-1.5 justify-end mt-0.5">
@@ -112,9 +102,11 @@ function BankCard({ bank, t }: { bank: Bank; t: ReturnType<typeof useTranslation
             <CopyButton text={bank.swift} t={t} />
           </div>
         </div>
+        )}
       </div>
 
       {/* Swift  mobile only */}
+      {bank.swift && (
       <div className="sm:hidden flex items-center justify-between px-6 py-3 bg-gray-50 border-b border-gray-100">
         <div>
           <p className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold">Swift / BIC</p>
@@ -122,6 +114,7 @@ function BankCard({ bank, t }: { bank: Bank; t: ReturnType<typeof useTranslation
         </div>
         <CopyButton text={bank.swift} t={t} />
       </div>
+      )}
 
       {/* Account holder */}
       <div className="flex items-center justify-between gap-4 px-6 py-4 bg-[#A5243D]/[0.03] border-b border-gray-100">
@@ -176,31 +169,11 @@ function BankCard({ bank, t }: { bank: Bank; t: ReturnType<typeof useTranslation
  */
 export default function BankAccountsBlock() {
   const t = useTranslations("BankTransfer");
-  const locale = useLocale();
-  const [banks, setBanks] = useState<Bank[] | null>(null);
-
-  useEffect(() => {
-    let live = true;
-    fetch(`/api/bank-accounts?locale=${encodeURIComponent(locale)}`)
-      .then((res) => (res.ok ? res.json() : { items: [] }))
-      .then((data: { items?: ApiBank[] }) => {
-        if (!live) return;
-        const items = Array.isArray(data.items) ? data.items : [];
-        setBanks(items.map(toBank).filter((bank) => bank.accounts.length > 0));
-      })
-      .catch(() => {
-        if (live) setBanks([]);
-      });
-    return () => {
-      live = false;
-    };
-  }, [locale]);
+  const banks = BANK_ACCOUNTS.map(toBank);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-4">
-      {banks === null
-        ? [0, 1].map((i) => <div key={i} className="h-48 rounded-2xl border border-gray-200 bg-gray-50 animate-pulse" />)
-        : banks.map((bank) => <BankCard key={bank.name + bank.swift} bank={bank} t={t} />)}
+      {banks.map((bank) => <BankCard key={bank.name} bank={bank} t={t} />)}
       <p className="text-center text-sm text-gray-400 pt-2">
         {t("footer")}{" "}
         <a href="mailto:info@ToplamVakfi.org" className="text-[#A5243D] font-semibold hover:underline">

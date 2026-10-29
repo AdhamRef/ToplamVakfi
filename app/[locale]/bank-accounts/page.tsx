@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { buildPageMetadata } from "@/lib/seo";
-import { banksFor } from "@/lib/minbar/banks-server";
+import { BANK_ACCOUNTS } from "@/lib/minbar/banks";
 import { slugFor } from "@/lib/minbar/routes";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import BankAccountsPage from "@/components/minbar/banks/BankAccountsPage";
@@ -32,11 +32,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  */
 export default async function BankAccounts({ params }: Props) {
   const { locale } = await params;
-  const banks = await banksFor(locale);
 
   return (
     <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-      <BankAccountsPage banks={banks} />
+      <BankAccountsPage banks={BANK_ACCOUNTS} />
     </MinbarMessages>
   );
 }

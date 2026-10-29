@@ -22,7 +22,7 @@ import { resolveGuestDonor } from "@/lib/users/resolve-guest-donor";
 import { completionData } from "@/lib/users/account-claim";
 import { createBankTransferClaim } from "@/lib/donations/bank-transfer-claims";
 import { BANK_TRANSFER_PROVIDER } from "@/lib/donations/bank-transfer-shared";
-import { listBankAccounts } from "@/lib/minbar/cms";
+import { BANK_ACCOUNTS } from "@/lib/minbar/banks";
 import { getUsdBaseRatesForServer } from "@/lib/exchange/rates-service";
 import { MIN_DONATION_USD, MIN_DONATION_USD_TOLERANCE, parseLocalAmount } from "@/lib/minbar/donation-amount";
 import {
@@ -679,9 +679,8 @@ export async function POST(request: NextRequest) {
        on the claim is the published one and not whatever the browser sent. */
     let bankSnapshot: { slug: string; name: string } | null = null;
     if (isBankTransfer && typeof bankSlug === "string" && bankSlug.trim()) {
-      const accounts = await listBankAccounts(validLocale ?? "ar").catch(() => []);
-      const match = accounts.find((account) => account.slug === bankSlug.trim());
-      if (match) bankSnapshot = { slug: match.slug, name: match.name };
+      const match = BANK_ACCOUNTS.find((account) => account.id === bankSlug.trim());
+      if (match) bankSnapshot = { slug: match.id, name: match.name };
     }
 
     const donation = await prisma.$transaction(async (tx) => {

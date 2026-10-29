@@ -12,12 +12,8 @@ export const DASHBOARD_PERMISSION_KEYS = [
   // settings. One key for the group, the way
   // "blog" already covers both posts and their categories.
   "siteContent",
-  // Bank accounts are gated separately from the rest of the content. A row here
-  // is a live payment destination  publishing a wrong IBAN sends a donor's
-  // transfer to someone else  so editing them is not the same privilege as
-  // editing a video title. Distinct from "bankTransfers", which only reads the
-  // incoming transfer list.
-  "bankAccounts",
+  // "bankAccounts" was removed when the accounts became a fixed list in
+  // lib/minbar/banks.ts; a stored value is inert.
   // "aiConcierge" was removed with the donation concierge; like "operations" above, a value
   // still stored on a user row is inert.
   "generalSettings", "platformConnectionsTest", "platformConnectionsManage",
@@ -121,8 +117,6 @@ const PATH_RULES: { prefix: string; key: DashboardPermissionKey }[] = [
   // "/dashboard → revenue" catch-all below, so the guard demanded `revenue` while the sidebar
   // entry and the API both check `siteContent`  a staffer granted the content section was
   // bounced out of each page. Same failure the /dashboard/inbox rule above exists to prevent.
-  // A live payment destination (IBAN/SWIFT), not content  see the `bankAccounts` key above.
-  { prefix: "/dashboard/bank-accounts", key: "bankAccounts" },
   { prefix: "/dashboard/quick-donation", key: "siteContent" },
   { prefix: "/dashboard/homepage-layout", key: "siteContent" },
   { prefix: "/dashboard/certificates", key: "siteContent" },

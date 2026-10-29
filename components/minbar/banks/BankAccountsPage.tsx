@@ -159,6 +159,7 @@ export default function BankAccountsPage({ banks }: { banks: readonly MinbarBank
                     <b style={{ fontSize: 17 }}>{bank.name}</b>
                     {bank.branch ? <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{bank.branch}</span> : null}
                   </span>
+                  {bank.swift ? (
                   <span style={{ marginInlineStart: "auto", display: "grid", gap: 3, textAlign: "end" }}>
                     <span style={{ fontSize: 11, fontWeight: 800, color: "var(--muted)", letterSpacing: ".05em" }}>SWIFT / BIC</span>
                     <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -168,6 +169,7 @@ export default function BankAccountsPage({ banks }: { banks: readonly MinbarBank
                       {copyButton(`${bank.id}:swift`, bank.swift)}
                     </span>
                   </span>
+                  ) : null}
                 </div>
 
                 <div style={{ display: "grid", gap: 12, padding: 22 }}>

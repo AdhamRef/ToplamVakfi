@@ -750,7 +750,7 @@ export default function CheckoutPage({ projects, projectAliases, categories, ban
 
                   {[
                     { key: `${selectedBank.id}:holder`, label: t("accountName"), value: selectedBank.holder, latin: false, dim: false },
-                    { key: `${selectedBank.id}:swift`, label: "SWIFT / BIC", value: selectedBank.swift, latin: true, dim: false },
+                    ...(selectedBank.swift ? [{ key: `${selectedBank.id}:swift`, label: "SWIFT / BIC", value: selectedBank.swift, latin: true, dim: false }] : []),
                     ...selectedBank.currencies.map((c) => ({
                       key: `${selectedBank.id}:iban:${c.code}`,
                       label: `IBAN · ${c.code}`,

@@ -7,7 +7,7 @@ import { resolveGeoFromRequest } from "@/lib/geo/country-from-request";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
 import { listProjectSlugAliases, listProjects } from "@/lib/minbar/projects";
 import { listCategoryTitles } from "@/lib/minbar/category-page";
-import { banksFor } from "@/lib/minbar/banks-server";
+import { BANK_ACCOUNTS } from "@/lib/minbar/banks";
 import MinbarMessages from "@/components/minbar/MinbarMessages";
 import CheckoutPage from "@/components/minbar/checkout/CheckoutPage";
 
@@ -51,12 +51,12 @@ async function visitorCountry(): Promise<string | null> {
  */
 export default async function Checkout({ params }: Props) {
   const { locale } = await params;
-  const [projects, projectAliases, categories, session, banks, ipCountry] = await Promise.all([
+  const banks = BANK_ACCOUNTS;
+  const [projects, projectAliases, categories, session, ipCountry] = await Promise.all([
     listProjects(locale),
     listProjectSlugAliases(),
     listCategoryTitles(locale),
     getServerSession(authOptions),
-    banksFor(locale),
     visitorCountry(),
   ]);
 

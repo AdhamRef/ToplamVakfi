@@ -77,7 +77,6 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
       // The basket's own steps: the "support the team" switch and amounts, and the
       // cross-sell campaigns offered under the rows  none of it per campaign.
       { key: "campaigns", get title() { return dt("إعدادات السلة"); }, href: "/dashboard/cart-settings", icon: "shoppingCart", keywords: ["cart", "basket", "السلة", "team", "support", "دعم", "الفريق", "upsell", "suggestions", "مقترحات", "amounts", "مبالغ"] },
-      { key: "bankAccounts", get title() { return dt("الحسابات البنكية"); }, href: "/dashboard/bank-accounts", icon: "landmark", keywords: ["bank", "accounts", "iban", "swift", "حسابات", "بنك"] },
     ],
   },
   {
@@ -183,8 +182,6 @@ export const DASHBOARD_PERMISSION_ROWS: {
   { key: "monthly", get group() { return dt("الرئيسية"); }, get title() { return dt("التبرعات المتكررة"); } },
   // One grant for the whole finance desk: the statement importer and the donor-receipt queue.
   { key: "bankTransfers", get group() { return dt("الرئيسية"); }, get title() { return dt("التحويلات البنكية وإيصالات التحويل"); } },
-  // Separate from siteContent: these rows are where donors send money (IBAN/SWIFT).
-  { key: "bankAccounts", get group() { return dt("الرئيسية"); }, get title() { return dt("الحسابات البنكية (IBAN)  صلاحية مالية حساسة"); } },
   { key: "donors", get group() { return dt("الرئيسية"); }, get title() { return dt("المتبرعون"); } },
   { key: "campaigns", get group() { return dt("محتوى الموقع"); }, get title() { return dt("المشاريع"); } },
   { key: "categories", get group() { return dt("محتوى الموقع"); }, get title() { return dt("الحملات والدول"); } },
