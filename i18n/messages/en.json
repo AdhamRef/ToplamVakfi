@@ -1101,7 +1101,7 @@
       "story": "Our story",
       "vision": "Our vision",
       "mission": "Our mission",
-      "purpose": "Our purpose",
+      "purpose": "Strategic advantage",
       "goals": "Our goals",
       "president": "President's letter",
       "board": "Board of trustees"
@@ -1132,6 +1132,22 @@
       "v4": "Building effective cooperation with various parties to achieve common goals.",
       "v5": "Commitment to the consequences of decisions and actions, and ensuring a positive and sustainable impact on society."
     },
+    "promoteTitle": "The authentic values we work to promote",
+    "promote": {
+      "p1": "Knowledge and learning",
+      "p2": "Building the community",
+      "p3": "Positivity",
+      "p4": "Civilisation",
+      "p5": "Effectiveness",
+      "p6": "Initiative",
+      "p7": "Peace",
+      "p8": "Accepting others",
+      "p9": "Participation",
+      "p10": "Seriousness",
+      "p11": "Taking responsibility",
+      "p12": "Work",
+      "p13": "Family"
+    },
     "joinLabel": "How to take part",
     "join": {
       "partner": {
@@ -1156,29 +1172,48 @@
     "visionQuote": "To be the pioneer in enhancing the role of community leaders in instilling values.",
     "missionQuote": "We work to activate and enhance the role of community leaders (preachers, youth, influencers) in order to make a positive impact, adopt initiatives and sponsor projects that seek to spread the spirit of sublime values by rooting and disseminating them effectively, to create a cohesive society capable of facing challenges ethically.",
     "mottoLabel": "Foundation motto",
-    "purposeQuote": "Empowering communities for a resilient future",
-    "purposeP1": "We care for and empower people in every part of life, with particular attention to community leaders, young people and families as the pillars of social change. Through education and values-based initiatives we support their moral and intellectual growth, building a culture of lifelong learning and ethical leadership.",
-    "purposeP2": "We do not stop at giving the next generation the tools for academic and professional success; we prepare them to make responsible decisions grounded in clear principles. Joining knowledge with values, we help people become agents of positive change, able to meet local and global challenges with wisdom and integrity.",
-    "purposeP3": "We respond to the challenges communities face today — social fragmentation, widening gaps and moral decline — by strengthening solidarity and spreading values worldwide. We work with partners who share our vision, design programmes for different groups’ needs, and keep people first, so that values become something people live every day.",
-    "goalsQuote": "Activating the role of community leaders in instilling and enhancing values, contributing to the preparation of influential role models to spread sublime values, adopting and supporting initiatives and projects specialised in spreading the system of sublime values, and establishing international partnerships and alliances and coordinating with relevant authorities.",
-    "goalsP1": "We aim to build cohesive communities able to face today’s challenges, and to strengthen social solidarity and spread noble values worldwide — through strategic partnerships, innovative programmes and a steady commitment to people — for a world of justice, dignity and cooperation.",
-    "targetsTitle": "Who we serve",
+    "purposeQuote": "Our strategic advantage lies in combining a focus on authentic sublime values with effective youth guidance and integrated community support — using modern means and strategic partnerships for a broad and lasting impact, with transparency, justice and excellence in everything we do.",
+    "advantages": {
+      "a1": {
+        "title": "Focus on authentic sublime values",
+        "text": "We offer a deep and accurate understanding of the authentic system of sublime values, drawing on the expertise of community leaders and thinkers, which gives our message credibility and depth. We direct their efforts to raising awareness of how these values help solve contemporary human problems."
+      },
+      "a2": {
+        "title": "Effective youth guidance",
+        "text": "We give young people special attention through innovative education and training programmes that strengthen their awareness of sublime values, guide them to spread these values among their peers, and activate their leading role in society."
+      },
+      "a3": {
+        "title": "Integrated community support",
+        "text": "We support and adopt community initiatives that spread sublime values effectively, helping to build a cohesive and ethical society."
+      },
+      "a4": {
+        "title": "Using modern means",
+        "text": "We use modern technology and social media to reach the widest part of society quickly and effectively, so that our message spreads widely."
+      }
+    },
+    "goalsList": {
+      "g1": "Activating the role of community leaders in instilling and enhancing values.",
+      "g2": "Contributing to the preparation of influential role models to spread sublime values.",
+      "g3": "Adopting and supporting initiatives and projects specialised in spreading the system of sublime values.",
+      "g4": "Establishing international partnerships and alliances, and coordinating with relevant authorities."
+    },
+    "targetsTitle": "Targeted community groups",
     "targets": {
       "t1": {
-        "title": "The family",
-        "text": "The first school of values and character"
+        "title": "Community leaders",
+        "text": "Because they have the greatest influence and are essential references in spreading awareness and sublime values within society."
       },
       "t2": {
-        "title": "Community leaders",
-        "text": "The people others look to on values"
+        "title": "Youth",
+        "text": "Because they are the pillar of the future and the force in society that can achieve a positive impact."
       },
       "t3": {
-        "title": "Young people",
-        "text": "The backbone of the future"
+        "title": "Family",
+        "text": "Because it is the basic unit of society and the primary source of education in values and morals."
       },
       "t4": {
-        "title": "Education and culture",
-        "text": "The institutions that shape minds"
+        "title": "Education and culture system",
+        "text": "Because it shapes minds, influences public thought and helps build a society enlightened by lofty values."
       }
     }
   },
@@ -4655,7 +4690,7 @@
       "ourStory": "Our story",
       "vision": "Our vision",
       "message": "Our mission",
-      "mission": "Our purpose",
+      "mission": "Strategic advantage",
       "goals": "Our goals",
       "presidentLetter": "President's letter",
       "board": "Board of trustees",
@@ -4767,7 +4802,13 @@
       "middleEast": "Middle East",
       "turkeyBalkans": "Türkiye & the Balkans",
       "asia": "Asia",
-      "africa": "Africa"
+      "africa": "Africa",
+      "text": {
+        "turkeyBalkans": "Our work here aims to deepen cultural understanding and spread sublime values. With its unique location as a bridge between East and West, the region carries these values on to other societies.",
+        "asia": "We spread ethical knowledge and support communities across Central Asia, whose rich cultural heritage and strategic position as a gateway between East and world give it a real civilisational role.",
+        "middleEast": "Amid the crises and wars some countries in the region face, we spread values that promote stability and peaceful coexistence, renew hope through knowledge and skills, and ease the burden of crises on people’s lives.",
+        "africa": "Facing poverty, ignorance and conflict, we spread human values, strengthen education and skills, and provide health and living care, to help build stronger, more stable societies that give each person a better life."
+      }
     },
     "countries": {
       "syria": "Syria",
@@ -4795,7 +4836,7 @@
     },
     "paths": {
       "title": "Giving paths",
-      "sub": "Four paths organise all of our programmes.",
+      "sub": "Given the challenges our societies face today, the foundation works along four main paths to build a cohesive and prosperous society.",
       "number": "Path {n}",
       "count": "{count, plural, one {# programme} other {# programmes}}",
       "explore": "Explore",

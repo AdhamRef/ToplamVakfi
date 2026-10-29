@@ -1101,7 +1101,7 @@
       "story": "Hikâyemiz",
       "vision": "Vizyonumuz",
       "mission": "Misyonumuz",
-      "purpose": "Görevimiz",
+      "purpose": "Stratejik avantajlarımız",
       "goals": "Hedeflerimiz",
       "president": "Başkanın mesajı",
       "board": "Mütevelli heyeti"
@@ -1132,6 +1132,22 @@
       "v4": "Ortak hedefler için aynı gaye ve hedefleri olan taraflarla etkin iş birliği yapmak.",
       "v5": "Kararlarımızı ve eylemlerimizi toplumun tüm katmanlarına ulaştırabilme sorumluluğu içinde olmak."
     },
+    "promoteTitle": "Vakfın geliştirdiği değerler",
+    "promote": {
+      "p1": "Eğitim ve öğrenme",
+      "p2": "Toplumun imarı",
+      "p3": "Pozitiflik",
+      "p4": "Medeniyet",
+      "p5": "Etkinlik",
+      "p6": "İnisiyatif",
+      "p7": "Barış",
+      "p8": "Başkasını kabul etme",
+      "p9": "Katılım",
+      "p10": "Ciddiyet",
+      "p11": "Sorumluluk",
+      "p12": "Çalışma",
+      "p13": "Aile"
+    },
     "joinLabel": "Nasıl katılırsınız",
     "join": {
       "partner": {
@@ -1156,29 +1172,48 @@
     "visionQuote": "Toplum liderlerinin değerleri aşılamada öncü olmasını sağlamak.",
     "missionQuote": "Toplumun önde gelen değerli insanlarıyla (vaizler, gençler, kanaat önderleri) birlikte, bu insanların rollerini etkinleştirmek, onlara gerekli donanımları sağlamak ve toplum için önemli değerlerin yayılmasını sağlayacak projeleri desteklemek; etik ve değerlerine bağlı, sorumlu bir toplum inşa etmeye katkıda bulunmak.",
     "mottoLabel": "Vakfın sloganı",
-    "purposeQuote": "Dayanıklı bir gelecek için toplumları güçlendirmek",
-    "purposeP1": "Bireyleri hayatın her alanında destekliyor ve güçlendiriyoruz; toplumsal dönüşümün direkleri olan toplum önderlerine, gençlere ve ailelere özel önem veriyoruz. Eğitim ve değer temelli girişimlerle ahlaki ve fikrî gelişimlerini destekleyerek ömür boyu öğrenme kültürü ve ahlaka dayalı liderlik inşa ediyoruz.",
-    "purposeP2": "Gelecek nesillere yalnızca akademik ve mesleki başarı araçları sunmakla yetinmiyor, onları açık ilkelere dayanan sorumlu kararlar almaya hazırlıyoruz. Bilgiyi değerlerle buluşturan bir yaklaşımla bireylerin yerel ve küresel sorunlara hikmet ve dürüstlükle karşılık veren olumlu değişim öncüleri olmasına yardım ediyoruz.",
-    "purposeP3": "Toplumsal çözülme, derinleşen eşitsizlikler ve ahlaki gerileme gibi bugünün sorunlarına dayanışmayı güçlendirerek ve değerleri dünya ölçeğinde yayarak karşılık veriyoruz. Vizyonumuzu paylaşan ortaklarla çalışıyor, farklı kesimlerin ihtiyaçlarına uygun programlar tasarlıyor ve insanı her zaman önde tutuyoruz.",
-    "goalsQuote": "Toplum liderlerinin değerlerin aşılanmasındaki rollerini etkinleştirmek, yüce değerleri yaymak için etkili rol modelleri geliştirmek, değerlerin yayılması için özel projeleri desteklemek ve geliştirmek, uluslararası ortaklıklar kurmak ve ilgili kurumlarla iş birliği yapmak.",
-    "goalsP1": "Çağın sorunlarına karşı koyabilen bütünleşik toplumlar inşa etmeyi; stratejik ortaklıklar, yenilikçi programlar ve insana bağlılıkla sosyal dayanışmayı güçlendirip yüce değerleri dünyaya yaymayı hedefliyoruz: adalet, onur ve iş birliğinin hâkim olduğu bir dünya için.",
-    "targetsTitle": "Hedef kitleler",
+    "purposeQuote": "Vakfımızın en önemli hedeflerinden biri; yüce değerlere odaklanmayı etkili gençlik yönlendirmesi ve entegre toplum desteğiyle birleştirerek, modern araçlar ve stratejik ortaklarımızla geniş, sürdürülebilir ve kalıcı bir etki yaratmak; tüm bunları şeffaflık, adalet ve mükemmeliyetle yapmaktır.",
+    "advantages": {
+      "a1": {
+        "title": "Yüce değerlere odaklanma",
+        "text": "Toplum önderleri ve düşünürlerin deneyimlerinden faydalanarak, yüce değerler üzerine derinlemesine ve doğru bir anlayış geliştirmek ve çağdaş insanlık sorunlarını çözmede önemli bir rol oynamak."
+      },
+      "a2": {
+        "title": "Etkili gençlik yönlendirmesi",
+        "text": "Gençlere yönelik yenilikçi eğitim ve öğretim programlarıyla, onların yüce değerler konusundaki farkındalığını artırmak ve toplumda liderlik rollerini üstlenmelerini sağlamak."
+      },
+      "a3": {
+        "title": "Entegre toplum desteği",
+        "text": "Yüce değerlerin yayılmasını amaçlayan toplumsal girişimleri destekleyerek, toplumun dayanışmasını ve ahlaki bütünlüğünü güçlendirmeye katkıda bulunmak."
+      },
+      "a4": {
+        "title": "Modern araçların kullanımı",
+        "text": "Sosyal medya ve modern teknoloji araçlarını kullanarak mesajlarımızın geniş kitlelere hızla ulaşmasını ve yayılmasını sağlamak."
+      }
+    },
+    "goalsList": {
+      "g1": "Toplum liderlerinin değerlerin aşılanmasındaki rollerini etkinleştirmek.",
+      "g2": "Yüce değerleri yaymak için etkili rol modelleri geliştirmek.",
+      "g3": "Değerlerin yayılması için özel projeleri desteklemek ve geliştirmek.",
+      "g4": "Uluslararası ortaklıklar kurmak ve ilgili kurumlarla iş birliği yapmak."
+    },
+    "targetsTitle": "Hedef kitlelerimiz",
     "targets": {
       "t1": {
-        "title": "Aile",
-        "text": "Değer ve ahlak eğitiminin temel birimi"
+        "title": "Toplum liderleri",
+        "text": "Toplumda en büyük etkiyi yaratan ve değerlerin yayılmasında önemli rol oynayan, sevilen ve saygı gören insanlar."
       },
       "t2": {
-        "title": "Toplum önderleri",
-        "text": "Değerler konusunda başvurulan önderler"
+        "title": "Gençler",
+        "text": "Geleceğin temeli ve teminatı olan gençlerimiz."
       },
       "t3": {
-        "title": "Gençler",
-        "text": "Geleceğin dayanağı"
+        "title": "Aile",
+        "text": "Toplumun temel direği olan ailelerimiz."
       },
       "t4": {
         "title": "Eğitim ve kültür sistemi",
-        "text": "Zihinleri şekillendiren kurumlar"
+        "text": "Zihinleri şekillendiren, genel düşünce yapımızı etkileyen ve aydınlık bir toplum inşa etmemize yardımcı olan altyapılarımız."
       }
     }
   },
@@ -4655,7 +4690,7 @@
       "ourStory": "Hikâyemiz",
       "vision": "Vizyonumuz",
       "message": "Misyonumuz",
-      "mission": "Görevimiz",
+      "mission": "Stratejik avantajlarımız",
       "goals": "Hedeflerimiz",
       "presidentLetter": "Başkanın mesajı",
       "board": "Mütevelli heyeti",
@@ -4767,7 +4802,13 @@
       "middleEast": "Orta Doğu",
       "turkeyBalkans": "Türkiye ve Balkanlar",
       "asia": "Asya",
-      "africa": "Afrika"
+      "africa": "Afrika",
+      "text": {
+        "turkeyBalkans": "Bu bölgedeki çalışmalarımız, kültürel anlayışı teşvik etmeye ve yüce değerleri yaymaya yöneliktir. Doğu ile Batı arasında köprü olan Balkanlar, bu değerlerin farklı toplumlara yayılmasına katkı sağlar.",
+        "asia": "Yüce değerlerin ve yüksek insani ilkelerin yayılmasını hedefleyerek Orta Asya’daki toplulukları destekliyoruz. Bölge, tarihî mirası, stratejik konumu ve köklü kültürel yapısıyla büyük katkılar yapabilecek potansiyele sahiptir.",
+        "middleEast": "Yıllardır süren çatışma ve savaşlar nedeniyle bölgede barışı ve toplumsal uyumu yeniden güçlendirecek insani değerlerin yayılmasına katkı sağlıyor; eğitim ve insani yardımlarla krizlerin insani ve toplumsal etkilerini hafifletmeye çalışıyoruz.",
+        "africa": "Yoksulluk, cehalet ve çatışmalarla mücadele ediyor; insani değerlerin yayılmasına, eğitim ve sağlık hizmetlerinin geliştirilmesine ve daha güçlü, daha istikrarlı toplumların inşasına katkıda bulunuyoruz."
+      }
     },
     "countries": {
       "syria": "Suriye",
@@ -4795,7 +4836,7 @@
     },
     "paths": {
       "title": "Bağış yolları",
-      "sub": "Vakıf programları dört yol altında toplanır.",
+      "sub": "Günümüz toplumlarının karşı karşıya olduğu zorluklar karşısında vakfımız, bu hedeflere ulaşmak için dört ana yol üzerinde çalışmaktadır.",
       "number": "Yol {n}",
       "count": "{count} program",
       "explore": "Keşfet",

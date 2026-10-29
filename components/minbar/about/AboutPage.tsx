@@ -24,6 +24,10 @@ import InnerBanner from "./InnerBanner";
 /* The catalogue's five values, each with its definition (`values.*`, `valuesText.*`). */
 const VALUES = ["v1", "v2", "v3", "v4", "v5"] as const;
 const TARGETS = ["t1", "t2", "t3", "t4"] as const;
+/* From the foundation catalogue: its four goals, four strategic advantages and the thirteen values it promotes. */
+const GOALS = ["g1", "g2", "g3", "g4"] as const;
+const ADVANTAGES = ["a1", "a2", "a3", "a4"] as const;
+const PROMOTE = ["p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9", "p10", "p11", "p12", "p13"] as const;
 
 const TRIO: ReadonlyArray<{ title: string; text: string; icon: ReactElement }> = [
   { title: "missionTitle", text: "missionText", icon: <path d="M22 2 11 13M22 2l-7 20-4-9-9-4z" /> },
@@ -146,6 +150,7 @@ export default function AboutPage() {
                 </div>
 
                 <Values t={t} />
+                <Promoted t={t} />
 
                 <section className="fd-join" aria-label={t("joinLabel")}>
                   {JOIN.map((key) => (
@@ -188,9 +193,14 @@ export default function AboutPage() {
                 <QuoteMark />
                 <h2>{t("purposeQuote")}</h2>
                 <span className="fd-quote-rule" aria-hidden="true" />
-                <p>{t("purposeP1")}</p>
-                <p>{t("purposeP2")}</p>
-                <p>{t("purposeP3")}</p>
+                <div className="fd-targets fd-advantages">
+                  {ADVANTAGES.map((key) => (
+                    <div key={key}>
+                      <b>{t(`advantages.${key}.title`)}</b>
+                      <span>{t(`advantages.${key}.text`)}</span>
+                    </div>
+                  ))}
+                </div>
               </article>
             ) : null}
 
@@ -198,9 +208,13 @@ export default function AboutPage() {
               <div>
                 <article className="fd-card fd-quote">
                   <QuoteMark />
-                  <h2>{t("goalsQuote")}</h2>
+                  <h2>{t("goalTitle")}</h2>
                   <span className="fd-quote-rule" aria-hidden="true" />
-                  <p>{t("goalsP1")}</p>
+                  <ol className="fd-goals">
+                    {GOALS.map((key) => (
+                      <li key={key}>{t(`goalsList.${key}`)}</li>
+                    ))}
+                  </ol>
                 </article>
                 <section className="fd-card fd-quote-sub" aria-labelledby="fd-targets-title">
                   <h2 id="fd-targets-title" className="fd-h2">
@@ -221,6 +235,22 @@ export default function AboutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+/* The thirteen values the catalogue says the foundation works to promote. */
+function Promoted({ t }: { t: (key: string) => string }) {
+  return (
+    <section className="fd-card fd-values" aria-labelledby="fd-promote-title">
+      <h2 id="fd-promote-title" className="fd-h2">
+        {t("promoteTitle")}
+      </h2>
+      <ul className="fd-chips">
+        {PROMOTE.map((key) => (
+          <li key={key}>{t(`promote.${key}`)}</li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

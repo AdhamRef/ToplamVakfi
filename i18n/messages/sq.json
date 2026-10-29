@@ -55,7 +55,7 @@
       "story": "Historia jonë",
       "vision": "Vizioni ynë",
       "mission": "Misioni ynë",
-      "purpose": "Detyra jonë",
+      "purpose": "Përparësia strategjike",
       "goals": "Qëllimet tona",
       "president": "Letra e presidentit",
       "board": "Bordi i besimit"
@@ -86,6 +86,22 @@
       "v4": "Ndërtimi i bashkëpunimit efektiv me palë të ndryshme për arritjen e qëllimeve të përbashkëta.",
       "v5": "Përkushtim ndaj pasojave të vendimeve dhe veprimeve, dhe sigurimi i një ndikimi pozitiv dhe të qëndrueshëm në shoqëri."
     },
+    "promoteTitle": "Vlerat autentike që fondacioni punon t’i forcojë",
+    "promote": {
+      "p1": "Dija dhe të mësuarit",
+      "p2": "Ndërtimi i komunitetit",
+      "p3": "Pozitiviteti",
+      "p4": "Qytetërimi",
+      "p5": "Efektiviteti",
+      "p6": "Nisma",
+      "p7": "Paqja",
+      "p8": "Pranimi i tjetrit",
+      "p9": "Pjesëmarrja",
+      "p10": "Seriozitet",
+      "p11": "Marrja e përgjegjësisë",
+      "p12": "Puna",
+      "p13": "Familja"
+    },
     "joinLabel": "Si të merrni pjesë",
     "join": {
       "partner": {
@@ -110,29 +126,48 @@
     "visionQuote": "Të jemi pionierë në forcimin e rolit të udhëheqësve të komunitetit në mbjelljen e vlerave.",
     "missionQuote": "Punojmë për të aktivizuar dhe forcuar rolin e udhëheqësve të komunitetit (predikuesve, të rinjve, personave me ndikim) për të krijuar një ndikim pozitiv, duke përqafuar nisma dhe duke mbështetur projekte që synojnë të përhapin frymën e vlerave të larta, duke i rrënjosur dhe përhapur ato në mënyrë efektive, për të krijuar një shoqëri të bashkuar dhe të aftë për t’i përballuar sfidat me etikë.",
     "mottoLabel": "Motoja e fondacionit",
-    "purposeQuote": "Fuqizimi i komuniteteve për një të ardhme të qëndrueshme",
-    "purposeP1": "Kujdesemi dhe fuqizojmë njerëzit në çdo aspekt të jetës, me vëmendje të veçantë për udhëheqësit, të rinjtë dhe familjet si shtylla të ndryshimit shoqëror. Përmes arsimit dhe nismave të bazuara në vlera mbështesim rritjen e tyre morale e intelektuale.",
-    "purposeP2": "Nuk mjaftohemi me mjetet e suksesit akademik dhe profesional; i përgatisim brezat e ardhshëm të marrin vendime të përgjegjshme mbi parime të qarta, dhe t’i përballojnë sfidat lokale e globale me urtësi dhe ndershmëri.",
-    "purposeP3": "U përgjigjemi sfidave të sotme — shpërbërjes shoqërore, pabarazive në rritje dhe rënies morale — duke forcuar solidaritetin dhe duke përhapur vlerat në botë, me partnerë që ndajnë vizionin tonë dhe me njeriun gjithmonë në radhë të parë.",
-    "goalsQuote": "Aktivizimi i rolit të udhëheqësve të komunitetit në mbjelljen dhe forcimin e vlerave, kontributi në përgatitjen e modeleve me ndikim për përhapjen e vlerave të larta, përqafimi dhe mbështetja e nismave dhe projekteve të specializuara në përhapjen e sistemit të vlerave të larta, si dhe krijimi i partneriteteve dhe aleancave ndërkombëtare dhe koordinimi me institucionet përkatëse.",
-    "goalsP1": "Synojmë të ndërtojmë komunitete të bashkuara, të forcojmë solidaritetin shoqëror dhe të përhapim vlerat fisnike në botë — përmes partneriteteve strategjike, programeve inovative dhe angazhimit ndaj njeriut — për një botë drejtësie, dinjiteti dhe bashkëpunimi.",
-    "targetsTitle": "Kë u shërbejmë",
+    "purposeQuote": "Përparësia strategjike e fondacionit tonë qëndron në aftësinë për të bashkuar fokusin te vlerat e larta autentike me udhëzimin efektiv të të rinjve dhe mbështetjen e integruar të komunitetit, duke përdorur mjete moderne dhe partneritete strategjike për një ndikim të gjerë dhe të qëndrueshëm, me transparencë, drejtësi dhe përsosmëri në zbatim.",
+    "advantages": {
+      "a1": {
+        "title": "Fokus te vlerat e larta autentike",
+        "text": "Ofrojmë një kuptim të thellë dhe të saktë të sistemit të vlerave të larta autentike, duke shfrytëzuar përvojën e udhëheqësve të komunitetit dhe të mendimtarëve, gjë që i jep mesazhit tonë besueshmëri dhe thellësi. Përpjekjet e tyre i drejtojmë drejt ndërgjegjësimit për rolin e këtyre vlerave në zgjidhjen e problemeve bashkëkohore njerëzore."
+      },
+      "a2": {
+        "title": "Udhëzim efektiv i të rinjve",
+        "text": "U kushtojmë vëmendje të veçantë të rinjve përmes programeve inovative arsimore dhe trajnuese, që forcojnë vetëdijen e tyre për vlerat e larta, i udhëzojnë t’i përhapin ato mes bashkëmoshatarëve dhe aktivizojnë rolin e tyre udhëheqës në shoqëri."
+      },
+      "a3": {
+        "title": "Mbështetje e integruar e komunitetit",
+        "text": "Mbështesim dhe përqafojmë nismat e komunitetit që përhapin vlerat e larta në mënyrë efektive, duke ndihmuar në ndërtimin e një shoqërie të bashkuar dhe morale."
+      },
+      "a4": {
+        "title": "Përdorimi i mjeteve moderne",
+        "text": "Përdorim teknologjinë moderne dhe rrjetet sociale për të arritur shpejt dhe me efektivitet pjesën më të gjerë të shoqërisë, që mesazhi ynë të përhapet gjerësisht."
+      }
+    },
+    "goalsList": {
+      "g1": "Aktivizimi i rolit të udhëheqësve të komunitetit në mbjelljen dhe forcimin e vlerave.",
+      "g2": "Kontributi në përgatitjen e modeleve me ndikim për përhapjen e vlerave të larta.",
+      "g3": "Përqafimi dhe mbështetja e nismave dhe projekteve të specializuara në përhapjen e sistemit të vlerave të larta.",
+      "g4": "Krijimi i partneriteteve dhe aleancave ndërkombëtare dhe koordinimi me institucionet përkatëse."
+    },
+    "targetsTitle": "Grupet shoqërore që synojmë",
     "targets": {
       "t1": {
-        "title": "Familja",
-        "text": "Njësia bazë e edukimit me vlera dhe karakter"
+        "title": "Udhëheqësit e komunitetit",
+        "text": "Sepse kanë ndikimin më të madh dhe janë pika kryesore referimi në përhapjen e vetëdijes dhe të vlerave të larta në shoqëri."
       },
       "t2": {
-        "title": "Udhëheqësit e komunitetit",
-        "text": "Njerëzit te të cilët të tjerët kërkojnë udhëzim për vlerat"
+        "title": "Të rinjtë",
+        "text": "Sepse janë shtylla e së ardhmes dhe forca e shoqërisë që mund të sjellë ndikim pozitiv."
       },
       "t3": {
-        "title": "Të rinjtë",
-        "text": "Shtylla e së ardhmes"
+        "title": "Familja",
+        "text": "Sepse është njësia bazë e shoqërisë dhe burimi i parë i edukimit me vlera dhe moral."
       },
       "t4": {
         "title": "Sistemi i arsimit dhe kulturës",
-        "text": "Institucionet që formojnë mendjet"
+        "text": "Sepse formëson mendjet, ndikon në mendimin publik dhe ndihmon në ndërtimin e një shoqërie të ndriçuar nga vlerat e larta."
       }
     }
   },
@@ -3613,7 +3648,7 @@
       "ourStory": "Historia jonë",
       "vision": "Vizioni ynë",
       "message": "Misioni ynë",
-      "mission": "Detyra jonë",
+      "mission": "Përparësia strategjike",
       "goals": "Qëllimet tona",
       "presidentLetter": "Letra e presidentit",
       "board": "Bordi i besimit",
@@ -3725,7 +3760,13 @@
       "middleEast": "Lindja e Mesme",
       "turkeyBalkans": "Turqia dhe Ballkani",
       "asia": "Azia",
-      "africa": "Afrika"
+      "africa": "Afrika",
+      "text": {
+        "turkeyBalkans": "Puna jonë këtu synon të thellojë mirëkuptimin kulturor dhe të përhapë vlerat e larta. Me pozitën e saj unike si urë mes Lindjes dhe Perëndimit, rajoni i bart këto vlera edhe te shoqëritë e tjera.",
+        "asia": "Përhapim dijen etike dhe mbështesim komunitetet në Azinë Qendrore, trashëgimia e pasur kulturore dhe pozita strategjike e së cilës si portë mes Lindjes dhe botës i japin një rol të vërtetë qytetërues.",
+        "middleEast": "Mes krizave dhe luftërave që përjetojnë disa vende të rajonit, përhapim vlera që nxisin stabilitetin dhe bashkëjetesën paqësore, rindezim shpresën përmes dijes dhe aftësive, dhe lehtësojmë barrën e krizave në jetën e njerëzve.",
+        "africa": "Përballë varfërisë, padijes dhe konflikteve, përhapim vlerat njerëzore, forcojmë arsimin dhe aftësitë, dhe ofrojmë kujdes shëndetësor dhe jetësor, për të ndihmuar në ndërtimin e shoqërive më të forta dhe më të qëndrueshme që i japin çdo njeriu një jetë më të mirë."
+      }
     },
     "countries": {
       "syria": "Siria",
@@ -3753,7 +3794,7 @@
     },
     "paths": {
       "title": "Rrugët e dhurimit",
-      "sub": "Programet tona organizohen në katër rrugë.",
+      "sub": "Përballë sfidave me të cilat përballen sot shoqëritë tona, fondacioni punon përmes katër rrugëve kryesore për të ndërtuar një shoqëri të bashkuar dhe të begatë.",
       "number": "Rruga {n}",
       "count": "{count, plural, one {# program} other {# programe}}",
       "explore": "Zbulo",

@@ -183,6 +183,7 @@ export default function ReportsPage() {
                     <i dir="ltr">{formatNumber(region.countries.length)}</i>
                     {t(`regions.${region.id}`)}
                   </h3>
+                  <p className="tvi-region-text">{t(`regions.text.${region.id}`)}</p>
                   <div>
                     {region.countries.map((country) => (
                       <span key={country}>{t(`countries.${country}`)}</span>

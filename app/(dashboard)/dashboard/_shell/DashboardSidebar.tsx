@@ -99,9 +99,10 @@ export function DashboardSidebar({
       )}
     >
       {/* Brand bar */}
-      <div className="h-16 flex items-center justify-between gap-2 px-4 border-b bg-burgundy shrink-0">
+      <div className="h-16 flex items-center justify-between gap-2 px-4 border-b bg-white shrink-0">
         <Link href="/dashboard" className="flex items-center gap-2 min-w-0">
-            <img src="/logo.webp" alt="" className="h-12 w-auto object-contain brightness-0 invert" />
+            {/* The same mark as the public site's header (`components/minbar/shell/Header.tsx`). */}
+            <img src="/toplum/logo-mark.png" alt="Toplum Vakfı" className="h-12 w-auto object-contain" />
           </Link>
         <button
           type="button"

@@ -101,6 +101,7 @@
   display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
   background: linear-gradient(135deg, #00a2e0, #0077b3); color: #fff; font-style: normal; font-size: 12px;
 }
+.mia-scope .tvi-region-text { margin: 0 0 12px; color: #4b6275; font-size: 12.5px; line-height: 1.85; }
 .mia-scope .tvi-region div { display: flex; flex-wrap: wrap; gap: 6px; }
 .mia-scope .tvi-region span {
   display: inline-flex; align-items: center; gap: 5px; min-height: 30px; padding: 0 11px; border-radius: 999px;

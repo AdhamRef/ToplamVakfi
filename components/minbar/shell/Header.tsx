@@ -71,8 +71,8 @@ const NAV: readonly NavGroup[] = [
     sub: [
       { route: "ourStory", key: "ourStory", icon: "story" },
       { route: "about", hash: "vision", key: "vision", icon: "eye" },
-      { route: "about", hash: "message", key: "message", icon: "send" },
-      { route: "about", hash: "mission", key: "mission", icon: "flag" },
+      { route: "about", hash: "mission", key: "message", icon: "send" },
+      { route: "about", hash: "purpose", key: "mission", icon: "flag" },
       { route: "about", hash: "goals", key: "goals", icon: "target" },
       { route: "presidentLetter", key: "presidentLetter", icon: "person" },
       { route: "board", key: "board", icon: "people" },

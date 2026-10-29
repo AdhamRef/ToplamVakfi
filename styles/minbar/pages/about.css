@@ -144,6 +144,12 @@
 /* Values: the catalogue's five, each name with its definition */
 .mia-scope .fd-values { padding: 22px 24px; margin-top: 16px; }
 .mia-scope .fd-values .fd-h2 { margin-bottom: 14px; }
+.mia-scope .fd-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.mia-scope .fd-chips li {
+  display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 16px; border-radius: 999px;
+  background: #f2f8fc; border: 1px solid var(--fd-line); color: var(--fd-ink); font-size: 13px; font-weight: 800;
+}
+.mia-scope .fd-chips li::before { content: "✓"; color: var(--fd-ink-brand); font-size: 12px; }
 .mia-scope .fd-values-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .mia-scope .fd-values-list li {
   position: relative; padding: 12px 16px; padding-inline-start: 40px; border-radius: 14px;
@@ -185,6 +191,18 @@
 .mia-scope .fd-targets > div { padding: 16px; border: 1px solid var(--fd-line); border-radius: 14px; background: #f7fbfe; }
 .mia-scope .fd-targets b { display: block; color: var(--fd-ink); font-size: 14.5px; font-weight: 900; margin-bottom: 6px; }
 .mia-scope .fd-targets span { color: var(--fd-muted); font-size: 12.5px; line-height: 1.75; }
+/* Strategic advantage: four longer texts, two per row */
+.mia-scope .fd-advantages { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0; }
+/* Goals: the catalogue's four goals, numbered */
+.mia-scope .fd-goals { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; counter-reset: fd-goal; }
+.mia-scope .fd-goals li {
+  counter-increment: fd-goal; position: relative; padding: 12px 16px; padding-inline-start: 52px; border-radius: 14px;
+  background: #f7fbfe; border: 1px solid var(--fd-line); color: var(--fd-ink); font-size: 14px; font-weight: 700; line-height: 1.85;
+}
+.mia-scope .fd-goals li::before {
+  content: counter(fd-goal); position: absolute; inset-inline-start: 14px; top: 12px; display: grid; place-items: center;
+  width: 26px; height: 26px; border-radius: 50%; background: var(--fd-brand); color: #fff; font-size: 12.5px; font-weight: 900;
+}
 
 /* Board (.bd-*) */
 .mia-scope .fd-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 0; padding: 0; list-style: none; }
@@ -343,7 +361,7 @@
   }
   .mia-scope .fd-banner::after { height: 36px; }
   .mia-scope .fd-banner p { font-size: 14.5px; }
-  .mia-scope .fd-targets, .mia-scope .fd-row { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .fd-targets, .mia-scope .fd-advantages, .mia-scope .fd-row { grid-template-columns: minmax(0, 1fr); }
   .mia-scope .fd-intro-text, .mia-scope .fd-story, .mia-scope .fd-form, .mia-scope .fd-sr-proj-text { padding: 20px 18px; }
   .mia-scope .fd-faq { padding: 36px 16px 64px; }
   /* 16px is the smallest size iOS Safari will not zoom into on focus. */
