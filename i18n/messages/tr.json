@@ -1058,7 +1058,7 @@
     "contactLabel": "İletişim",
     "ctaTagline": "Kudüs İçin Bir Minber Olalım",
     "heroTitle": "Hakkımızda",
-    "heroSubtitle": "Yüce değerler, güvenli toplumlar",
+    "heroSubtitle": "Yüce Değerler, Güvenli Toplumlar",
     "mission": "Beytülmakdis davasında bilinç oluşturmak ve halkının direnişini güçlendirmek için hatip ve davetçilerle çalışmak.",
     "howWeWork": "Projeleri uygulamak ve takip etmek için Kudüs ve Gazze'deki saha ekibimize dayanıyoruz; uygulamanın her aşamasını fotoğraf ve raporlarla belgeliyoruz. Onaylanmamış hiçbir rakam yayımlamayız, belgelenmemiş hiçbir uygulamayı anlatmayız.",
     "vision": "Beytülmakdis davasına hizmette dünyanın dört bir yanındaki hatip ve davetçilerin ilk başvuru kaynağı olmak.",
@@ -1112,20 +1112,25 @@
     "introCta": "Hikâyemizi okuyun",
     "introImgAlt": "Sahadaki vakıf ekibi",
     "missionTitle": "Misyonumuz",
-    "missionText": "Toplum öncülerini güçlendiriyor, değerleri yayan girişimleri destekliyor, zorluklarına ahlakıyla karşılık veren bütünleşik bir toplum için çalışıyoruz.",
+    "missionText": "Toplumun önde gelen değerli insanlarıyla (vaizler, gençler, kanaat önderleri) birlikte, bu insanların rollerini etkinleştirmek, onlara gerekli donanımları sağlamak ve toplum için önemli değerlerin yayılmasını sağlayacak projeleri desteklemek; etik ve değerlerine bağlı, sorumlu bir toplum inşa etmeye katkıda bulunmak.",
     "visionTitle": "Vizyonumuz",
-    "visionText": "Değerleri güçlendirmek için toplum öncülerini destekleyen öncü kurum olmak.",
-    "goalTitle": "Hedefimiz",
-    "goalText": "Başta toplum önderleri, gençler ve aileler olmak üzere bireyleri desteklemek; eğitim ve değer temelli girişimlerle ahlaki ve fikrî gelişimlerini güçlendirmek.",
-    "valuesTitle": "Kurumsal değerlerimiz",
+    "visionText": "Toplum liderlerinin değerleri aşılamada öncü olmasını sağlamak.",
+    "goalTitle": "Hedeflerimiz",
+    "goalText": "Toplum liderlerinin değerlerin aşılanmasındaki rollerini etkinleştirmek, yüce değerleri yaymak için etkili rol modelleri geliştirmek, değerlerin yayılması için özel projeleri desteklemek ve geliştirmek, uluslararası ortaklıklar kurmak ve ilgili kurumlarla iş birliği yapmak.",
+    "valuesTitle": "Değerlerimiz",
     "values": {
-      "v1": "İtkan",
+      "v1": "Mükemmeliyet",
       "v2": "İnsanlık",
       "v3": "Şeffaflık",
       "v4": "Ortaklık",
-      "v5": "Sorumluluk",
-      "v6": "Yönetişim",
-      "v7": "Kurumsal mükemmellik"
+      "v5": "Sorumluluk"
+    },
+    "valuesText": {
+      "v1": "Faaliyetlerimizde en yüksek düzeyde verimlilik ve mükemmeliyete sahip olmak.",
+      "v2": "İnsan onuruna saygı göstermek ve tüm insan haklarını savunmak.",
+      "v3": "Tüm faaliyetlerde dürüstlük ve doğruluğa bağlı kalmak.",
+      "v4": "Ortak hedefler için aynı gaye ve hedefleri olan taraflarla etkin iş birliği yapmak.",
+      "v5": "Kararlarımızı ve eylemlerimizi toplumun tüm katmanlarına ulaştırabilme sorumluluğu içinde olmak."
     },
     "joinLabel": "Nasıl katılırsınız",
     "join": {
@@ -1148,14 +1153,14 @@
         "cta": "Bizimle gönüllü olun"
       }
     },
-    "visionQuote": "Değerleri güçlendirmek için toplum öncülerini güçlendirmede öncülük.",
-    "missionQuote": "Toplum öncülerinin rolünü etkinleştirip güçlendiriyor; yüce değerleri kökleştiren ve yayan girişim ve projeleri sahipleniyoruz. Hedefimiz, zorluklarına ahlakıyla karşılık veren bütünleşik bir toplum.",
+    "visionQuote": "Toplum liderlerinin değerleri aşılamada öncü olmasını sağlamak.",
+    "missionQuote": "Toplumun önde gelen değerli insanlarıyla (vaizler, gençler, kanaat önderleri) birlikte, bu insanların rollerini etkinleştirmek, onlara gerekli donanımları sağlamak ve toplum için önemli değerlerin yayılmasını sağlayacak projeleri desteklemek; etik ve değerlerine bağlı, sorumlu bir toplum inşa etmeye katkıda bulunmak.",
     "mottoLabel": "Vakfın sloganı",
     "purposeQuote": "Dayanıklı bir gelecek için toplumları güçlendirmek",
     "purposeP1": "Bireyleri hayatın her alanında destekliyor ve güçlendiriyoruz; toplumsal dönüşümün direkleri olan toplum önderlerine, gençlere ve ailelere özel önem veriyoruz. Eğitim ve değer temelli girişimlerle ahlaki ve fikrî gelişimlerini destekleyerek ömür boyu öğrenme kültürü ve ahlaka dayalı liderlik inşa ediyoruz.",
     "purposeP2": "Gelecek nesillere yalnızca akademik ve mesleki başarı araçları sunmakla yetinmiyor, onları açık ilkelere dayanan sorumlu kararlar almaya hazırlıyoruz. Bilgiyi değerlerle buluşturan bir yaklaşımla bireylerin yerel ve küresel sorunlara hikmet ve dürüstlükle karşılık veren olumlu değişim öncüleri olmasına yardım ediyoruz.",
     "purposeP3": "Toplumsal çözülme, derinleşen eşitsizlikler ve ahlaki gerileme gibi bugünün sorunlarına dayanışmayı güçlendirerek ve değerleri dünya ölçeğinde yayarak karşılık veriyoruz. Vizyonumuzu paylaşan ortaklarla çalışıyor, farklı kesimlerin ihtiyaçlarına uygun programlar tasarlıyor ve insanı her zaman önde tutuyoruz.",
-    "goalsQuote": "Başta toplum önderleri, gençler ve aileler olmak üzere bireyleri desteklemek ve güçlendirmek; eğitim ve değer temelli girişimlerle ahlaki ve fikrî gelişimlerini artırmak.",
+    "goalsQuote": "Toplum liderlerinin değerlerin aşılanmasındaki rollerini etkinleştirmek, yüce değerleri yaymak için etkili rol modelleri geliştirmek, değerlerin yayılması için özel projeleri desteklemek ve geliştirmek, uluslararası ortaklıklar kurmak ve ilgili kurumlarla iş birliği yapmak.",
     "goalsP1": "Çağın sorunlarına karşı koyabilen bütünleşik toplumlar inşa etmeyi; stratejik ortaklıklar, yenilikçi programlar ve insana bağlılıkla sosyal dayanışmayı güçlendirip yüce değerleri dünyaya yaymayı hedefliyoruz: adalet, onur ve iş birliğinin hâkim olduğu bir dünya için.",
     "targetsTitle": "Hedef kitleler",
     "targets": {
@@ -3900,31 +3905,31 @@
     "script": "Hikâyemiz başladı…",
     "s1": {
       "title": "Nereden başladık",
-      "text": "Vakfın fikri, Doğu ile Batı medeniyetlerinin yüzyıllardır buluştuğu ve bilginin nesilden nesle aktığı Türkiye’de doğdu. Basit bir inançla yola çıktık: Her yükselişin temeli insandır ve insanın inşası eğitimle başlar."
+      "text": "Tarih ve medeniyetin beşiği, kültürün merkezi ve Doğu ile Batı’nın buluşma noktası olan bu topraklarda, bu vakfın fikri doğdu. İmparatorlukların görkemine ve kuşaklar arasında bilgi aktarımına tanık olan Türkiye, bu vizyonun ilk merkezi oldu."
     },
     "s2": {
       "title": "Başlangıç: 1995",
-      "text": "Otuz yıl önce, 1995’te vakıf, değerlere sahip eğitimli gençlerin yükselen toplumların direkleri olduğu inancıyla çalışmaya başladı. Eğitim ilk dayanağımız oldu; yalnızca bilgi aktarımı olarak değil, aklı ve kalbi, ilmi ve ahlakı birleştiren bütüncül bir yetişme olarak."
+      "text": "İnsanın medeniyetin özü olduğuna ve insanın ancak eğitim, bilgi ve kültür yoluyla inşa edilebileceğine dair derin bir inanç üzerine kurulu olan bu vizyon, 1995 yılında somut bir adım atarak hayata geçti. Bu vakıf, zamana ve mekâna meydan okuyan yüce değerleri şiar edinerek, insanla başlayan ve insanla biten bir yol çizdi.\n\nKurucular, gençlerin eğitim ve terbiyesinin toplumu ilerletip kalkındıracak ana unsur olduğuna inandılar. Bu nedenle vakıf, ilk günden itibaren eğitimi temel bir unsur olarak kabul etti. Ancak bu eğitim sadece bilginin aktarımı değil, aynı zamanda yüce değerlerin yaşatıldığı bütünsel bir eğitimdi. Bu eğitim, akıl ile kalbi, maddi ilerleme ile manevi yükselişi birleştiren bir yaklaşımdı."
     },
     "s3": {
       "title": "Nesillerin yetişmesi",
-      "text": "Nesiller boyunca gençler vakfın programlarından geçti, bilgi edindi ve değerlerle yetişti. Zamanla birçoğu toplumunda öncü ve lider oldu; etkileri akademik veya mesleki başarıyla sınırlı kalmayıp adalet, şeffaflık ve ihsan üzerine kurulu toplumlara uzandı."
+      "text": "Vakıftan geçen kuşaklar, bilgiyle donatılırken aynı zamanda değerlerle eğitildi. Bu gençler sadece akademik veya mesleki başarılarla kalmadı; taşıdıkları değerlerle toplum liderleri ve öncüleri oldular. Adalet, şeffaflık ve iyilik üzerine kurulu yeni toplumlar inşa ettiler. Tüm bunlar, eğitimin köprü işlevi görmesi sayesinde oldu: geçmişin medeniyetlerini ve yaratıcı mirasını, umut ve beklentilerle dolu bir geleceğe bağlayan bir köprü."
     },
     "s4": {
       "title": "Süren çalışma",
-      "text": "Çalışma burada durmadı. Vakfın himayesinde yetişen öğrenciler bugün onun misyonunu taşıyor; ilkelerini koruyarak yöntemlerini çağa uygun biçimde yeniliyor. Böylece çalışmanın alanı genişledi."
+      "text": "Ancak bu yolculuk burada sona ermedi. Bir zamanlar vakfın gölgesinde yetişen gençler, bugün vakfın bayrağını taşıyanlar oldular. Çağın değişen şartlarına uyum sağlayarak, temel değerleri koruyarak yöntem ve araçları yenilediler."
     },
     "s5": {
       "title": "Dünyanın sınamaları karşısında",
-      "text": "Dünya bugün art arda krizler yaşıyor: çatışmalar ve savaşlar, yayılan yoksulluk, aşırılık ve bağnazlık. Vakıf yöneticilerine göre buna en etkili cevap, toplumlara güven ve barışı geri kazandıran değerleri kökleştirmektir."
+      "text": "Bugün vakfın liderleri, dünyanın karşılaştığı büyük değişimleri fark ettiler. Savaşlar, yoksulluk ve adaletsizlik gibi insani krizlerin derinleştiğini gördüler ve bu sorunların çözümünde yüce değerlerin ekilmesinin ve güçlendirilmesinin en etkili çözüm olduğunu anladılar. Bu değerlerin ekilmesi, genç nesillerin yanlış düşünce ve şüphelerden korunması için bir savunma duvarı oluşturur. Bu sadece İslam toplumları için değil, tüm dünya için geçerlidir. Çünkü tüm dünya karmaşa, krizler ve sapkınlıklardan kurtarılmayı bekliyor ve bu ancak yüce değerler üzerine kurulu sağlam bir anlayışla mümkündür."
     },
     "s6": {
       "title": "Sınırları aşan bir vizyon",
-      "text": "Eğitim bu bilinci güçlendirmenin en uygun yolu olmaya devam ediyor. Ancak insanın bütüncül yetişmesi için bilgiden fazlası gerekir: ruhu güçlendiren değerler ve bilgisini toplumu için kullanmasına yardım eden rehberlik. Bu yüzden vakfın çalışmaları ahlakı, uygun öğrenme ortamlarını ve sosyal dayanışmayı da kapsayacak şekilde genişledi."
+      "text": "Eğitimin bu bilinci güçlendirmek için en uygun yol olduğu bilinciyle vakıf, eğitim ve bilginin ötesinde insana yönelik daha geniş bir bakış açısı benimsemiştir. İnsanın tam anlamıyla inşa edilmesi için sadece bilgi yeterli değildir; ruhu besleyen değerlere ve bu bilgiyi toplumun inşasında kullanmasına imkân veren bir rehberliğe ihtiyaç vardır. Bu nedenle vakfın faaliyetleri, ruhu ve ahlaki değerleri geliştirmeye yönelik faaliyetlerle genişletildi; ardından bilgi edinme için uygun ortamlar sağlandı ve nihayetinde sosyal dayanışmayı güçlendirmeye yönelik yardım çalışmalarıyla tamamlandı.\n\nTüm bu süreçler, daha geniş ve yenilikçi bir vizyonun parçasıdır. Bu vizyon, vakfa coğrafi sınırlarının ötesine geçmesi için özgüven aşılamıştır. Yüce değerlere olan inançları ve halkların ortak kimliklerini paylaşma bilinci, sınırları aşarak daha adil ve insani bir dünya inşa etme yolunda ortak bir çalışma motivasyonu sağladı."
     },
     "s7": {
       "title": "Türkiye’den dünyaya",
-      "text": "Vakfın yolculuğu köklü medeniyetlerin beşiği Türkiye’de başladı ve dünyayı insanlık ve değerlerle birbirine bağlayan bir köprüye dönüştü. Çalışmaları bugün Balkanlar’a, Orta Asya’ya ve ötesine uzanıyor; vakıf halklar arasında iş birliği ve anlayışın köprülerinden biri."
+      "text": "Bu şekilde vakıf yolculuğuna devam etti. Türkiye’de doğan bu fikir dünyaya yayıldı. Türkiye, bu yolculuğun başladığı yer olarak medeniyet ve insanlık köprüsü oldu ve vakfın çalışmaları Türkiye sınırlarının ötesine taşındı. Balkanlar, Orta Asya gibi bölgeler, İslam ümmetinin ve özellikle Türk milletinin tarihî derinliğini yansıtan alanlar olarak vakfın çalışmalarına dâhil edildi. Bu bölgelerle olan tarihî ve kültürel bağlar, iş birliği ve dayanışmayı güçlendiren bir unsur hâline geldi."
     }
   },
   "tvPresident": {
@@ -4155,7 +4160,8 @@
       "titleLead": "İnsanlık",
       "titleAccent": "bizi birleştirir",
       "lead": "Daha adil, merhametli ve onurlu toplumlar için",
-      "body": "Yüce değerlerle umut ekiyor, iyilik ve güvenle gelişen toplumlar kuruyoruz.",
+      "bodyTitle": "Yüce Değerler, Güvenli Toplumlar",
+      "body": "Toplumlara güven ve barışı geri kazandıran yüce değerleri aşılıyor, insanı eğitim, bilgi ve kültürle inşa ediyoruz.",
       "cta": "Bu etkinin parçası olun",
       "story": "Hikâyemiz",
       "trustLabel": "Güven göstergeleri",
@@ -4198,14 +4204,14 @@
       "campaignTag": "Vakıf kampanyası 2026",
       "campaignTitle": "Umut kampanyası",
       "campaignText": "Umutları olalım; dayanışmamız gelecekleridir",
-      "valuesTitle": "Değerlerin inşası",
-      "valuesText": "Ahlakı kökleştiren eğitim, bireyden topluma geçen bilgi",
-      "humanTitle": "İnsan inşası",
-      "humanText": "En kırılgan kesimler için eşit eğitim ve gelişime alan açan bakım",
-      "youthTitle": "Gençlerin geleceği",
-      "youthText": "İş fırsatları açan beceriler, liderliği ve katılımı destekleyen yetkinlikler",
-      "communityTitle": "Tek toplum",
-      "communityText": "Günlük hayatta dayanışma: her mevsim gıda, su ve bakım"
+      "valuesTitle": "Değerleri Aşılama Yolu",
+      "valuesText": "Topluma ahlaki ve pozitif değerler kazandırarak daha adil ve uyumlu bir toplum yapısına kavuşmak.",
+      "humanTitle": "İnsan İnşası Yolu",
+      "humanText": "Eğitim ve bilgiye erişimi artırarak toplumun tüm üyeleri için eşit fırsatlar sunmak.",
+      "youthTitle": "Gençliğin Geleceğini Yaratma Yolu",
+      "youthText": "Gençleri beceri ve bilgiyle donatmak; ekonomik ve sosyal açıdan güçlendirerek liderliğe hazırlamak.",
+      "communityTitle": "Tek Toplum Yolu",
+      "communityText": "Yardımlaşma ve dayanışmayı artırarak daha güçlü ve birbirine bağlı topluluklar oluşturmak."
     },
     "world": {
       "title": "Dünyadaki etkimiz",
@@ -4654,10 +4660,10 @@
       "presidentLetter": "Başkanın mesajı",
       "board": "Mütevelli heyeti",
       "programs": "Programlarımız",
-      "values": "Değerlerin inşası",
-      "human": "İnsan inşası",
-      "youth": "Gençlerin geleceği",
-      "community": "Tek toplum",
+      "values": "Değerleri Aşılama Yolu",
+      "human": "İnsan İnşası Yolu",
+      "youth": "Gençliğin Geleceğini Yaratma Yolu",
+      "community": "Tek Toplum Yolu",
       "hope": "Umut kampanyası",
       "impact": "Etkimiz",
       "transparency": "Şeffaflık",
@@ -4794,20 +4800,20 @@
       "count": "{count} program",
       "explore": "Keşfet",
       "values": {
-        "title": "Değerlerin inşası",
-        "text": "Bireyden topluma geçen ahlak ve bilgiyi kökleştirmek."
+        "title": "Değerleri Aşılama Yolu",
+        "text": "Topluma ahlaki ve pozitif değerler kazandırarak daha adil ve uyumlu bir toplum yapısına kavuşmak."
       },
       "human": {
-        "title": "İnsan inşası",
-        "text": "En kırılgan kesimler için eşit eğitim; insanın gelişebileceği bakım ve ortamlar."
+        "title": "İnsan İnşası Yolu",
+        "text": "Eğitim ve bilgiye erişimi artırarak toplumun tüm üyeleri için eşit fırsatlar sunmak."
       },
       "youth": {
-        "title": "Gençlerin geleceği",
-        "text": "İş kapılarını açan beceriler, liderliği ve katılımı destekleyen yetkinlikler."
+        "title": "Gençliğin Geleceğini Yaratma Yolu",
+        "text": "Gençleri beceri ve bilgiyle donatmak; ekonomik ve sosyal açıdan güçlendirerek liderliğe hazırlamak."
       },
       "community": {
-        "title": "Tek toplum",
-        "text": "Hayatın içinde dayanışma: gıda, su ve bakım ihtiyaç sahiplerine zamanında ulaşır."
+        "title": "Tek Toplum Yolu",
+        "text": "Yardımlaşma ve dayanışmayı artırarak daha güçlü ve birbirine bağlı topluluklar oluşturmak."
       }
     },
     "field": {

@@ -81,8 +81,7 @@ export function ImpactStrip() {
             ”
           </span>
           <p id="hs-quote">
-            {t("quote1")}
-            <br />
+            {t("quote1")} <br />
             {t("quote2")}
           </p>
         </blockquote>

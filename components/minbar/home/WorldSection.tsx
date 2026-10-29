@@ -61,8 +61,7 @@ export default function WorldSection() {
         </div>
         <div className="iw-map">
           <span className="iw-note" aria-hidden="true">
-            {t("note1")}
-            <br />
+            {t("note1")} <br />
             {t("note2")}
           </span>
           <div className="iw-map-frame" role="img" aria-label={t("mapLabel")}>

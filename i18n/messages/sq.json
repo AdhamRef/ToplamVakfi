@@ -12,7 +12,7 @@
     "contactLabel": "Kontakti",
     "ctaTagline": "Të jemi një minber për Al-Kudsin",
     "heroTitle": "Rreth nesh",
-    "heroSubtitle": "Vlera fisnike, komunitete të sigurta",
+    "heroSubtitle": "Vlera të Larta, Komunitete të Sigurta",
     "mission": "Të punojmë me oratorët dhe thirrësit për të krijuar ndërgjegjësim për çështjen e Bejtul-Makdisit dhe për të forcuar qëndresën e banorëve të tij.",
     "howWeWork": "Mbështetemi në një ekip terreni në Al-Kuds dhe Gaza për zbatimin dhe ndjekjen e projekteve, duke dokumentuar çdo fazë me foto dhe raporte. Nuk publikojmë asnjë shifër të pamiratuar dhe nuk përshkruajmë asnjë zbatim të padokumentuar.",
     "vision": "Referenca e parë për oratorët dhe thirrësit nga e gjithë bota në shërbim të çështjes së Bejtul-Makdisit.",
@@ -66,20 +66,25 @@
     "introCta": "Lexoni historinë tonë",
     "introImgAlt": "Ekipi i fondacionit në terren",
     "missionTitle": "Misioni ynë",
-    "missionText": "Fuqizojmë udhëheqësit e komunitetit dhe mbështesim nisma që përhapin vlerat, për një shoqëri të bashkuar që i përballon sfidat me integritet.",
+    "missionText": "Punojmë për të aktivizuar dhe forcuar rolin e udhëheqësve të komunitetit (predikuesve, të rinjve, personave me ndikim) për të krijuar një ndikim pozitiv, duke përqafuar nisma dhe duke mbështetur projekte që synojnë të përhapin frymën e vlerave të larta, duke i rrënjosur dhe përhapur ato në mënyrë efektive, për të krijuar një shoqëri të bashkuar dhe të aftë për t’i përballuar sfidat me etikë.",
     "visionTitle": "Vizioni ynë",
-    "visionText": "Të jemi të parët në fuqizimin e udhëheqësve të komunitetit për forcimin e vlerave.",
-    "goalTitle": "Qëllimi ynë",
-    "goalText": "Të kujdesemi dhe të fuqizojmë njerëzit — në radhë të parë udhëheqësit, të rinjtë dhe familjet — dhe të mbështesim rritjen e tyre morale e intelektuale përmes arsimit.",
+    "visionText": "Të jemi pionierë në forcimin e rolit të udhëheqësve të komunitetit në mbjelljen e vlerave.",
+    "goalTitle": "Qëllimet tona",
+    "goalText": "Aktivizimi i rolit të udhëheqësve të komunitetit në mbjelljen dhe forcimin e vlerave, kontributi në përgatitjen e modeleve me ndikim për përhapjen e vlerave të larta, përqafimi dhe mbështetja e nismave dhe projekteve të specializuara në përhapjen e sistemit të vlerave të larta, si dhe krijimi i partneriteteve dhe aleancave ndërkombëtare dhe koordinimi me institucionet përkatëse.",
     "valuesTitle": "Vlerat tona",
     "values": {
       "v1": "Përsosmëria",
       "v2": "Njerëzimi",
       "v3": "Transparenca",
       "v4": "Partneriteti",
-      "v5": "Përgjegjësia",
-      "v6": "Qeverisja",
-      "v7": "Përsosmëri institucionale"
+      "v5": "Përgjegjësia"
+    },
+    "valuesText": {
+      "v1": "Arritja e niveleve më të larta të efikasitetit dhe përsosmërisë në punë dhe veprimtari.",
+      "v2": "Respektimi i dinjitetit njerëzor dhe nxitja e të drejtave të njeriut.",
+      "v3": "Përkushtim ndaj ndershmërisë dhe integritetit në të gjitha veprimtaritë tona.",
+      "v4": "Ndërtimi i bashkëpunimit efektiv me palë të ndryshme për arritjen e qëllimeve të përbashkëta.",
+      "v5": "Përkushtim ndaj pasojave të vendimeve dhe veprimeve, dhe sigurimi i një ndikimi pozitiv dhe të qëndrueshëm në shoqëri."
     },
     "joinLabel": "Si të merrni pjesë",
     "join": {
@@ -102,14 +107,14 @@
         "cta": "Bëhu vullnetar me ne"
       }
     },
-    "visionQuote": "Të prijmë në fuqizimin e udhëheqësve të komunitetit për forcimin e vlerave.",
-    "missionQuote": "Aktivizojmë dhe forcojmë rolin e udhëheqësve të komunitetit, dhe mbështesim nisma e projekte që rrënjosin dhe përhapin vlerat fisnike — për një shoqëri të bashkuar që i përballon sfidat me integritet.",
+    "visionQuote": "Të jemi pionierë në forcimin e rolit të udhëheqësve të komunitetit në mbjelljen e vlerave.",
+    "missionQuote": "Punojmë për të aktivizuar dhe forcuar rolin e udhëheqësve të komunitetit (predikuesve, të rinjve, personave me ndikim) për të krijuar një ndikim pozitiv, duke përqafuar nisma dhe duke mbështetur projekte që synojnë të përhapin frymën e vlerave të larta, duke i rrënjosur dhe përhapur ato në mënyrë efektive, për të krijuar një shoqëri të bashkuar dhe të aftë për t’i përballuar sfidat me etikë.",
     "mottoLabel": "Motoja e fondacionit",
     "purposeQuote": "Fuqizimi i komuniteteve për një të ardhme të qëndrueshme",
     "purposeP1": "Kujdesemi dhe fuqizojmë njerëzit në çdo aspekt të jetës, me vëmendje të veçantë për udhëheqësit, të rinjtë dhe familjet si shtylla të ndryshimit shoqëror. Përmes arsimit dhe nismave të bazuara në vlera mbështesim rritjen e tyre morale e intelektuale.",
     "purposeP2": "Nuk mjaftohemi me mjetet e suksesit akademik dhe profesional; i përgatisim brezat e ardhshëm të marrin vendime të përgjegjshme mbi parime të qarta, dhe t’i përballojnë sfidat lokale e globale me urtësi dhe ndershmëri.",
     "purposeP3": "U përgjigjemi sfidave të sotme — shpërbërjes shoqërore, pabarazive në rritje dhe rënies morale — duke forcuar solidaritetin dhe duke përhapur vlerat në botë, me partnerë që ndajnë vizionin tonë dhe me njeriun gjithmonë në radhë të parë.",
-    "goalsQuote": "Të kujdesemi dhe të fuqizojmë njerëzit — sidomos udhëheqësit, të rinjtë dhe familjet — dhe të forcojmë rritjen e tyre morale e intelektuale përmes arsimit dhe nismave të bazuara në vlera.",
+    "goalsQuote": "Aktivizimi i rolit të udhëheqësve të komunitetit në mbjelljen dhe forcimin e vlerave, kontributi në përgatitjen e modeleve me ndikim për përhapjen e vlerave të larta, përqafimi dhe mbështetja e nismave dhe projekteve të specializuara në përhapjen e sistemit të vlerave të larta, si dhe krijimi i partneriteteve dhe aleancave ndërkombëtare dhe koordinimi me institucionet përkatëse.",
     "goalsP1": "Synojmë të ndërtojmë komunitete të bashkuara, të forcojmë solidaritetin shoqëror dhe të përhapim vlerat fisnike në botë — përmes partneriteteve strategjike, programeve inovative dhe angazhimit ndaj njeriut — për një botë drejtësie, dinjiteti dhe bashkëpunimi.",
     "targetsTitle": "Kë u shërbejmë",
     "targets": {
@@ -2858,31 +2863,31 @@
     "script": "Historia jonë nisi…",
     "s1": {
       "title": "Ku filluam",
-      "text": "Ideja e fondacionit lindi në Turqi, ku qytetërimet e Lindjes dhe Perëndimit janë takuar për shekuj. Nisëm nga një bindje e thjeshtë: njeriu është themeli i çdo ringjalljeje, dhe ndërtimi i tij fillon me arsimin."
+      "text": "Në vendin e historisë dhe të qytetërimit, burim i kulturës dhe pikë takimi mes Lindjes dhe Perëndimit, ku krijimtaria shfaqet në çdo tipar të tij, lindi ideja e këtij fondacioni.\n\nTurqia, vendi që dëshmoi madhështinë e perandorive dhe përcjelljen e dijes dhe mendimit ndër breza të panumërt, ishte djepi i parë i këtij vizioni: një vizion i mbështetur në bindjen e thellë se njeriu është themeli i qytetërimit dhe se ndërtimi i njeriut bëhet vetëm përmes portës së dijes, arsimit dhe njohurisë."
     },
     "s2": {
       "title": "Fillimi, 1995",
-      "text": "Tridhjetë vjet më parë, në 1995, fondacioni nisi punën duke besuar se të rinjtë e arsimuar me vlera janë shtyllat e shoqërive që përparojnë. Arsimi u bë shtylla jonë e parë — jo vetëm transmetim informacioni, por formim i plotë që bashkon mendjen dhe zemrën, dijen dhe karakterin."
+      "text": "Tridhjetë vjet më parë, pikërisht në vitin 1995, ishte fillimi. Fondacioni i mori vlerat e larta si moto dhe si fener që kapërcen kufijtë e kohës dhe të vendit, dhe hapi një rrugë që nis nga njeriu dhe përfundon tek ai.\n\nThemeluesit besuan se të rinjtë pionierë, me arsimin dhe edukimin e tyre, janë shtylla e shoqërive që synojnë përparimin dhe ngritjen. Prandaj, që në çastin e parë, arsimi ishte shtylla mbi të cilën u mbështet fondacioni. Por ky arsim nuk ishte thjesht transmetim dijeje dhe shpjegim informacioni; ishte një arsim i plotë që pasqyronte vlerat e larta, një arsim që nuk e ndan mendjen nga zemra, por e lidh dijen me moralin dhe përparimin material me ngritjen shpirtërore."
     },
     "s3": {
       "title": "Rritja e brezave",
-      "text": "Breza të rinjsh kanë kaluar nëpër programet tona, duke fituar dije dhe duke u rritur me vlera. Me kohë shumë prej tyre u bënë udhëheqës në komunitetet e tyre, dhe ndikimi i tyre shkoi përtej suksesit akademik drejt ndërtimit të komuniteteve mbi drejtësi dhe mirësi."
+      "text": "Breza të rinjsh kaluan nëpër këtë fondacion, duke fituar dije dhe duke u edukuar me vlera.\n\nMe kalimin e ditëve, këta të rinj u bënë faktor i rëndësishëm në ndërtim dhe një forcë e pazëvendësueshme në ndikimin pozitiv. Roli i tyre nuk u kufizua në suksesin akademik apo profesional; ata ishin udhëheqës dhe pionierë me vlerat që mbartnin, duke ndërtuar shoqëri të reja mbi drejtësinë, transparencën dhe mirësinë. E gjithë kjo përmes arsimit — urës që lidh të kaluarën, me qytetërimet dhe krijimtarinë e saj, me të ardhmen, me shpresat dhe aspiratat e saj; urës përmes së cilës ecim drejt një bote më të mirë, që rrezaton dritë, drejtësi dhe vlera të larta."
     },
     "s4": {
       "title": "Puna vazhdon",
-      "text": "Puna nuk u ndal këtu. Studentët që u rritën nën kujdesin e fondacionit sot mbajnë misionin e tij, duke rinovuar metodat për një botë në ndryshim. Kështu puna u zgjerua."
+      "text": "Por rrugëtimi nuk u ndal këtu. Ata të rinj, që dikur ishin studentë të përqafuar dhe të mbështetur nga fondacioni, i cili u dha hije të bollshme dhe u shtroi një rrugë të qartë, sot janë bartësit e flamurit. Ata vazhdojnë në të njëjtën rrugë me metoda që ecin me kohën dhe marrin parasysh ndryshimet; ruajnë shtyllat dhe themelet dhe rinovojnë mjetet dhe metodat. Në duart e tyre, vizioni u zgjerua drejt një horizonti më të gjerë."
     },
     "s5": {
       "title": "Përballë sfidave të botës",
-      "text": "Bota përballet me kriza të njëpasnjëshme: konflikte dhe luftëra, varfëri në rritje dhe ekstremizëm. Besojmë se përgjigjja më e mirë është mbjellja e vlerave që u kthejnë komuniteteve sigurinë dhe paqen."
+      "text": "Sot, drejtuesit e fondacionit panë ndryshimet e mëdha që kanë ndodhur në jetën njerëzore në tërësi. Krizat e njëpasnjëshme u shumëfishuan në mbarë botën, derisa përfshinë çdo aspekt të jetës: nga përhapja e konflikteve dhe luftërave, te rëndimi i varfërisë dhe padrejtësisë, te sundimi i kulturës së ekstremizmit dhe fanatizmit. Ata kuptuan se zgjidhja më e mirë për të gjitha këto probleme është mbjellja dhe forcimi i vlerave të larta, që u kthejnë shoqërive sigurinë dhe paqen dhe e shpëtojnë njerëzimin nga devijimi intelektual dhe moral.\n\nMbjellja e vlerave të larta krijon një mur mbrojtës kundër ideve dhe dyshimeve që mund të ndikojnë te të rinjtë në shoqëri. Dhe kjo nuk kufizohet vetëm te shoqëritë islame: e gjithë bota ka nevojë të shpëtohet nga gjendja e hutimit, humbjes, krizave dhe devijimeve, dhe kjo arrihet vetëm me një qasje të shëndoshë, të mishëruar në këtë sistem vlerash të larta."
     },
     "s6": {
       "title": "Një vizion përtej kufijve",
-      "text": "Arsimi mbetet rruga më e mirë për këtë vetëdije. Por njerëzit kanë nevojë për më shumë se dije: vlera që forcojnë shpirtin dhe udhëzim për ta vënë dijen në shërbim të komunitetit. Prandaj puna jonë u zgjerua drejt karakterit, mjediseve të mësimit dhe solidaritetit shoqëror."
+      "text": "Duke qenë se arsimi është rruga më e përshtatshme për të forcuar këtë vetëdije, ai ishte dhe mbetet shtylla e parë themelore dhe fokusi kryesor, ndërsa vështrimi drejt rrugëve më të gjera u bë i pranishëm. Që njeriu të ndërtohet plotësisht, ka nevojë për më shumë se dije: ka nevojë për vlera që forcojnë shpirtin dhe për udhëzim që i mundëson ta vërë këtë dije në shërbim të ndërtimit të shoqërisë së tij.\n\nPrej këtu, veprimtaria e fondacionit u zgjerua për të përfshirë ndërtimin e shpirtit dhe të moralit, pastaj krijimin e mjedisit të përshtatshëm për marrjen e dijes, pastaj zotërimin e aftësive që garantojnë një jetë dinjitoze, deri te zgjatja e dorës së ndihmës për forcimin e solidaritetit shoqëror — që tabloja të plotësohet, e ndritshme dhe e bukur.\n\nTë gjitha këto rrugë ishin pjesë e një vizioni më të gjerë ripërtëritjeje, një vizion që kapërcen kufijtë gjeografikë nga ku u nis fondacioni. Kufijtë nuk ishin pengesë për drejtuesit e fondacionit; ata i shtyn besimi te vlerat e larta e të pandashme dhe vetëdija për themelet e përbashkëta qytetëruese të popujve me identitet të përbashkët — një identitet që duhet të jetë shtysa për punë të përbashkët përtej kufijve dhe gjeografisë, për të ndërtuar një botë më të drejtë dhe më njerëzore, ku të gjithë mund të jetojnë me dinjitet dhe liri."
     },
     "s7": {
       "title": "Nga Turqia në botë",
-      "text": "Rrugëtimi i fondacionit nisi në Turqi, djep qytetërimesh të lashta, dhe u bë urë që lidh botën me njerëzimin dhe vlerat. Sot puna shtrihet në Ballkan, Azinë Qendrore e më tej, duke e bërë fondacionin një urë bashkëpunimi mes popujve."
+      "text": "Kështu, rrugëtimi i fondacionit vazhdoi: një rrugëtim që nisi nga Turqia, djepi i qytetërimit dhe i paqes që dëshmoi lindjen e idesë, për t’u zgjeruar në botë — nga njeriu dhe për njeriun.\n\nTurqia, me historinë e saj të lashtë dhe trashëgiminë kulturore, aty ku nisi gjithçka, u bë urë që lidh botën me lidhjen e njerëzimit dhe të vlerave të larta, një diell që rrezaton dritën e vet mbi gjithë botën. Drejtuesit e fondacionit nuk e shohin më punën e tyre të kufizuar brenda kufijve të Turqisë; ata besuan se mesazhi i tyre është njerëzor dhe i bazuar në vlera, dhe kërkon punë edhe në vende të tjera si vendet e Ballkanit dhe të Azisë Qendrore, ku duket thellësia historike e umetit islam në përgjithësi dhe e kombit turk në veçanti. Kombi turk, që sot bashkon diasporën e vet, ruan miqësinë dhe zgjat dorën e mirësisë, që umeti të ngrihet i tëri, me të gjitha vendet, popujt dhe individët e tij. Fondacioni vjen të jetë një nga faktorët e ndërtimit të urave të bashkëpunimit dhe mirëkuptimit, dhe të forcimit të lidhjeve historike e kulturore të një kombi të vetëm."
     }
   },
   "tvPresident": {
@@ -3113,7 +3118,8 @@
       "titleLead": "Njerëzimi",
       "titleAccent": "na bashkon",
       "lead": "Për komunitete më të drejta, më të mëshirshme dhe me dinjitet",
-      "body": "Me vlera fisnike mbjellim shpresë dhe ndihmojmë komunitetet të lulëzojnë me bamirësi dhe siguri.",
+      "bodyTitle": "Vlera të Larta, Komunitete të Sigurta",
+      "body": "Mbjellim vlerat e larta që u kthejnë shoqërive sigurinë dhe paqen, dhe e ndërtojmë njeriun përmes arsimit dhe dijes.",
       "cta": "Bëhu pjesë e këtij ndikimi",
       "story": "Historia jonë",
       "trustLabel": "Tregues besimi",
@@ -3156,14 +3162,14 @@
       "campaignTag": "Fushata e fondacionit 2026",
       "campaignTitle": "Fushata Shpresë",
       "campaignText": "Të jemi shpresa e tyre; solidariteti ynë është e ardhmja e tyre",
-      "valuesTitle": "Mbjellja e vlerave",
-      "valuesText": "Mësim që rrënjos karakterin dhe dije që kalon nga individi te komuniteti",
-      "humanTitle": "Ndërtimi i njeriut",
-      "humanText": "Arsim i barabartë për më të pambrojturit dhe kujdes që u jep hapësirë për t’u rritur",
-      "youthTitle": "E ardhmja e të rinjve",
-      "youthText": "Aftësi që hapin vende pune dhe mbështesin udhëheqjen dhe pjesëmarrjen",
-      "communityTitle": "Një komunitet",
-      "communityText": "Solidaritet në jetën e përditshme: ushqim, ujë dhe kujdes në çdo stinë"
+      "valuesTitle": "Rruga e Mbjelljes së Vlerave",
+      "valuesText": "Forcimi i vlerave morale dhe pozitive në shoqëri, për breza të ekuilibruar që kontribuojnë në zhvillimin e qëndrueshëm.",
+      "humanTitle": "Rruga e Ndërtimit të Njeriut",
+      "humanText": "Arsim cilësor dhe i barabartë për të gjithë, veçanërisht për më të pambrojturit, për një shoqëri të fortë dhe të arsimuar.",
+      "youthTitle": "Rruga e Krijimit të së Ardhmes së të Rinjve",
+      "youthText": "Përgatitja e të rinjve përmes trajnimeve dhe arsimit të specializuar, duke i fuqizuar ekonomikisht dhe shoqërisht për të inovuar dhe udhëhequr.",
+      "communityTitle": "Rruga e Një Shoqërie",
+      "communityText": "Forcimi i solidaritetit shoqëror dhe mbështetja e grupeve në nevojë, për një shoqëri të bashkuar dhe solidare."
     },
     "world": {
       "title": "Ndikimi ynë në botë",
@@ -3612,10 +3618,10 @@
       "presidentLetter": "Letra e presidentit",
       "board": "Bordi i besimit",
       "programs": "Programet tona",
-      "values": "Mbjellja e vlerave",
-      "human": "Ndërtimi i njeriut",
-      "youth": "E ardhmja e të rinjve",
-      "community": "Një komunitet",
+      "values": "Rruga e Mbjelljes së Vlerave",
+      "human": "Rruga e Ndërtimit të Njeriut",
+      "youth": "Rruga e Krijimit të së Ardhmes së të Rinjve",
+      "community": "Rruga e Një Shoqërie",
       "hope": "Fushata Shpresë",
       "impact": "Ndikimi ynë",
       "transparency": "Transparenca",
@@ -3752,20 +3758,20 @@
       "count": "{count, plural, one {# program} other {# programe}}",
       "explore": "Zbulo",
       "values": {
-        "title": "Mbjellja e vlerave",
-        "text": "Rrënjosja e karakterit dhe dijes që kalon nga individi te komuniteti."
+        "title": "Rruga e Mbjelljes së Vlerave",
+        "text": "Forcimi i vlerave morale dhe pozitive në shoqëri, për breza të ekuilibruar që kontribuojnë në zhvillimin e qëndrueshëm."
       },
       "human": {
-        "title": "Ndërtimi i njeriut",
-        "text": "Arsim i barabartë për më të pambrojturit, me kujdes dhe mjedise ku njerëzit rriten."
+        "title": "Rruga e Ndërtimit të Njeriut",
+        "text": "Arsim cilësor dhe i barabartë për të gjithë, veçanërisht për më të pambrojturit, për një shoqëri të fortë dhe të arsimuar."
       },
       "youth": {
-        "title": "E ardhmja e të rinjve",
-        "text": "Aftësi që hapin dyert e punës dhe mbështesin udhëheqjen."
+        "title": "Rruga e Krijimit të së Ardhmes së të Rinjve",
+        "text": "Përgatitja e të rinjve përmes trajnimeve dhe arsimit të specializuar, duke i fuqizuar ekonomikisht dhe shoqërisht për të inovuar dhe udhëhequr."
       },
       "community": {
-        "title": "Një komunitet",
-        "text": "Solidaritet në jetën e përditshme: ushqim, ujë dhe kujdes që arrijnë te nevojtarët në kohë."
+        "title": "Rruga e Një Shoqërie",
+        "text": "Forcimi i solidaritetit shoqëror dhe mbështetja e grupeve në nevojë, për një shoqëri të bashkuar dhe solidare."
       }
     },
     "field": {

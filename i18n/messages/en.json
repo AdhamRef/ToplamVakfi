@@ -1058,7 +1058,7 @@
     "contactLabel": "Contact",
     "ctaTagline": "Let us be a minbar for Al-Quds",
     "heroTitle": "About us",
-    "heroSubtitle": "Noble values, safe communities",
+    "heroSubtitle": "Sublime Values, Safe Communities",
     "mission": "Working with orators and preachers to build awareness of the cause of Bayt al-Maqdis and to strengthen the steadfastness of its people.",
     "howWeWork": "We rely on a field team in Al-Quds and Gaza to execute and follow up projects, documenting every stage with photos and reports. We publish no unverified number and describe no undocumented work.",
     "vision": "The first reference for orators and preachers worldwide in serving the cause of Bayt al-Maqdis.",
@@ -1112,20 +1112,25 @@
     "introCta": "Read our story",
     "introImgAlt": "Foundation team in the field",
     "missionTitle": "Our mission",
-    "missionText": "We empower community leaders and support initiatives that spread values, working towards a cohesive society that meets its challenges with integrity.",
+    "missionText": "We work to activate and enhance the role of community leaders (preachers, youth, influencers) in order to make a positive impact, adopt initiatives and sponsor projects that seek to spread the spirit of sublime values by rooting and disseminating them effectively, to create a cohesive society capable of facing challenges ethically.",
     "visionTitle": "Our vision",
-    "visionText": "To lead in empowering community leaders to strengthen values.",
-    "goalTitle": "Our goal",
-    "goalText": "To care for and empower people — first among them community leaders, young people and families — and support their moral and intellectual growth through education and values-based initiatives.",
+    "visionText": "To be the pioneer in enhancing the role of community leaders in instilling values.",
+    "goalTitle": "Our goals",
+    "goalText": "Activating the role of community leaders in instilling and enhancing values, contributing to the preparation of influential role models to spread sublime values, adopting and supporting initiatives and projects specialised in spreading the system of sublime values, and establishing international partnerships and alliances and coordinating with relevant authorities.",
     "valuesTitle": "Our values",
     "values": {
-      "v1": "Excellence",
+      "v1": "Mastery",
       "v2": "Humanity",
       "v3": "Transparency",
       "v4": "Partnership",
-      "v5": "Responsibility",
-      "v6": "Governance",
-      "v7": "Institutional excellence"
+      "v5": "Responsibility"
+    },
+    "valuesText": {
+      "v1": "Achieving the highest levels of efficiency and excellence in work and activities.",
+      "v2": "Respecting human dignity and promoting human rights.",
+      "v3": "Commitment to honesty and integrity in all our activities.",
+      "v4": "Building effective cooperation with various parties to achieve common goals.",
+      "v5": "Commitment to the consequences of decisions and actions, and ensuring a positive and sustainable impact on society."
     },
     "joinLabel": "How to take part",
     "join": {
@@ -1148,14 +1153,14 @@
         "cta": "Volunteer with us"
       }
     },
-    "visionQuote": "Leading the way in empowering community leaders to strengthen values.",
-    "missionQuote": "We activate and strengthen the role of community leaders, and adopt initiatives and projects that root and spread noble values — working towards a cohesive society that meets its challenges with integrity.",
+    "visionQuote": "To be the pioneer in enhancing the role of community leaders in instilling values.",
+    "missionQuote": "We work to activate and enhance the role of community leaders (preachers, youth, influencers) in order to make a positive impact, adopt initiatives and sponsor projects that seek to spread the spirit of sublime values by rooting and disseminating them effectively, to create a cohesive society capable of facing challenges ethically.",
     "mottoLabel": "Foundation motto",
     "purposeQuote": "Empowering communities for a resilient future",
     "purposeP1": "We care for and empower people in every part of life, with particular attention to community leaders, young people and families as the pillars of social change. Through education and values-based initiatives we support their moral and intellectual growth, building a culture of lifelong learning and ethical leadership.",
     "purposeP2": "We do not stop at giving the next generation the tools for academic and professional success; we prepare them to make responsible decisions grounded in clear principles. Joining knowledge with values, we help people become agents of positive change, able to meet local and global challenges with wisdom and integrity.",
     "purposeP3": "We respond to the challenges communities face today — social fragmentation, widening gaps and moral decline — by strengthening solidarity and spreading values worldwide. We work with partners who share our vision, design programmes for different groups’ needs, and keep people first, so that values become something people live every day.",
-    "goalsQuote": "To care for and empower people — especially community leaders, young people and families — and strengthen their moral and intellectual growth through education and values-based initiatives.",
+    "goalsQuote": "Activating the role of community leaders in instilling and enhancing values, contributing to the preparation of influential role models to spread sublime values, adopting and supporting initiatives and projects specialised in spreading the system of sublime values, and establishing international partnerships and alliances and coordinating with relevant authorities.",
     "goalsP1": "We aim to build cohesive communities able to face today’s challenges, and to strengthen social solidarity and spread noble values worldwide — through strategic partnerships, innovative programmes and a steady commitment to people — for a world of justice, dignity and cooperation.",
     "targetsTitle": "Who we serve",
     "targets": {
@@ -3900,31 +3905,31 @@
     "script": "Our story began…",
     "s1": {
       "title": "Where we began",
-      "text": "The foundation was born in Türkiye, where the civilisations of East and West have met for centuries and knowledge has passed between generations. We started from a simple conviction: people are the basis of every renewal, and building people begins with education."
+      "text": "In the country of history and civilisation, the source of culture and the meeting point between East and West, where creativity is embodied in its features, the idea of this foundation was born.\n\nTürkiye, the country that witnessed the greatness of empires and the transmission of knowledge and thought between countless generations, was the first incubator of that vision: a vision based on a deep belief that people are the origin of civilisation, and that people can only rise through the gate of education and knowledge."
     },
     "s2": {
       "title": "The beginning, 1995",
-      "text": "Thirty years ago, in 1995, the foundation began its work believing that educated young people who hold firm values are the pillars of thriving societies. Education became our first pillar — not merely passing on information, but a whole formation that joins mind and heart, knowledge and character, material progress and spiritual growth."
+      "text": "Thirty years ago, specifically in 1995, was the beginning. The foundation took sublime values as its slogan and a beacon that transcends the limits of time and place, and charted a path that begins with human beings and ends with them.\n\nThe founders believed that young pioneers, through their education and upbringing, are the backbone of societies that seek progress and advancement. Therefore, from the first moment, education was the pillar on which the foundation relied. But this education was not merely the transfer of knowledge and the explanation of information; it was an integrated education that reflected high, sublime values — an education that did not separate the mind from the heart, but linked knowledge with morals, and tangible progress with spiritual advancement."
     },
     "s3": {
       "title": "Raising generations",
-      "text": "Generations of young people have come through our programmes, gaining knowledge and growing up with values. Over time many became active in their communities as leaders and pioneers, and their impact reached beyond academic or professional success to building communities founded on justice, transparency and kindness."
+      "text": "Generations of young people passed through this foundation, gaining knowledge and being raised with values.\n\nAs the days passed, these young people became an important factor in building, and a force that could not be surpassed in positive influence. Their role was not limited to academic or professional success; they were leaders and pioneers through the values they carried, building new societies based on justice, transparency and benevolence. All of this through education — the bridge that connects the past, with its civilisations and creativity, to the future, with its hope and aspirations; the bridge across which we move toward a better world that spreads light, justice and sublime values."
     },
     "s4": {
       "title": "Continuing the work",
-      "text": "The work did not stop there. Students who grew up in the foundation’s care now carry its mission, renewing its methods for a changing world while keeping its principles. And so the work has widened."
+      "text": "But the journey did not stop there. Those young people who were once students embraced and sponsored by the foundation, which gave them ample shade and paved a clear path for them, have become the bearers of the banner today. They continue on the same path with methods that keep pace with the times and take changes into account; they preserve the pillars and foundations while renewing the means and methods. In their hands, the vision expanded to include a broader horizon."
     },
     "s5": {
       "title": "Facing the world’s challenges",
-      "text": "The world faces crisis after crisis: conflict and war, spreading poverty, and rising extremism. We believe the most effective answer is to instil values that restore security and peace to communities and protect people from intellectual and moral drift."
+      "text": "Today, the leaders of the foundation have seen the great changes that have occurred in human life as a whole. Successive crises have multiplied across the entire world until they have overwhelmed every aspect of life — from the spread of conflicts and wars to the aggravation of poverty and injustice, and the dominance of a culture of extremism and intolerance. They realised that the ideal solution to all these problems is to instil and strengthen sublime values that restore security and peace to societies and save humanity from intellectual and behavioural deviation.\n\nInstilling sublime values forms a barrier against the ideas and doubts that may affect young people in society. And the matter is not limited to Islamic societies: the entire world needs to be saved from a state of confusion, loss, crises and deviation, and this can only be done through a sound approach represented by this system of sublime values."
     },
     "s6": {
       "title": "A vision beyond borders",
-      "text": "Education remains the best way to build this awareness. But people need more than knowledge to grow fully: values that strengthen the spirit, and guidance to put their knowledge to work for their community. So our work grew to include character, good learning environments and social solidarity."
+      "text": "Because education is the most appropriate way to enhance this awareness, it was and still is the first basic pillar and the main focus, while the outlook toward broader paths has become present. For human beings to be fully built, they need more than just knowledge: they need values that strengthen their spirit, and guidance that enables them to invest this knowledge in building their society.\n\nFrom here, the foundation’s activity expanded to include building the spirit and guiding morals, then providing the right environment for acquiring knowledge, then achieving the skills that guarantee a decent life, all the way to extending a helping hand to strengthen social solidarity — so that the picture is complete, bright and beautiful.\n\nAll of these paths were part of a broader vision of renewal, a vision that transcends the geographical boundaries from which the foundation was launched. Borders were not an obstacle for those in charge of the foundation. They are driven by their belief in sublime and indivisible values, and by their awareness of the shared civilisational foundations of peoples with a common identity — an identity that must be the motivation for joint action beyond borders and geography, to take part in building a more just and humane world where everyone can live in dignity and freedom."
     },
     "s7": {
       "title": "From Türkiye to the world",
-      "text": "The foundation’s journey began in Türkiye, cradle of ancient civilisations, and became a bridge linking the world through shared humanity and values. Its work now reaches the Balkans, Central Asia and beyond, making the foundation one of the bridges of cooperation and understanding between peoples."
+      "text": "Thus, the foundation’s journey continued: a journey that began in Türkiye, the cradle of civilisation and peace that witnessed the birth of the idea, expanding to the world — from people, and to people.\n\nTürkiye, with its ancient history and cultural heritage, where it all began, has become a bridge linking the world with the bond of humanity and sublime values, a sun that shines its light on the entire world. Those in charge of the foundation no longer see their work as limited to the borders of Türkiye; they believed that their message was humanitarian and value-based, calling for work in other places such as the Balkan countries and Central Asia, where the historical depth of the Islamic nation in general, and the Turkish nation in particular, is evident. The Turkish nation, which gathers its diaspora today, maintains friendship and extends the hand of goodness, so that the nation rises as a whole, with all its countries, peoples and individuals. The foundation comes to be one of the factors in building bridges of cooperation and understanding, and in strengthening the historical and cultural ties of one nation."
     }
   },
   "tvPresident": {
@@ -4155,7 +4160,8 @@
       "titleLead": "Humanity",
       "titleAccent": "unites us",
       "lead": "For fairer, kinder communities that uphold dignity",
-      "body": "Guided by enduring values, we plant hope and help communities thrive through giving and security.",
+      "bodyTitle": "Sublime Values, Safe Communities",
+      "body": "We instil the sublime values that restore security and peace to societies, and build people through education and knowledge.",
       "cta": "Be part of this impact",
       "story": "Our story",
       "trustLabel": "Trust indicators",
@@ -4198,14 +4204,14 @@
       "campaignTag": "Foundation campaign 2026",
       "campaignTitle": "Hope campaign",
       "campaignText": "Let us be their hope; our solidarity is their future",
-      "valuesTitle": "Instilling values",
-      "valuesText": "Learning that roots good character, and knowledge that passes from person to community",
-      "humanTitle": "Building people",
-      "humanText": "Equal education for the most vulnerable, and care that gives people room to grow",
-      "youthTitle": "Shaping youth futures",
-      "youthText": "Skills that open jobs, and abilities that support leadership and participation",
-      "communityTitle": "One community",
-      "communityText": "Solidarity in daily life: food, water and care through every season"
+      "valuesTitle": "Path of Instilling Values",
+      "valuesText": "Enhancing moral and positive values in society, building balanced generations that contribute to sustainable development.",
+      "humanTitle": "Path of Building the Human",
+      "humanText": "Quality and equal education for all, especially the most vulnerable, to build a strong and cultured society.",
+      "youthTitle": "Path of Creating the Future of Youth",
+      "youthText": "Qualifying young people through specialised training and education, empowering them economically and socially to innovate and lead.",
+      "communityTitle": "One Society Path",
+      "communityText": "Enhancing social solidarity and supporting groups in need, to build a cohesive and caring society."
     },
     "world": {
       "title": "Our impact worldwide",
@@ -4654,10 +4660,10 @@
       "presidentLetter": "President's letter",
       "board": "Board of trustees",
       "programs": "Our programmes",
-      "values": "Instilling values",
-      "human": "Building people",
-      "youth": "Shaping youth futures",
-      "community": "One community",
+      "values": "Path of Instilling Values",
+      "human": "Path of Building the Human",
+      "youth": "Path of Creating the Future of Youth",
+      "community": "One Society Path",
       "hope": "Hope campaign",
       "impact": "Our impact",
       "transparency": "Transparency",
@@ -4794,20 +4800,20 @@
       "count": "{count, plural, one {# programme} other {# programmes}}",
       "explore": "Explore",
       "values": {
-        "title": "Instilling values",
-        "text": "Rooting character and knowledge that pass from person to community."
+        "title": "Path of Instilling Values",
+        "text": "Enhancing moral and positive values in society, building balanced generations that contribute to sustainable development."
       },
       "human": {
-        "title": "Building people",
-        "text": "Equal education for the most vulnerable, with care and settings where people can grow."
+        "title": "Path of Building the Human",
+        "text": "Quality and equal education for all, especially the most vulnerable, to build a strong and cultured society."
       },
       "youth": {
-        "title": "Shaping youth futures",
-        "text": "Skills that open doors to work, and abilities that support leadership and participation."
+        "title": "Path of Creating the Future of Youth",
+        "text": "Qualifying young people through specialised training and education, empowering them economically and socially to innovate and lead."
       },
       "community": {
-        "title": "One community",
-        "text": "Solidarity in daily life: food, water and care reaching people in need when it matters."
+        "title": "One Society Path",
+        "text": "Enhancing social solidarity and supporting groups in need, to build a cohesive and caring society."
       }
     },
     "field": {

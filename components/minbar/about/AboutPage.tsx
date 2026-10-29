@@ -21,7 +21,8 @@ import InnerBanner from "./InnerBanner";
  * Styles: `styles/minbar/pages/about.css`.
  */
 
-const VALUES = ["v1", "v2", "v3", "v4", "v5", "v6", "v7"] as const;
+/* The catalogue's five values, each with its definition (`values.*`, `valuesText.*`). */
+const VALUES = ["v1", "v2", "v3", "v4", "v5"] as const;
 const TARGETS = ["t1", "t2", "t3", "t4"] as const;
 
 const TRIO: ReadonlyArray<{ title: string; text: string; icon: ReactElement }> = [
@@ -229,9 +230,11 @@ function Values({ t }: { t: (key: string) => string }) {
       <h2 id="fd-values-title" className="fd-h2">
         {t("valuesTitle")}
       </h2>
-      <ul className="fd-chips">
+      <ul className="fd-values-list">
         {VALUES.map((key) => (
-          <li key={key}>{t(`values.${key}`)}</li>
+          <li key={key}>
+            <b>{t(`values.${key}`)}:</b> {t(`valuesText.${key}`)}
+          </li>
         ))}
       </ul>
     </section>

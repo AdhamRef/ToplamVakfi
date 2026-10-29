@@ -70,8 +70,8 @@ export default function HomeHero({ slides, donate }: { slides: string[]; donate?
         <div className="th-fade" aria-hidden="true" />
         <div className="th-orb" aria-hidden="true" />
         <p className="th-script th-script--a" aria-hidden="true">
-          {t("scriptA1")}
-          <br />
+          {/* The space keeps the words apart where the break collapses (copy, screen readers). */}
+          {t("scriptA1")} <br />
           {t("scriptA2")}
         </p>
 
@@ -81,7 +81,9 @@ export default function HomeHero({ slides, donate }: { slides: string[]; donate?
               {t("titleLead")} <span>{t("titleAccent")}</span>
             </h1>
             <p className="th-lead">{t("lead")}</p>
-            <p className="th-body">{t("body")}</p>
+            <p className="th-body">
+              <strong>{t("bodyTitle")}</strong> {t("body")}
+            </p>
             <div className="th-actions">
               <a className="th-cta" href="#programs">
                 {t("cta")}
@@ -129,8 +131,7 @@ export default function HomeHero({ slides, donate }: { slides: string[]; donate?
           {donate ? (
             <div className="th-ring-slot">
               <p className="th-script th-script--b" aria-hidden="true">
-                {t("scriptB1")}
-                <br />
+                {t("scriptB1")} <br />
                 {t("scriptB2")} <HeartLine />
               </p>
               {donate}

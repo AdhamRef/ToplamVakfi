@@ -21,11 +21,11 @@ export const IMPACT_STATS: ReadonlyArray<{ id: string; value: number; plus: bool
   { id: "founded", value: 0, plus: false, icon: "calendar", grouped: false },
 ];
 
-/** The four regions and the countries listed under each, in the design's order. */
+/** The four regions and the countries listed under each, in the catalogue's order (Türkiye & the Balkans first). */
 export const IMPACT_REGIONS: ReadonlyArray<{ id: string; countries: readonly string[] }> = [
-  { id: "middleEast", countries: ["syria", "palestine", "yemen", "egypt"] },
   { id: "turkeyBalkans", countries: ["turkey", "albania", "kosovo", "macedonia"] },
   { id: "asia", countries: ["indonesia", "bangladesh", "rohingya", "uzbekistan", "tajikistan"] },
+  { id: "middleEast", countries: ["syria", "palestine", "yemen", "egypt"] },
   { id: "africa", countries: ["sudan", "chad", "cameroon", "togo", "burkinaFaso", "somalia", "benin", "senegal", "tanzania"] },
 ];
 

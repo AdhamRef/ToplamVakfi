@@ -121,11 +121,11 @@ export const WORLD_EXTRA: ReadonlyArray<readonly [number, number, string]> = [
   [596, 175.9, "M585.3,149.7L586.2,149.5C587.1,149.4,588.9,149.1,590.7,153.5C592.4,157.8,594.2,166.9,595.1,171.4L596,175.9"],
 ];
 
-/** The four regions and how many countries each holds, as the design lists them. */
+/** The four regions and how many countries each holds, in the catalogue's order (Türkiye & the Balkans first). */
 export const WORLD_REGIONS: ReadonlyArray<{ key: "middleEast" | "balkans" | "asia" | "africa"; count: number }> = [
-  { key: "middleEast", count: 4 },
   { key: "balkans", count: 4 },
   { key: "asia", count: 5 },
+  { key: "middleEast", count: 4 },
   { key: "africa", count: 9 },
 ];
 

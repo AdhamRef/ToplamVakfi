@@ -19,14 +19,14 @@
  */
 
 /**
- * Enabled / public locales. Order is significant (drives dropdowns + routing)
- * and is the Toplum Vakfı design's language order (ToplamVakfi-design/i18n.js:
- * Arabic source, then English, Turkish, Albanian).
+ * Enabled / public locales. Order is significant (drives the language menus and
+ * the hreflang list) and is the foundation catalogue's order: Turkish, English,
+ * Arabic, Albanian. The default locale is set separately (`DEFAULT_LOCALE`).
  */
 export const SUPPORTED_LOCALES = [
-  "ar",
-  "en",
   "tr",
+  "en",
+  "ar",
   "sq",
 ] as const;
 

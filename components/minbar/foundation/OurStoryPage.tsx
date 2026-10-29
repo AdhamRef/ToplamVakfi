@@ -41,7 +41,12 @@ export default function OurStoryPage() {
             {SECTIONS.map((key) => (
               <section key={key} aria-labelledby={`fd-story-${key}`}>
                 <h2 id={`fd-story-${key}`}>{t(`${key}.title`)}</h2>
-                <p>{t(`${key}.text`)}</p>
+                {/* A section's text holds its paragraphs separated by a blank line. */}
+                {t(`${key}.text`)
+                  .split(/\n\s*\n/)
+                  .map((paragraph, i) => (
+                    <p key={i}>{paragraph}</p>
+                  ))}
               </section>
             ))}
           </article>

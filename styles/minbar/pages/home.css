@@ -115,7 +115,9 @@
 }
 @keyframes tvhSheen { 0%, 55% { background-position: 100% 0; } 100% { background-position: -150% 0; } }
 .mia-scope .tv-home .th-lead { margin: 0 0 12px; color: #fff; font-size: clamp(17px, 1.6vw, 22px); font-weight: 800; }
-.mia-scope .tv-home .th-body { margin: 0 0 26px; color: #fff; font-size: 14.5px; line-height: 1.9; white-space: nowrap; }
+/* The catalogue's slogan on its own line, then the sentence; it wraps now that it is two lines long. */
+.mia-scope .tv-home .th-body { margin: 0 0 26px; max-width: 54ch; color: #fff; font-size: 14.5px; line-height: 1.9; }
+.mia-scope .tv-home .th-body strong { display: block; font-weight: 800; }
 .mia-scope .tv-home .th-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
 .mia-scope .tv-home .th-cta {
   display: inline-flex; align-items: center; gap: 12px; min-height: 52px; padding-block: 0; padding-inline: 24px 8px; border-radius: 999px;
