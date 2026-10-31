@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
 import { ORG } from "@/lib/minbar/org";
 import { cssImage } from "@/lib/minbar/image-url";
-import { FIELD_RAIL, HOME_FAQ, HOME_PARTNERS } from "@/lib/minbar/home-content";
+import { HOME_FAQ, HOME_PARTNERS } from "@/lib/minbar/home-content";
 import { Icon } from "./HomeIntro";
 
 /**
