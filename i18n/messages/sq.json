@@ -61,7 +61,7 @@
       "board": "Bordi i besimit"
     },
     "introEyebrow": "Toplumsal Dayanışma Vakfı",
-    "introTitle": "Fondacioni ynë u regjistrua zyrtarisht dhe filloi punën me miratimin e Drejtorisë së Përgjithshme të Fondacioneve të Republikës së Turqisë më {date}, me numër regjistri {registry}.",
+    "introTitle": "Fondacioni ynë u themelua zyrtarisht dhe filloi punën me miratimin e Drejtorisë së Përgjithshme të Fondacioneve të Republikës së Turqisë më {date}, me numër regjistri {registry}.",
     "introText": "Toplumsal Dayanışma Vakfı është një fondacion turk me seli në Stamboll. Forcojmë rolin e udhëheqësve të komunitetit — edukatorëve, të rinjve dhe personave me ndikim — dhe mbështesim nisma që rrënjosin vlerat në jetën e përditshme.",
     "introCta": "Lexoni historinë tonë",
     "introImgAlt": "Ekipi i fondacionit në terren",
@@ -2937,15 +2937,39 @@
     "metaDescription": "Drejtuesit që mbikëqyrin Toplum Vakfı-n dhe udhëheqin punën e tij.",
     "m1": {
       "name": "Dr. Ahmet Hamdi Yıldırım",
-      "role": "Kryetar i Këshillit të Lartë Këshillimor"
+      "role": "Kryetar i Këshillit të Lartë Këshillimor",
+      "bio": [
+        "Nxënës i dijetarit të shquar Muhammad Amin Siraj (Allahu e mëshiroftë).",
+        "I diplomuar në Universitetin Al-Azhar, Egjipt.",
+        "Anëtar i stafit akademik në Fakultetin e Drejtësisë, Universiteti Medeniyet i Stambollit (universitet publik).",
+        "Ish-zëvendësdekan i Fakultetit të Shkencave Islame (Ilahiyat) në Universitetin Sabahattin Zaim të Stambollit.",
+        "Ish-profesor i Jurisprudencës Islame (Fikh) në Fakultetin e Shkencave Islame (Ilahiyat) të Universitetit Sabahattin Zaim të Stambollit.",
+        "Këshilltar i Sheriatit pranë Fondacionit Aziz Mahmud Hüdayi (themeluar më 1985 – Turqi)."
+      ]
     },
     "m2": {
       "name": "Dr. Hamdi Arslan",
-      "role": "Kryetar i Bordit të Besimit"
+      "role": "Kryetar i Bordit të Besimit",
+      "bio": [
+        "Dijetar i Hadithit.",
+        "Zëvendës i dijetarit të shquar Muhammad Amin Siraj (Allahu e mëshiroftë) dhe mësues në Xhaminë e Sulltan Mehmet Fatihut.",
+        "I diplomuar në Universitetin Umm Al-Qura, Mekë, Arabi Saudite.",
+        "Anëtar i stafit akademik në Universitetin Vakëf Fatih Sultan Mehmet (FSMVU) – Stamboll.",
+        "Themelues i projektit të parë për mësimin e gjuhës arabe në Turqi.",
+        "Ish-drejtor i Qendrës për Mësimin e Gjuhës Arabe dhe Debatet në Universitetin Vakëf Fatih Sultan Mehmet – Stamboll.",
+        "Themelues i Projektit të Daves Islame në vendet e Ballkanit."
+      ]
     },
     "m3": {
       "name": "Dr. Abdüssamet Koçak",
-      "role": "Kryetar i Bordit Drejtues"
+      "role": "Kryetar i Bordit Drejtues",
+      "bio": [
+        "Anëtar i stafit akademik në Universitetin Vakëf Fatih Sultan Mehmet (FSMVU) – Stamboll.",
+        "Zëvendësdrejtor i Qendrës për Studimet e Gjuhës Arabe dhe Debatet në Universitetin Vakëf Fatih Sultan Mehmet – Stamboll.",
+        "Kryetar i Komisionit të Pranimit të Studentëve Ndërkombëtarë në Universitetin Vakëf Fatih Sultan Mehmet – Stamboll.",
+        "Anëtar i bordeve drejtuese të disa fondacioneve turke (vakëfe).",
+        "Aktiv në daven islame dhe në mësimin e gjuhës arabe."
+      ]
     }
   },
   "tvFaq": {

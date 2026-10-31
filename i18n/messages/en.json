@@ -1107,7 +1107,7 @@
       "board": "Board of trustees"
     },
     "introEyebrow": "Toplumsal Dayanışma Vakfı",
-    "introTitle": "Our foundation was officially registered and began its work with the approval of the General Directorate of Foundations of the Republic of Türkiye on {date}, under registry number {registry}.",
+    "introTitle": "Our foundation was officially established and began its work with the approval of the General Directorate of Foundations of the Republic of Türkiye on {date}, under registry number {registry}.",
     "introText": "Toplumsal Dayanışma Vakfı is a Turkish foundation based in Istanbul. We strengthen the role of community leaders — educators, young people and people of influence — and support initiatives that root values in everyday life.",
     "introCta": "Read our story",
     "introImgAlt": "Foundation team in the field",
@@ -3979,15 +3979,39 @@
     "metaDescription": "The leaders who oversee Toplum Vakfı and guide its work.",
     "m1": {
       "name": "Dr. Ahmet Hamdi Yıldırım",
-      "role": "Chair of the High Advisory Board"
+      "role": "Chair of the High Advisory Board",
+      "bio": [
+        "Disciple of the prominent scholar Muhammad Amin Siraj (may Allah have mercy on him).",
+        "Graduated from Al-Azhar University, Egypt.",
+        "Faculty member at the Faculty of Law, Istanbul Medeniyet University (a public university).",
+        "Former Assistant Dean of the Faculty of Islamic Sciences (Ilahiyat) at Istanbul Sabahattin Zaim University.",
+        "Former Professor of Jurisprudence (Fiqh) at the Faculty of Islamic Sciences (Ilahiyat) at Istanbul Sabahattin Zaim University.",
+        "Sharia Consultant to the Aziz Mahmud Hüdayi Foundation (established 1985 – Türkiye)."
+      ]
     },
     "m2": {
       "name": "Dr. Hamdi Arslan",
-      "role": "Chair of the Board of Trustees"
+      "role": "Chair of the Board of Trustees",
+      "bio": [
+        "Scholar of Hadith.",
+        "Deputy to the prominent scholar Muhammad Amin Siraj (may Allah have mercy on him) and a teacher at the Sultan Muhammad al-Fatih Mosque.",
+        "Graduated from Umm Al-Qura University, Makkah Al-Mukarramah, Saudi Arabia.",
+        "Faculty member at Fatih Sultan Mehmet Vakıf University (FSMVU) – Istanbul.",
+        "Founder of the first Arabic language teaching project in Türkiye.",
+        "Former Director of the Center for Arabic Language Teaching and Debates at Fatih Sultan Mehmet Vakıf University – Istanbul.",
+        "Founder of the Islamic Dawah Project in the Balkan countries."
+      ]
     },
     "m3": {
       "name": "Dr. Abdüssamet Koçak",
-      "role": "Chair of the Board of Directors"
+      "role": "Chair of the Board of Directors",
+      "bio": [
+        "Faculty member at Fatih Sultan Mehmet Vakıf University (FSMVU) – Istanbul.",
+        "Vice Director of the Center for Arabic Language Studies and Debates at Fatih Sultan Mehmet Vakıf University – Istanbul.",
+        "Head of the International Student Admissions Committee at Fatih Sultan Mehmet Vakıf University – Istanbul.",
+        "Member of the Board of Directors of several Turkish foundations (vakıfs).",
+        "Active in Islamic dawah and Arabic language education."
+      ]
     }
   },
   "tvFaq": {
