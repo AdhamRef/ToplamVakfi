@@ -52,16 +52,6 @@ export function StoriesSection({ images }: { images: string[] }) {
             </span>
           </Link>
         </div>
-        <div className="fd-rail" role="list" aria-label={t("railLabel")}>
-          {FIELD_RAIL.map((key, i) => (
-            <Link key={key} role="listitem" className="fd-card" href={stories} style={{ backgroundImage: cssImage(images[(i + 2) % images.length], 700) }}>
-              <span>
-                <Icon name="pin" />
-                {t(key)}
-              </span>
-            </Link>
-          ))}
-        </div>
       </div>
     </section>
   );

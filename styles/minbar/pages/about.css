@@ -205,23 +205,17 @@
 }
 
 /* Board (.bd-*) */
-.mia-scope .fd-board { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 0; padding: 0; list-style: none; }
-.mia-scope .fd-board-card { overflow: hidden; text-align: center; }
-/* No portraits are published yet: the photo slot carries the member's initials
-   on the brand's light field instead of an empty grey box. */
-.mia-scope .fd-board-photo {
-  position: relative; height: 250px; display: grid; place-items: center;
-  background: radial-gradient(circle at 50% 38%, #ffffff 0%, #eaf5fc 46%, #d7ecf8 100%);
-}
-.mia-scope .fd-board-photo::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 34px; background: #fff; clip-path: ellipse(70% 100% at 50% 100%); z-index: 1; }
-.mia-scope .fd-board-initials {
-  display: grid; place-items: center; width: 116px; height: 116px; margin-bottom: 18px; border-radius: 50%;
-  background: linear-gradient(135deg, #00a2e0, #0077b3); color: #fff; font-size: 38px; font-weight: 900; letter-spacing: 1px;
-  box-shadow: 0 0 0 8px rgba(255,255,255,.85), 0 14px 30px rgba(0,119,179,.25); direction: ltr;
-}
-.mia-scope .fd-board-body { padding: 8px 16px 20px; }
-.mia-scope .fd-board-body h3 { margin: 0 0 4px; color: var(--fd-ink); font-size: 16px; font-weight: 900; }
-.mia-scope .fd-board-body span { color: var(--fd-ink-brand); font-size: 12.5px; font-weight: 800; }
+.mia-scope .fd-board { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; margin: 0; padding: 0; list-style: none; }
+/* One member per row: portrait beside the name, role and biography. */
+.mia-scope .fd-board-card { display: grid; grid-template-columns: 260px minmax(0, 1fr); overflow: hidden; text-align: start; }
+.mia-scope .fd-board-photo { position: relative; min-height: 300px; background: radial-gradient(circle at 50% 38%, #ffffff 0%, #eaf5fc 46%, #d7ecf8 100%); }
+.mia-scope .fd-board-photo img { object-fit: cover; object-position: 50% 35%; }
+.mia-scope .fd-board-body { padding: 26px 28px 24px; }
+.mia-scope .fd-board-body h3 { margin: 0 0 4px; color: var(--fd-ink); font-size: 19px; font-weight: 900; }
+.mia-scope .fd-board-body > span { display: block; color: var(--fd-ink-brand); font-size: 13px; font-weight: 800; }
+.mia-scope .fd-board-bio { margin: 16px 0 0; padding: 16px 0 0; border-top: 1px solid var(--fd-line); list-style: none; display: grid; gap: 9px; }
+.mia-scope .fd-board-bio li { position: relative; padding-inline-start: 18px; color: var(--fd-muted); font-size: 13.5px; line-height: 1.75; }
+.mia-scope .fd-board-bio li::before { content: ""; position: absolute; inset-inline-start: 0; top: .72em; width: 7px; height: 7px; border-radius: 50%; background: var(--fd-brand); }
 
 /* ── Partners list (Partners.dc.html) ────────────────────────────────────── */
 .mia-scope .fd-partners { width: min(1180px, calc(100% - 64px)); margin-inline: auto; padding: 56px 0 20px; display: flex; flex-direction: column; gap: 12px; list-style: none; }
@@ -344,7 +338,9 @@
   .mia-scope .fd-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 760px) {
-  .mia-scope .fd-board { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .fd-board-card { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .fd-board-photo { min-height: 0; aspect-ratio: 1 / 1; max-height: 360px; }
+  .mia-scope .fd-board-body { padding: 20px 18px; }
   .mia-scope .fd-quote { padding: 24px 20px; }
 }
 @media (max-width: 560px) {

@@ -3979,15 +3979,42 @@
     "metaDescription": "Toplum Vakfı’nın çalışmalarını denetleyen ve yön veren yöneticiler.",
     "m1": {
       "name": "Dr. Ahmet Hamdi Yıldırım",
-      "role": "Yüksek İstişare Kurulu Başkanı"
+      "role": "Yüksek İstişare Heyeti Başkanı",
+      "bio": [
+        "Merhum Allâme Muhammed Emin Saraç'ın seçkin talebelerinden biridir.",
+        "Mısır'da el-Ezher Üniversitesi'nde tahsil görmüş, klasik ilim geleneğinin derinliklerinde yetişmiştir.",
+        "İstanbul Medeniyet Üniversitesi Hukuk Fakültesi'nde öğretim üyesi olarak görev yapmaktadır.",
+        "Daha önce İstanbul Sabahattin Zaim Üniversitesi İlahiyat Fakültesi'nde dekan yardımcılığı vazifesini deruhte etmiştir.",
+        "Aynı fakültede fıkıh alanında dr. olarak ilmî faaliyetlerde bulunmuş, tedris ve tahkiki bir arada yürütmüştür.",
+        "1985 yılından itibaren Aziz Mahmud Hüdâyî Vakfı'nın şer'î müşavirliğini üstlenmiş, vakıf geleneğinin fıkhî temellerine rehberlik etmiştir.",
+        "Bu çerçevede, ilmî silsilesi ile kurumsal hizmeti mezcetmiş; gelenekten beslenen fakat çağın meselelerine nüfuz eden bir ilim adamı olarak temâyüz etmiştir."
+      ]
     },
     "m2": {
       "name": "Dr. Hamdi Arslan",
-      "role": "Mütevelli Heyeti Başkanı"
+      "role": "Mütevelli Heyeti Başkanı",
+      "bio": [
+        "Hadis ilmi sahasında temayüz etmiş bir âlimdir; rivayet ve dirayet dengesini gözeten bir ilim anlayışını temsil eder.",
+        "Merhum Allâme Muhammed Emin Saraç'ın vekili olarak vazife icra etmiş; aynı zamanda Sultan Mehmed el-Fâtih Camii'nde müderrislik yaparak ilmî irşad halkalarını sürdürmüştür.",
+        "Mekke-i Mükerreme'de bulunan Ümmü'l-Kurâ Üniversitesi mezunu olup, tahsilini İslâm ilim geleneğinin merkezlerinden birinde ikmal etmiştir.",
+        "İstanbul'da Fatih Sultan Mehmet Vakıf Üniversitesi'nde öğretim görevlisi olarak akademik faaliyetlerde bulunmuştur.",
+        "Türkiye'de Arapça öğretimine yönelik ilk sistematik projeyi hayata geçiren isimlerden biri olarak, dil ile ilim arasındaki kadim rabıtayı yeniden ihya etmiştir.",
+        "Fatih Sultan Mehmet Vakıf Üniversitesi bünyesinde Arapça Öğretimi ve Münazara Merkezi başkanlığı görevini yürütmüş; dil, hitabet ve muhakeme disiplinlerini bir araya getiren bir eğitim modeli geliştirmiştir.",
+        "Balkan coğrafyasında İslâmî davetin neşrine yönelik projelerin öncüsü olmuş; ilmin ve davetin sınır tanımayan ufkunu temsil etmiştir.",
+        "Bu suretle, tedris, tebliğ ve teşkilat faaliyetlerini mezceden bir çizgide; geleneğin köklerinden beslenerek ümmet coğrafyasına uzanan bir ilim ve irşad mimarisi inşa etmiştir."
+      ]
     },
     "m3": {
       "name": "Dr. Abdüssamet Koçak",
-      "role": "Yönetim Kurulu Başkanı"
+      "role": "Yönetim Kurulu Başkanı",
+      "bio": [
+        "İstanbul Fatih Sultan Mehmet Vakıf Üniversitesi'nde öğretim üyesi olarak akademik faaliyetlerini sürdürmektedir.",
+        "Aynı üniversite bünyesinde faaliyet gösteren Arapça Dil Çalışmaları ve Münazara Merkezi'nde başkan yardımcılığı görevini deruhte etmiştir.",
+        "Uluslararası öğrenci kabul komisyonu başkanı olarak, ilmin coğrafyalar arası intikaline kurumsal bir zemin hazırlamıştır.",
+        "Türkiye'de muhtelif vakıfların yönetim kurullarında üyelik yaparak, sivil toplumun ilim ve hizmet eksenindeki sürekliliğine katkı sunmaktadır.",
+        "Davet faaliyetleri ve Arapça öğretimi sahasında aktif bir isim olarak, dil ile tebliğ arasındaki kadim irtibatı diri tutmaktadır.",
+        "Bu minvalde, akademi ile sivil toplum arasında köprü kuran; ilmi, teşkilatlı hizmet ve davet şuuru ile mezceden bir çizgide temayüz etmektedir."
+      ]
     }
   },
   "tvFaq": {
