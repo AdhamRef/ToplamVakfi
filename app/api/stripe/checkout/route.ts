@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const origin = new URL(req.url).origin;
+    const origin = process.env.APP_URL?.replace(/\/$/, "") ?? new URL(req.url).origin;
     const locale = (body.locale ?? donation.locale ?? "en").toLowerCase();
 
     // Build a descriptive product name

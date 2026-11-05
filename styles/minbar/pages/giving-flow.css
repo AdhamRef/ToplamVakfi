@@ -81,16 +81,33 @@
 
 /* ── Basket (`Cart.dc.html`, `.ct-*`) ────────────────────────────────────── */
 .mia-scope .gf-cart { padding: 26px 0 70px; }
-.mia-scope .gf-cart-title { margin: 0 auto 18px; font-size: clamp(24px, 3vw, 32px); font-weight: 900; color: var(--ink); }
+.mia-scope .gf-cart-top { margin-inline: auto; margin-bottom: 20px; }
+.mia-scope .gf-cart-title { margin: 0 0 4px; font-size: clamp(24px, 3vw, 32px); font-weight: 900; color: var(--ink); }
+.mia-scope .gf-cart-top p { margin: 0; color: var(--muted); font-size: 14px; }
 .mia-scope .gf-cart-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
 .mia-scope .gf-cart-col { display: grid; gap: 20px; min-width: 0; align-content: start; }
-.mia-scope .gf-cart-items { padding: 10px 24px; min-height: 150px; }
+/* One card per gift, rather than lines in one card. */
+.mia-scope .gf-card.gf-cart-items { display: grid; gap: 14px; min-height: 150px; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
 .mia-scope .gf-ct-row {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center;
-  padding: 18px 0; border-bottom: 1px solid #e3edf4; transition: background .4s ease;
+  display: grid; grid-template-columns: 168px minmax(0, 1fr) auto; gap: 18px; align-items: center;
+  padding: 12px; padding-inline-end: 18px; border: 1px solid #e3edf4; border-radius: 18px; background: #fff;
+  box-shadow: 0 10px 26px rgba(2,52,88,.06); transition: background .4s ease, box-shadow .25s ease, border-color .4s ease;
 }
-.mia-scope .gf-ct-row:last-child { border-bottom: 0; }
-.mia-scope .gf-ct-row.is-added { background: rgba(0,162,224,.08); }
+.mia-scope .gf-ct-row:hover { box-shadow: 0 16px 34px rgba(2,52,88,.1); }
+.mia-scope .gf-ct-row.is-added { border-color: var(--brand); background: #f1fafe; }
+.mia-scope .gf-ct-media { display: block; align-self: stretch; overflow: hidden; min-height: 128px; border-radius: 12px; }
+.mia-scope .gf-ct-pic { display: grid; place-items: center; width: 100%; height: 100%; min-height: inherit; background: center / cover no-repeat #dcebf4; transition: transform .45s ease; }
+.mia-scope a.gf-ct-media:hover .gf-ct-pic { transform: scale(1.06); }
+.mia-scope .gf-ct-pic[data-empty="true"], .mia-scope .gf-upsell-pic[data-empty="true"] { background: linear-gradient(135deg, #0c3f78, #1b6fe0); color: #fff; }
+.mia-scope .gf-ct-pic svg { width: 38px; height: 38px; opacity: .92; }
+.mia-scope .gf-ct-region { margin-bottom: 4px; color: var(--brand-ink); font-size: 12px; font-weight: 800; }
+.mia-scope .gf-ct-head h3 a { color: inherit; text-decoration: none; }
+.mia-scope .gf-ct-head h3 a:hover { color: var(--brand-ink); }
+.mia-scope .gf-ct-text { display: -webkit-box; overflow: hidden; margin: 0 0 8px; color: var(--muted); font-size: 13px; line-height: 1.7; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.mia-scope .gf-ct-progress { display: flex; align-items: center; gap: 10px; width: 100%; margin-bottom: 10px; }
+.mia-scope .gf-ct-bar { flex: 1 1 auto; height: 6px; overflow: hidden; border-radius: 999px; background: #e6eff5; }
+.mia-scope .gf-ct-bar i { display: block; height: 100%; border-radius: inherit; background: var(--cta-gradient); }
+.mia-scope .gf-ct-progress small { flex: 0 0 auto; color: var(--muted); font-size: 11.5px; font-weight: 800; }
 .mia-scope .gf-ct-head { display: grid; justify-items: start; gap: 0; min-width: 0; }
 .mia-scope .gf-ct-head h3 {
   display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
@@ -112,8 +129,8 @@
 }
 .mia-scope .gf-ct-end { display: flex; align-items: center; gap: 10px; }
 .mia-scope .gf-ct-amt {
-  display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px;
-  border: 1.5px solid #e3edf4; border-radius: 999px; background: #fbfdff; direction: ltr; cursor: text;
+  display: flex; align-items: center; gap: 6px; min-height: 46px; padding: 0 12px;
+  border: 1.5px solid #e3edf4; border-radius: 12px; background: #fbfdff; direction: ltr; cursor: text;
 }
 .mia-scope .gf-ct-amt:focus-within { border-color: var(--brand); background: #fff; }
 .mia-scope .gf-ct-amt span { color: var(--brand-ink); font-weight: 800; white-space: nowrap; }
@@ -137,7 +154,10 @@
   display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 14px 16px;
   background: #f7fbfe; border: 1px solid #e3edf4; border-radius: 14px;
 }
-.mia-scope .gf-upsell-row > b { flex: 1 1 100%; min-width: 0; font-size: 14px; font-weight: 800; line-height: 1.65; color: var(--ink); overflow-wrap: anywhere; }
+.mia-scope .gf-upsell-title { display: flex; flex: 1 1 100%; align-items: center; gap: 12px; min-width: 0; }
+.mia-scope .gf-upsell-pic { display: grid; flex: 0 0 56px; place-items: center; width: 56px; height: 56px; border-radius: 12px; background: center / cover no-repeat #dcebf4; }
+.mia-scope .gf-upsell-pic svg { width: 22px; height: 22px; }
+.mia-scope .gf-upsell-title b { min-width: 0; font-size: 14px; font-weight: 800; line-height: 1.65; color: var(--ink); overflow-wrap: anywhere; }
 .mia-scope .gf-upsell-amts { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; min-width: 0; }
 .mia-scope .gf-upsell-amt {
   display: inline-flex; align-items: center; gap: 4px; min-height: 40px; padding: 0 14px; border-radius: 999px;
@@ -215,8 +235,14 @@
 }
 @media (max-width: 560px) {
   .mia-scope .gf-wrap { width: calc(100% - 32px); }
-  .mia-scope .gf-ct-row { grid-template-columns: minmax(0, 1fr); }
-  .mia-scope .gf-cart-items { padding: 6px 16px; }
+  /* The picture beside the words, then the amount and delete across the card. */
+  .mia-scope .gf-ct-row { grid-template-columns: 92px minmax(0, 1fr); gap: 12px; align-items: start; padding: 10px; }
+  .mia-scope .gf-ct-media { align-self: start; height: 92px; min-height: 92px; }
+  .mia-scope .gf-ct-text { -webkit-line-clamp: 2; font-size: 12.5px; }
+  .mia-scope .gf-ct-head h3 { font-size: 14.5px; margin-bottom: 4px; }
+  .mia-scope .gf-ct-end { grid-column: 1 / -1; justify-content: space-between; padding-top: 10px; border-top: 1px solid #eef3f7; }
+  .mia-scope .gf-ct-amt { flex: 1 1 auto; }
+  .mia-scope .gf-ct-amt input { flex: 1 1 auto; width: 100%; min-width: 0; font-size: 16px; }
   .mia-scope .gf-upsell { padding: 18px 16px; }
   .mia-scope .gf-ct-sum { padding: 20px 18px !important; }
 }

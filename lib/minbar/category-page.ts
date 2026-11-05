@@ -196,6 +196,7 @@ async function readCategoryPage(where: CategoryWhere, locale: string): Promise<C
 export interface MinbarCategoryTitle {
   id: string;
   title: string;
+  image: string | null;
 }
 
 /**
@@ -213,8 +214,9 @@ export async function listCategoryTitles(locale: string): Promise<MinbarCategory
     select: {
       id: true,
       name: true,
+      image: true,
       translations: { where: translationLocaleWhere(locale), select: { locale: true, name: true } },
     },
   });
-  return rows.map((row) => ({ id: row.id, title: pickTranslation(row.translations, locale)?.name || row.name }));
+  return rows.map((row) => ({ id: row.id, title: pickTranslation(row.translations, locale)?.name || row.name, image: row.image }));
 }

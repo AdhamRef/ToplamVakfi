@@ -88,8 +88,8 @@
 .mia-scope[dir="ltr"] .tv-home .th-orb { right: auto; left: -300px; background: radial-gradient(circle at 28% 50%, #0b3a78, #031a36 70%); }
 
 .mia-scope .tv-home .th-script { position: absolute; z-index: 2; margin: 0; color: #fff; font-family: "Aref Ruqaa", Cairo, serif; font-weight: 700; line-height: 1.25; text-shadow: 0 2px 14px rgba(0,0,0,.35); }
-.mia-scope .tv-home .th-script--a { top: 26%; inset-inline-end: 4%; font-size: clamp(26px, 2.6vw, 40px); transform: rotate(-8deg); }
-.mia-scope .tv-home .th-script--b { bottom: -4px; inset-inline-start: -46px; z-index: 3; font-size: clamp(18px, 1.6vw, 24px); text-align: center; transform: rotate(-6deg); white-space: nowrap; }
+.mia-scope .tv-home .th-script--a { top: 38%; inset-inline-end: 3%; font-size: clamp(26px, 2.6vw, 40px); transform: rotate(-8deg); }
+.mia-scope .tv-home .th-script--b { bottom: -92px; inset-inline-start: -30px; z-index: 3; font-size: clamp(18px, 1.6vw, 24px); text-align: center; transform: rotate(-6deg); white-space: nowrap; }
 .mia-scope .tv-home .th-script--b svg { width: 22px; height: 22px; vertical-align: middle; color: #4fc3f7; }
 
 .mia-scope .tv-home .th-inner {
@@ -730,6 +730,12 @@
   .mia-scope .tv-ring-orbit { animation: none; }
   .mia-scope .tv-ring-arc circle { transition: none; }
 }
+/* The disc's small select. */
+.mia-scope .tv-ring .qc-trigger { flex: 1 1 0; min-height: 32px; height: 32px; padding: 0 8px; padding-inline-start: 4px; gap: 5px; border-width: 1px; border-radius: 999px; }
+.mia-scope .tv-ring .qc-thumb { flex-basis: 24px; width: 24px; height: 24px; border-radius: 50%; }
+.mia-scope .tv-ring .qc-thumb svg { width: 12px; height: 12px; }
+.mia-scope .tv-ring .qc-trigger-text small { display: none; }
+.mia-scope .tv-ring .qc-trigger-text > span { font-size: 12px; }
 @media (max-width: 1279px) {
   .mia-scope .tv-ring { width: 300px; height: 300px; flex-basis: 300px; }
   .mia-scope .tv-ring-disc { width: 280px; height: 280px; gap: 4px; padding: 0 12px; }
@@ -749,8 +755,97 @@
 @media (max-width: 760px) {
   .mia-scope .tv-ring-sb { flex-basis: 34px; width: 34px; height: 34px; }
 }
-/* Narrowest phones: scale the whole disc rather than shrink any control. */
-@media (max-width: 340px) { .mia-scope .tv-ring { transform: scale(.9); margin-block: -15px; } }
+
+/* ── Phone hero ──────────────────────────────────────────────────────────
+   A photo stretched behind a page-tall column crops to nothing, and a circle
+   cannot hold these controls at a usable size. So: the photo keeps the top of
+   the hero in its own proportions and fades into navy, the copy sits on the
+   fade, and the disc becomes a card. */
+@media (max-width: 760px) {
+  .mia-scope .tv-home .th { display: block; padding: 84px 0 58px; }
+  .mia-scope .tv-home .th-photo { inset: 0 0 auto 0; height: min(92vw, 460px); }
+  .mia-scope .tv-home .th-fade { background: linear-gradient(to bottom, rgba(3,26,54,.3) 0, rgba(3,26,54,.66) 110px, rgba(3,26,54,.92) min(66vw, 330px), #031a36 min(92vw, 460px)); }
+  .mia-scope .tv-home .th-wave { height: 42px; }
+  .mia-scope .tv-home .th-inner { gap: 22px; width: calc(100% - 32px); }
+  .mia-scope .tv-home .th-copy { width: 100%; max-width: 480px; }
+  .mia-scope .tv-home .th-copy::before { display: none; }
+  .mia-scope .tv-home .th-lead { margin-bottom: 8px; font-size: clamp(15.5px, 4.3vw, 18px); line-height: 1.5; }
+  .mia-scope .tv-home .th-body { margin-bottom: 0; font-size: 13.5px; line-height: 1.75; }
+  .mia-scope .tv-home .th-body strong { font-size: 14px; color: #7fd6f5; }
+
+  .mia-scope .tv-home .th-actions { margin-top: 16px; gap: 14px; flex-wrap: nowrap; }
+  .mia-scope .tv-home .th-cta { flex: 1 1 auto; justify-content: space-between; min-width: 0; min-height: 52px; font-size: 14.5px; }
+  .mia-scope .tv-home .th-link { flex: 0 0 auto; }
+
+  .mia-scope .tv-home .th-trust { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 16px; padding: 12px 0; border: 1px solid rgba(255,255,255,.14); border-radius: 16px; background: rgba(255,255,255,.07); backdrop-filter: blur(6px); }
+  .mia-scope .tv-home .th-trust li { min-width: 0; margin: 0; padding: 0 6px; border-inline-end: 1px solid rgba(255,255,255,.14); }
+  .mia-scope .tv-home .th-trust li:last-child { padding: 0 6px; }
+  .mia-scope .tv-home .th-trust b { font-size: 18px; }
+  .mia-scope .tv-home .th-trust span { font-size: 11px; line-height: 1.35; }
+  .mia-scope .tv-home .th-dots { margin-top: 6px; }
+  .mia-scope .tv-home .th-dots button { width: 30px; height: 30px; }
+
+  .mia-scope .tv-home .th-ring-slot { width: 100%; max-width: 480px; }
+  .mia-scope .tv-ring { width: 100%; height: auto; flex: none; }
+  .mia-scope .tv-ring-orbit, .mia-scope .tv-ring-arc { display: none; }
+  .mia-scope .tv-ring-disc { width: 100%; height: auto; gap: 12px; padding: 18px 16px; border-radius: 22px; background: linear-gradient(165deg, #0c3f78, #06284f); box-shadow: inset 0 0 0 1px rgba(90,200,255,.32), 0 18px 40px rgba(0,0,0,.28); }
+  .mia-scope .tv-ring .tv-ring-title { font-size: 20px !important; }
+  .mia-scope .tv-ring-sub { margin-top: -8px; font-size: 12.5px; }
+  .mia-scope .tv-ring-step { justify-content: space-between; width: 100%; padding: 4px; border-radius: 16px; background: rgba(255,255,255,.07); }
+  .mia-scope .tv-ring-sb { flex-basis: 46px; width: 46px; height: 46px; border-radius: 12px; font-size: 20px; }
+  .mia-scope .tv-ring-amt { max-width: none; font-size: 30px; }
+  .mia-scope .tv-ring-freq { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); width: 100%; max-width: none; padding: 3px; border-radius: 14px; }
+  .mia-scope .tv-ring-freq button, .mia-scope .tv-ring[data-freqs="3"] .tv-ring-freq button, .mia-scope .tv-ring[data-freqs="4"] .tv-ring-freq button { min-height: 42px; padding: 0 4px; border-radius: 11px; font-size: 13px; }
+  .mia-scope .tv-ring-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; max-width: none; }
+  .mia-scope .tv-ring .qc-trigger { height: auto; min-height: 54px; padding: 6px 12px; padding-inline-start: 7px; gap: 10px; border-radius: 14px; }
+  .mia-scope .tv-ring .qc-thumb { flex-basis: 38px; width: 38px; height: 38px; border-radius: 10px; }
+  .mia-scope .tv-ring .qc-thumb svg { width: 18px; height: 18px; }
+  .mia-scope .tv-ring .qc-trigger-text small { display: block; font-size: 11px; }
+  .mia-scope .tv-ring .qc-trigger-text > span { font-size: 14px; }
+  .mia-scope .tv-ring-free, .mia-scope .tv-ring-row > .tv-ring-free:only-child { flex: none; width: 100%; height: 48px; padding: 0 14px; border-radius: 14px; }
+  .mia-scope .tv-ring-free small { font-size: 14px; }
+  /* 16px: a smaller field makes iOS zoom the page on focus. */
+  .mia-scope .tv-ring-free input { font-size: 16px; }
+  .mia-scope .tv-ring-presets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; width: 100%; max-width: none; }
+  .mia-scope .tv-ring-presets button { min-width: 0; min-height: 46px; padding: 0 2px; border-radius: 12px; font-size: 13.5px; }
+  .mia-scope .tv-ring-go { width: 100%; min-height: 54px; margin-top: 2px; border-radius: 14px; font-size: 16px; }
+}
+@media (max-width: 480px) {
+  .mia-scope .tv-home .th-body-text { display: none; }
+}
+@media (max-width: 350px) {
+  .mia-scope .tv-home .th-actions { flex-wrap: wrap; justify-content: center; }
+  .mia-scope .tv-home .th-cta { flex-basis: 100%; }
+  .mia-scope .tv-ring-presets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── From the blog (`BlogSection`) ───────────────────────────────────────── */
+.mia-scope .tv-home .hb { padding: 56px 0 24px; }
+.mia-scope .tv-home .hb-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+.mia-scope .tv-home .hb-head h2 { margin: 0 0 4px; color: var(--ink, #062442); font-size: clamp(24px, 2.6vw, 32px); font-weight: 900; line-height: 1.25; }
+.mia-scope .tv-home .hb-head p { margin: 0; color: var(--muted, #5b7486); font-size: 14px; }
+.mia-scope .tv-home .hb-all { display: inline-flex; flex-shrink: 0; align-items: center; gap: 7px; min-height: 44px; color: var(--brand-ink, #0077b3); font-size: 14px; font-weight: 800; white-space: nowrap; }
+.mia-scope .tv-home .hb svg { width: 16px; height: 16px; flex-shrink: 0; }
+[dir="ltr"] .mia-scope .tv-home .hb svg, .mia-scope[dir="ltr"] .tv-home .hb svg { transform: scaleX(-1); }
+.mia-scope .tv-home .hb-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.mia-scope .tv-home .hb-card { display: flex; flex-direction: column; min-width: 0; overflow: hidden; border: 1px solid #e6eef3; border-radius: 18px; background: #fff; color: inherit; box-shadow: 0 12px 28px rgba(2,52,88,.07); transition: transform .25s ease, box-shadow .25s ease; }
+.mia-scope .tv-home .hb-card:hover { transform: translateY(-4px); box-shadow: 0 22px 44px rgba(2,52,88,.14); }
+.mia-scope .tv-home .hb-img { position: relative; display: block; aspect-ratio: 16 / 10; background: center / cover no-repeat #dcebf4; }
+.mia-scope .tv-home .hb-img[data-empty="true"] { background: linear-gradient(135deg, #0c3f78, #1b6fe0); }
+.mia-scope .tv-home .hb-img em { position: absolute; top: 12px; inset-inline-start: 12px; padding: 4px 11px; border-radius: 999px; background: rgba(3,26,54,.78); color: #fff; font-size: 11.5px; font-style: normal; font-weight: 800; }
+.mia-scope .tv-home .hb-body { display: flex; flex: 1 1 auto; flex-direction: column; gap: 8px; padding: 16px 18px 18px; }
+.mia-scope .tv-home .hb-body time { color: var(--muted, #5b7486); font-size: 12px; font-weight: 700; }
+.mia-scope .tv-home .hb-body b { display: -webkit-box; overflow: hidden; color: var(--ink, #062442); font-size: 16.5px; font-weight: 900; line-height: 1.45; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.mia-scope .tv-home .hb-excerpt { display: -webkit-box; overflow: hidden; color: var(--muted, #5b7486); font-size: 13.5px; line-height: 1.75; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.mia-scope .tv-home .hb-read { display: inline-flex; align-items: center; gap: 6px; margin-top: auto; padding-top: 4px; color: var(--brand-ink, #0077b3); font-size: 13.5px; font-weight: 800; }
+.mia-scope .tv-home .hb-empty { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 22px 24px; border: 1.5px dashed rgba(0,162,224,.45); border-radius: 18px; background: #fff; color: var(--ink, #062442); font-size: 15px; font-weight: 800; line-height: 1.6; }
+.mia-scope .tv-home .hb-empty svg { color: var(--brand-ink, #0077b3); }
+@media (max-width: 900px) { .mia-scope .tv-home .hb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  .mia-scope .tv-home .hb { padding-top: 40px; }
+  .mia-scope .tv-home .hb-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .mia-scope .tv-home .hb-empty { padding: 18px; font-size: 14px; }
+}
 
 /* ── Shared with other pages: the dark CTA band (ZakatBanner) and the section title (CategoryLandingPage) ── */
 .mia-scope .tv-h2 { margin: 0; font-size: clamp(24px, 2.6vw, 32px); line-height: 1.25; font-weight: 900; color: var(--ink, #062442); letter-spacing: -.4px; }

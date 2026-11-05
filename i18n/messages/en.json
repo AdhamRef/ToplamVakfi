@@ -1735,6 +1735,8 @@
     "loadMore": "Show More"
   },
   "cart": {
+    "zakat": "Zakat",
+    "gaza-relief": "Gaza relief",
     "title": "Donation Cart",
     "summary": "Cart Summary",
     "remove": "Remove",
@@ -4063,6 +4065,9 @@
   },
   "tvPayment": {
     "cart": {
+      "funded": "{pct}% funded",
+      "generalCause": "Your gift goes where it is needed most",
+      "subtitle": "Review your gifts before you complete them",
       "title": "Donation cart",
       "summary": "Donation summary",
       "count": "Donations",
@@ -4233,6 +4238,13 @@
       "scriptA2": "a better tomorrow",
       "scriptB1": "The circle of good",
       "scriptB2": "grows with you"
+    },
+    "blog": {
+      "title": "From our blog",
+      "lead": "Articles and stories from our work in the field",
+      "more": "All articles",
+      "read": "Read more",
+      "empty": "New articles are on the way. Visit our blog to read the latest."
     },
     "ring": {
       "label": "Quick donate",
@@ -4710,6 +4722,7 @@
     "viewAll": "View all →",
     "mainNav": "Main navigation",
     "nav": {
+      "blog": "Blog",
       "about": "About us",
       "ourStory": "Our story",
       "vision": "Our vision",
@@ -4758,6 +4771,13 @@
       "more": "More"
     },
     "qd": {
+      "zakat": "Zakat",
+      "gazaRelief": "Gaza relief",
+      "freq": "Frequency",
+      "freqOnce": "One-time",
+      "freqMonthly": "Monthly",
+      "freqDaily": "Daily",
+      "freqFriday": "Every Friday",
       "label": "Quick donation",
       "fund": "Cause",
       "whereNeed": "Where the need is greatest",

@@ -36,7 +36,8 @@ import {
 import { dashDir, dt, dtx } from "@/lib/dashboard/i18n";
 
 /**
- * The homepage quick-donation card and its dock, end to end: whether it shows,
+ * The quick donation on every page, end to end: the homepage disc and the bar
+ * on the other pages (`shell/QuickDonate`) both read this document. Whether it shows,
  * the presets (USD, with per-currency overrides the way the campaign form
  * offers them), which one is suggested, the free field, the frequencies, the
  * destinations in the select, and the title per language.
@@ -223,7 +224,7 @@ export default function QuickDonationSettingsPage() {
     <div className="max-w-5xl mx-auto space-y-6" dir={dashDir()}>
       <PageHeader
         title={dt("التبرع السريع")}
-        description={dt("بطاقة التبرع السريع في الصفحة الرئيسية والشريط الذي يتبعها  المبالغ، التكرار، الوجهات، والعنوان")}
+        description={dt("دائرة التبرع في الصفحة الرئيسية والشريط الثابت في بقية الصفحات: المبالغ، التكرار، الوجهات، والعنوان")}
         icon={HeartHandshake}
         actions={
           <>
@@ -246,10 +247,10 @@ export default function QuickDonationSettingsPage() {
       <Card>
         <CardHeader>
           <CardTitle>{dt("الظهور")}</CardTitle>
-          <CardDescription>{dt("البطاقة في الصفحة، والشريط الذي يظهر أسفل الشاشة بعد تجاوزها")}</CardDescription>
+          <CardDescription>{dt("الدائرة في الصفحة الرئيسية، والشريط الذي يظهر أسفل الشاشة في بقية الصفحات")}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-3">
-          <ToggleRow label={dt("إظهار البطاقة")} hint={dt("إيقافها يخفي البطاقة والشريط معًا")} checked={config.enabled} onChange={(v) => set("enabled", v)} />
+          <ToggleRow label={dt("إظهار التبرع السريع")} hint={dt("إيقافه يخفي الدائرة والشريط معًا")} checked={config.enabled} onChange={(v) => set("enabled", v)} />
           <ToggleRow label={dt("الشريط على الحاسوب")} hint={dt("شريط عائم أسفل الشاشة")} checked={config.dockDesktop} onChange={(v) => set("dockDesktop", v)} disabled={!config.enabled} />
           <ToggleRow label={dt("الشريط على الجوال")} hint={dt("شريط ثابت أسفل الشاشة")} checked={config.dockMobile} onChange={(v) => set("dockMobile", v)} disabled={!config.enabled} />
         </CardContent>

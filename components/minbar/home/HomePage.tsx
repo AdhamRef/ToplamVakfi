@@ -1,8 +1,7 @@
 "use client";
 
 import { Suspense, useMemo, type ReactNode } from "react";
-import type { MinbarProject } from "@/lib/minbar/projects";
-import type { QuickDonationConfig } from "@/lib/minbar/quick-donation";
+import type { QuickDonationConfig, QuickProject } from "@/lib/minbar/quick-donation";
 import type { HomeSectionId } from "@/lib/minbar/home-layout";
 import type { HomeLists } from "@/lib/minbar/home-layout-read";
 import { photoPool, type HomeZakatTarget } from "@/lib/minbar/home-content";
@@ -11,6 +10,7 @@ import HomeHero from "./HomeHero";
 import { ImpactStrip, ProgramsRow } from "./HomeIntro";
 import WorldSection from "./WorldSection";
 import WaysSection from "./WaysSection";
+import BlogSection from "./BlogSection";
 import { ClosingCta, FaqSection, PartnersSection, StoriesSection, TrustSection } from "./LowerSections";
 
 /**
@@ -37,7 +37,7 @@ export default function HomePage({
   sections: HomeSectionId[];
   lists: HomeLists;
   /** The quick-donation disc as the dashboard configured it, with the projects it may list. */
-  quick: { config: QuickDonationConfig; projects: MinbarProject[] };
+  quick: { config: QuickDonationConfig; projects: QuickProject[] };
   /** Where the zakat tab's gift goes; null sends the donor to the zakat page. */
   zakat: HomeZakatTarget;
 }) {
@@ -53,6 +53,7 @@ export default function HomePage({
     world: () => <WorldSection />,
     ways: () => <WaysSection projects={lists.projects} images={images} zakat={zakat} />,
     stories: () => <StoriesSection images={images} />,
+    blog: () => <BlogSection articles={lists.articles} />,
     trust: () => <TrustSection />,
     partners: () => <PartnersSection />,
     faq: () => <FaqSection />,

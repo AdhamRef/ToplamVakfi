@@ -5,6 +5,7 @@ import { LOCALE_SEO, buildPageMetadata, SITE_URL } from "@/lib/seo";
 import type { Locale } from "@/lib/seo";
 import { listProjects, type MinbarProject } from "@/lib/minbar/projects";
 import { readQuickDonation } from "@/lib/minbar/quick-donation-read";
+import { quickAllowedProjects, type QuickProject } from "@/lib/minbar/quick-donation";
 import { getCategoryPageByTemplate } from "@/lib/minbar/category-page";
 import { readHomeLayout, resolveHomeLists, usedLists, visibleSections } from "@/lib/minbar/home-layout-read";
 import type { HomeZakatTarget } from "@/lib/minbar/home-content";
@@ -45,15 +46,25 @@ async function readZakatTarget(locale: string): Promise<HomeZakatTarget> {
  */
 const cachedHomeData = unstable_cache(
   async (locale: string) => {
-    const layout = await readHomeLayout();
-    const projectsRead = usedLists(layout).has("projects") ? listProjects(locale) : Promise.resolve([] as MinbarProject[]);
+    const [layout, quick] = await Promise.all([readHomeLayout(), readQuickDonation()]);
+    const quickNeedsProjects = quick.enabled && quick.projectsMode !== "none";
+    const projectsRead = usedLists(layout).has("projects") || quickNeedsProjects ? listProjects(locale) : Promise.resolve([] as MinbarProject[]);
     const ways = visibleSections(layout).includes("ways");
-    const [quick, lists, zakat] = await Promise.all([
-      readQuickDonation(),
+    const [lists, zakat, allProjects] = await Promise.all([
       resolveHomeLists(locale, layout, projectsRead),
       ways ? readZakatTarget(locale) : Promise.resolve(null),
+      projectsRead,
     ]);
-    return { quick, layout, lists, zakat };
+    /* Only what the select shows reaches the page: a whole project per option
+       cost ~90 KB of inline payload. */
+    const quickProjects: QuickProject[] = quickAllowedProjects(quick, allProjects).map((p) => ({
+      id: p.id,
+      slug: p.slug,
+      title: p.title,
+      image: p.image,
+      regionLabel: p.regionLabel,
+    }));
+    return { quick, quickProjects, layout, lists, zakat };
   },
   ["tv-home-data"],
   { revalidate: 60, tags: ["minbar-home"] }
@@ -86,7 +97,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  */
 export default async function Home({ params }: Props) {
   const { locale } = await params;
-  const { quick, layout, lists, zakat } = await cachedHomeData(locale);
+  const { quick, quickProjects, layout, lists, zakat } = await cachedHomeData(locale);
   /* The hero's first photograph is the Largest Contentful Paint. The sizes
      mirror `.th-slide--hero` in home.css: the 800px copy up to 760px wide
      (a 3× phone included), the full one above. */
@@ -113,10 +124,7 @@ export default async function Home({ params }: Props) {
         <HomePage
           sections={visibleSections(layout)}
           lists={lists}
-          /* The disc lists only the generic destinations unless the
-             dashboard allows projects; every project serialized into the page
-             for it cost ~90 KB of inline payload, so none is passed. */
-          quick={{ config: quick, projects: [] }}
+          quick={{ config: quick, projects: quickProjects }}
           zakat={zakat}
         />
       </MinbarMessages>

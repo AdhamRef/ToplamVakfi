@@ -82,7 +82,7 @@ export default function HomeHero({ slides, donate }: { slides: string[]; donate?
             </h1>
             <p className="th-lead">{t("lead")}</p>
             <p className="th-body">
-              <strong>{t("bodyTitle")}</strong> {t("body")}
+              <strong>{t("bodyTitle")}</strong> <span className="th-body-text">{t("body")}</span>
             </p>
             <div className="th-actions">
               <a className="th-cta" href="#programs">

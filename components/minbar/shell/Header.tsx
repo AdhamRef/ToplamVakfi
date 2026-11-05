@@ -43,7 +43,7 @@ import {
  * same page.
  */
 
-type NavKey = "about" | "programs" | "impact" | "stories" | "partners" | "contact";
+type NavKey = "about" | "programs" | "impact" | "stories" | "blog" | "partners" | "contact";
 
 interface SubLink {
   route: MinbarRoute;
@@ -100,6 +100,7 @@ const NAV: readonly NavGroup[] = [
     ],
   },
   { key: "stories", route: "stories" },
+  { key: "blog", route: "blog" },
   { key: "partners", route: "partner" },
   { key: "contact", route: "contact" },
 ];
@@ -118,6 +119,8 @@ const ACTIVE_OF: Partial<Record<MinbarRoute, NavKey>> = {
   transparency: "impact",
   news: "impact",
   stories: "stories",
+  blog: "blog",
+  article: "blog",
   partner: "partners",
   contact: "contact",
 };
@@ -130,6 +133,7 @@ const DRAWER: ReadonlyArray<readonly [MinbarRoute, string]> = [
   ["news", "allNews"],
   ["reports", "impact"],
   ["stories", "ourStories"],
+  ["blog", "blog"],
   ["partner", "partners"],
   ["contact", "contact"],
 ];

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { Prisma } from "@prisma/client";
 import { authOptions } from "@/app/api/auth/[...nextauth]/options";
@@ -58,6 +59,9 @@ export async function PUT(request: NextRequest) {
       data: { quickDonation: config as unknown as Prisma.InputJsonValue },
       select: { quickDonation: true, updatedAt: true },
     });
+
+    /* The homepage disc and every page's bar read this through a 60 s cache. */
+    revalidateTag("minbar-home", { expire: 0 });
 
     const actor = auditActorFromDashboardSession(session!);
     queueAuditLog({

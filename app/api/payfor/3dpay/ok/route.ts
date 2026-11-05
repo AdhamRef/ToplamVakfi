@@ -16,7 +16,7 @@ import { dispatchDonationPaid, dispatchEvent } from "@/lib/events/dispatch";
 import { mergePayForProviderRaw, PAYFOR_UNVERIFIED_APPROVAL, payForErrorMessage, redactPayForResponse, stripeFallbackPath, verifyPayForResponseHash, wantsStripeFallback } from "@/lib/payfor";
 
 export async function POST(req: NextRequest) {
-  const origin = new URL(req.url).origin;
+  const origin = process.env.APP_URL?.replace(/\/$/, "") ?? new URL(req.url).origin;
   const { searchParams } = new URL(req.url);
   const donationId = searchParams.get("donationId") || "";
   const locale = (searchParams.get("locale") || "en").toLowerCase();

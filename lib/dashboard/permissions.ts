@@ -7,8 +7,10 @@ export const DASHBOARD_PERMISSION_KEYS = [
   "badges", "messages", "templates", "campaigns", "categories", "blog", "slides",
   // "operations" was removed with the التشغيل section. Any value still stored on a user row is
   // simply inert  it maps to no page and grants nothing.
-  "ticker", "pixels", "ads", "platformConnections", "archive",
-  // Site content: homepage layout, quick donation, certificate copy and other site
+  "ticker", "pixels", "ads", "platformConnections",
+  // "archive" and its action keys were removed with the archive section; like "operations"
+  // above, a value still stored on a user row is inert.
+  // Site content: homepage layout, quick donation and other site
   // settings. One key for the group, the way
   // "blog" already covers both posts and their categories.
   "siteContent",
@@ -17,14 +19,13 @@ export const DASHBOARD_PERMISSION_KEYS = [
   // "aiConcierge" was removed with the donation concierge; like "operations" above, a value
   // still stored on a user row is inert.
   "generalSettings", "platformConnectionsTest", "platformConnectionsManage",
-  "platformConnectionsAdmin", "archiveUpload", "archiveDelete", "archiveAnalyze",
-  "archiveDocuments", "donationsEdit", "reportsExport",
+  "platformConnectionsAdmin",
+  "donationsEdit", "reportsExport",
 ] as const;
 export type DashboardPermissionKey = (typeof DASHBOARD_PERMISSION_KEYS)[number];
 
 const ACTION_PERMISSION_KEYS: DashboardPermissionKey[] = [
   "platformConnectionsTest", "platformConnectionsManage", "platformConnectionsAdmin",
-  "archiveUpload", "archiveDelete", "archiveAnalyze", "archiveDocuments",
   "donationsEdit", "reportsExport",
 ];
 const LEGACY_USERS_KEY = "users";
@@ -69,7 +70,6 @@ export function userHasDashboardPermission(user: UserLike | undefined, key: Dash
   if (user.role !== "STAFF") return false;
   const perms = sanitizeDashboardPermissions(user.dashboardPermissions);
   if (perms.includes(key) || hasIntegrationPermission(perms, key)) return true;
-  if ((key === "archiveUpload" || key === "archiveDelete" || key === "archiveAnalyze") && perms.includes("archive")) return true;
   return hasLegacyUsersPermission(user) && legacyUsersGrants(key);
 }
 
@@ -91,7 +91,6 @@ const PATH_RULES: { prefix: string; key: DashboardPermissionKey }[] = [
   { prefix: "/dashboard/marketing-intelligence", key: "ads" },
   { prefix: "/dashboard/conversion-events", key: "pixels" },
   { prefix: "/dashboard/ads", key: "ads" },
-  { prefix: "/dashboard/archive", key: "archive" },
   { prefix: "/dashboard/monthly", key: "monthly" },
   { prefix: "/dashboard/link-generator", key: "referrals" },
   { prefix: "/dashboard/referrals", key: "referrals" },
@@ -119,7 +118,6 @@ const PATH_RULES: { prefix: string; key: DashboardPermissionKey }[] = [
   // bounced out of each page. Same failure the /dashboard/inbox rule above exists to prevent.
   { prefix: "/dashboard/quick-donation", key: "siteContent" },
   { prefix: "/dashboard/homepage-layout", key: "siteContent" },
-  { prefix: "/dashboard/certificates", key: "siteContent" },
   { prefix: "/dashboard/pixels", key: "pixels" },
   { prefix: "/dashboard/donations", key: "revenue" },
   { prefix: "/dashboard/general", key: "generalSettings" },

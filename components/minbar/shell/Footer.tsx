@@ -130,10 +130,10 @@ export default function Footer() {
                 <ShellIcon name="phone" />
                 <span dir="ltr">{ORG.phone}</span>
               </a>
-              <span>
+              <a href={ORG.mapUrl} target="_blank" rel="noopener noreferrer">
                 <ShellIcon name="pin" />
                 <span dir="ltr">{ORG.address}</span>
-              </span>
+              </a>
             </div>
             <div className="tv-foot-social">
               {social.map((s) => (

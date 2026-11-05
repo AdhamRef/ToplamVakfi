@@ -59,7 +59,7 @@ const CARDS: ReadonlyArray<{ icon: keyof typeof ICONS; labelKey: string; value: 
   { icon: "mail", labelKey: "emailCard", value: ORG.email, href: `mailto:${ORG.email}` },
   { icon: "phone", labelKey: "phoneCard", value: ORG.phone, href: ORG_TEL },
   { icon: "whatsapp", labelKey: "whatsappCard", value: ORG.phone, href: ORG_WHATSAPP, external: true },
-  { icon: "pin", labelKey: "addressCard", value: ORG.address },
+  { icon: "pin", labelKey: "addressCard", value: ORG.address, href: ORG.mapUrl, external: true },
 ];
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -280,11 +280,8 @@ export default function ContactPage() {
             })}
 
             <div className="fd-card fd-map">
-              <div>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
-                  <path d="M9 4 3 6.5v13L9 17l6 2.5 6-2.5v-13L15 6.5z" />
-                  <path d="M9 4v13M15 6.5v13" />
-                </svg>
+              <iframe className="fd-map-frame" src={ORG.mapEmbedUrl} title={ORG.legalName} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+              <div className="fd-map-foot">
                 <p>{t("mapNote")}</p>
                 <a className="fd-pill" href={ORG.mapUrl} target="_blank" rel="noopener noreferrer">
                   <span className="fd-pill-ico" aria-hidden="true">

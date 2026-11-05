@@ -441,7 +441,7 @@
 .mia-scope .tvp-chip { padding: 0 20px; min-height: 40px; }
 .mia-scope .tvp-chip[data-cat="1"] { background: var(--cta-gradient); color: #fff; box-shadow: 0 4px 12px rgba(0,162,224,.32); }
 .mia-scope .mia-projects-page #all { padding: 6px 0 50px !important; }
-.mia-scope .tvp-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); padding-top: 6px; }
+.mia-scope .tvp-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); padding-top: 6px; }
 @media (max-width: 900px) {
   .mia-scope .tvp-grid { grid-template-columns: minmax(0, 1fr); }
 }

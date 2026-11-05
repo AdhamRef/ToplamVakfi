@@ -1735,6 +1735,8 @@
     "loadMore": "Daha Fazla Göster"
   },
   "cart": {
+    "zakat": "Zekât",
+    "gaza-relief": "Gazze yardımı",
     "title": "Bağış Sepeti",
     "summary": "Sepet Özeti",
     "remove": "Kaldır",
@@ -4066,6 +4068,9 @@
   },
   "tvPayment": {
     "cart": {
+      "funded": "%{pct} toplandı",
+      "generalCause": "Bağışınız ihtiyacın en büyük olduğu yere ulaşır",
+      "subtitle": "Bağışlarınızı tamamlamadan önce gözden geçirin",
       "title": "Bağış sepeti",
       "summary": "Bağış özeti",
       "count": "Bağış sayısı",
@@ -4236,6 +4241,13 @@
       "scriptA2": "daha iyi bir yarın",
       "scriptB1": "İyilik halkası",
       "scriptB2": "sizinle büyür"
+    },
+    "blog": {
+      "title": "Blogumuzdan",
+      "lead": "Sahadaki çalışmalarımızdan yazılar ve hikâyeler",
+      "more": "Tüm yazılar",
+      "read": "Devamını oku",
+      "empty": "Yeni yazılar yolda. En son yazılar için blogumuzu ziyaret edin."
     },
     "ring": {
       "label": "Hızlı bağış",
@@ -4713,6 +4725,7 @@
     "viewAll": "Tümünü gör →",
     "mainNav": "Ana menü",
     "nav": {
+      "blog": "Blog",
       "about": "Hakkımızda",
       "ourStory": "Hikâyemiz",
       "vision": "Vizyonumuz",
@@ -4761,6 +4774,13 @@
       "more": "Daha fazla"
     },
     "qd": {
+      "zakat": "Zekât",
+      "gazaRelief": "Gazze yardımı",
+      "freq": "Sıklık",
+      "freqOnce": "Tek sefer",
+      "freqMonthly": "Aylık",
+      "freqDaily": "Günlük",
+      "freqFriday": "Her Cuma",
       "label": "Hızlı bağış",
       "fund": "Alan",
       "whereNeed": "İhtiyacın en büyük olduğu yer",

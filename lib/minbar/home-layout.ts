@@ -30,7 +30,7 @@
  * so the dashboard shows them as locked rows.
  *
  * Ids the code no longer has (the Minbar sections: verse, path, travel,
- * urgent, categories, zakat, recurring, regions, account, articles, news) are
+ * urgent, categories, zakat, recurring, regions, account, news) are
  * dropped by `parseHomeLayout` when a stored row still names them.
  */
 export const HOME_SECTION_IDS = [
@@ -39,6 +39,7 @@ export const HOME_SECTION_IDS = [
   "world",
   "ways",
   "stories",
+  "blog",
   "trust",
   "partners",
   "faq",
@@ -79,6 +80,13 @@ export const HOME_SECTIONS: Record<HomeSectionId, HomeSectionMeta> = {
     editHref: "/dashboard/campaigns",
   },
   stories: { label: "من الميدان", description: "قصة من الواقع وصور الميدان ورابط صفحة القصص.", kind: "static", lists: [] },
+  blog: {
+    label: "المدونة",
+    description: "أحدث مقالات المدونة ورابط صفحتها.",
+    kind: "list",
+    lists: ["articles"],
+    editHref: "/dashboard/blog",
+  },
   trust: { label: "لماذا تثق بنا", description: "بطاقات الثقة الأربع واعتماد الوقف الرسمي.", kind: "static", lists: [] },
   partners: { label: "شركاؤنا في صناعة الأثر", description: "شريط الشركاء.", kind: "static", lists: [] },
   faq: { label: "الأسئلة الشائعة", description: "ثلاثة أسئلة ورابط صفحة الأسئلة الشائعة.", kind: "static", lists: [] },
@@ -137,7 +145,7 @@ export const HOME_LISTS: Record<HomeListId, HomeListMeta> = {
   /* The design's «طرق العطاء» shows three project cards and six priced units. */
   projects: { label: "مشاريع طرق العطاء", sorts: ["default", "newest", "oldest", "mostRaised", "mostProgress"], defaultLimit: 9 },
   categories: { label: "الحملات والدول", sorts: ["default", "newest", "oldest", "mostProjects"], defaultLimit: 0 },
-  articles: { label: "المقالات", sorts: ["newest", "oldest"], defaultLimit: 4 },
+  articles: { label: "المقالات", sorts: ["newest", "oldest"], defaultLimit: 3 },
   news: { label: "الأخبار", sorts: ["newest", "oldest"], defaultLimit: 4 },
 };
 

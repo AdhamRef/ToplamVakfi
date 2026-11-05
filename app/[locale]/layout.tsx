@@ -9,6 +9,7 @@ import Header from "@/components/minbar/shell/Header";
 import MobileBottomNav from "@/components/minbar/shell/MobileBottomNav";
 import MinbarFooter from "@/components/minbar/shell/Footer";
 import QuickDonate from "@/components/minbar/shell/QuickDonate";
+import { readQuickDonationCached } from "@/lib/minbar/quick-donation-read";
 import CartReminder from "@/components/CartReminder";
 import { CurrencyFromUrlSync } from "@/components/CurrencyFromUrlSync";
 import IntlProviderClient from "./IntlProviderClient";
@@ -128,7 +129,7 @@ export default async function Rootlayout({
   // RTL too, and the previous `locale === "ar"` test silently rendered it LTR.
   const dir = localeDirection(locale);
   // Drives where the header's account icon points (`[AUTH-INTEGRATION]`).
-  const session = await getServerSession(authOptions);
+  const [session, quickDonation] = await Promise.all([getServerSession(authOptions), readQuickDonationCached()]);
   const localeFont = LOCALE_FONT_STYLESHEETS[locale];
 
   // Phones hide the hero pattern (styles/minbar/minbar.css), so only wider screens need it early.
@@ -164,7 +165,7 @@ export default async function Rootlayout({
               <Suspense fallback={null}>
                 <MinbarFooter />
               </Suspense>
-              <QuickDonate />
+              <QuickDonate config={quickDonation} />
               <CartReminder />
               <ConfettiProvider />
               <Toaster position="top-center" />

@@ -26,16 +26,6 @@ export const aiAssistantContexts: AiAssistantContextDefinition[] = [
     blockedActions: ["No auto publishing", "No message sending", "No external platform calls"],
     entryHref: "/dashboard/operations/ai-assistant",
   },
-  {
-    key: "archive",
-    title: "Archive AI Assistant",
-    description: "يساعد في البحث داخل الأرشيف، اقتراح مواد قابلة لإعادة الاستخدام، وتصنيف الأصول.",
-    systemRole: "Archive retrieval and asset reuse assistant.",
-    capabilities: ["SEARCH_ARCHIVE", "PLAN_CONTENT", "BRAND_GUARDRAILS"],
-    allowedSources: ["getArchiveSummary", "getBrandRules"],
-    blockedActions: ["No file deletion", "No public publishing", "No external platform calls"],
-    entryHref: "/dashboard/archive/ai",
-  },
 ];
 
 const promptExamples: Partial<Record<AiAssistantContextKey, string[]>> = {

@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
+import { cssImage } from "@/lib/minbar/image-url";
 import { useMinbarCart } from "@/hooks/useMinbarCart";
 import { useMinbarMoney } from "@/hooks/useMinbarMoney";
 import { useDonationAmount, useHealLegacyRows } from "@/hooks/useDonationAmount";
@@ -46,8 +47,9 @@ import type { MinbarCategoryTitle } from "@/lib/minbar/category-page";
  * order is created  what is shown here is display state, never the basis for a
  * charge.
  *
- * Layout (`.ct-cart`): the page title, then one white card of rows (title, a
- * fixed frequency tag, the amount field, delete) beside the navy summary
+ * Layout (`.ct-cart`): the page title, then one card per row (the campaign's
+ * picture, its title and region, a line about it, how far it has come, a fixed
+ * frequency tag, the amount field, delete) beside the navy summary
  * (count, one-off / recurring subtotals, total, the way on). The frequency is a
  * tag, not a toggle: it is chosen where the gift is set up. Two things the
  * dashboard drives sit inside that frame: the cross-sell campaigns
@@ -66,6 +68,12 @@ const FREQ_TAG: Record<CartFreqKey, string> = {
 const TRASH = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
     <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" />
+  </svg>
+);
+
+const HEART = (
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.4 3 5 6.4 5c2 0 3.4 1.1 4.1 2.3h3C14.2 6.1 15.6 5 17.6 5 21 5 23.1 8.4 21.6 11.7 19.5 16.4 12 21 12 21z" />
   </svg>
 );
 
@@ -180,6 +188,8 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
   const titleBySlug = useMemo(() => new Map(projects.map((p) => [p.slug, p.title])), [projects]);
   /** Category id → its title in the active locale. */
   const categoryTitleById = useMemo(() => new Map(categories.map((c) => [c.id, c.title])), [categories]);
+  const projectBySlug = useMemo(() => new Map(projects.map((p) => [p.slug, p])), [projects]);
+  const categoryImageById = useMemo(() => new Map(categories.map((c) => [c.id, c.image])), [categories]);
 
   /**
    * Resolve a row's display title, live, in this order:
@@ -282,7 +292,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
   };
 
   /* `add(amount, typed)`: a typed figure is always in the visitor's currency. */
-  type UpsellRow = { id: string; label: string; amounts: readonly number[]; localAmounts: boolean; add: (amount: number, typed?: boolean) => void };
+  type UpsellRow = { id: string; label: string; image: string | null; amounts: readonly number[]; localAmounts: boolean; add: (amount: number, typed?: boolean) => void };
   /* Only the dashboard's own campaigns are offered. The old built-in
      fallback rows named the previous foundation's projects, so a basket with
      no configured cross-sell simply shows none. */
@@ -291,6 +301,7 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
     label: project.title,
     amounts,
     localAmounts: local,
+    image: project.image,
     add: (amount: number, typed?: boolean) => addProjectSuggestion(project, amount, local || Boolean(typed)),
   }));
 
@@ -316,7 +327,10 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
 
   return (
     <div className="gf-cart">
-      <h1 className="gf-wrap gf-cart-title">{tv("title")}</h1>
+      <div className="gf-wrap gf-cart-top">
+        <h1 className="gf-cart-title">{tv("title")}</h1>
+        <p>{tv("subtitle")}</p>
+      </div>
 
       <div className="gf-wrap gf-cart-grid">
         <div className="gf-cart-col">
@@ -329,21 +343,49 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
               const note = noteLine(item);
               const shares = item.shareCount ? sharesOf(item) : null;
               const draft = drafts[index];
+              const project = item.projectId ? projectBySlug.get(item.projectId) : undefined;
+              const image = project?.image ?? (item.categoryId ? categoryImageById.get(item.categoryId) : null) ?? null;
+              const href = project ? miaPath("projectDetail", locale, project.slug) : null;
+              const funded = project?.goal && project.goal > 0 ? Math.min(100, Math.round((project.raised / project.goal) * 100)) : null;
+              const media = (
+                <span className="gf-ct-pic" style={image ? { backgroundImage: cssImage(image, 480) } : undefined} data-empty={image ? undefined : "true"}>
+                  {image ? null : HEART}
+                </span>
+              );
               return (
                 <div
                   key={`${item.projectId ?? item.titleKey ?? item.title}-${index}`}
                   id={`cart-row-${index}`}
                   className={`gf-ct-row${addedIndex === index ? " is-added" : ""}`}
                 >
+                  {href ? (
+                    <Link className="gf-ct-media" href={href} tabIndex={-1} aria-hidden="true">
+                      {media}
+                    </Link>
+                  ) : (
+                    <span className="gf-ct-media" aria-hidden="true">
+                      {media}
+                    </span>
+                  )}
                   <div className="gf-ct-head">
+                    {project?.regionLabel ? <span className="gf-ct-region">{project.regionLabel}</span> : null}
                     <h3>
-                      {resolveTitle(item)}
+                      {href ? <Link href={href}>{resolveTitle(item)}</Link> : resolveTitle(item)}
                       {addedIndex === index ? (
                         <span className="cart-added-badge" role="status">
                           {tCommon("added")}
                         </span>
                       ) : null}
                     </h3>
+                    {project?.text || !item.projectId ? <p className="gf-ct-text">{project?.text || tv("generalCause")}</p> : null}
+                    {funded !== null ? (
+                      <div className="gf-ct-progress">
+                        <span className="gf-ct-bar" aria-hidden="true">
+                          <i style={{ width: `${funded}%` }} />
+                        </span>
+                        <small>{tv("funded", { pct: formatNumber(funded) })}</small>
+                      </div>
+                    ) : null}
                     <span className={`gf-ct-tag${recurring ? " is-rec" : ""}`}>{tv(FREQ_TAG[item.freqKey] ?? "tagOnce")}</span>
                     {note ? <small className="gf-ct-note">{note}</small> : null}
                     {lineTooSmall(item) ? (
@@ -394,7 +436,12 @@ export default function CartPage({ projects, categories }: { projects: MinbarPro
               <h2>{t("upsellHeading")}</h2>
               {upsellRows.map((suggestion) => (
                 <div key={suggestion.id} className="gf-upsell-row">
-                  <b>{suggestion.label}</b>
+                  <span className="gf-upsell-title">
+                    <span className="gf-upsell-pic" style={suggestion.image ? { backgroundImage: cssImage(suggestion.image, 160) } : undefined} data-empty={suggestion.image ? undefined : "true"} aria-hidden="true">
+                      {suggestion.image ? null : HEART}
+                    </span>
+                    <b>{suggestion.label}</b>
+                  </span>
                   <div className="gf-upsell-amts">
                     {suggestion.amounts.map((value) => (
                       <button key={value} type="button" onClick={() => suggestion.add(value)} className="gf-upsell-amt">

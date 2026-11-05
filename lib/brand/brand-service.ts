@@ -22,12 +22,10 @@ import { dt } from "@/lib/dashboard/i18n";
 // was removed from the user-facing Brand Center; the /dashboard/brand/organizations route redirects.
 export const BRAND_CENTER_TABS: BrandCenterTab[] = [
   { key: "overview", get title() { return dt("دليل الهوية"); }, href: "/dashboard/brand" },
-  { key: "assets", get title() { return dt("الأصول والشعارات"); }, href: "/dashboard/brand/assets" },
   { key: "colors", get title() { return dt("الألوان"); }, href: "/dashboard/brand/colors" },
   { key: "typography", get title() { return dt("الخطوط"); }, href: "/dashboard/brand/typography" },
   { key: "voice", get title() { return dt("نبرة الخطاب"); }, href: "/dashboard/brand/voice" },
   { key: "frameworks", get title() { return dt("قوالب الرسائل"); }, href: "/dashboard/brand/frameworks" },
-  { key: "downloads", get title() { return dt("التنزيلات"); }, href: "/dashboard/brand/downloads" },
 ];
 
 const nextModels = [

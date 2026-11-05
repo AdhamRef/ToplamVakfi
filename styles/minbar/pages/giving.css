@@ -78,7 +78,7 @@
 .mia-scope .tvg-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
 .mia-scope .tvg-tabs button { min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid var(--tvg-line); background: #fff; color: var(--tvg-ink); font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer; }
 .mia-scope .tvg-tabs button[aria-selected="true"] { background: var(--tvg-grad); border-color: transparent; color: #fff; box-shadow: 0 8px 18px rgba(0,162,224,.3); }
-.mia-scope .tvg-pj-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 30px; }
+.mia-scope .tvg-pj-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 30px; }
 .mia-scope .tvg-pj-card { overflow: hidden; display: flex; flex-direction: column; }
 .mia-scope .tvg-pj-img { position: relative; display: block; aspect-ratio: 16 / 10; background: #0b2440 center / cover no-repeat; }
 .mia-scope .tvg-pj-img::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 30px; background: #fff; clip-path: ellipse(70% 100% at 50% 100%); }

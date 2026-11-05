@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const draftSchema = z.object({
-  context: z.enum(["marketing", "content", "archive", "brand"]),
+  context: z.enum(["marketing", "content", "brand"]),
   prompt: z.string().trim().max(2000).default(""),
   requestedTool: z.string().trim().max(80).optional().nullable(),
 });
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   if (denied) return denied;
 
   const context = request.nextUrl.searchParams.get("context");
-  if (context === "marketing" || context === "content" || context === "archive" || context === "brand") {
+  if (context === "marketing" || context === "content" || context === "brand") {
     return jsonNoStore({ ok: true, readiness: getAiAssistantReadiness(context) });
   }
 

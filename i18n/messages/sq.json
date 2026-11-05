@@ -689,6 +689,8 @@
     "loadMore": "Shfaq më Shumë"
   },
   "cart": {
+    "zakat": "Zekati",
+    "gaza-relief": "Ndihmë për Gazën",
     "title": "Shporta e Donacioneve",
     "summary": "Përmbledhje e Shportës",
     "remove": "Hiq",
@@ -3021,6 +3023,9 @@
   },
   "tvPayment": {
     "cart": {
+      "funded": "{pct}% e mbledhur",
+      "generalCause": "Dhurimi juaj shkon aty ku nevojitet më shumë",
+      "subtitle": "Rishikoni dhurimet tuaja para se t'i përfundoni",
       "title": "Shporta e dhurimeve",
       "summary": "Përmbledhja e dhurimit",
       "count": "Numri i dhurimeve",
@@ -3191,6 +3196,13 @@
       "scriptA2": "një e nesërme më e mirë",
       "scriptB1": "Rrethi i së mirës",
       "scriptB2": "rritet me ju"
+    },
+    "blog": {
+      "title": "Nga blogu ynë",
+      "lead": "Artikuj dhe histori nga puna jonë në terren",
+      "more": "Të gjithë artikujt",
+      "read": "Lexo më shumë",
+      "empty": "Artikuj të rinj po vijnë. Vizitoni blogun tonë për më të rejat."
     },
     "ring": {
       "label": "Dhurim i shpejtë",
@@ -3668,6 +3680,7 @@
     "viewAll": "Shiko të gjitha →",
     "mainNav": "Navigimi kryesor",
     "nav": {
+      "blog": "Blog",
       "about": "Rreth nesh",
       "ourStory": "Historia jonë",
       "vision": "Vizioni ynë",
@@ -3716,6 +3729,13 @@
       "more": "Më shumë"
     },
     "qd": {
+      "zakat": "Zekati",
+      "gazaRelief": "Ndihmë për Gazën",
+      "freq": "Shpeshtia",
+      "freqOnce": "Një herë",
+      "freqMonthly": "Mujore",
+      "freqDaily": "Ditore",
+      "freqFriday": "Çdo të premte",
       "label": "Dhurim i shpejtë",
       "fund": "Kauza",
       "whereNeed": "Aty ku nevoja është më e madhe",

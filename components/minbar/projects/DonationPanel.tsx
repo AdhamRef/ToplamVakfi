@@ -2,10 +2,11 @@
 
 import { offeredFrequencies } from "@/lib/minbar/frequencies";
 import { decimalAmount, digitsOnly } from "@/lib/minbar/numeric-input";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { miaPath } from "@/lib/minbar/routes";
+import { QUICK_DONATE_OPEN_EVENT } from "@/components/minbar/shell/quick-donate-styles";
 import { addToCart, type CartFreqKey } from "@/lib/minbar/cart";
 import { useMinbarMoney } from "@/hooks/useMinbarMoney";
 import { shareProgress, useShareWording } from "@/hooks/useShareWording";
@@ -123,6 +124,25 @@ export default function DonationPanel({ project }: { project: MinbarProject; don
     addToCart(buildItem());
     router.push(miaPath("cart", locale));
   };
+
+  /* The phone bottom navigation's «تبرع» gives to this campaign, with the
+     amount, frequency and gift chosen here. Below the minimum it brings the
+     panel into view so the hint is seen. */
+  const fromBottomNav = useRef(onDonate);
+  useEffect(() => {
+    fromBottomNav.current = () => {
+      if (belowMinimum) document.getElementById("pd-aside")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      onDonate();
+    };
+  });
+  useEffect(() => {
+    const onOpen = (event: Event) => {
+      event.preventDefault();
+      fromBottomNav.current();
+    };
+    window.addEventListener(QUICK_DONATE_OPEN_EVENT, onOpen);
+    return () => window.removeEventListener(QUICK_DONATE_OPEN_EVENT, onOpen);
+  }, []);
 
   const onAddToBasket = () => {
     if (!(amount > 0)) return;

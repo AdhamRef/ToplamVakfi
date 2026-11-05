@@ -4,17 +4,20 @@ import { decimalAmount } from "@/lib/minbar/numeric-input";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import * as SelectPrimitive from "@radix-ui/react-select";
 import { LOCALES } from "@/lib/locales";
 import { miaPath } from "@/lib/minbar/routes";
 import { addToCart, type CartFreqKey } from "@/lib/minbar/cart";
 import { formatMoney } from "@/lib/minbar/money";
 import { useMinbarMoney } from "@/hooks/useMinbarMoney";
-import type { MinbarProject } from "@/lib/minbar/projects";
+import QuickCauseSelect, { type QuickCause } from "@/components/minbar/shell/QuickCauseSelect";
 import {
+  quickAllowedProjects,
+  quickInitialDestination,
+  quickTitleKey,
   resolveQuickAmounts,
   type QuickDonationConfig,
   type QuickGenericDestination,
+  type QuickProject,
 } from "@/lib/minbar/quick-donation";
 
 /**
@@ -32,9 +35,9 @@ import {
  *     $100 $300 $500 $700
  *      [ ♥ تبرّع الآن ]
  *
- *   · The destination is ONE select  the generic intentions first, then the
- *     projects the dashboard allows under a group heading. A real listbox
- *     (Radix), keyboard-navigable, mirrored for RTL.
+ *   · The destination is ONE select (`shell/QuickCauseSelect`, shared with the
+ *     bar on the other pages)  the generic intentions first, then the
+ *     projects the dashboard allows under a group heading.
  *   · − / + step through the presets (or by 10 in the free field), and each
  *     says which amount it will pick. The arc around the disc traces how far
  *     up the presets the choice is.
@@ -55,6 +58,10 @@ import {
  *
  * The donate action adds to the basket and routes to the cart  the same path
  * as "add to basket" on a project card.
+ *
+ * On a phone a circle cannot hold these controls at a usable size, so the same
+ * markup is drawn as a full-width card and the orbits and arc are dropped
+ * (`.tv-ring` in `styles/minbar/pages/home.css`).
  */
 
 const FREQ_KEY: Record<CartFreqKey, string> = {
@@ -80,7 +87,7 @@ const Heart = () => (
   </svg>
 );
 
-export default function QuickDonateBar({ config, projects }: { config: QuickDonationConfig; projects: MinbarProject[] }) {
+export default function QuickDonateBar({ config, projects }: { config: QuickDonationConfig; projects: QuickProject[] }) {
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("common");
@@ -97,12 +104,7 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
   const presets = resolveQuickAmounts(config, visitorCode);
   const suggested = Math.min(config.suggestedIndex, presets.amounts.length - 1);
 
-  const shownProjects = useMemo(() => {
-    if (config.projectsMode === "none") return [];
-    if (config.projectsMode === "all") return projects;
-    const allow = new Set(config.projectIds);
-    return projects.filter((p) => allow.has(p.id));
-  }, [config.projectsMode, config.projectIds, projects]);
+  const shownProjects = useMemo(() => quickAllowedProjects(config, projects), [config, projects]);
 
   const label = (g: QuickGenericDestination) => {
     const { ns, key } = GENERIC[g];
@@ -110,13 +112,7 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
   };
 
   /** The default destination as an option value: a generic id or a project slug. */
-  const initialDestination = useMemo(() => {
-    const d = config.defaultDestination;
-    if (d && (config.genericDestinations as string[]).includes(d)) return d;
-    const byId = d ? shownProjects.find((p) => p.id === d) : undefined;
-    if (byId) return byId.slug;
-    return config.genericDestinations[0] ?? shownProjects[0]?.slug ?? "";
-  }, [config.defaultDestination, config.genericDestinations, shownProjects]);
+  const initialDestination = useMemo(() => quickInitialDestination(config, shownProjects), [config, shownProjects]);
 
   /* ── State ──────────────────────────────────────────────────────────── */
 
@@ -134,11 +130,6 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
   }, [presets.currency]);
 
   const isGeneric = (config.genericDestinations as string[]).includes(destination);
-  const destinationLabel = useMemo(() => {
-    if (isGeneric) return label(destination as QuickGenericDestination);
-    return shownProjects.find((p) => p.slug === destination)?.title ?? "";
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [destination, shownProjects, locale]);
 
   /* The total and the currency it is in  see "Money" above. */
   const total = custom ? Number(custom) : amount;
@@ -152,7 +143,7 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
     addToCart(
       isGeneric
         ? {
-            titleKey: destination === "where-needed" ? "whereNeedGreatest" : destination,
+            titleKey: quickTitleKey(destination),
             typeKey: "project",
             freqKey: freq,
             amount: total,
@@ -207,61 +198,10 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
     ? 100
     : Math.round(((Math.max(0, presetIndex) + 1) / Math.max(1, presets.amounts.length)) * 100);
 
-  /* ── The destination select ───────────────────────────────────────────
-     Radix in a portal, so the list is never clipped by the disc. The content
-     carries `mia-scope` so the site's tokens and fonts reach it outside the
-     page's own tree. */
-  const destinationSelect = (id: string) => (
-    <SelectPrimitive.Root value={destination} onValueChange={setDestination} dir={dir}>
-      <SelectPrimitive.Trigger id={`${id}-destination`} className="mia-sel-trigger tv-ring-sel" aria-label={tRing("destLabel")}>
-        <SelectPrimitive.Value>{destinationLabel}</SelectPrimitive.Value>
-        <SelectPrimitive.Icon className="mia-sel-icon">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </SelectPrimitive.Icon>
-      </SelectPrimitive.Trigger>
-      <SelectPrimitive.Portal>
-        <SelectPrimitive.Content className="mia-scope mia-sel-content" dir={dir} position="popper" sideOffset={6} collisionPadding={12}>
-          <SelectPrimitive.ScrollUpButton className="mia-sel-scroll" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 15 6-6 6 6" /></svg>
-          </SelectPrimitive.ScrollUpButton>
-          <SelectPrimitive.Viewport className="mia-sel-viewport">
-            {config.genericDestinations.length ? (
-              <SelectPrimitive.Group>
-                <SelectPrimitive.Label className="mia-sel-group">{tHome("projectSelectLabel")}</SelectPrimitive.Label>
-                {config.genericDestinations.map((g) => (
-                  <SelectPrimitive.Item key={g} value={g} className="mia-sel-item">
-                    <SelectPrimitive.ItemText>{label(g)}</SelectPrimitive.ItemText>
-                    <SelectPrimitive.ItemIndicator className="mia-sel-check">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5L20 7" /></svg>
-                    </SelectPrimitive.ItemIndicator>
-                  </SelectPrimitive.Item>
-                ))}
-              </SelectPrimitive.Group>
-            ) : null}
-            {shownProjects.length ? (
-              <SelectPrimitive.Group>
-                <SelectPrimitive.Label className="mia-sel-group">{tNav("projects")}</SelectPrimitive.Label>
-                {shownProjects.map((p) => (
-                  <SelectPrimitive.Item key={p.slug} value={p.slug} className="mia-sel-item">
-                    <SelectPrimitive.ItemText>{p.title}</SelectPrimitive.ItemText>
-                    {p.regionLabel ? <span className="mia-sel-meta" aria-hidden="true">{p.regionLabel}</span> : null}
-                    <SelectPrimitive.ItemIndicator className="mia-sel-check">
-                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5L20 7" /></svg>
-                    </SelectPrimitive.ItemIndicator>
-                  </SelectPrimitive.Item>
-                ))}
-              </SelectPrimitive.Group>
-            ) : null}
-          </SelectPrimitive.Viewport>
-          <SelectPrimitive.ScrollDownButton className="mia-sel-scroll" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
-          </SelectPrimitive.ScrollDownButton>
-        </SelectPrimitive.Content>
-      </SelectPrimitive.Portal>
-    </SelectPrimitive.Root>
-  );
+  const generics: QuickCause[] = config.genericDestinations.map((g) => ({ value: g, label: label(g) }));
+  const projectCauses: QuickCause[] = shownProjects.map((p) => ({ value: p.slug, label: p.title, meta: p.regionLabel, image: p.image }));
+  /* The dashboard's own title for this language, else the site copy. */
+  const title = config.titles[locale]?.trim() || tRing("title");
 
   /* The disc's selected state is the dark-surface pick: brand fill, navy text
      (ToplamVakfi-design/CLAUDE.md), so it keys off `data-on`, not the light
@@ -275,7 +215,7 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
       </svg>
 
       <div className="tv-ring-disc">
-        <h2 id="quick-title" className="tv-ring-title">{tRing("title")}</h2>
+        <h2 id="quick-title" className="tv-ring-title">{title}</h2>
         <span className="tv-ring-sub">{tRing("sub")}</span>
 
         <div className="tv-ring-step">
@@ -296,7 +236,19 @@ export default function QuickDonateBar({ config, projects }: { config: QuickDona
 
         {hasDestinations || config.allowCustomAmount ? (
           <div className="tv-ring-row">
-            {hasDestinations ? destinationSelect("qr") : null}
+            {hasDestinations ? (
+              <QuickCauseSelect
+                value={destination}
+                onChange={setDestination}
+                generics={generics}
+                projects={projectCauses}
+                genericsHeading={tHome("projectSelectLabel")}
+                projectsHeading={tNav("projects")}
+                caption={tRing("destLabel")}
+                dir={dir}
+                tone="dark"
+              />
+            ) : null}
             {config.allowCustomAmount ? (
               <label className="tv-ring-free" data-active={custom ? "true" : "false"}>
                 <small dir="ltr">{symbol}</small>

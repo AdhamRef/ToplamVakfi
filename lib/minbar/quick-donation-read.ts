@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { parseQuickDonation, type QuickDonationConfig } from "./quick-donation";
 
@@ -21,3 +22,12 @@ export async function readQuickDonation(): Promise<QuickDonationConfig> {
     return parseQuickDonation(null);
   }
 }
+
+/**
+ * The same config for the shell, which every public page renders. Cached under
+ * the homepage's tag, so saving in the dashboard refreshes both surfaces.
+ */
+export const readQuickDonationCached = unstable_cache(readQuickDonation, ["tv-quick-donation"], {
+  revalidate: 60,
+  tags: ["minbar-home"],
+});

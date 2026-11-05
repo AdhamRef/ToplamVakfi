@@ -261,9 +261,10 @@
 .mia-scope .fd-item-text { display: grid; gap: 2px; min-width: 0; }
 .mia-scope .fd-item small { display: block; color: var(--fd-muted); font-size: 12px; }
 .mia-scope .fd-item b { color: var(--fd-ink); font-size: 14px; font-weight: 800; overflow-wrap: anywhere; unicode-bidi: isolate; }
-.mia-scope .fd-map { min-height: 200px; display: grid; place-items: center; text-align: center; padding: 26px; background: linear-gradient(135deg, #eef6fb, #fff); }
-.mia-scope .fd-map > div > svg { width: 34px; height: 34px; color: var(--fd-ink-brand); }
-.mia-scope .fd-map p { margin: 12px 0 10px; color: var(--fd-muted); font-size: 12.5px; }
+.mia-scope .fd-map { overflow: hidden; padding: 0; text-align: center; }
+.mia-scope .fd-map-frame { display: block; width: 100%; height: 260px; border: 0; }
+.mia-scope .fd-map-foot { padding: 14px 18px 18px; background: linear-gradient(135deg, #eef6fb, #fff); }
+.mia-scope .fd-map p { margin: 0 0 10px; color: var(--fd-muted); font-size: 12.5px; }
 
 /* Sent state (partner / volunteer). */
 .mia-scope .fd-done { display: grid; justify-items: center; gap: 14px; padding: 44px 30px; text-align: center; }

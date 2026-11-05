@@ -247,3 +247,36 @@ export function quickTitleFor(config: QuickDonationConfig, locale: string): stri
   const t = config.titles[locale]?.trim();
   return t || null;
 }
+
+/* ── What the two quick-donation surfaces share ──────────────────────────── */
+
+/** A project as the quick-donation select shows it, and no more: this reaches the page's payload. */
+export interface QuickProject {
+  id: string;
+  slug: string;
+  title: string;
+  image: string | null;
+  regionLabel: string | null;
+}
+
+/** The projects the dashboard allows in the select. */
+export function quickAllowedProjects<T extends { id: string }>(config: QuickDonationConfig, projects: readonly T[]): T[] {
+  if (config.projectsMode === "none") return [];
+  if (config.projectsMode === "all") return [...projects];
+  const allow = new Set(config.projectIds);
+  return projects.filter((p) => allow.has(p.id));
+}
+
+/** The default destination as an option value: a generic id or a project slug. */
+export function quickInitialDestination(config: QuickDonationConfig, projects: ReadonlyArray<{ id: string; slug: string }>): string {
+  const d = config.defaultDestination;
+  if (d && (config.genericDestinations as string[]).includes(d)) return d;
+  const byId = d ? projects.find((p) => p.id === d) : undefined;
+  if (byId) return byId.slug;
+  return config.genericDestinations[0] ?? projects[0]?.slug ?? "";
+}
+
+/** The cart's `titleKey` for a generic destination, resolved to wording at render time. */
+export function quickTitleKey(destination: string): string {
+  return destination === "where-needed" ? "whereNeedGreatest" : destination;
+}

@@ -19,8 +19,10 @@ export const ORG = {
   /** Year the foundation was established. */
   foundedYear: 1995,
   address: "Mimar Sinan Cd. No:38, Bağlar, 34209 Bağcılar / İstanbul",
-  /** Google Maps search for {@link ORG.address}, as linked from the contact page. */
-  mapUrl: "https://maps.google.com/?q=Mimar+Sinan+Cd.+No:38+Ba%C4%9Flar+Ba%C4%9Fc%C4%B1lar+Istanbul",
+  /** The foundation's own Google Maps listing; every address on the site links here. */
+  mapUrl: "https://maps.app.goo.gl/FpaxvF9UNr8L8acF7",
+  /** The same place for the contact page's embedded map (a short link cannot be embedded). */
+  mapEmbedUrl: "https://maps.google.com/maps?q=41.0222548,28.8254831&z=17&output=embed",
   email: "info@toplumsalvakfi.org",
   /** Display form. `whatsapp` below is the same line in dial format. */
   phone: "+90 212 582 79 70",

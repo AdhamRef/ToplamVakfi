@@ -73,7 +73,6 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
       // picks and how it ranks them. The items themselves are edited in the pages around it.
       { key: "siteContent", get title() { return dt("ترتيب الصفحة الرئيسية"); }, href: "/dashboard/homepage-layout", icon: "layoutTemplate", keywords: ["homepage", "home", "layout", "order", "sections", "arrange", "الرئيسية", "ترتيب", "أقسام", "أولوية", "priority"] },
       { key: "siteContent", get title() { return dt("التبرع السريع"); }, href: "/dashboard/quick-donation", icon: "heartHandshake", keywords: ["quick", "donation", "donate", "amounts", "presets", "سريع", "مبالغ", "مقترحة", "dock"] },
-      { key: "siteContent", get title() { return dt("نصوص الشهادات"); }, href: "/dashboard/certificates", icon: "award", keywords: ["certificate", "certificates", "receipt", "thanks", "شهادة", "شهادات", "إيصال", "شكر"] },
       // The basket's own steps: the "support the team" switch and amounts, and the
       // cross-sell campaigns offered under the rows  none of it per campaign.
       { key: "campaigns", get title() { return dt("إعدادات السلة"); }, href: "/dashboard/cart-settings", icon: "shoppingCart", keywords: ["cart", "basket", "السلة", "team", "support", "دعم", "الفريق", "upsell", "suggestions", "مقترحات", "amounts", "مبالغ"] },
@@ -134,7 +133,6 @@ export const DASHBOARD_NAV_GROUPS: DashboardNavGroup[] = [
   {
     get group() { return dt("الإدارة"); },
     items: [
-      { key: "archive", get title() { return dt("الأرشيف"); }, href: "/dashboard/archive/collections", icon: "archive", keywords: ["archive", "files", "assets", "أرشيف", "ملفات"] },
       { key: "team", get title() { return dt("الفريق"); }, href: "/dashboard/users/team", icon: "userCog", keywords: ["team", "staff", "permissions", "صلاحيات"] },
       { key: "generalSettings", get title() { return dt("الإعدادات"); }, href: "/dashboard/general/payment-gateways", icon: "settings", keywords: ["settings", "payment", "gateways", "stripe"] },
       { key: "logs", get title() { return dt("سجلات النظام"); }, href: "/dashboard/logs", icon: "scrollText", keywords: ["logs", "audit", "system"] },
@@ -194,7 +192,7 @@ export const DASHBOARD_PERMISSION_ROWS: {
   { key: "ticker", get group() { return dt("محتوى الموقع"); }, get title() { return dt("شريط التبرعات"); } },
   // One key for the whole "محتوى الموقع" group. Was enforced by every /api/* content route and
   // shown in the nav, but absent here  the same P3-2 shape: valid, checked, and ungrantable.
-  { key: "siteContent", get group() { return dt("محتوى الموقع"); }, get title() { return dt("محتوى الموقع (ترتيب الرئيسية، التبرع السريع، نصوص الشهادات…)"); } },
+  { key: "siteContent", get group() { return dt("محتوى الموقع"); }, get title() { return dt("محتوى الموقع (ترتيب الرئيسية، التبرع السريع…)"); } },
   // Group was "التشغيل / التواصل"; التشغيل no longer exists, so these two are plain التواصل.
   { key: "templates", get group() { return dt("التواصل"); }, get title() { return dt("قوالب البريد والمحفّزات"); } },
   // The outbound send log page is gone; `messages` now grants the inbox and the per-channel
@@ -209,11 +207,6 @@ export const DASHBOARD_PERMISSION_ROWS: {
   { key: "referrals", get group() { return dt("التسويق"); }, get title() { return dt("إدارة الروابط والإسناد"); } },
   { key: "pixels", get group() { return dt("التسويق"); }, get title() { return dt("عرض التتبع والتحويلات"); } },
   { key: "platformConnections", get group() { return dt("ربط المنصات والإرسال"); }, get title() { return dt("ربط المنصات والإرسال"); } },
-  // Same P3-2 shape as the five above: `/dashboard/archive` is guarded by this key in
-  // PATH_RULES and every archive API asks for it, but it was in no grant screen  so the archive
-  // was admin-only in practice, and granting the المستندات action below could never take effect
-  // because its holder could not reach the archive at all.
-  { key: "archive", get group() { return dt("الإدارة"); }, get title() { return dt("الأرشيف (ملفات التسويق والمجموعات)"); } },
   { key: "team", get group() { return dt("الإدارة"); }, get title() { return dt("الفريق"); } },
   // Today this key controls only the payment-gateway page (main gateway, PayFor):
   // where every new donation's money goes. Labelled so it is granted knowingly.
@@ -253,16 +246,5 @@ export const ACTION_PERMISSION_ROWS: {
     key: "platformConnectionsAdmin",
     get title() { return dt("ربط المنصات: حذف وإدارة كاملة"); },
     get description() { return dt("حذف إعدادات مزوّد وعرض حالته الكاملة. يشمل الحفظ والاختبار. صلاحية حساسة جدًا."); },
-  },
-  // Enforced by app/api/admin/archive/_auth.ts on every DOCUMENTS listing, but it appeared in no
-  // grant screen and  unlike archiveUpload/Delete/Analyze  is not derived from "archive", so
-  // nobody but an admin could hold it: a member of staff given the archive returned an
-  // unexplained 403 the moment they opened المستندات. It stays a separate grant rather than
-  // riding on "archive" because the two hold different things: marketing files on one side,
-  // contracts and licences on the other.
-  {
-    key: "archiveDocuments",
-    get title() { return dt("الأرشيف: المستندات الرسمية"); },
-    get description() { return dt("الوصول إلى ملفات المستندات (العقود، التراخيص، الملفات الرسمية) داخل الأرشيف. تُمنح مع صلاحية «الأرشيف»، ولا تُشتق منها لأن محتواها أكثر حساسية من ملفات التسويق."); },
   },
 ];
