@@ -310,7 +310,7 @@ test("read-only localization audit retains actionable item details", () => {
   assert.match(card, /emptyFields/);
   assert.match(card, /identicalToArabicFields/);
   assert.match(card, /ملاحظات جودة العربية/);
-  assert.match(card, /label="حقول فارغة" value=\{totals\.emptyFields\}/);
+  assert.match(card, /label=\{dt\("حقول فارغة"\)\} value=\{totals\.emptyFields\}/);
   assert.doesNotMatch(card, /حقول ناقصة أوفارغة/);
 });
 

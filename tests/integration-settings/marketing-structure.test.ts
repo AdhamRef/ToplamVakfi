@@ -84,7 +84,6 @@ test("legacy marketing routes have explicit redirects", () => {
 test("dashboard navigation permissions stay aligned with protected routes", () => {
   assert.equal(pathToDashboardPermission("/dashboard/cart-settings"), "campaigns");
   assert.equal(pathToDashboardPermission("/dashboard/telegram"), "platformConnectionsAdmin");
-  assert.equal(pathToDashboardPermission("/dashboard/archive/collections"), "archive");
 
   const content = DASHBOARD_NAV_GROUPS.find((group) => group.group === "محتوى الموقع");
   assert.equal(content?.items.find((item) => item.href === "/dashboard/cart-settings")?.key, "campaigns");
@@ -94,8 +93,6 @@ test("dashboard navigation permissions stay aligned with protected routes", () =
   assert.equal(telegram?.key, "platformConnectionsAdmin");
   assert.equal(telegram?.adminOnly, true);
 
-  const admin = DASHBOARD_NAV_GROUPS.find((group) => group.group === "الإدارة");
-  assert.equal(admin?.items.find((item) => item.href === "/dashboard/archive/collections")?.key, "archive");
 });
 
 test("Telegram dashboard has the same admin-only boundary as its setup API", () => {

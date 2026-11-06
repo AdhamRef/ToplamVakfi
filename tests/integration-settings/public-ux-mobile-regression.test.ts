@@ -74,7 +74,7 @@ test("mobile donor layouts constrain wide content to the viewport", () => {
 
 test("guest checkout rejects an empty phone that is only a dial code", () => {
   const page = read("components/minbar/checkout/CheckoutPage.tsx");
-  assert.match(page, /const phoneDigits = phone\.replace\(\/\\D\/g, ""\)/);
+  assert.match(page, /const phoneDigits = digitsOnly\(phone\)/);
   assert.match(page, /phoneDigits\.length < 7/);
 });
 

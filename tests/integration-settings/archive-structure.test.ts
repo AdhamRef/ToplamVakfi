@@ -1,32 +1,29 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-
-const read = (path: string) => readFileSync(path, "utf8");
+import { existsSync } from "node:fs";
+import { DASHBOARD_NAV_HREFS_ORDERED } from "../../lib/dashboard/nav-config";
+import { DASHBOARD_PERMISSION_KEYS } from "../../lib/dashboard/permissions";
 
 /**
- * Was operations-archive-structure.test.ts. Every operations assertion in it described pages that
- * no longer exist  the التشغيل nav group, the five approved operations pages, their legacy
- * redirect targets, and the donor-reactivation masking page. Those tests could only fail, and a
- * test that pins removed behaviour is worse than no test. What remains is the archive half, which
- * is untouched by that removal.
+ * The archive and the certificate wording left the dashboard. Only the interfaces went: the
+ * Prisma models, their rows and the stored files stay, and lib/archive stays for the code that
+ * still imports it.
  */
 
-test("archive is protected before nested page reads", () => {
-  const source = read("app/(dashboard)/dashboard/archive/layout.tsx");
-  assert.match(source, /getServerSession/);
-  assert.match(source, /resolveDashboardPageAccess/);
-  assert.match(source, /redirect\(access\.redirectTo\)/);
+test("archive and certificate wording pages and APIs are removed", () => {
+  for (const path of [
+    "app/(dashboard)/dashboard/archive",
+    "app/api/admin/archive",
+    "app/(dashboard)/dashboard/certificates",
+    "app/api/certificates/copy",
+  ]) {
+    assert.equal(existsSync(path), false, `${path} must be removed`);
+  }
 });
 
-test("archive root and duplicate upload routes redirect to canonical pages", () => {
-  const redirects: Record<string, string> = {
-    "app/(dashboard)/dashboard/archive/page.tsx": "/dashboard/archive/collections",
-    "app/(dashboard)/dashboard/archive/marketing-files/page.tsx": "/dashboard/archive/assets?category=MARKETING",
-    "app/(dashboard)/dashboard/archive/documents/page.tsx": "/dashboard/archive/assets?category=DOCUMENTS",
-  };
-
-  for (const [path, destination] of Object.entries(redirects)) {
-    assert.ok(read(path).includes(`redirect("${destination}")`));
+test("archive and certificate wording are absent from navigation and permissions", () => {
+  for (const prefix of ["/dashboard/archive", "/dashboard/certificates"]) {
+    assert.equal(DASHBOARD_NAV_HREFS_ORDERED.some((href) => href.startsWith(prefix)), false);
   }
+  assert.equal((DASHBOARD_PERMISSION_KEYS as readonly string[]).includes("archive"), false);
 });

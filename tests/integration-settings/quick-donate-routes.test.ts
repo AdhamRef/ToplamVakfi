@@ -11,8 +11,8 @@ import { QUICK_DONATE_ROUTES, routeForPathname, slugFor } from "../../lib/minbar
 test("pathnames resolve to their page, including locale slugs and list/detail pairs", () => {
   assert.equal(routeForPathname("/ar"), "home");
   assert.equal(routeForPathname("/en/"), "home");
-  assert.equal(routeForPathname("/en/projects"), "projects");
-  assert.equal(routeForPathname("/en/projects/some-slug"), "projectDetail");
+  assert.equal(routeForPathname("/en/bagislar"), "projects");
+  assert.equal(routeForPathname("/en/bagislar/some-slug"), "projectDetail");
   assert.equal(routeForPathname("/en/blog"), "blog");
   assert.equal(routeForPathname("/en/blog/257-rural-road-repair-recovery"), "article");
   assert.equal(routeForPathname("/en/achievements-and-reports"), "reports");
