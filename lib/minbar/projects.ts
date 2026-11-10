@@ -400,6 +400,72 @@ export async function getProjectDonorCount(projectId: string): Promise<number> {
 }
 
 /**
+ * A paid gift to a project, as its page lists it. No name, email or donor id
+ * leaves the server: donors never chose to be named publicly, so the page
+ * shows each one as an anonymous benefactor with the amount and when.
+ */
+export interface MinbarRecentDonation {
+  id: string;
+  /** USD. */
+  amount: number;
+  createdAt: string;
+  /** Part of a recurring gift (a subscription's charge). */
+  recurring: boolean;
+}
+
+export interface MinbarProjectDonations {
+  /** Newest first. */
+  recent: MinbarRecentDonation[];
+  /** The largest single gift, when there is one. */
+  top: MinbarRecentDonation | null;
+}
+
+const DONATION_ROW_SELECT = {
+  id: true,
+  amount: true,
+  amountUSD: true,
+  createdAt: true,
+  donation: { select: { currency: true, subscriptionId: true } },
+} as const;
+
+type DonationRow = {
+  id: string;
+  amount: number;
+  amountUSD: number | null;
+  createdAt: Date;
+  donation: { currency: string; subscriptionId: string | null } | null;
+};
+
+/** The row's USD value: its own, or its amount when the donation was in USD. */
+function donationRowUSD(row: DonationRow): number | null {
+  if (row.amountUSD != null && row.amountUSD > 0) return row.amountUSD;
+  if ((row.donation?.currency ?? "USD").toUpperCase() === "USD" && row.amount > 0) return row.amount;
+  return null;
+}
+
+function toRecentDonation(row: DonationRow): MinbarRecentDonation | null {
+  const amount = donationRowUSD(row);
+  if (amount == null) return null;
+  return { id: row.id, amount, createdAt: row.createdAt.toISOString(), recurring: Boolean(row.donation?.subscriptionId) };
+}
+
+export async function listProjectDonations(projectId: string, take = 5): Promise<MinbarProjectDonations> {
+  try {
+    const where = { campaignId: projectId, donation: PAID_DONATION_FILTER };
+    const [recentRows, topRows] = await Promise.all([
+      prisma.donationItem.findMany({ where, select: DONATION_ROW_SELECT, orderBy: { createdAt: "desc" }, take }),
+      prisma.donationItem.findMany({ where: { ...where, amountUSD: { gt: 0 } }, select: DONATION_ROW_SELECT, orderBy: { amountUSD: "desc" }, take: 1 }),
+    ]);
+    const recent = (recentRows as DonationRow[]).map(toRecentDonation).filter((d): d is MinbarRecentDonation => d !== null);
+    const top = topRows.length ? toRecentDonation(topRows[0] as DonationRow) : null;
+    return { recent, top };
+  } catch (err) {
+    console.error("listProjectDonations failed:", err);
+    return { recent: [], top: null };
+  }
+}
+
+/**
  * Donors' public messages on a project, newest first. Only the first name
  * and avatar are exposed  never an email.
  */

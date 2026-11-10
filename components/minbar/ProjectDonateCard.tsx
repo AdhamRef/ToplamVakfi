@@ -14,7 +14,7 @@ import GiveFrequencyDialog, { type GiveIntent } from "@/components/minbar/GiveFr
 import type { MinbarProject } from "@/lib/minbar/projects";
 import { useMinbarMoney } from "@/hooks/useMinbarMoney";
 import { shareProgress, useShareWording } from "@/hooks/useShareWording";
-import { useProjectPricing } from "@/hooks/useProjectPricing";
+import { CARD_MAX_CHIPS, useProjectPricing } from "@/hooks/useProjectPricing";
 import { useDonationAmount } from "@/hooks/useDonationAmount";
 import { cssImage } from "@/lib/minbar/image-url";
 
@@ -23,9 +23,10 @@ import { cssImage } from "@/lib/minbar/image-url";
  * Projects.dc.html` (styles: `styles/minbar/pages/projects.css`, `tvpc-*`).
  *
  * The photograph on top, then the title, a two-line summary, the
- * "NN% complete" row over the funding bar, three quick amounts beside a free
- * field (the first preselected, as drawn), and the two actions: "give to this
- * project" and "+ add to cart".
+ * "NN% complete" row over the funding bar, the campaign's own suggested
+ * amounts (from its record, up to six) with the free field filling the last
+ * row, and the two actions: "give to this project" and "+ add to cart". The
+ * dashboard's first card pick starts selected, else the first amount.
  *
  * Every figure is the campaign's own: the percentage and bar only when it has
  * a fixed goal, the goal (and what has been raised, when anything has) as the
@@ -65,16 +66,21 @@ export default function ProjectDonateCard({ project, width, tag }: ProjectDonate
 
   const { chips: amountChips, sharePrice } = useProjectPricing(project, QUICK_AMOUNTS, { card: true });
 
-  /* Three chips and the free field, as drawn. The chips are the campaign's
-     card picks (dashboard), else the defaults, or for a shares campaign its
-     card share counts. Amount chips carry USD with a label that may be an
-     admin's figure in the visitor's currency; picked by position. */
+  /* The campaign's own suggestions, or for a shares campaign its share counts.
+     Amount chips carry USD with a label that may be an admin's figure in the
+     visitor's currency; picked by position. */
+  const shareCounts = shares ? (shares.counts.length ? shares.counts : shares.cardCounts).slice(0, CARD_MAX_CHIPS) : [];
   const options = shares
-    ? shares.cardCounts.slice(0, 3).map((count) => ({ value: count, label: countLabel(count, formatNumber(count)) }))
-    : amountChips.slice(0, 3).map((c) => ({ value: c.usd, label: c.label }));
+    ? shareCounts.map((count) => ({ value: count, label: countLabel(count, formatNumber(count)) }))
+    : amountChips.map((c) => ({ value: c.usd, label: c.label }));
 
-  /* The design preselects the first amount. */
-  const [picked, setPicked] = useState<number | null>(0);
+  /* The dashboard's first card pick starts selected when it is on the card;
+     otherwise the first suggestion. */
+  const featured = shares ? shares.cardCounts[0] : project.cardAmounts[0];
+  const featuredIndex = shares ? shareCounts.indexOf(featured) : amountChips.findIndex((c) => c.local == null && c.usd === featured);
+  const [picked, setPicked] = useState<number | null>(featuredIndex >= 0 ? featuredIndex : 0);
+  /* The free field fills what is left of the chips' last row of three. */
+  const customSpan = 3 - (options.length % 3 || 3) || 3;
   const [custom, setCustom] = useState("");
   /* Bumped on each attempt without a usable amount; keys the chip row so the
      shake replays every time. */
@@ -247,7 +253,10 @@ export default function ProjectDonateCard({ project, width, tag }: ProjectDonate
         </div>
 
         <div key={nudge} className={`tvpc-amounts-row${missingAmount ? " pdc-shake" : ""}`}>
-          <div className="pdc-amounts tvpc-amounts">
+          <span className="tvpc-amounts-label" aria-hidden="true">
+            {shares ? tShares("chooseCount", { unit: unitWord(2) }) : tCard("suggested")}
+          </span>
+          <div className="pdc-amounts tvpc-amounts" role="group" aria-label={shares ? tShares("chooseCount", { unit: unitWord(2) }) : tCard("chooseAmount")}>
             {options.map((option, index) => (
               <button
                 key={index}
@@ -262,20 +271,20 @@ export default function ProjectDonateCard({ project, width, tag }: ProjectDonate
                 {shares ? option.label : <span dir="ltr">{option.label}</span>}
               </button>
             ))}
-          </div>
-          <div className="tvpc-custom">
-            <input
-              value={custom}
-              onChange={(e) => {
-                const next = shares ? digitsOnly(e.target.value).replace(/^0+/, "").slice(0, 6) : decimalAmount(e.target.value);
-                setCustom(next);
-                if (next) setPicked(null);
-              }}
-              inputMode={shares ? "numeric" : "decimal"}
-              placeholder={shares ? tGive("otherCount") : tGive("otherAmount")}
-              aria-label={shares ? tShares("customCountPh") : t("freeAmount")}
-              className="pdc-custom"
-            />
+            <div className="tvpc-custom" style={{ gridColumn: `span ${customSpan}` }}>
+              <input
+                value={custom}
+                onChange={(e) => {
+                  const next = shares ? digitsOnly(e.target.value).replace(/^0+/, "").slice(0, 6) : decimalAmount(e.target.value);
+                  setCustom(next);
+                  if (next) setPicked(null);
+                }}
+                inputMode={shares ? "numeric" : "decimal"}
+                placeholder={shares ? tGive("otherCount") : tGive("otherAmount")}
+                aria-label={shares ? tShares("customCountPh") : t("freeAmount")}
+                className="pdc-custom"
+              />
+            </div>
           </div>
         </div>
         {missingAmount ? (

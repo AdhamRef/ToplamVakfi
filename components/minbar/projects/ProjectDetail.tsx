@@ -1,34 +1,34 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import type { MinbarProject, MinbarProjectComment, MinbarProjectUpdate } from "@/lib/minbar/projects";
+import type { MinbarProject, MinbarProjectComment, MinbarProjectDonations, MinbarProjectUpdate } from "@/lib/minbar/projects";
 import { useMinbarMoney } from "@/hooks/useMinbarMoney";
+import { miaPath } from "@/lib/minbar/routes";
+import { imageUrl } from "@/lib/minbar/image-url";
+import { ORG } from "@/lib/minbar/org";
 import DonationPanel from "./DonationPanel";
 import ProjectHeroMedia from "./ProjectHeroMedia";
 import ProjectVideo from "./ProjectVideo";
 import ProjectComments from "./ProjectComments";
 import ProjectUpdatePost from "./ProjectUpdatePost";
+import { SHARE_SECTION_ID, ShareButton, ShareLinks } from "./ProjectShare";
 
 /**
- * Project detail  `ToplamVakfi-design/Toplum Vakfı Project - *.dc.html`
- * (the six project files share one template). Styles:
- * `styles/minbar/pages/project-detail.css`.
+ * Project detail, laid out like a GoFundMe campaign in the Toplum Vakfı
+ * identity. Styles: `styles/minbar/pages/project-detail.css` (`pd-gf-*`).
  *
- * The photo hero with the category tag and the title at its foot, then the
- * two columns: the story beside the sticky donation sidebar. The story
- * column follows the design's sections  القصة (the description as written in
- * the dashboard), the fact tiles, الميزانية (goal / raised / complete) and
- * آخر التحديثات (the campaign's published updates)  and only draws a section
- * when the campaign has the data for it: no fixed goal, no budget; no update,
- * no updates list. The design's الاحتياج / الأثر paragraphs have no campaign
- * field of their own; an editor writes them as headings in the description.
+ * The title and the campaign's categories on top; then the photos beside the
+ * sticky donation card (ring, giving controls, share, latest donations).
+ * Under the photos: who runs it and the protected-giving badge, the story
+ * (folded with «اقرأ المزيد» when long), donate / share buttons, and every
+ * section the campaign has data for  its film, the fact tiles, الميزانية,
+ * its further photos, آخر التحديثات, then the share card, the organiser and
+ * the donors' messages (posting stays available).
  *
- * Three things the template does not draw are kept because they are the
- * campaign's own content: its film (after the story), its further photos, and
- * donors' messages (posting stays available). The breadcrumb is in the route's
- * JSON-LD only, as the design shows none.
+ * On a phone the donation card comes straight after the photos, then the
+ * story. Nothing the previous layout showed is dropped.
  */
 
 export interface ProjectDetailProps {
@@ -38,9 +38,61 @@ export interface ProjectDetailProps {
   /** Settled donations to this campaign. */
   donorCount: number;
   comments: MinbarProjectComment[];
+  donations?: MinbarProjectDonations;
 }
 
-export default function ProjectDetail({ project, updates, gallery, donorCount, comments }: ProjectDetailProps) {
+/** The story is folded past this height (px) and opens on «اقرأ المزيد». */
+const STORY_FOLD = 360;
+
+const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
+
+function ProjectStory({ project }: { project: MinbarProject }) {
+  const tExtras = useTranslations("ProjectExtras");
+  const body = useRef<HTMLDivElement>(null);
+  const [long, setLong] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useIsoLayoutEffect(() => {
+    const node = body.current;
+    if (node) setLong(node.scrollHeight > STORY_FOLD + 80);
+  }, [project.body]);
+
+  return (
+    <div className={`pd-story${long && !open ? " is-folded" : ""}`}>
+      <div ref={body} className="pd-story-body" id="pd-story-body">
+        {project.body.map((block, index) =>
+          block.kind === "h2" ? (
+            <h3 key={index}>{block.text}</h3>
+          ) : block.kind === "li" ? (
+            <p key={index} className="pd-li">
+              <span aria-hidden="true" />
+              {block.text}
+            </p>
+          ) : (
+            <p key={index}>{block.text}</p>
+          )
+        )}
+      </div>
+      {long ? (
+        <button type="button" className="pd-story-more" aria-expanded={open} aria-controls="pd-story-body" onClick={() => setOpen((v) => !v)}>
+          {open ? tExtras("showLess") : tExtras("readMore")}
+        </button>
+      ) : null}
+    </div>
+  );
+}
+
+function SectionTitle({ children, count }: { children: React.ReactNode; count?: number }) {
+  const { formatNumber } = useMinbarMoney();
+  return (
+    <h2 className="pd-gf-h2">
+      {children}
+      {count ? <span className="pd-gf-count">{formatNumber(count)}</span> : null}
+    </h2>
+  );
+}
+
+export default function ProjectDetail({ project, updates, gallery, donorCount, comments, donations }: ProjectDetailProps) {
   const locale = useLocale();
   const t = useTranslations("projects.tv");
   const tExtras = useTranslations("ProjectExtras");
@@ -56,8 +108,9 @@ export default function ProjectDetail({ project, updates, gallery, donorCount, c
 
   const hasFinancials = project.goal != null && project.goal > 0;
   const pct = hasFinancials ? Math.min((project.raised / (project.goal as number)) * 100, 100) : 0;
+  const remaining = hasFinancials ? Math.max((project.goal as number) - project.raised, 0) : 0;
 
-  /* The design's three fact tiles, from the campaign's own figures only. */
+  /* The design's fact tiles, from the campaign's own figures only. */
   const facts: Array<{ key: string; value: string; label: string; figure: boolean }> = [
     ...(hasFinancials ? [{ key: "goal", value: format(project.goal as number), label: t("factGoal"), figure: true }] : []),
     ...(project.raised > 0 ? [{ key: "raised", value: format(project.raised), label: t("factRaised"), figure: true }] : []),
@@ -67,21 +120,29 @@ export default function ProjectDetail({ project, updates, gallery, donorCount, c
 
   const heroImages = project.images.length ? project.images : project.image ? [project.image] : [];
 
+  /* The inline «تبرع» brings the donation card into view and onto its first amount. */
+  const toDonate = () => {
+    const card = document.getElementById("pd-aside");
+    if (!card) return;
+    card.scrollIntoView({ behavior: "smooth", block: "center" });
+    card.querySelector<HTMLElement>(".pd-ds-amounts button, .pd-custom")?.focus({ preventScroll: true });
+  };
+
+  const logo = imageUrl("/toplum/logo-mark.png", 96);
+
   return (
-    <div className="pd-page">
-      {/* ── Hero (`.proj-hero-img`): the photo, the tag and title at its foot ── */}
-      <section className="pd-hero">
-        <ProjectHeroMedia images={heroImages} title={project.title} banner />
-        {/* Click-through except for its links, so the photos still swipe. */}
-        <div className="pd-container pd-hero-inner">
+    <div className="pd-page pd-gf">
+      <div className="pd-container">
+        {/* ── Title and categories ─────────────────────────────────────── */}
+        <header className="pd-gf-head">
           {project.categories.length ? (
-            <nav aria-label={tExtras("categories")} className="pd-hero-tags">
+            <nav aria-label={tExtras("categories")} className="pd-gf-tags">
               {project.categories.map((category) => (
                 <Link
                   key={category.id}
                   /* By id: the category route resolves it to the canonical, localised page. */
                   href={`/${locale}/category/${category.id}`}
-                  className="pd-tag-lg"
+                  className="pd-gf-tag"
                 >
                   {category.label}
                 </Link>
@@ -89,101 +150,156 @@ export default function ProjectDetail({ project, updates, gallery, donorCount, c
             </nav>
           ) : null}
           <h1>{project.title}</h1>
-        </div>
-      </section>
+        </header>
 
-      {/* ── Story beside the donation sidebar (`.proj-layout`) ──────────────── */}
-      {/* No `overflow: hidden` here: it would make this grid the sidebar's
-          sticky container and the sidebar would never stick. */}
-      <div id="pd-layout" className="pd-container pd-layout">
-        <div className="pd-project-main">
-          <h2>{t("story")}</h2>
-          {project.body.map((block, index) =>
-            block.kind === "h2" ? (
-              <h2 key={index}>{block.text}</h2>
-            ) : block.kind === "li" ? (
-              <p key={index} className="pd-li">
-                <span aria-hidden="true" />
-                {block.text}
-              </p>
-            ) : (
-              <p key={index}>{block.text}</p>
-            )
-          )}
+        {/* No `overflow: hidden` here: it would make this grid the card's
+            sticky container and the card would never stick. */}
+        <div id="pd-layout" className="pd-gf-grid">
+          <div className="pd-gf-media">
+            <ProjectHeroMedia images={heroImages} title={project.title} />
+          </div>
 
-          {project.videoUrl ? (
-            <div className="pd-project-video">
-              <h2>{tExtras("video")}</h2>
-              <ProjectVideo url={project.videoUrl} title={project.title} />
+          {/* The card's column runs the full height of the page so it sticks. */}
+          <aside className="pd-aside-col pd-gf-aside">
+            <div className="pd-aside-sticky">
+              <DonationPanel project={project} donorCount={donorCount} donations={donations} />
             </div>
-          ) : null}
+          </aside>
 
-          {facts.length ? (
-            <div className="pd-facts">
-              {facts.map((fact) => (
-                <div key={fact.key} className="pd-fact">
-                  {fact.figure ? <b dir="ltr">{fact.value}</b> : <b>{fact.value}</b>}
-                  <span>{fact.label}</span>
-                </div>
-              ))}
+          <div className="pd-gf-body pd-project-main">
+            {/* ── Who runs it, and the protected-giving badge ──────────── */}
+            <div className="pd-gf-org">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="pd-gf-org-logo" src={logo} alt="" width={40} height={40} />
+              <p>{t("organizedBy", { name: ORG.legalName })}</p>
             </div>
-          ) : null}
+            <span className="pd-gf-protected">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6Z" />
+                <path d="m9 12 2 2 4-4" />
+              </svg>
+              {t("protected")}
+            </span>
 
-          {hasFinancials ? (
-            <>
-              <h2>{t("budget")}</h2>
-              <div className="pd-budget">
-                <div className="pd-budget-bar" aria-hidden="true">
-                  <span style={{ width: `${pct}%` }} />
-                </div>
-                <div className="pd-budget-row">
-                  <span>
-                    {t("goalLabel")} <b dir="ltr">{format(project.goal as number)}</b>
-                  </span>
-                  <span>
-                    {t("raisedLabel")} <b dir="ltr">{format(project.raised)}</b>
-                  </span>
-                  <span>{t("complete", { pct: formatNumber(Math.round(pct)) })}</span>
-                </div>
-              </div>
-            </>
-          ) : null}
-
-          {gallery.length ? (
-            <>
-              <h2>{t("gallery")}</h2>
-              <div className="pd-gallery">
-                {gallery.map((src, i) => (
-                  <span key={src} role="img" aria-label={`${project.title}  ${i + 1}`} style={{ backgroundImage: `url('${src.replace(/'/g, "%27")}')` }} />
-                ))}
-              </div>
-            </>
-          ) : null}
-
-          {updates.length ? (
-            <section id="updates" className="pd-anchor">
-              <h2>{t("updates")}</h2>
-              <div className="pd-updates">
-                {updates.map((update) => (
-                  <ProjectUpdatePost key={update.id} update={update} projectTitle={project.title} />
-                ))}
+            {/* ── Story ─────────────────────────────────────────────────── */}
+            <section className="pd-gf-section pd-gf-section--story" aria-label={t("story")}>
+              <ProjectStory project={project} />
+              <div className="pd-gf-actions">
+                <button type="button" className="pd-gf-btn pd-gf-btn--donate" onClick={toDonate}>
+                  {t("donateNow")}
+                </button>
+                <ShareButton title={project.title} className="pd-gf-btn" />
               </div>
             </section>
-          ) : null}
 
-          <section id="comments" className="pd-anchor">
-            <h2>{comments.length ? `${tExtras("tabComments")} (${formatNumber(comments.length)})` : tExtras("tabComments")}</h2>
-            <ProjectComments projectId={project.id} initial={comments} />
-          </section>
-        </div>
+            {project.videoUrl ? (
+              <section className="pd-gf-section pd-project-video">
+                <SectionTitle>{tExtras("video")}</SectionTitle>
+                <ProjectVideo url={project.videoUrl} title={project.title} />
+              </section>
+            ) : null}
 
-        {/* The sidebar column runs the full height of the row so its content
-            can stick beside the story. */}
-        <aside className="pd-aside-col">
-          <div className="pd-aside-sticky">
-            <DonationPanel project={project} donorCount={donorCount} />
+            {facts.length || hasFinancials ? (
+              <section className="pd-gf-section">
+                {hasFinancials ? <SectionTitle>{t("budget")}</SectionTitle> : null}
+                {facts.length ? (
+                  <div className="pd-facts">
+                    {facts.map((fact) => (
+                      <div key={fact.key} className="pd-fact">
+                        {fact.figure ? <b dir="ltr">{fact.value}</b> : <b>{fact.value}</b>}
+                        <span>{fact.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+                {hasFinancials ? (
+                  <div className="pd-budget">
+                    <div className="pd-budget-bar" aria-hidden="true">
+                      <span style={{ width: `${pct}%` }} />
+                    </div>
+                    <div className="pd-budget-row">
+                      <span>
+                        {t("goalLabel")} <b dir="ltr">{format(project.goal as number)}</b>
+                      </span>
+                      <span>
+                        {t("raisedLabel")} <b dir="ltr">{format(project.raised)}</b>
+                      </span>
+                      <span>{t("complete", { pct: formatNumber(Math.round(pct)) })}</span>
+                    </div>
+                  </div>
+                ) : null}
+              </section>
+            ) : null}
+
+            {gallery.length ? (
+              <section className="pd-gf-section">
+                <SectionTitle count={gallery.length}>{t("gallery")}</SectionTitle>
+                <div className="pd-gallery">
+                  {gallery.map((src, i) => (
+                    <span key={src} role="img" aria-label={`${project.title}  ${i + 1}`} style={{ backgroundImage: `url('${src.replace(/'/g, "%27")}')` }} />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            {updates.length ? (
+              <section id="updates" className="pd-gf-section pd-anchor">
+                <SectionTitle count={updates.length}>{t("updates")}</SectionTitle>
+                <div className="pd-updates">
+                  {updates.map((update) => (
+                    <ProjectUpdatePost key={update.id} update={update} projectTitle={project.title} />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            {/* ── Sharing makes a difference ─────────────────────────────── */}
+            <section id={SHARE_SECTION_ID} className="pd-gf-section pd-anchor">
+              <SectionTitle>{t("shareTitle")}</SectionTitle>
+              <p className="pd-gf-lead">{t("shareLead")}</p>
+              <div className="pd-share-card">
+                <div className="pd-share-preview">
+                  <div className="pd-share-preview-text">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={logo} alt="" width={28} height={28} />
+                    <b>{project.title}</b>
+                    <span>{t("organizedBy", { name: ORG.legalName })}</span>
+                  </div>
+                  <div className="pd-share-preview-img" style={project.image ? { backgroundImage: `url('${project.image.replace(/'/g, "%27")}')` } : undefined}>
+                    {hasFinancials && remaining > 0 ? (
+                      <span className="pd-share-chip">{t("toGoal", { amount: format(remaining) })}</span>
+                    ) : null}
+                    <span className="pd-share-chip pd-share-chip--cta">{t("donateNow")}</span>
+                  </div>
+                </div>
+                <ShareLinks title={project.title} />
+              </div>
+            </section>
+
+            {/* ── The organiser ──────────────────────────────────────────── */}
+            <section className="pd-gf-section">
+              <SectionTitle>{t("organizer")}</SectionTitle>
+              <div className="pd-gf-organizer">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img className="pd-gf-org-logo" src={logo} alt="" width={48} height={48} />
+                <div>
+                  <b>{ORG.legalName}</b>
+                  <span>{t("organizerRole")}</span>
+                  <span dir="ltr" className="pd-gf-organizer-place">{ORG.address}</span>
+                  <Link href={miaPath("contact", locale)} className="pd-gf-btn pd-gf-btn--sm">
+                    {t("contactOrganizer")}
+                  </Link>
+                </div>
+              </div>
+            </section>
+
+            {/* ── Donors' messages ───────────────────────────────────────── */}
+            <section id="comments" className="pd-gf-section pd-anchor">
+              <SectionTitle count={comments.length}>{tExtras("tabComments")}</SectionTitle>
+              <ProjectComments projectId={project.id} initial={comments} />
+            </section>
           </div>
-        </aside>
+        </div>
       </div>
     </div>
   );

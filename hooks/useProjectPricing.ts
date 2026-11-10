@@ -22,20 +22,29 @@ export interface PriceChip {
  * their USD equivalent at the same rate the page displays with, so the
  * figure the donor picked is the figure they see in the basket.
  *
- * `card`: the campaign card's three chips  the first three of the visitor's
- * per-currency list when there is one, else the card picks
- * (`MinbarProject.cardAmounts`). The campaign page passes nothing and gets
- * the whole list.
+ * `card`: the campaign card's chips  the campaign's own suggested amounts
+ * from its database record (the visitor's per-currency list when there is
+ * one), up to {@link CARD_MAX_CHIPS}. A campaign with no suggestions of its
+ * own falls back to the card defaults (`MinbarProject.cardAmounts`). The
+ * campaign page passes nothing and gets the whole list.
  */
+export const CARD_MAX_CHIPS = 6;
+
 export function useProjectPricing(project: MinbarProject, fallbackAmounts: readonly number[], { card = false }: { card?: boolean } = {}) {
   const { format, formatLocal, code, rate } = useMinbarMoney();
 
   const chips = useMemo<PriceChip[]>(() => {
     const local = project.suggestedAmountsByCurrency?.[code];
     if (local?.length && rate && rate > 0) {
-      return (card ? local.slice(0, 3) : local).map((value) => ({ usd: value / rate, label: formatLocal(value), local: value }));
+      return (card ? local.slice(0, CARD_MAX_CHIPS) : local).map((value) => ({ usd: value / rate, label: formatLocal(value), local: value }));
     }
-    const usd = card ? project.cardAmounts : project.suggestedAmounts?.length ? project.suggestedAmounts : fallbackAmounts;
+    const usd = card
+      ? project.suggestedAmounts?.length
+        ? project.suggestedAmounts.slice(0, CARD_MAX_CHIPS)
+        : project.cardAmounts
+      : project.suggestedAmounts?.length
+        ? project.suggestedAmounts
+        : fallbackAmounts;
     return usd.map((value) => ({ usd: value, label: format(value) }));
   }, [project.suggestedAmountsByCurrency, project.suggestedAmounts, project.cardAmounts, card, fallbackAmounts, code, rate, format, formatLocal]);
 

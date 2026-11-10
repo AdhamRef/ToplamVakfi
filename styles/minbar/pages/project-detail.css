@@ -213,3 +213,199 @@
   .mia-scope .pd-ds-freq { grid-template-columns: repeat(2, minmax(0, 1fr)); border-radius: 14px; }
   .mia-scope .pd-ds-freq > button { border-radius: 11px; }
 }
+
+/* ══ GoFundMe-style campaign page (ProjectDetail `pd-gf-*`) ══════════════════
+   Title on top; the photos beside the sticky donation card; the story and its
+   sections under the photos. The Toplum identity carries through: navy type,
+   the sky-blue accent and the CTA gradient. */
+.mia-scope .pd-page.pd-gf { background: #fff; padding-bottom: 70px; }
+.mia-scope .pd-gf-head { padding: 30px 0 20px; }
+.mia-scope .pd-gf-head h1 {
+  margin: 0; max-width: 30ch; color: #062442; font-size: clamp(24px, 2.5vw, 34px); font-weight: 800; line-height: 1.3; text-wrap: balance;
+}
+.mia-scope .pd-gf-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.mia-scope .pd-gf-tag {
+  display: inline-flex; align-items: center; padding: 5px 12px; border-radius: 999px; background: #eaf6fd; color: #0077b3;
+  font-size: 12px; font-weight: 800; line-height: 1.4; transition: background .15s, color .15s;
+}
+.mia-scope .pd-gf-tag:hover { background: #00a2e0; color: #fff; }
+
+.mia-scope .pd-gf-grid {
+  display: grid; grid-template-columns: minmax(0, 1fr) 390px; grid-template-areas: "media aside" "body aside";
+  column-gap: 44px; align-items: start;
+}
+.mia-scope .pd-gf-media { grid-area: media; min-width: 0; }
+.mia-scope .pd-gf-media .pd-hero-media {
+  aspect-ratio: 16 / 10 !important; border: 0 !important; border-radius: 22px !important; background: #eaf2f8 !important;
+  box-shadow: 0 18px 40px rgba(2,52,88,.12);
+}
+.mia-scope .pd-gf-aside { grid-area: aside; }
+.mia-scope .pd-gf-aside .pd-aside-sticky { top: calc(var(--mia-head-h, 78px) + 20px); }
+.mia-scope .pd-gf-body { grid-area: body; min-width: 0; padding-top: 22px; }
+
+/* Who runs it, and the protected badge. */
+.mia-scope .pd-gf-org { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.mia-scope .pd-gf-org p { margin: 0 !important; color: #062442 !important; font-size: 14.5px !important; font-weight: 800; }
+.mia-scope .pd-gf-org-logo {
+  flex-shrink: 0; width: 40px; height: 40px; padding: 5px; box-sizing: border-box; border-radius: 50%; object-fit: contain;
+  background: #fff; border: 1px solid #e2eaf0; box-shadow: 0 4px 10px rgba(2,52,88,.08);
+}
+.mia-scope .pd-gf-protected {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 8px; background: #e7f7ef; color: #1f7a4d;
+  font-size: 12px; font-weight: 800;
+}
+.mia-scope .pd-gf-protected svg { width: 15px; height: 15px; }
+
+/* Sections, each ruled off from the last. */
+.mia-scope .pd-gf-section { padding: 28px 0; border-top: 1px solid #e6eef3; }
+.mia-scope .pd-gf-section--story { margin-top: 18px; }
+.mia-scope .pd-project-main .pd-gf-h2 {
+  display: flex; align-items: center; gap: 10px; margin: 0 0 16px; color: #062442; font-size: 21px; font-weight: 800; line-height: 1.4;
+}
+.mia-scope .pd-gf-count {
+  display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 7px; box-sizing: border-box; border-radius: 8px;
+  background: #eef3f7; color: #33495e; font-size: 12px; font-weight: 800;
+}
+.mia-scope .pd-project-main .pd-gf-lead { margin: -6px 0 16px; }
+
+/* The story, folded when long. */
+.mia-scope .pd-story-body h3 { margin: 22px 0 8px; color: #062442; font-size: 17px; font-weight: 800; line-height: 1.5; }
+.mia-scope .pd-story-body > :first-child { margin-top: 0; }
+.mia-scope .pd-story.is-folded .pd-story-body {
+  max-height: 360px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent); mask-image: linear-gradient(180deg, #000 62%, transparent);
+}
+.mia-scope .pd-story-more {
+  margin-top: 4px; padding: 0; border: 0; background: none; color: #062442; font-family: inherit; font-size: 14px; font-weight: 800;
+  text-decoration: underline; text-underline-offset: 4px; cursor: pointer;
+}
+.mia-scope .pd-story-more:hover { color: #0077b3; }
+
+/* Pill buttons: donate / share under the story, the organiser's contact. */
+.mia-scope .pd-gf-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 22px; }
+.mia-scope .pd-gf-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 20px; box-sizing: border-box;
+  border: 1.5px solid #d7e3ec; border-radius: 999px; background: #fff; color: #062442;
+  font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer; transition: border-color .15s, background .15s, color .15s, transform .15s;
+}
+.mia-scope .pd-gf-btn svg { width: 17px; height: 17px; }
+.mia-scope .pd-gf-btn:hover { border-color: #00a2e0; color: #0077b3; transform: translateY(-1px); }
+.mia-scope .pd-gf-btn--donate { border-color: transparent; background: var(--cta-gradient); color: #fff; box-shadow: 0 10px 22px rgba(0,162,224,.3); }
+.mia-scope .pd-gf-btn--donate:hover { color: #fff; filter: brightness(.95); }
+.mia-scope .pd-gf-btn--sm { min-height: 38px; padding: 0 18px; font-size: 13px; justify-self: start; margin-top: 10px; }
+.mia-scope .pd-gf-btn:focus-visible { outline: 2px solid #00a2e0; outline-offset: 2px; }
+
+/* "Sharing makes a difference". */
+.mia-scope .pd-share-card { padding: 22px; border-radius: 22px; background: #f4f8fb; }
+.mia-scope .pd-share-preview {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); overflow: hidden; border-radius: 16px; background: #fff;
+  box-shadow: 0 12px 30px rgba(2,52,88,.08);
+}
+.mia-scope .pd-share-preview-text { display: flex; flex-direction: column; gap: 10px; padding: 20px; min-width: 0; }
+.mia-scope .pd-share-preview-text img { width: 28px; height: 28px; object-fit: contain; }
+.mia-scope .pd-share-preview-text b { color: #062442; font-size: 17px; font-weight: 800; line-height: 1.45; }
+.mia-scope .pd-share-preview-text span { margin-top: auto; color: #5d7187; font-size: 12.5px; font-weight: 700; }
+.mia-scope .pd-share-preview-img {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 6px; min-height: 190px;
+  padding: 14px; background: #eaf2f8 center / cover no-repeat;
+}
+.mia-scope .pd-share-chip {
+  padding: 5px 11px; border-radius: 999px; background: #fff; color: #062442; font-size: 12px; font-weight: 800;
+  box-shadow: 0 6px 14px rgba(2,52,88,.18);
+}
+.mia-scope .pd-share-chip--cta { background: var(--cta-gradient); color: #fff; }
+.mia-scope .pd-share-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; margin-top: 20px; }
+.mia-scope .pd-share-net {
+  display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; color: #fff;
+  transition: transform .15s, box-shadow .15s;
+}
+.mia-scope .pd-share-net svg { width: 21px; height: 21px; }
+.mia-scope .pd-share-net:hover { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(2,52,88,.2); }
+.mia-scope .pd-share-net:focus-visible { outline: 2px solid #00a2e0; outline-offset: 3px; }
+.mia-scope .pd-share-net--whatsapp { background: #25d366; }
+.mia-scope .pd-share-net--facebook { background: #1877f2; }
+.mia-scope .pd-share-net--x { background: #0f1419; }
+.mia-scope .pd-share-net--telegram { background: #229ed9; }
+.mia-scope .pd-share-net--copy {
+  width: auto; gap: 7px; padding: 0 16px; border: 1.5px solid #d7e3ec; background: #fff; color: #062442;
+  font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer;
+}
+.mia-scope .pd-share-net--copy svg { width: 17px; height: 17px; }
+
+/* The organiser. */
+.mia-scope .pd-gf-organizer { display: flex; align-items: flex-start; gap: 14px; }
+.mia-scope .pd-gf-organizer .pd-gf-org-logo { width: 48px; height: 48px; }
+.mia-scope .pd-gf-organizer > div { display: grid; gap: 3px; min-width: 0; }
+.mia-scope .pd-gf-organizer b { color: #062442; font-size: 15px; font-weight: 800; }
+.mia-scope .pd-gf-organizer span { color: #5d7187; font-size: 12.5px; font-weight: 700; }
+.mia-scope .pd-gf-organizer-place { unicode-bidi: isolate; text-align: start; }
+
+/* ── The donation card: summary ring, share, latest donations ─────────── */
+.mia-scope .pd-gf .pd-donate { padding: 24px; border-radius: 22px; box-shadow: 0 20px 44px rgba(2,52,88,.12); }
+.mia-scope .pd-sum {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 14px;
+  padding-bottom: 18px; margin-bottom: 18px; border-bottom: 1px solid #e6eef3;
+}
+.mia-scope .pd-ring { position: relative; display: grid; place-items: center; width: 66px; height: 66px; }
+.mia-scope .pd-ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.mia-scope .pd-ring-track { fill: none; stroke: #e6f3fa; stroke-width: 5; }
+.mia-scope .pd-ring-fill { fill: none; stroke: #00a2e0; stroke-width: 5; stroke-linecap: round; transition: stroke-dasharray .8s ease; }
+.mia-scope .pd-ring > b { position: relative; color: #062442; font-size: 13px; font-weight: 800; }
+.mia-scope .pd-ring--open { border-radius: 50%; background: #eaf6fd; color: #00a2e0; }
+.mia-scope .pd-ring--open svg { position: static; width: 28px; height: 28px; transform: none; }
+.mia-scope .pd-sum-text { min-width: 0; }
+.mia-scope .pd-sum-text p { margin: 0; }
+.mia-scope .pd-sum-raised { color: #5d7187; font-size: 14px; font-weight: 700; line-height: 1.4; }
+.mia-scope .pd-sum-raised b { color: #062442; font-size: 24px; font-weight: 800; unicode-bidi: isolate; }
+.mia-scope .pd-sum-raised--first { color: #062442; font-size: 17px; font-weight: 800; }
+.mia-scope .pd-sum-goal { color: #33495e; font-size: 13.5px; font-weight: 700; margin-top: 2px !important; }
+.mia-scope .pd-sum-count { color: #0077b3; font-size: 12px; font-weight: 800; margin-top: 3px !important; }
+.mia-scope .pd-ds-sub--open { margin: -8px 0 14px; }
+.mia-scope .pd-donate h3.pd-ds-title { margin: 0 0 12px; font-size: 14.5px; }
+.mia-scope .pd-ds-share {
+  display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; min-height: 46px; margin-top: 10px;
+  border: 0; border-radius: 999px; background: #062442; color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 800; cursor: pointer;
+  transition: background .15s, transform .15s;
+}
+.mia-scope .pd-ds-share svg { width: 16px; height: 16px; }
+.mia-scope .pd-ds-share:hover { background: #0a3a66; transform: translateY(-1px); }
+.mia-scope .pd-gf .pd-donate .pd-ds-note { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.mia-scope .pd-gf .pd-donate .pd-ds-note svg { flex-shrink: 0; width: 15px; height: 15px; color: #1f7a4d; }
+
+.mia-scope .pd-recent { margin-top: 18px; padding-top: 16px; border-top: 1px solid #e6eef3; }
+.mia-scope .pd-recent-head { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; color: #0077b3; font-size: 13.5px; font-weight: 800; }
+.mia-scope .pd-recent-icon { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #eaf6fd; }
+.mia-scope .pd-recent-icon svg { width: 16px; height: 16px; }
+.mia-scope .pd-recent-list { margin: 0; padding: 0; list-style: none; }
+.mia-scope .pd-recent-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; }
+.mia-scope .pd-recent-row + .pd-recent-row { border-top: 1px dashed #edf2f6; }
+.mia-scope .pd-recent-avatar { flex-shrink: 0; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #f2f6f9; color: #00a2e0; }
+.mia-scope .pd-recent-avatar svg { width: 16px; height: 16px; }
+.mia-scope .pd-recent-text { display: grid; gap: 1px; min-width: 0; }
+.mia-scope .pd-recent-text b { color: #062442; font-size: 13.5px; font-weight: 700; }
+.mia-scope .pd-recent-text small { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; color: #5d7187; font-size: 12px; font-weight: 600; }
+.mia-scope .pd-recent-amount { color: #062442; font-weight: 800; unicode-bidi: isolate; }
+.mia-scope .pd-recent-badge { padding: 1px 6px; border-radius: 6px; background: #e7f7ef; color: #1f7a4d; font-size: 10px; font-style: normal; font-weight: 800; }
+
+/* Tablet / phone: photos, then the donation card, then the story. */
+@media (max-width: 960px) {
+  .mia-scope .pd-gf-grid { grid-template-columns: minmax(0, 1fr); grid-template-areas: "media" "aside" "body"; }
+  .mia-scope .pd-gf-aside { margin-top: 20px; }
+  .mia-scope .pd-gf-aside .pd-aside-sticky { position: static; }
+}
+@media (max-width: 640px) {
+  .mia-scope .pd-gf-head { padding: 20px 0 14px; }
+  .mia-scope .pd-gf-head h1 { font-size: 23px; }
+  .mia-scope .pd-gf-media { margin-inline: -16px; }
+  .mia-scope .pd-gf-media .pd-hero-media { border-radius: 0 !important; box-shadow: none; aspect-ratio: 4 / 3 !important; }
+  .mia-scope .pd-gf .pd-donate { padding: 20px; }
+  .mia-scope .pd-project-main .pd-gf-h2 { font-size: 19px; }
+  .mia-scope .pd-share-card { padding: 14px; border-radius: 18px; }
+  .mia-scope .pd-share-preview { grid-template-columns: minmax(0, 1fr); }
+  .mia-scope .pd-share-preview-img { min-height: 170px; order: -1; }
+  .mia-scope .pd-gf-btn { min-height: 46px; padding: 0 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mia-scope .pd-gf-btn:hover, .mia-scope .pd-share-net:hover, .mia-scope .pd-ds-share:hover { transform: none; }
+  .mia-scope .pd-ring-fill { transition: none; }
+}

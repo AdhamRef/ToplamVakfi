@@ -12,13 +12,17 @@ import { useMinbarMoney } from "@/hooks/useMinbarMoney";
 import { shareProgress, useShareWording } from "@/hooks/useShareWording";
 import { useProjectPricing } from "@/hooks/useProjectPricing";
 import { useDonationAmount } from "@/hooks/useDonationAmount";
-import type { MinbarProject } from "@/lib/minbar/projects";
+import type { MinbarProject, MinbarProjectDonations, MinbarRecentDonation } from "@/lib/minbar/projects";
+import { ShareButton } from "./ProjectShare";
 
 /**
- * The project page's donation sidebar  `.donate-sidebar` of
- * `ToplamVakfi-design/Toplum Vakfı Project - *.dc.html`.
+ * The project page's donation card, laid out like a GoFundMe campaign's: the
+ * progress ring with what has been raised, the goal and how many donations,
+ * then the giving controls, the share button and the latest donations.
  *
- * Title, funding bar and "NN% complete", six amount pills three-up, the free
+ * The giving controls are `.donate-sidebar` of
+ * `ToplamVakfi-design/Toplum Vakfı Project - *.dc.html`: the amount pills
+ * three-up (the campaign's own suggestions), the free
  * amount field with the currency at its start, the "give as a gift" pill
  * that opens the recipient's name, then "donate now" beside "add to cart" and
  * the secure-giving note.
@@ -34,6 +38,10 @@ import type { MinbarProject } from "@/lib/minbar/projects";
  * and the exact local figure). "Donate now" adds and routes to the basket.
  * On a سهوم (shares) campaign the pills are share counts and the row carries
  * the count.
+ *
+ * The latest donations are real paid gifts, newest first, with the largest
+ * one marked. Donors never chose to be named, so each is shown as an
+ * anonymous benefactor with the amount and when.
  */
 
 const AMOUNTS = [100, 200, 300, 500, 700, 1000];
@@ -49,7 +57,36 @@ const FREQUENCIES = offeredFrequencies<{ id: CartFreqKey; key: string }>([
 /** Note length that fits the certificate's dedication line. */
 const NOTE_MAX = 90;
 
-export default function DonationPanel({ project }: { project: MinbarProject; donorCount?: number }) {
+/** Rows in the latest-donations list. */
+const RECENT_ROWS = 5;
+
+const TIME_UNITS: Array<[Intl.RelativeTimeFormatUnit, number]> = [
+  ["year", 31536000],
+  ["month", 2592000],
+  ["week", 604800],
+  ["day", 86400],
+  ["hour", 3600],
+  ["minute", 60],
+];
+
+function timeAgo(iso: string, now: number, locale: string): string {
+  const seconds = (Date.parse(iso) - now) / 1000;
+  const format = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+  for (const [unit, size] of TIME_UNITS) {
+    if (Math.abs(seconds) >= size) return format.format(Math.round(seconds / size), unit);
+  }
+  return format.format(0, "minute");
+}
+
+export default function DonationPanel({
+  project,
+  donorCount = 0,
+  donations = { recent: [], top: null },
+}: {
+  project: MinbarProject;
+  donorCount?: number;
+  donations?: MinbarProjectDonations;
+}) {
   const locale = useLocale();
   const router = useRouter();
   const t = useTranslations("common");
@@ -79,6 +116,16 @@ export default function DonationPanel({ project }: { project: MinbarProject; don
   const [showAmount, setShowAmount] = useState(true);
   const [added, setAdded] = useState(false);
   const [minHint, setMinHint] = useState(false);
+  /* "2 hours ago" is worked out in the browser only, so the server's render
+     and the first client render agree. */
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => setNow(Date.now()), []);
+
+  /* The largest gift first, then the newest, without repeating it. */
+  const rows: Array<{ donation: MinbarRecentDonation; top: boolean }> = [
+    ...(donations.top ? [{ donation: donations.top, top: true }] : []),
+    ...donations.recent.filter((d) => d.id !== donations.top?.id).map((donation) => ({ donation, top: false })),
+  ].slice(0, RECENT_ROWS);
 
   const chosen = custom ? Number(custom) : options[picked]?.value ?? 0;
   const shareCount = shares && Number.isInteger(chosen) && chosen > 0 ? chosen : 0;
@@ -154,35 +201,45 @@ export default function DonationPanel({ project }: { project: MinbarProject; don
 
   return (
     <div id="pd-aside" className="pd-donate">
-      <h3>{tTv("donateTitle")}</h3>
-
-      {hasFinancials ? (
-        <>
-          <div className="pd-ds-progress" aria-hidden="true">
-            <span style={{ width: `${pct}%` }} />
-          </div>
-          <div className="pd-ds-meta">
-            <span>{tTv("complete", { pct: formatNumber(Math.round(pct)) })}</span>
-            <span>{tTv("raisedOfGoal", { raised: format(project.raised), goal: format(project.goal as number) })}</span>
-          </div>
-        </>
-      ) : (
-        <div className="pd-ds-meta pd-ds-meta--open">
-          <span>
-            {progress && progress.sold > 0
-              ? tShares("givenSoFar", { count: formatNumber(progress.sold), unit: unitWord(progress.sold) })
-              : project.raised > 0
-                ? tTv("raisedSoFar", { amount: format(project.raised) })
-                : null}
+      {/* ── Summary: ring, raised, goal, donations ─────────────────────── */}
+      <div className="pd-sum">
+        {hasFinancials ? (
+          <span className="pd-ring" role="img" aria-label={tTv("complete", { pct: formatNumber(Math.round(pct)) })}>
+            <svg viewBox="0 0 44 44" aria-hidden="true">
+              <circle className="pd-ring-track" cx="22" cy="22" r="19" />
+              <circle className="pd-ring-fill" cx="22" cy="22" r="19" pathLength={100} strokeDasharray={`${Math.max(pct, 0.5)} 100`} />
+            </svg>
+            <b aria-hidden="true">{formatNumber(Math.round(pct))}%</b>
           </span>
-          <span>{tTv("ongoing")}</span>
+        ) : (
+          <span className="pd-ring pd-ring--open" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21s-7.5-4.6-9.6-9.4C.9 8 3.1 4 6.9 4c2 0 3.5 1 5.1 3 1.6-2 3.1-3 5.1-3 3.8 0 6 4 4.5 7.6C19.5 16.4 12 21 12 21Z" />
+            </svg>
+          </span>
+        )}
+        <div className="pd-sum-text">
+          {hasFinancials || project.raised > 0 ? (
+            <p className="pd-sum-raised">
+              <b dir="ltr">{format(project.raised)}</b> <span>{tTv("raisedWord")}</span>
+            </p>
+          ) : (
+            <p className="pd-sum-raised pd-sum-raised--first">{tTv("beFirst")}</p>
+          )}
+          <p className="pd-sum-goal">{hasFinancials ? tTv("ofGoal", { goal: format(project.goal as number) }) : tTv("ongoing")}</p>
+          {donorCount > 0 ? <p className="pd-sum-count">{tTv("donationsCount", { count: formatNumber(donorCount), n: donorCount })}</p> : null}
         </div>
-      )}
+      </div>
+      {!hasFinancials && progress && progress.sold > 0 ? (
+        <p className="pd-ds-sub pd-ds-sub--open">{tShares("givenSoFar", { count: formatNumber(progress.sold), unit: unitWord(progress.sold) })}</p>
+      ) : null}
       {progress?.total != null ? (
         <p className="pd-ds-sub">
           {tShares("soldOfTotal", { sold: formatNumber(progress.sold), total: formatNumber(progress.total), unit: unitWord(progress.total) })}
         </p>
       ) : null}
+
+      <h3 className="pd-ds-title">{tTv("donateTitle")}</h3>
 
       {shares ? (
         <span className="pd-ds-price">{tShares("pricePer", { price: sharePrice?.label ?? format(shares.priceUSD), unit: unitWord(1) })}</span>
@@ -305,7 +362,49 @@ export default function DonationPanel({ project }: { project: MinbarProject; don
           {added ? tTv("added") : tTv("addToCartPlain")}
         </button>
       </div>
-      <p className="pd-ds-note">{tTv("secureNote")}</p>
+      <ShareButton title={project.title} className="pd-ds-share" />
+      <p className="pd-ds-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6Z" />
+          <path d="m9 12 2 2 4-4" />
+        </svg>
+        {tTv("secureNote")}
+      </p>
+
+      {/* ── Latest donations ───────────────────────────────────────────── */}
+      <div className="pd-recent">
+        <p className="pd-recent-head">
+          <span className="pd-recent-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m3 17 6-6 4 4 8-8" />
+              <path d="M14 7h7v7" />
+            </svg>
+          </span>
+          {rows.length ? tTv("recentTitle") : tTv("recentEmpty")}
+        </p>
+        {rows.length ? (
+          <ul className="pd-recent-list">
+            {rows.map(({ donation, top }) => (
+              <li key={donation.id} className="pd-recent-row">
+                <span className="pd-recent-avatar" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21s-7.5-4.6-9.6-9.4C.9 8 3.1 4 6.9 4c2 0 3.5 1 5.1 3 1.6-2 3.1-3 5.1-3 3.8 0 6 4 4.5 7.6C19.5 16.4 12 21 12 21Z" />
+                  </svg>
+                </span>
+                <span className="pd-recent-text">
+                  <b>{tTv("anonymousDonor")}</b>
+                  <small>
+                    <span dir="ltr" className="pd-recent-amount">{format(donation.amount)}</span>
+                    {donation.recurring ? <em className="pd-recent-badge">{tTv("recurringBadge")}</em> : null}
+                    <span aria-hidden="true"> · </span>
+                    <span>{top ? tTv("topDonation") : now != null ? timeAgo(donation.createdAt, now, locale) : tTv("recentDonation")}</span>
+                  </small>
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </div>
     </div>
   );
 }

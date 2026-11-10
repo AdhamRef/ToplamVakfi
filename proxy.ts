@@ -130,6 +130,26 @@ export default function proxy(req: NextRequest) {
 
   const response = intl(req) ?? NextResponse.next();
 
+  // Behind nginx, X-Forwarded-Proto: https makes next-intl's rewrite target
+  // https://localhost:3000, and Next then speaks TLS to its own plain-HTTP port:
+  // every localized page answers 500 with EPROTO "wrong version number". Keep
+  // the rewrite on the request's real protocol and host, and drop it entirely
+  // when it points back at the same URL.
+  const rewrite = response.headers.get('x-middleware-rewrite');
+  if (rewrite) {
+    const current = new URL(req.url);
+    const target = new URL(rewrite, current);
+
+    if (target.pathname === current.pathname && target.search === current.search) {
+      response.headers.delete('x-middleware-rewrite');
+      response.headers.set('x-middleware-next', '1');
+    } else {
+      target.protocol = current.protocol;
+      target.host = current.host;
+      response.headers.set('x-middleware-rewrite', target.toString());
+    }
+  }
+
   if (normalized) {
     response.cookies.set('currency', normalized, {
       maxAge: CURRENCY_COOKIE_MAX_AGE,

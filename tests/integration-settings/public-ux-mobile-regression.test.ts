@@ -33,11 +33,13 @@ test("project cards do not show an unlabeled zero raised figure beside a real go
 
 test("mobile project detail puts donation before optional video content", () => {
   const detail = read("components/minbar/projects/ProjectDetail.tsx");
-  const css = read("styles/minbar/minbar.css");
-  assert.match(detail, /className="pd-project-main"/);
-  assert.match(detail, /className="pd-project-video"/);
-  assert.match(css, /#pd-top #pd-aside \{ order: 3; \}/);
-  assert.match(css, /#pd-top \.pd-project-video \{ order: 4; \}/);
+  const css = read("styles/minbar/pages/project-detail.css");
+  // The film lives in the story column, which on a phone comes after the
+  // donation card: photos, then the card, then the story.
+  assert.match(detail, /className="pd-gf-body pd-project-main"/);
+  assert.match(detail, /className="pd-gf-section pd-project-video"/);
+  assert.ok(detail.indexOf("pd-gf-aside") < detail.indexOf("pd-gf-body"));
+  assert.match(css, /grid-template-areas: "media" "aside" "body"/);
 });
 
 test("team support remains optional and never blocks checkout", () => {

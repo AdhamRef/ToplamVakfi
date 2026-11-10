@@ -6,6 +6,7 @@ import {
   getProjectDonorCount,
   getProjectSeo,
   listProjectComments,
+  listProjectDonations,
   listProjectUpdates,
 } from "@/lib/minbar/projects";
 import { miaPath, slugFor } from "@/lib/minbar/routes";
@@ -63,10 +64,11 @@ export default async function ProjectPage({ params }: Props) {
   const project = await getProject(key, locale);
   if (!project) notFound();
 
-  const [updates, donorCount, comments] = await Promise.all([
+  const [updates, donorCount, comments, donations] = await Promise.all([
     listProjectUpdates(project.id, locale),
     getProjectDonorCount(project.id),
     listProjectComments(project.id),
+    listProjectDonations(project.id),
   ]);
 
   /* The campaign's own further photos (the cover is already the hero). */
@@ -86,7 +88,7 @@ export default async function ProjectPage({ params }: Props) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <MinbarMessages locale={locale} namespaces={NAMESPACES}>
-        <ProjectDetail project={project} updates={updates} gallery={gallery} donorCount={donorCount} comments={comments} />
+        <ProjectDetail project={project} updates={updates} gallery={gallery} donorCount={donorCount} comments={comments} donations={donations} />
       </MinbarMessages>
     </>
   );
